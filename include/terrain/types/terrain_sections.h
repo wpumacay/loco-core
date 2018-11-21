@@ -18,13 +18,4 @@
  *                      
  */
 
-#include <terrains/terrain_sections_connectedpath.h>
-
-namespace tysocterrain
-{
-
-	// @TODO: Here there be dragons ... I mean, some extra functionality ...
-	// on top of the implementation of each type of scenario
-
-
-}
+#include <terrain/types/terrain_sections_connectedpath.h>
