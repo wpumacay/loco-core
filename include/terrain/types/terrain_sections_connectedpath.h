@@ -66,6 +66,7 @@ namespace tysocterrain
                                float sectionDeltaX, 
                                float sectionsDepth, 
                                float sectionTickness,
+                               float baseX = 0.0f,
                                float baseY = 0.0f,
                                float baseZ = 0.0f );
         ~TPathTerrainGenerator();

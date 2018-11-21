@@ -29,6 +29,7 @@ namespace tysocterrain
                                                   float sectionDeltaX, 
                                                   float sectionsDepth, 
                                                   float sectionTickness,
+                                                  float baseX,
                                                   float baseY,
                                                   float baseZ )
         : TTerrainGenerator( name )
@@ -36,7 +37,7 @@ namespace tysocterrain
         m_sectionsDeltaX    = sectionDeltaX;
         m_sectionsTickness  = sectionTickness;
         m_sectionsDepth     = sectionsDepth;
-        m_currentX          = 0.0f;
+        m_currentX          = baseX;
         m_baseY             = baseY;
         m_baseZ             = baseZ;
         m_generator         = generator;
@@ -53,8 +54,6 @@ namespace tysocterrain
 
     void TPathTerrainGenerator::initialize()
     {
-        m_currentX = m_generatorInfo->trackingpoint.x;
-
         // create some sections in front
         for ( size_t i = 0; i < 20; i++ )
         {
@@ -190,6 +189,8 @@ namespace tysocterrain
         }
 
         m_justCreated.push( _pathPrimitive );
+
+        m_currentX += m_sectionsDeltaX;
     }
 
 }
