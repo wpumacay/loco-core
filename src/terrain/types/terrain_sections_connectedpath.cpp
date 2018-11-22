@@ -84,8 +84,6 @@ namespace tysocterrain
         auto _dx = ( generatorInfo->trackingpoint.x - m_currentX );
         if ( _dx > m_sectionsDeltaX )
         {
-            // advance current generator position
-            m_currentX += m_sectionsDeltaX;
             // create the section with this new position
             _createSection();
         }

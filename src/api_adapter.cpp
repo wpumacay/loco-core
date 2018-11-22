@@ -73,4 +73,16 @@ namespace tysoc
 
         return NULL;
     }
+
+    std::vector< tysocterrain::TTerrainGenerator* > TTysocCommonApi::getTerrainGenerators()
+    {
+        if ( m_scenarioPtr )
+        {
+            return m_scenarioPtr->getTerrainGenerators();
+        }
+
+        std::cout << "ERROR> there is no scenario" << std::endl;
+
+        return std::vector< tysocterrain::TTerrainGenerator* >();
+    }
 }
