@@ -29,6 +29,7 @@ namespace tysocagent
     {
         std::string                             name;
         std::string                             type;
+        struct { float r; float g; float b; }   color;
         struct { float x; float y; float z; }   size;
         struct { float x; float y; float z; }   pos;// absolute position (from mjv)
         float                                   rotmat[9];// absolute orientation (from mjv)
