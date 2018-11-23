@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include <cmath>
 #include <map>
 
@@ -53,6 +54,15 @@ namespace tysocagent
         std::map< std::string, TAgentGeom* >        m_geometries;
         std::map< std::string, TAgentActuator* >    m_actuators;
 
+        // @CHECK: I'm adding this to check whether or not I'll need ...
+        // to access the elements of the agent by key or just use them ...
+        // as a vector ( to iterate over them )
+
+        std::vector< TAgentJoint* >       m_jointsBuffer;
+        std::vector< TAgentBody* >        m_bodiesBuffer;
+        std::vector< TAgentGeom* >        m_geometriesBuffer;
+        std::vector< TAgentActuator* >    m_actuatorsBuffer;
+
         size_t m_actionDim;
 
         public :
@@ -84,6 +94,11 @@ namespace tysocagent
         std::map< std::string, TAgentBody* > bodies();
         std::map< std::string, TAgentActuator* > actuators();
         std::map< std::string, TAgentGeom* > geometries();
+
+        std::vector< TAgentJoint* > jointsBuffer();
+        std::vector< TAgentBody* > bodiesBuffer();
+        std::vector< TAgentActuator* > actuatorsBuffer();
+        std::vector< TAgentGeom* > geometriesBuffer();
 
         std::string name();
         size_t actionDim();

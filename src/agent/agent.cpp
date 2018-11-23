@@ -16,11 +16,13 @@ namespace tysocagent
             delete jointPair.second;
         }
         m_joints.clear();
+        m_jointsBuffer.clear();
 
         for ( const auto& bodyPair : m_bodies )
         {
             delete bodyPair.second;
         }
+        m_bodies.clear();
         m_bodies.clear();
 
         for ( const auto& geomPair : m_geometries )
@@ -28,12 +30,14 @@ namespace tysocagent
             delete geomPair.second;
         }
         m_geometries.clear();
+        m_geometriesBuffer.clear();
 
         for ( const auto& actuatorPair : m_actuators )
         {
             delete actuatorPair.second;
         }
         m_actuators.clear();
+        m_actuatorsBuffer.clear();
     }
 
     void TAgent::addJoint( const std::string& name,
@@ -44,6 +48,7 @@ namespace tysocagent
         _joint->type = type;
 
         m_joints[ name ] = _joint;
+        m_jointsBuffer.push_back( _joint );
     }
                        
     void TAgent::addBody( const std::string& name )
@@ -52,6 +57,7 @@ namespace tysocagent
         _body->name = name;
 
         m_bodies[ name ] = _body;
+        m_bodiesBuffer.push_back( _body );
     }
 
     void TAgent::addGeom( const std::string& name,
@@ -64,6 +70,7 @@ namespace tysocagent
         _geom->size = { size[0], size[1], size[2] };
 
         m_geometries[ name ] = _geom;
+        m_geometriesBuffer.push_back( _geom );
     }
 
     void TAgent::addActuator( const std::string& name,
@@ -77,6 +84,7 @@ namespace tysocagent
         _actuator->ctrlValue = 0.0f;
 
         m_actuators[ name ] = _actuator;
+        m_actuatorsBuffer.push_back( _actuator );
     }
 
     void TAgent::updateJoint( const std::string& name,
@@ -139,6 +147,26 @@ namespace tysocagent
     std::map< std::string, TAgentActuator* > TAgent::actuators()
     {
         return m_actuators;
+    }
+
+    std::vector< TAgentJoint* > TAgent::jointsBuffer()
+    {
+        return m_jointsBuffer;
+    }
+
+    std::vector< TAgentBody* > TAgent::bodiesBuffer()
+    {
+        return m_bodiesBuffer;
+    }
+
+    std::vector< TAgentActuator* > TAgent::actuatorsBuffer()
+    {
+        return m_actuatorsBuffer;
+    }
+
+    std::vector< TAgentGeom* > TAgent::geometriesBuffer()
+    {
+        return m_geometriesBuffer;
     }
 
     std::string TAgent::name()
