@@ -5,9 +5,11 @@ namespace tysocsensor
 {
 
 
-    TSensor::TSensor( tysocagent::TAgent* agentPtr,
+    TSensor::TSensor( const std::string& name,
+                      tysocagent::TAgent* agentPtr,
                       tysocterrain::TTerrainGenerator* terrainGenPtr )
     {
+        m_name = name;
         m_agentPtr = agentPtr;
         m_terrainGenPtr = terrainGenPtr;
     }

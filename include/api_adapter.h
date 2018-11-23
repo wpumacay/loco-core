@@ -27,6 +27,7 @@ namespace tysoc
         ~TTysocCommonApi();
 
         void setScenario( tysoc::TScenario* scenarioPtr );
+        tysoc::TScenario* getScenario() { return m_scenarioPtr; }
 
         void initialize();
         void step();

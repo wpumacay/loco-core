@@ -25,7 +25,8 @@ namespace tysocsensor
 
         public :
 
-        TSensor( tysocagent::TAgent* agentPtr,
+        TSensor( const std::string& name,
+                 tysocagent::TAgent* agentPtr,
                  tysocterrain::TTerrainGenerator* terrainGenPtr );
         ~TSensor();
 

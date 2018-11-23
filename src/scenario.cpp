@@ -120,4 +120,9 @@ namespace tysoc
     {
         return m_agents;
     }
+
+    std::map< std::string, tysocsensor::TSensor* > TScenario::getSensors()
+    {
+        return m_sensors;
+    }
 }

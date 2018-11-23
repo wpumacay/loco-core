@@ -173,5 +173,14 @@ namespace tysocagent
         return NULL;
     }
 
+    TAgentGeom* TAgent::getGeom( const std::string& name )
+    {
+        if ( m_geometries.find( name ) != m_geometries.end() )
+        {
+            return m_geometries[ name ];
+        }
 
+        std::cout << "WARNING> geom with name: " << name << " not in agent" << std::endl;
+        return NULL;
+    }
 }

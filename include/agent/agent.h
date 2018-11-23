@@ -90,6 +90,7 @@ namespace tysocagent
         
         TAgentJoint* getJoint( const std::string& name );
         TAgentBody* getBody( const std::string& name );
+        TAgentGeom* getGeom( const std::string& name );
 
     };
 }

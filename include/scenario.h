@@ -41,6 +41,7 @@ namespace tysoc
         tysocsensor::TSensor* getSensor( const std::string& name );
 
         std::map< std::string, tysocagent::TAgent* > getAgents();
+        std::map< std::string, tysocsensor::TSensor* > getSensors();
         std::vector< tysocterrain::TTerrainGenerator* > getTerrainGenerators();
 
         virtual void initialize();
