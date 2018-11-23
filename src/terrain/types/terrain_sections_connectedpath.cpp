@@ -192,7 +192,7 @@ namespace tysocterrain
     void TPathTerrainGenerator::initialize()
     {
         // create some sections in front
-        for ( size_t i = 0; i < 20; i++ )
+        for ( size_t i = 0; i < PROCEDURAL_TERRAIN_POOL_SIZE; i++ )
         {
             _createSection();
         }
@@ -244,6 +244,7 @@ namespace tysocterrain
         {
             // just create a new one
             _pathPrimitive = new TPathTerrainPrimitive();
+            m_primitives.push_back( _pathPrimitive );
         }
 
         _pathPrimitive->inUse = true;

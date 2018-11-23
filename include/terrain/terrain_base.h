@@ -10,6 +10,7 @@
 #include <queue>
 #include <vector>
 
+#define PROCEDURAL_TERRAIN_POOL_SIZE 20
 
 namespace tysocterrain
 {
@@ -41,6 +42,9 @@ namespace tysocterrain
     {
         protected :
 
+        // this will hold all primitives created in the generator lifetime
+        std::vector< TTerrainPrimitive* > m_primitives;
+        // this are working structures, and contain references for reuse
         std::queue< TTerrainPrimitive* > m_pool;
         std::queue< TTerrainPrimitive* > m_justCreated;
 
@@ -62,6 +66,7 @@ namespace tysocterrain
 
         void flushJustCreatedQueue();
         std::queue< TTerrainPrimitive* > getJustCreated() { return m_justCreated; }
+        std::vector< TTerrainPrimitive* > getPrimitives() { return m_primitives; }
     };
 
 }

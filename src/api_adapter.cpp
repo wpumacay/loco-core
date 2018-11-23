@@ -81,8 +81,20 @@ namespace tysoc
             return m_scenarioPtr->getTerrainGenerators();
         }
 
-        std::cout << "ERROR> there is no scenario" << std::endl;
+        std::cout << "ERROR> there is no scenario to get terraingens from" << std::endl;
 
         return std::vector< tysocterrain::TTerrainGenerator* >();
+    }
+
+    std::map< std::string, tysocagent::TAgent* > TTysocCommonApi::getAgents()
+    {
+        if ( m_scenarioPtr )
+        {
+            return m_scenarioPtr->getAgents();
+        }
+
+        std::cout << "ERROR> there is no scenario to get agents from" << std::endl;
+
+        return std::map< std::string, tysocagent::TAgent* >();
     }
 }

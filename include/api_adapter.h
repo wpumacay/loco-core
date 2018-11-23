@@ -36,6 +36,7 @@ namespace tysoc
 
         tysocsensor::TSensorMeasurement* getSensorMeasurement( const std::string sensorName );
         std::vector< tysocterrain::TTerrainGenerator* > getTerrainGenerators();
+        std::map< std::string, tysocagent::TAgent* > getAgents();
     };
 
 }

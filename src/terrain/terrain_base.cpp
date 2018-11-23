@@ -13,9 +13,14 @@ namespace tysocterrain
 
     TTerrainGenerator::~TTerrainGenerator()
     {
+        for ( size_t i = 0; i < m_primitives.size(); i++ )
+        {
+            delete m_primitives[i];
+        }
+        m_primitives.clear();
+
         while ( !m_pool.empty() )
         {
-            delete m_pool.front();
             m_pool.pop();
         }
 
