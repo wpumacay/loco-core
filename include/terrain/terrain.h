@@ -1,4 +1,4 @@
 
 #pragma once
 
-#include <terrain/types/terrain_sections.h>
+#include <terrain/types/sections/terrain_sections.h>

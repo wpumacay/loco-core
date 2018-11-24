@@ -1,14 +1,7 @@
 
 #pragma once
 
-// just in case
-#define _USE_MATH_DEFINES
-#include <cmath>
-
-#include <string>
-#include <iostream>
-#include <queue>
-#include <vector>
+#include <terrain/terrain_common.h>
 
 #define PROCEDURAL_TERRAIN_POOL_SIZE 20
 
