@@ -43,7 +43,7 @@ namespace tysocterrain
         }
     }
 
-    float TPathTerrainGenerator::_computeProfile1D( float x )
+    float TPathTerrainGenerator::_computeProfile1D( float x, float y )
     {
         return m_generator->generate( x );
     }
@@ -88,6 +88,7 @@ namespace tysocterrain
         }
 
         _pathPrimitive->inUse = true;
+        _pathPrimitive->useCustomColor = false;
         // compute vertices
         {
             _pathPrimitive->p1.x = _prevX;

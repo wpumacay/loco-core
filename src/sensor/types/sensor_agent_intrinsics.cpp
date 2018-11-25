@@ -7,10 +7,12 @@ namespace tysocsensor
 
         TAgentIntrinsicsSensor::TAgentIntrinsicsSensor( const std::string& name,
                                                         tysocagent::TAgent* agentPtr )
-            : TSensor( name, agentPtr, NULL )
+            : TSensor( name )
         {
             m_sensorMeasurement = new TAgentIntrinsicsSensorMeasurement();
             m_sensorMeasurement->type = "AgentIntrinsicsMeasurement";
+
+            m_agentPtr = agentPtr;
         }
 
         TAgentIntrinsicsSensor::~TAgentIntrinsicsSensor()

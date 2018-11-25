@@ -1,5 +1,5 @@
 
-#include <sensor/types/sensor_terrain_path.h>
+#include <sensor/types/sensor_terrain_sections.h>
 
 
 namespace tysocsensor
@@ -7,20 +7,22 @@ namespace tysocsensor
 
 
 
-    TPathTerrainSensor::TPathTerrainSensor( const std::string& name,
-                                            tysocterrain::TPathTerrainGenerator* terrainGenPtr,
-                                            tysocagent::TAgent* agentPtr,
-                                            bool useComplement )
-        : TSensor( name, agentPtr, terrainGenPtr )
+    TSectionsTerrainSensor::TSectionsTerrainSensor( const std::string& name,
+                                                    tysocterrain::TSectionsTerrainGenerator* terrainGenPtr,
+                                                    tysocagent::TAgent* agentPtr,
+                                                    bool useComplement )
+        : TSensor( name )
     {
+        m_agentPtr = agentPtr;
+        m_terrainGenPtr = terrainGenPtr;
         m_useComplement = useComplement;
 
-        m_sensorMeasurement = new TPathTerrainSensorMeasurement();
+        m_sensorMeasurement = new TSectionsTerrainSensorMeasurement();
         m_sensorMeasurement->type = "PathTerrainMeasurement";
         m_sensorMeasurement->usesComplement = m_useComplement;
     }
 
-    TPathTerrainSensor::~TPathTerrainSensor()
+    TSectionsTerrainSensor::~TSectionsTerrainSensor()
     {
         m_terrainGenPtr = NULL;
         m_agentPtr = NULL;
@@ -32,7 +34,7 @@ namespace tysocsensor
         }
     }
 
-    void TPathTerrainSensor::update()
+    void TSectionsTerrainSensor::update()
     {
         // @CHECK: We are using the geom because with the body we had weird behaviour. Still ...
         // we should use the body, as the geoms may be offset according to the bodies
@@ -46,13 +48,12 @@ namespace tysocsensor
         auto _currentY = _agentRoot->pos.y;
         auto _currentZ = _agentRoot->pos.z;
 
-        auto _agentSampleZ = reinterpret_cast< tysocterrain::TPathTerrainGenerator* >
-                                ( m_terrainGenPtr )->getProfile1D( _currentX );
+        auto _agentSampleZ = m_terrainGenPtr->getProfile1D( _currentX, _currentY );
 
         // sample from the terrain profiler using some spacing
-        auto _maxpos = _currentX + 7.5f;
-        auto _minpos = _currentX - 7.5f;
-        auto _nsamples = 40;
+        auto _maxpos = _currentX + 5.0f;
+        auto _minpos = _currentX - 5.0f;
+        auto _nsamples = 100;
 
         m_sensorMeasurement->agentPosition.x = _currentX;
         m_sensorMeasurement->agentPosition.y = _currentY;
@@ -68,8 +69,7 @@ namespace tysocsensor
         {
             auto _sampleX = _minpos + ( ( _maxpos - _minpos ) * ( i ) ) / _nsamples;
             auto _sampleY = _currentY;
-            auto _sampleZ = reinterpret_cast< tysocterrain::TPathTerrainGenerator* >
-                                ( m_terrainGenPtr )->getProfile1D( _sampleX );
+            auto _sampleZ = m_terrainGenPtr->getProfile1D( _sampleX, _sampleY );
             // transform to format appropiate format :
             if ( !m_useComplement )
             {
@@ -116,12 +116,14 @@ namespace tysocsensor
             }
 
             m_sensorMeasurement->profile.push_back( _sampleX );
-            m_sensorMeasurement->profile.push_back( _sampleY );
+            m_sensorMeasurement->profile.push_back( _sampleY /*- 0.505f * m_terrainGenPtr->getSectionDepth()*/ );
             m_sensorMeasurement->profile.push_back( _sampleZ );
         }
+
+        // std::cout << "finished measurements" << std::endl;
     }
 
-    TSensorMeasurement* TPathTerrainSensor::getSensorMeasurement()
+    TSensorMeasurement* TSectionsTerrainSensor::getSensorMeasurement()
     {
         return m_sensorMeasurement;
     }

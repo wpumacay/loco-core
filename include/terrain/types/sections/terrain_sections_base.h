@@ -20,7 +20,7 @@ namespace tysocterrain
 
         virtual void _initializeSection() = 0;
         virtual void _updateSection() = 0;
-        virtual float _computeProfile1D( float x ) = 0;
+        virtual float _computeProfile1D( float x, float y ) = 0;
 
         public :
 
@@ -36,7 +36,9 @@ namespace tysocterrain
         void update() override;
 
         // Should be implemented in order to be used by the terrainsensor
-        float getProfile1D( float x );
+        float getProfile1D( float x, float y );
+
+        float getSectionDepth() { return m_sectionDepth; }
     };
 
 

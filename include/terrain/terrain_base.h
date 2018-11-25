@@ -30,6 +30,7 @@ namespace tysocterrain
         float                                   rotmat[9];
         float                                   rbound;
         bool                                    inUse;
+        bool                                    useCustomColor;
     };
 
     class TTerrainGenerator
@@ -41,6 +42,7 @@ namespace tysocterrain
         // this are working structures, and contain references for reuse
         std::queue< TTerrainPrimitive* > m_pool;
         std::queue< TTerrainPrimitive* > m_justCreated;
+        std::queue< TTerrainPrimitive* > m_fixed;
 
         TGeneratorInfo* m_generatorInfo;
 
@@ -59,6 +61,8 @@ namespace tysocterrain
         TGeneratorInfo* generatorInfo() { return m_generatorInfo; }
 
         void flushJustCreatedQueue();
+        void flushFixedQueue();
+        std::queue< TTerrainPrimitive* > getFixed() { return m_fixed; }
         std::queue< TTerrainPrimitive* > getJustCreated() { return m_justCreated; }
         std::vector< TTerrainPrimitive* > getPrimitives() { return m_primitives; }
     };

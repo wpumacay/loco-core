@@ -49,4 +49,12 @@ namespace tysocterrain
         }
     }
 
+    void TTerrainGenerator::flushFixedQueue()
+    {
+        while ( !m_fixed.empty() )
+        {
+            m_fixed.pop();
+        }
+    }
+
 }

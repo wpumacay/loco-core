@@ -7,6 +7,23 @@
 namespace tysocterrain
 {
 
+    /**
+     *   The type of scenarios created here are of the form :
+     * 
+     * 
+     *      __________
+     *    /|          |\                     ______
+     *   / |          | \                  /|      |\
+     *  /  |          |  \                / |      | \          
+     *     |__________|   \ _____________/  |      |  \        ______________________
+     *     /          \    |            |   |      |   |      |   \|    |/
+     *    /            \   |            |   |______|   |      |    |    |
+     *   /              \  |            |  /        \  |      |    |    |               ... 
+     *                   \ |            | /          \ |      |    |    |
+     *                    \|____________|/            \|      |___/|____|\___________
+     *                      
+     */
+
 
     struct TPathTerrainPrimitive : public TTerrainPrimitive
     {
@@ -36,7 +53,7 @@ namespace tysocterrain
 
         void _initializeSection() override;
         void _updateSection() override;
-        float _computeProfile1D( float x ) override;
+        float _computeProfile1D( float x, float y ) override;
 
         void _createPathComponent();
 

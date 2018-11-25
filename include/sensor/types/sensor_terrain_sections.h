@@ -6,7 +6,7 @@
 namespace tysocsensor
 {
 
-    struct TPathTerrainSensorMeasurement : public TSensorMeasurement
+    struct TSectionsTerrainSensorMeasurement : public TSensorMeasurement
     {
         struct { float x; float y; float z; } agentPosition;
         struct { float x; float y; float z; } agentProjection;
@@ -14,11 +14,11 @@ namespace tysocsensor
         bool usesComplement;
     };
 
-    class TPathTerrainSensor : public TSensor
+    class TSectionsTerrainSensor : public TSensor
     {
         private :
 
-        TPathTerrainSensorMeasurement* m_sensorMeasurement;
+        TSectionsTerrainSensorMeasurement* m_sensorMeasurement;
 
         // FORMAT 1
         /*
@@ -61,13 +61,16 @@ namespace tysocsensor
         //   format 2 : heights with base the position of the agent
         bool m_useComplement;
 
+        tysocterrain::TSectionsTerrainGenerator* m_terrainGenPtr;
+        tysocagent::TAgent* m_agentPtr;
+
         public :
 
-        TPathTerrainSensor( const std::string& name,
-                            tysocterrain::TPathTerrainGenerator* terrainGenPtr,
-                            tysocagent::TAgent* agentPtr,
-                            bool useComplement = false );
-        ~TPathTerrainSensor();
+        TSectionsTerrainSensor( const std::string& name,
+                                tysocterrain::TSectionsTerrainGenerator* terrainGenPtr,
+                                tysocagent::TAgent* agentPtr,
+                                bool useComplement = false );
+        ~TSectionsTerrainSensor();
 
         void update() override;
         TSensorMeasurement* getSensorMeasurement() override;

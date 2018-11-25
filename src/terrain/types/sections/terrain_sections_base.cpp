@@ -40,8 +40,8 @@ namespace tysocterrain
         _updateSection();
     }
 
-    float TSectionsTerrainGenerator::getProfile1D( float x )
+    float TSectionsTerrainGenerator::getProfile1D( float x, float y )
     {
-        return _computeProfile1D( x );
+        return _computeProfile1D( x, y );
     }
 }

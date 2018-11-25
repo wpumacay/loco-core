@@ -27,6 +27,8 @@ namespace tysocsensor
 
         TAgentIntrinsicsSensorMeasurement* m_sensorMeasurement;
 
+        tysocagent::TAgent* m_agentPtr;
+
         public :
 
         TAgentIntrinsicsSensor( const std::string& name,

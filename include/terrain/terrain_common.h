@@ -12,3 +12,5 @@
 #include <queue>
 
 #define _RANDOM( a, b ) ( a + ( b - a ) * ( std::rand() / ( float )RAND_MAX ) )
+#define _RAND() ( std::rand() / ( float )RAND_MAX )
+#define _RANDOM_COLOR { ( (float)rand() / RAND_MAX ), ( (float)rand() / RAND_MAX ), ( (float)rand() / RAND_MAX ) }
