@@ -49,17 +49,26 @@ namespace tysoc
 
     void TScenario::addAgent( tysocagent::TAgent* agent )
     {
-        m_agents[ agent->name() ] = agent;
+        if ( agent )
+        {
+            m_agents[ agent->name() ] = agent;
+        }
     }
 
     void TScenario::addSensor( tysocsensor::TSensor* sensor )
     {
-        m_sensors[ sensor->name() ] = sensor;
+        if ( sensor )
+        {
+            m_sensors[ sensor->name() ] = sensor;
+        }
     }
 
     void TScenario::addTerrainGenerator( tysocterrain::TTerrainGenerator* terrainGenerator )
     {
-        m_terrainGenerators.push_back( terrainGenerator );
+        if ( terrainGenerator )
+        {
+            m_terrainGenerators.push_back( terrainGenerator );
+        }
     }
 
     void TScenario::initialize()

@@ -88,7 +88,7 @@ namespace tysocterrain
         }
 
         _pathPrimitive->inUse = true;
-        _pathPrimitive->useCustomColor = false;
+        _pathPrimitive->useCustomColor = true;
         // compute vertices
         {
             _pathPrimitive->p1.x = _prevX;
@@ -163,6 +163,8 @@ namespace tysocterrain
             _pathPrimitive->rotmat[6] = _pathPrimitive->normal.x;
             _pathPrimitive->rotmat[7] = _pathPrimitive->normal.y;// must be 0.0
             _pathPrimitive->rotmat[8] = _pathPrimitive->normal.z;
+
+            _pathPrimitive->color = { 0.83f, 0.83f, 0.83f };
         }
 
         m_justCreated.push( _pathPrimitive );

@@ -3,9 +3,6 @@
 
 namespace tysocterrain
 {
-
-
-
     TBlockyTerrainGenerator::TBlockyTerrainGenerator( const std::string& name,
                                                       float startX,
                                                       float startY,
@@ -73,7 +70,8 @@ namespace tysocterrain
         m_basePrimitivePtr->AABB.p2z = _pz + 0.5f * _sz;
 
         m_basePrimitivePtr->inUse = true;
-        m_basePrimitivePtr->useCustomColor = false;
+        m_basePrimitivePtr->useCustomColor = true;
+        m_basePrimitivePtr->color = { 0.83f, 0.83f, 0.83f };
 
         m_fixed.push( m_basePrimitivePtr );
     }
@@ -220,5 +218,4 @@ namespace tysocterrain
 
         return m_startZ;
     }
-
 }
