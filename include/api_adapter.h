@@ -3,7 +3,7 @@
 
 
 #include <scenario.h>
-
+#include <utils/primitives_spawner.h>
 
 namespace tysoc
 {
@@ -16,6 +16,7 @@ namespace tysoc
         protected :
 
         tysoc::TScenario* m_scenarioPtr;
+        tysocUtils::TPrimitivesSpawner* m_primitivesSpawnerPtr;
 
         virtual void _preStep() = 0; // collect info "for" specific backend
         virtual void _updateStep() = 0; // simulate with specific backend
@@ -38,6 +39,7 @@ namespace tysoc
         tysocsensor::TSensorMeasurement* getSensorMeasurement( const std::string sensorName );
         std::vector< tysocterrain::TTerrainGenerator* > getTerrainGenerators();
         std::map< std::string, tysocagent::TAgent* > getAgents();
+        tysocUtils::TPrimitivesSpawner* getPrimitivesSpawner();
     };
 
 }

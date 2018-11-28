@@ -10,6 +10,7 @@ namespace tysoc
     TTysocCommonApi::TTysocCommonApi()
     {
         m_scenarioPtr = NULL;
+        m_primitivesSpawnerPtr = NULL;
     }
 
     TTysocCommonApi::~TTysocCommonApi()
@@ -18,6 +19,12 @@ namespace tysoc
         {
             delete m_scenarioPtr;
             m_scenarioPtr = NULL;
+        }
+
+        if ( m_primitivesSpawnerPtr )
+        {
+            delete m_primitivesSpawnerPtr;
+            m_primitivesSpawnerPtr = NULL;
         }
     }
 
@@ -39,6 +46,12 @@ namespace tysoc
         if ( m_scenarioPtr )
         {
             m_scenarioPtr->update();
+        }
+
+        if ( m_primitivesSpawnerPtr )
+        {
+            // @TODO: Add wall time
+            m_primitivesSpawnerPtr->update( 1.0 / 60.0 );
         }
 
         _preStep();
@@ -96,5 +109,10 @@ namespace tysoc
         std::cout << "ERROR> there is no scenario to get agents from" << std::endl;
 
         return std::map< std::string, tysocagent::TAgent* >();
+    }
+
+    tysocUtils::TPrimitivesSpawner* TTysocCommonApi::getPrimitivesSpawner()
+    {
+        return m_primitivesSpawnerPtr;
     }
 }
