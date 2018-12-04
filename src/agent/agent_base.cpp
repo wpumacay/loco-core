@@ -3,43 +3,36 @@
 
 
 
-namespace tysocAgent
-{
-
+namespace tysoc{
+namespace agent{
 
     TIAgent::TIAgent( const std::string& name,
-                      float startX, 
-                      float startY, 
-                      float startZ )
+                      const TVec3& position )
     {
-        m_posX = startX;
-        m_posY = startY;
-        m_posZ = startZ;
+        m_name = name;
+        m_position = position;
+        m_type = "undefined";
     }
 
     TIAgent::~TIAgent()
     {
-        // Override this
+        m_geometries.clear();
     }
 
-    void TIAgent::setPosition( float x, float y, float z )
+    void TIAgent::setPosition( const TVec3& position )
     {
-        m_posX = x;
-        m_posY = y;
-        m_posZ = z;
-        _setPositionInternal( x, y, z );
+        m_position = position;
     }
 
-    void TIAgent::getPosition( float& x, float& y, float& z )
+    TVec3 TIAgent::getPosition()
     {
-        x = m_posX;
-        y = m_posY;
-        z = m_posZ;
+        return m_position;
     }
 
-    void TIAgent::update()
+    void TIAgent::update( float dt )
     {
-        _updateInternal();
+        // make the agent's logic update the inner data
+        _updateAgentInternal( dt );
     }
 
     std::string TIAgent::getName()
@@ -47,5 +40,14 @@ namespace tysocAgent
         return m_name;
     }
 
+    std::string TIAgent::getType()
+    {
+        return m_type;
+    }
 
-}
+    const std::vector< TGeometry >& TIAgent::getGeometries() const
+    {
+        return m_geometries;
+    }
+    
+}}

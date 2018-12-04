@@ -111,6 +111,18 @@ namespace tysoc
         return std::map< std::string, tysocagent::TAgent* >();
     }
 
+    std::vector< tysoc::agent::TIAgent* > TTysocCommonApi::getIAgents()
+    {
+        if ( m_scenarioPtr )
+        {
+            return m_scenarioPtr->getIAgents();
+        }
+
+        std::cout << "ERROR> there is no scenario to get Iagents from" << std::endl;
+
+        return std::vector< tysoc::agent::TIAgent* >();
+    }
+
     tysocUtils::TPrimitivesSpawner* TTysocCommonApi::getPrimitivesSpawner()
     {
         return m_primitivesSpawnerPtr;

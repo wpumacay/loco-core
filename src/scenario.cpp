@@ -55,6 +55,14 @@ namespace tysoc
         }
     }
 
+    void TScenario::addIAgent( tysoc::agent::TIAgent* agent )
+    {
+        if ( agent )
+        {
+            m_iagents.push_back( agent );
+        }
+    }
+
     void TScenario::addSensor( tysocsensor::TSensor* sensor )
     {
         if ( sensor )
@@ -128,6 +136,11 @@ namespace tysoc
     std::map< std::string, tysocagent::TAgent* > TScenario::getAgents()
     {
         return m_agents;
+    }
+
+    std::vector< tysoc::agent::TIAgent* > TScenario::getIAgents()
+    {
+        return m_iagents;
     }
 
     std::map< std::string, tysocsensor::TSensor* > TScenario::getSensors()

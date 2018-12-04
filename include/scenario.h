@@ -2,6 +2,7 @@
 #pragma once
 
 #include <terrain/terrain.h>
+#include <agent/agent_base.h>
 #include <agent/agent.h>
 #include <sensor/sensor.h>
 
@@ -25,6 +26,7 @@ namespace tysoc
 
         ScenarioState m_state;
 
+        std::vector< tysoc::agent::TIAgent* > m_iagents;
 
         public :
 
@@ -34,6 +36,7 @@ namespace tysoc
         ScenarioState state();
 
         void addAgent( tysocagent::TAgent* agent );
+        void addIAgent( tysoc::agent::TIAgent* agent );
         void addSensor( tysocsensor::TSensor* sensor );
         void addTerrainGenerator( tysocterrain::TTerrainGenerator* terrainGenerator );
 
@@ -43,6 +46,8 @@ namespace tysoc
         std::map< std::string, tysocagent::TAgent* > getAgents();
         std::map< std::string, tysocsensor::TSensor* > getSensors();
         std::vector< tysocterrain::TTerrainGenerator* > getTerrainGenerators();
+
+        std::vector< tysoc::agent::TIAgent* > getIAgents();
 
         virtual void initialize();
         virtual void update();
