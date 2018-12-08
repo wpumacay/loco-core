@@ -9,6 +9,8 @@
 
 typedef float TScalar;
 
+#define TRANDOM( a, b ) ( a + ( b - a ) * ( rand() / ( float )RAND_MAX ) )
+
 namespace tysoc
 {
 
@@ -50,6 +52,7 @@ namespace tysoc
                TScalar m20, TScalar m21, TScalar m22 );
 
         static TMat3 fromQuaternion( const TVec4& quat );
+        static TMat3 fromEuler( const TVec3& euler );
     };
 
     struct TMat4
@@ -111,5 +114,7 @@ namespace tysoc
         TVec3           size;           // size params for primitives, scale for mesh
         TMat4           worldTransform; // position part of the world-transform
     };
+
+    std::vector< TScalar > generateRandomArray( int size, TScalar min, TScalar max );
 
 }

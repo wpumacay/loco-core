@@ -61,6 +61,25 @@ namespace agent {
         m_mapKinTreeSensors.clear();
     }
 
+    void TAgentKinTree::setActions( const std::vector< TScalar >& actions )
+    {
+        if ( actions.size() != m_kinTreeActuators.size() )
+        {
+            std::cout << "WARNING> actions size - mismatch" << std::endl;
+            return;
+        }
+
+        for ( size_t i = 0; i < m_kinTreeActuators.size(); i++ )
+        {
+            m_kinTreeActuators[i]->ctrlValue = actions[i];
+        }
+    }
+
+    int TAgentKinTree::getActionDim()
+    {
+        return m_kinTreeActuators.size();
+    }
+
     void TAgentKinTree::_initializeKinTree()
     {
         // call specific construction functioality (virtual)

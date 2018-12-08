@@ -13,6 +13,7 @@ namespace agent{
         // save the reference to the elementPtr for later usage (if needed to inject resources)
         m_modelElementPtr = modelElementPtr;
 
+        _collectAssets();
         _initializeKinTree();
     }
 
@@ -109,6 +110,43 @@ namespace agent{
             {
                 _initializeBody( kinTreeBodyPtr->childBodies[i] );
             }
+        }
+    }
+
+    void TAgentKinTreeMjcf::_collectAssets()
+    {
+        auto _assetsElmPtr = mjcf::findFirstChildByType( m_modelElementPtr, "asset" );
+        if ( !_assetsElmPtr )
+        {
+            // Nothing to do here
+            return;
+        }
+
+        auto _assets = _assetsElmPtr->children;
+        for ( size_t i = 0; i < _assets.size(); i++ )
+        {
+            auto _asset = _assets[i];
+            if ( _asset->etype == "mesh" );
+            {
+                TMjcfMeshAsset _meshAsset;
+
+                // grab the name of the mesh
+                _meshAsset.name = _asset->getAttributeString( "name" );
+                // and the file resource
+                _meshAsset.file = _asset->getAttributeString( "file" );
+
+                // as well as the scale (in case there is)
+                auto _scale = _asset->getAttributeVec3( "scale", { 1.0f, 1.0f, 1.0f } );
+                _meshAsset.scale.x = _scale.x;
+                _meshAsset.scale.y = _scale.y;
+                _meshAsset.scale.z = _scale.z;
+
+                m_mjcfMeshAssets[ _meshAsset.name ] = _meshAsset;
+            }
+            // else
+            // {
+            //     // the others are not supported yet
+            // }
         }
     }
 
@@ -214,8 +252,18 @@ namespace agent{
         _extractTransform( geomElementPtr, _kinTreeVisualPtr->relTransform );
         // and the type of visual/geom
         _kinTreeVisualPtr->geometry.type = geomElementPtr->getAttributeString( "type" );
-        // and the mesh filename in case there is any
-        _kinTreeVisualPtr->geometry.filename = geomElementPtr->getAttributeString( "mesh" );
+        // and the mesh filename in case there is any (this one is tricky)
+        auto _meshId = geomElementPtr->getAttributeString( "mesh" );
+        if ( m_mjcfMeshAssets.find( _meshId ) != m_mjcfMeshAssets.end() )
+        {
+            // if the mesh is is a "pure link" to a filename, then use the stored asset in map
+            _kinTreeVisualPtr->geometry.filename = m_mjcfMeshAssets[ _meshId ].file;
+        }
+        else
+        {
+            // if not, then is a pure path to the mesh file
+            _kinTreeVisualPtr->geometry.filename = _meshId;
+        }
         // and the visual/geom size (and check if uses fromto, so we can extract the relative transform)
         TVec3 _posFromFromto;
         TMat3 _rotFromFromto;
@@ -247,6 +295,18 @@ namespace agent{
         _kinTreeCollisionPtr->geometry.type = geomElementPtr->getAttributeString( "type" );
         // and the mesh filename in case there is any
         _kinTreeCollisionPtr->geometry.filename = geomElementPtr->getAttributeString( "mesh" );
+        // and the mesh filename in case there is any (this one is tricky)
+        auto _meshId = geomElementPtr->getAttributeString( "mesh" );
+        if ( m_mjcfMeshAssets.find( _meshId ) != m_mjcfMeshAssets.end() )
+        {
+            // if the mesh is is a "pure link" to a filename, then use the stored asset in map
+            _kinTreeCollisionPtr->geometry.filename = m_mjcfMeshAssets[ _meshId ].file;
+        }
+        else
+        {
+            // if not, then is a pure path to the mesh file
+            _kinTreeCollisionPtr->geometry.filename = _meshId;
+        }
         // and the collision/geom size (and check if uses fromto, so we can extract the relative transform)
         TVec3 _posFromFromto;
         TMat3 _rotFromFromto;
@@ -288,18 +348,38 @@ namespace agent{
     void TAgentKinTreeMjcf::_extractTransform( mjcf::GenericElement* elementPtr,
                                                TMat4& targetTransform )
     {
+        // grab local position from element
         auto _relPosition   = elementPtr->getAttributeVec3( "pos", { 0.0, 0.0, 0.0 } );
-        auto _relQuaternion = elementPtr->getAttributeVec4( "quat", { 1.0, 0.0, 0.0, 0.0 } );
-
-        // extract position (defined the same way as our vec3 in mjcf)
+        // and make the vector to be used
         TVec3 _rPosition    = { _relPosition.x, _relPosition.y, _relPosition.z };
-        // extract rotation (quaternion convention in mjcf is "wxyz", our is "xyzw", so compensate for this)
-        TVec4 _rQuaternion  = { _relQuaternion.y, _relQuaternion.z, _relQuaternion.w, _relQuaternion.x };
-        TMat3 _rRotation    = TMat3::fromQuaternion( _rQuaternion );
-
-        // and store the relative transform
+        // and set it to the target transform
         targetTransform.setPosition( _rPosition );
-        targetTransform.setRotation( _rRotation );
+
+        // check if we have euler
+        if ( elementPtr->hasAttributeVec3( "euler" ) )
+        {
+            // extract rotation using euler
+            auto _relEuler = elementPtr->getAttributeVec3( "euler", { 0.0, 0.0, 0.0 } );
+            // and convert it to our tvec3 format
+            TVec3 _rEuler = { _relEuler.x * ((float)M_PI) / 180.0f, 
+                              _relEuler.y * ((float)M_PI) / 180.0f, 
+                              _relEuler.z * ((float)M_PI) / 180.0f };
+            // and convert to matrix type
+            TMat3 _rRotation    = TMat3::fromEuler( _rEuler );
+            // and set it to the target transform
+            targetTransform.setRotation( _rRotation );
+        }
+        else
+        {
+            // extract rotation using quaternions
+            auto _relQuaternion = elementPtr->getAttributeVec4( "quat", { 1.0, 0.0, 0.0, 0.0 } );
+            // and extract rotation (quaternion convention in mjcf is "wxyz", our is "xyzw", so compensate for this)
+            TVec4 _rQuaternion  = { _relQuaternion.y, _relQuaternion.z, _relQuaternion.w, _relQuaternion.x };
+            // and convert to matrix type
+            TMat3 _rRotation    = TMat3::fromQuaternion( _rQuaternion );
+            // and set it to the target transform
+            targetTransform.setRotation( _rRotation );
+        }
     }
 
     bool TAgentKinTreeMjcf::_extractStandardSize( mjcf::GenericElement* geomElm,

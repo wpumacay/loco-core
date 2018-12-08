@@ -112,6 +112,32 @@ namespace tysoc
             return _res;
         }
 
+        TMat3 TMat3::fromEuler( const TVec3& euler )
+        {
+            TMat3 _res;
+
+            float _c1 = std::cos( euler.z );
+            float _s1 = std::sin( euler.z );
+            float _c2 = std::cos( euler.y );
+            float _s2 = std::sin( euler.y );
+            float _c3 = std::cos( euler.x );
+            float _s3 = std::sin( euler.x );
+
+            _res.buff[0] = _c1 * _c2;
+            _res.buff[1] = _s1 * _c2;
+            _res.buff[2] = -_s2;
+
+            _res.buff[3] = _c1 * _s2 * _s3 - _s1 * _c3;
+            _res.buff[4] = _c1 * _c3 + _s1 * _s2 * _s3;
+            _res.buff[5] = _c2 * _s3;
+
+            _res.buff[6] = _s1 * _s3 + _c1 * _s2 * _c3;
+            _res.buff[7] = _s1 * _s2 * _c3 - _c1 * _s3;
+            _res.buff[8] = _c2 * _c3;
+
+            return _res;
+        }
+
         TMat4::TMat4()
         {
             buff[0] = 1; buff[4] = 0; buff[8]  = 0; buff[12] = 0;
@@ -290,4 +316,14 @@ namespace tysoc
             return _res;
         }
 
+        std::vector< TScalar > generateRandomArray( int size, TScalar min, TScalar max )
+        {
+            std::vector< TScalar > _res;
+            for ( size_t i = 0; i < size; i++ )
+            {
+                _res.push_back( TRANDOM( min, max ) );
+            }
+
+            return _res;
+        }
 }

@@ -59,7 +59,7 @@ namespace tysocterrain
         }
 
         auto _dx = ( m_generatorInfo->trackingpoint.x - m_currentX );
-        if ( _dx > m_componentsSpacingX )
+        if ( _dx > 4 * m_componentsSpacingX )
         {
             // create the section with this new position
             _createPathComponent();

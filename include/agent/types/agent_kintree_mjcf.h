@@ -10,7 +10,12 @@
 namespace tysoc{
 namespace agent{
 
-
+    struct TMjcfMeshAsset
+    {
+        std::string                             name;
+        std::string                             file;
+        struct { float x; float y; float z; }   scale;
+    };
 
 
     class TAgentKinTreeMjcf : public TAgentKinTree
@@ -37,6 +42,9 @@ namespace agent{
         void _constructKinTree() override;
         void _initializeWorldTransforms() override;
         void _initializeBody( TKinTreeBody* kinTreeBodyPtr );
+
+        void _collectAssets();
+        std::map< std::string, TMjcfMeshAsset > m_mjcfMeshAssets;
 
         public :
 

@@ -137,6 +137,7 @@ namespace agent{
         TMat4               worldTransform; // World transform
         TMat4               relTransform;   // Relative transform
         TKinTreeJoint*      jointPtr;       // Attached joint (to whom the actuator is applied)
+        TScalar             ctrlValue;      // Control signal to be applied to this actuator
 
         TKinTreeActuator()
         {
@@ -184,6 +185,9 @@ namespace agent{
         TAgentKinTree( const std::string& name,
                        const TVec3& position );
         ~TAgentKinTree() override;
+
+        void setActions( const std::vector< TScalar >& actions );
+        int getActionDim();
 
         std::vector< TKinTreeBody* >        getKinTreeBodies();
         std::vector< TKinTreeJoint* >       getKinTreeJoints();
