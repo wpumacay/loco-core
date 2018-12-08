@@ -336,6 +336,10 @@ namespace agent{
         _kinTreeActuatorPtr->type = actuatorElementPtr->getAttributeString( "type" );
         // and a reference to the joint it controls
         _kinTreeActuatorPtr->jointPtr = m_mapKinTreeJoints[ actuatorElementPtr->getAttributeString( "joint" ) ];
+        // and the ctrl limits
+        auto _ctrlLimits = actuatorElementPtr->getAttributeVec2( "ctrlrange", { -1, 1 } );
+        _kinTreeActuatorPtr->minCtrl = _ctrlLimits.x;
+        _kinTreeActuatorPtr->maxCtrl = _ctrlLimits.y;
 
         // @TODO|CHECK: for some special joints (ball and free) "joint" is not the field we are looking for
 

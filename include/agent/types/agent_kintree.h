@@ -138,6 +138,8 @@ namespace agent{
         TMat4               relTransform;   // Relative transform
         TKinTreeJoint*      jointPtr;       // Attached joint (to whom the actuator is applied)
         TScalar             ctrlValue;      // Control signal to be applied to this actuator
+        TScalar             minCtrl;        // Control min limit
+        TScalar             maxCtrl;        // Control max limit
 
         TKinTreeActuator()
         {
@@ -188,6 +190,7 @@ namespace agent{
 
         void setActions( const std::vector< TScalar >& actions );
         int getActionDim();
+        void getActuatorLimits( size_t actuatorIndx, TScalar& minCtrl, TScalar& maxCtrl );
 
         std::vector< TKinTreeBody* >        getKinTreeBodies();
         std::vector< TKinTreeJoint* >       getKinTreeJoints();

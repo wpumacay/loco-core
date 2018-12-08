@@ -80,6 +80,18 @@ namespace agent {
         return m_kinTreeActuators.size();
     }
 
+    void TAgentKinTree::getActuatorLimits( size_t actuatorIndx, TScalar& minCtrl, TScalar& maxCtrl )
+    {
+        if ( 0 > actuatorIndx || actuatorIndx >= m_kinTreeActuators.size()  )
+        {
+            std::cout << "WARNING> trying to query an our of range actuator" << std::endl;
+            return;
+        }
+
+        minCtrl = m_kinTreeActuators[ actuatorIndx ]->minCtrl;
+        maxCtrl = m_kinTreeActuators[ actuatorIndx ]->maxCtrl;
+    }
+
     void TAgentKinTree::_initializeKinTree()
     {
         // call specific construction functioality (virtual)
