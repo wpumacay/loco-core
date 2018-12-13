@@ -1,8 +1,9 @@
 
 #include <terrain/types/sections/terrain_sections_blocky.h>
 
-namespace tysocterrain
-{
+namespace tysoc {
+namespace terrain {
+
     TBlockyTerrainGenerator::TBlockyTerrainGenerator( const std::string& name,
                                                       float startX,
                                                       float startY,
@@ -218,4 +219,5 @@ namespace tysocterrain
 
         return m_startZ;
     }
-}
+    
+}}

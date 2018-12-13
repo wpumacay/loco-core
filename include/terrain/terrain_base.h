@@ -5,8 +5,8 @@
 
 #define PROCEDURAL_TERRAIN_POOL_SIZE 100
 
-namespace tysocterrain
-{
+namespace tysoc {
+namespace terrain {
 
     struct TGeneratorInfo
     {
@@ -67,4 +67,4 @@ namespace tysocterrain
         std::vector< TTerrainPrimitive* > getPrimitives() { return m_primitives; }
     };
 
-}
+}}

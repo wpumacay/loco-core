@@ -15,7 +15,7 @@ namespace tysoc
 
         protected :
 
-        tysoc::TScenario* m_scenarioPtr;
+        TScenario* m_scenarioPtr;
         tysocUtils::TPrimitivesSpawner* m_primitivesSpawnerPtr;
 
         virtual void _preStep() = 0; // collect info "for" specific backend
@@ -27,8 +27,8 @@ namespace tysoc
         TTysocCommonApi();
         ~TTysocCommonApi();
 
-        void setScenario( tysoc::TScenario* scenarioPtr );
-        tysoc::TScenario* getScenario() { return m_scenarioPtr; }
+        void setScenario( TScenario* scenarioPtr );
+        TScenario* getScenario() { return m_scenarioPtr; }
 
         void initialize();
         void step();
@@ -36,10 +36,10 @@ namespace tysoc
                              const std::string& actuatorName,
                              float actionValue );
 
-        tysocsensor::TSensorMeasurement* getSensorMeasurement( const std::string sensorName );
-        std::vector< tysocterrain::TTerrainGenerator* > getTerrainGenerators();
-        std::map< std::string, tysocagent::TAgent* > getAgents();
-        std::vector< tysoc::agent::TIAgent* > getIAgents();
+        sensor::TSensorMeasurement* getSensorMeasurement( const std::string sensorName );
+        std::vector< terrain::TTerrainGenerator* > getTerrainGenerators();
+        std::map< std::string, agent::TAgent* > getAgents();
+        std::vector< agent::TIAgent* > getIAgents();
         tysocUtils::TPrimitivesSpawner* getPrimitivesSpawner();
     };
 

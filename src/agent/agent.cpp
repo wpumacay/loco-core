@@ -1,8 +1,8 @@
 
 #include <agent/agent.h>
 
-namespace tysocagent
-{
+namespace tysoc {
+namespace agent {
 
     TAgent::TAgent( const std::string& name )
     {
@@ -211,4 +211,5 @@ namespace tysocagent
         std::cout << "WARNING> geom with name: " << name << " not in agent" << std::endl;
         return NULL;
     }
-}
+    
+}}

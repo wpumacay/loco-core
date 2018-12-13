@@ -2,8 +2,8 @@
 #include <terrain/types/sections/terrain_sections_connectedpath_profiles.h>
 
 
-namespace tysocterrain
-{
+namespace tysoc {
+namespace terrain {
 
     TSineProfileGenerator::TSineProfileGenerator( float ampl, 
                                                   float period, 
@@ -159,4 +159,4 @@ namespace tysocterrain
 
 
     
-}
+}}

@@ -47,7 +47,7 @@ namespace tysoc
         return m_state;
     }
 
-    void TScenario::addAgent( tysocagent::TAgent* agent )
+    void TScenario::addAgent( agent::TAgent* agent )
     {
         if ( agent )
         {
@@ -55,7 +55,7 @@ namespace tysoc
         }
     }
 
-    void TScenario::addIAgent( tysoc::agent::TIAgent* agent )
+    void TScenario::addIAgent( agent::TIAgent* agent )
     {
         if ( agent )
         {
@@ -63,7 +63,7 @@ namespace tysoc
         }
     }
 
-    void TScenario::addSensor( tysocsensor::TSensor* sensor )
+    void TScenario::addSensor( sensor::TSensor* sensor )
     {
         if ( sensor )
         {
@@ -71,7 +71,7 @@ namespace tysoc
         }
     }
 
-    void TScenario::addTerrainGenerator( tysocterrain::TTerrainGenerator* terrainGenerator )
+    void TScenario::addTerrainGenerator( terrain::TTerrainGenerator* terrainGenerator )
     {
         if ( terrainGenerator )
         {
@@ -102,7 +102,7 @@ namespace tysoc
         }
     }
 
-    tysocagent::TAgent* TScenario::getAgent( const std::string& name )
+    agent::TAgent* TScenario::getAgent( const std::string& name )
     {
         if ( m_agents.find( name ) != m_agents.end() )
         {
@@ -115,7 +115,7 @@ namespace tysoc
         return NULL;
     }
 
-    tysocsensor::TSensor* TScenario::getSensor( const std::string& name )
+    sensor::TSensor* TScenario::getSensor( const std::string& name )
     {
         if ( m_sensors.find( name ) != m_sensors.end() )
         {
@@ -128,22 +128,22 @@ namespace tysoc
         return NULL;
     }
 
-    std::vector< tysocterrain::TTerrainGenerator* > TScenario::getTerrainGenerators()
+    std::vector< terrain::TTerrainGenerator* > TScenario::getTerrainGenerators()
     {
         return m_terrainGenerators;
     }
 
-    std::map< std::string, tysocagent::TAgent* > TScenario::getAgents()
+    std::map< std::string, agent::TAgent* > TScenario::getAgents()
     {
         return m_agents;
     }
 
-    std::vector< tysoc::agent::TIAgent* > TScenario::getIAgents()
+    std::vector< agent::TIAgent* > TScenario::getIAgents()
     {
         return m_iagents;
     }
 
-    std::map< std::string, tysocsensor::TSensor* > TScenario::getSensors()
+    std::map< std::string, sensor::TSensor* > TScenario::getSensors()
     {
         return m_sensors;
     }

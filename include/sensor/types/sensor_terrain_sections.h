@@ -3,8 +3,8 @@
 
 #include <sensor/sensor_base.h>
 
-namespace tysocsensor
-{
+namespace tysoc {
+namespace sensor {
 
     struct TSectionsTerrainSensorMeasurement : public TSensorMeasurement
     {
@@ -61,14 +61,14 @@ namespace tysocsensor
         //   format 2 : heights with base the position of the agent
         bool m_useComplement;
 
-        tysocterrain::TSectionsTerrainGenerator* m_terrainGenPtr;
-        tysocagent::TAgent* m_agentPtr;
+        agent::TAgent*                          m_agentPtr;
+        terrain::TSectionsTerrainGenerator*     m_terrainGenPtr;
 
         public :
 
         TSectionsTerrainSensor( const std::string& name,
-                                tysocterrain::TSectionsTerrainGenerator* terrainGenPtr,
-                                tysocagent::TAgent* agentPtr,
+                                terrain::TSectionsTerrainGenerator* terrainGenPtr,
+                                agent::TAgent* agentPtr,
                                 bool useComplement = false );
         ~TSectionsTerrainSensor();
 
@@ -76,5 +76,4 @@ namespace tysocsensor
         TSensorMeasurement* getSensorMeasurement() override;
     };
 
-
-}
+}}

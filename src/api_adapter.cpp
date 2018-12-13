@@ -28,7 +28,7 @@ namespace tysoc
         }
     }
 
-    void TTysocCommonApi::setScenario( tysoc::TScenario* scenarioPtr )
+    void TTysocCommonApi::setScenario( TScenario* scenarioPtr )
     {
         m_scenarioPtr = scenarioPtr;
     }
@@ -73,7 +73,7 @@ namespace tysoc
         }
     }
 
-    tysocsensor::TSensorMeasurement* TTysocCommonApi::getSensorMeasurement( const std::string sensorName )
+    sensor::TSensorMeasurement* TTysocCommonApi::getSensorMeasurement( const std::string sensorName )
     {
         if ( m_scenarioPtr )
         {
@@ -87,7 +87,7 @@ namespace tysoc
         return NULL;
     }
 
-    std::vector< tysocterrain::TTerrainGenerator* > TTysocCommonApi::getTerrainGenerators()
+    std::vector< terrain::TTerrainGenerator* > TTysocCommonApi::getTerrainGenerators()
     {
         if ( m_scenarioPtr )
         {
@@ -96,10 +96,10 @@ namespace tysoc
 
         std::cout << "ERROR> there is no scenario to get terraingens from" << std::endl;
 
-        return std::vector< tysocterrain::TTerrainGenerator* >();
+        return std::vector< terrain::TTerrainGenerator* >();
     }
 
-    std::map< std::string, tysocagent::TAgent* > TTysocCommonApi::getAgents()
+    std::map< std::string, agent::TAgent* > TTysocCommonApi::getAgents()
     {
         if ( m_scenarioPtr )
         {
@@ -108,10 +108,10 @@ namespace tysoc
 
         std::cout << "ERROR> there is no scenario to get agents from" << std::endl;
 
-        return std::map< std::string, tysocagent::TAgent* >();
+        return std::map< std::string, agent::TAgent* >();
     }
 
-    std::vector< tysoc::agent::TIAgent* > TTysocCommonApi::getIAgents()
+    std::vector< agent::TIAgent* > TTysocCommonApi::getIAgents()
     {
         if ( m_scenarioPtr )
         {
@@ -120,7 +120,7 @@ namespace tysoc
 
         std::cout << "ERROR> there is no scenario to get Iagents from" << std::endl;
 
-        return std::vector< tysoc::agent::TIAgent* >();
+        return std::vector< agent::TIAgent* >();
     }
 
     tysocUtils::TPrimitivesSpawner* TTysocCommonApi::getPrimitivesSpawner()

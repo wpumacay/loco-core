@@ -3,8 +3,9 @@
 
 
 
-namespace tysocterrain
-{
+namespace tysoc {
+namespace terrain {
+
     
     TPathTerrainGenerator::TPathTerrainGenerator( const std::string& name,
                                                   float startX,
@@ -172,4 +173,5 @@ namespace tysocterrain
         m_currentX += m_componentsSpacingX;
     }
 
-}
+
+}}

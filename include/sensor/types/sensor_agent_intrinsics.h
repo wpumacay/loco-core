@@ -3,8 +3,8 @@
 
 #include <sensor/sensor_base.h>
 
-namespace tysocsensor
-{
+namespace tysoc {
+namespace sensor {
 
     struct TAgentIntrinsicsSensorMeasurement : public TSensorMeasurement
     {
@@ -27,12 +27,12 @@ namespace tysocsensor
 
         TAgentIntrinsicsSensorMeasurement* m_sensorMeasurement;
 
-        tysocagent::TAgent* m_agentPtr;
+        agent::TAgent* m_agentPtr;
 
         public :
 
         TAgentIntrinsicsSensor( const std::string& name,
-                                tysocagent::TAgent* agentPtr );
+                                agent::TAgent* agentPtr );
         ~TAgentIntrinsicsSensor();
 
         void update() override;
@@ -40,5 +40,4 @@ namespace tysocsensor
 
     };
 
-
-}
+}}

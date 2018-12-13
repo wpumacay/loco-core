@@ -8,8 +8,8 @@
 #include <map>
 
 
-namespace tysocagent
-{
+namespace tysoc {
+namespace agent {
 
     struct TAgentBody
     {
@@ -108,4 +108,5 @@ namespace tysocagent
         TAgentGeom* getGeom( const std::string& name );
 
     };
-}
+    
+}}

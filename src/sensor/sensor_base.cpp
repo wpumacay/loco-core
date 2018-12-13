@@ -1,8 +1,8 @@
 
 #include <sensor/sensor.h>
 
-namespace tysocsensor
-{
+namespace tysoc {
+namespace sensor {
 
 
     TSensor::TSensor( const std::string& name )
@@ -20,4 +20,4 @@ namespace tysocsensor
         return m_name;
     }
 
-}
+}}

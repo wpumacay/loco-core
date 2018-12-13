@@ -2,11 +2,11 @@
 #include <sensor/types/sensor_agent_intrinsics.h>
 
 
-namespace tysocsensor
-{
+namespace tysoc {
+namespace sensor {
 
         TAgentIntrinsicsSensor::TAgentIntrinsicsSensor( const std::string& name,
-                                                        tysocagent::TAgent* agentPtr )
+                                                        agent::TAgent* agentPtr )
             : TSensor( name )
         {
             m_sensorMeasurement = new TAgentIntrinsicsSensorMeasurement();
@@ -28,6 +28,9 @@ namespace tysocsensor
 
         void TAgentIntrinsicsSensor::update()
         {
+            // @CHECK: make this not dependent of the engine
+            // why did I this in the first place?, perhaps I was in a hurry
+
             m_sensorMeasurement->bodiesRelativePosition.clear();
             // m_sensorMeasurement->bodiesVelocities.clear();
 
@@ -64,8 +67,4 @@ namespace tysocsensor
             return m_sensorMeasurement;
         }
 
-
-
-
-
-}
+}}

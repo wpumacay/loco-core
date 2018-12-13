@@ -1,8 +1,8 @@
 
 #include <terrain/types/sections/terrain_sections_base.h>
 
-namespace tysocterrain
-{
+namespace tysoc {
+namespace terrain {
 
     TSectionsTerrainGenerator::TSectionsTerrainGenerator( const std::string& name,
                                                           float startX,
@@ -44,4 +44,5 @@ namespace tysocterrain
     {
         return _computeProfile1D( x, y );
     }
-}
+    
+}}

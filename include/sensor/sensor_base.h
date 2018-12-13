@@ -2,11 +2,16 @@
 #pragma once
 
 #include <terrain/terrain.h>
+#include <agent/agent_base.h>
 #include <agent/agent.h>
 
-namespace tysocsensor
-{
+namespace tysoc {
+namespace sensor {
 
+
+    /**
+    * Base sensor measurement
+    */
     struct TSensorMeasurement
     {
         std::string type;
@@ -28,7 +33,7 @@ namespace tysocsensor
         std::string name();
 
         /**
-        * Should update measurements here, given terraingen and agent
+        * Should update measurements here, given specific resources
         */
         virtual void update() = 0;
 
@@ -39,4 +44,4 @@ namespace tysocsensor
     };
 
     
-}
+}}

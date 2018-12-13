@@ -2,14 +2,12 @@
 #include <sensor/types/sensor_terrain_sections.h>
 
 
-namespace tysocsensor
-{
-
-
+namespace tysoc {
+namespace sensor {
 
     TSectionsTerrainSensor::TSectionsTerrainSensor( const std::string& name,
-                                                    tysocterrain::TSectionsTerrainGenerator* terrainGenPtr,
-                                                    tysocagent::TAgent* agentPtr,
+                                                    terrain::TSectionsTerrainGenerator* terrainGenPtr,
+                                                    agent::TAgent* agentPtr,
                                                     bool useComplement )
         : TSensor( name )
     {
@@ -127,4 +125,5 @@ namespace tysocsensor
     {
         return m_sensorMeasurement;
     }
-}
+
+}}

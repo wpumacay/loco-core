@@ -4,8 +4,8 @@
 #include <terrain/types/sections/terrain_sections_base.h>
 #include <terrain/types/sections/terrain_sections_connectedpath_profiles.h>
 
-namespace tysocterrain
-{
+namespace tysoc {
+namespace terrain {
 
     /**
      *   The type of scenarios created here are of the form :
@@ -70,5 +70,4 @@ namespace tysocterrain
         ~TPathTerrainGenerator();
     };
 
-
-}
+}}

@@ -2,8 +2,8 @@
 #include <terrain/terrain_base.h>
 
 
-namespace tysocterrain
-{
+namespace tysoc {
+namespace terrain {
 
     TTerrainGenerator::TTerrainGenerator( const std::string& name )
     {
@@ -57,4 +57,4 @@ namespace tysocterrain
         }
     }
 
-}
+}}
