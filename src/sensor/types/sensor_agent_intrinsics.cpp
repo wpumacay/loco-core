@@ -6,13 +6,16 @@ namespace tysoc {
 namespace sensor {
 
         TAgentIntrinsicsSensor::TAgentIntrinsicsSensor( const std::string& name,
-                                                        agent::TAgent* agentPtr )
-            : TSensor( name )
+                                                        agent::TIAgent* agentPtr )
+            : TISensor( name )
         {
-            m_sensorMeasurement = new TAgentIntrinsicsSensorMeasurement();
-            m_sensorMeasurement->type = "AgentIntrinsicsMeasurement";
+            m_type                      = SENSOR_TYPE_INTRINSICS;
+            m_agentPtr                  = agentPtr;
+            m_sensorMeasurement         = new TAgentIntrinsicsSensorMeasurement();
+            m_sensorMeasurement->type   = "AgentIntrinsicsMeasurement";
 
-            m_agentPtr = agentPtr;
+            // Take an initial measurement
+            update();
         }
 
         TAgentIntrinsicsSensor::~TAgentIntrinsicsSensor()
@@ -28,6 +31,18 @@ namespace sensor {
 
         void TAgentIntrinsicsSensor::update()
         {
+            if ( !m_agentPtr )
+            {
+                std::cout << "ERROR> no agentPtr given to this sensor" << std::endl;
+                return;
+            }
+
+            if ( m_agentPtr->type() != agent::AGENT_TYPE_KINTREE )
+            {
+                std::cout << "ERROR> agentPtr should be of type AGENT_TYPE_KINTREE" << std::endl;
+                return;
+            }
+
             // @CHECK: make this not dependent of the engine
             // why did I this in the first place?, perhaps I was in a hurry
 
@@ -37,22 +52,23 @@ namespace sensor {
             m_sensorMeasurement->thetas.clear();
             m_sensorMeasurement->thetadots.clear();
 
-            auto _rootGeomName = std::string( "mjcgeom_" ) + m_agentPtr->name() + std::string( "_tmjcroot" );
-            auto _agentRoot = m_agentPtr->getGeom( _rootGeomName );
+            auto _agentRootPosition = m_agentPtr->getPosition();
 
-            m_sensorMeasurement->rootPosition.x = _agentRoot->pos.x;
-            m_sensorMeasurement->rootPosition.y = _agentRoot->pos.y;
-            m_sensorMeasurement->rootPosition.z = _agentRoot->pos.z;
+            m_sensorMeasurement->rootPosition.x = _agentRootPosition.x;
+            m_sensorMeasurement->rootPosition.y = _agentRootPosition.y;
+            m_sensorMeasurement->rootPosition.z = _agentRootPosition.z;
 
             // Compute the relative positions and velocities of the bodies/geometries to the root body/geometry
             // @CHECK: We are using the geometries instead, because of a weird issue I still can't solve.
             //         I will try to solve this a bit later, so for now, we use the geometries.
-            auto _geometries = m_agentPtr->geometriesBuffer();
-            for ( size_t i = 0; i < _geometries.size(); i++ )
+            auto _kinBodies = reinterpret_cast< agent::TAgentKinTree* >( m_agentPtr )->getKinTreeBodies();
+            for ( size_t i = 0; i < _kinBodies.size(); i++ )
             {
-                float _dx = _geometries[i]->pos.x - _agentRoot->pos.x;
-                float _dy = _geometries[i]->pos.y - _agentRoot->pos.y;
-                float _dz = _geometries[i]->pos.z - _agentRoot->pos.z;
+                auto _bodyPosition = _kinBodies[i]->worldTransform.getPosition();
+
+                float _dx = _bodyPosition.x - _agentRootPosition.x;
+                float _dy = _bodyPosition.y - _agentRootPosition.y;
+                float _dz = _bodyPosition.z - _agentRootPosition.z;
 
                 m_sensorMeasurement->bodiesRelativePosition.push_back( _dx );
                 m_sensorMeasurement->bodiesRelativePosition.push_back( _dy );
@@ -62,7 +78,7 @@ namespace sensor {
 
         // @CHECK: Seems that we area always returning the same, and the ...
         // object already is polymorphic, so perhaps put this in the base class
-        TSensorMeasurement* TAgentIntrinsicsSensor::getSensorMeasurement()
+        TISensorMeasurement* TAgentIntrinsicsSensor::getSensorMeasurement()
         {
             return m_sensorMeasurement;
         }

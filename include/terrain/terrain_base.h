@@ -8,6 +8,9 @@
 namespace tysoc {
 namespace terrain {
 
+    const std::string TERRAIN_TYPE_PROCEDURAL_SECTIONS_PATH     = "proc_sect_path";
+    const std::string TERRAIN_TYPE_PROCEDURAL_SECTIONS_BLOCKS   = "proc_sect_blocks";
+
     struct TGeneratorInfo
     {
         // some time information
@@ -33,7 +36,7 @@ namespace terrain {
         bool                                    useCustomColor;
     };
 
-    class TTerrainGenerator
+    class TITerrainGenerator
     {
         protected :
 
@@ -47,17 +50,19 @@ namespace terrain {
         TGeneratorInfo* m_generatorInfo;
 
         std::string m_name;
+        std::string m_type;
 
         public :
 
-        TTerrainGenerator( const std::string& name );
-        ~TTerrainGenerator();
+        TITerrainGenerator( const std::string& name );
+        ~TITerrainGenerator();
 
         virtual void initialize() = 0;
         virtual void update() = 0;
         virtual void recycle( TTerrainPrimitive* pPrimitive );
 
         std::string name() { return m_name; }
+        std::string type() { return m_type; }
         TGeneratorInfo* generatorInfo() { return m_generatorInfo; }
 
         void flushJustCreatedQueue();

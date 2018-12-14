@@ -6,7 +6,7 @@
 namespace tysoc {
 namespace sensor {
 
-    struct TSectionsTerrainSensorMeasurement : public TSensorMeasurement
+    struct TSectionsTerrainSensorMeasurement : public TISensorMeasurement
     {
         struct { float x; float y; float z; } agentPosition;
         struct { float x; float y; float z; } agentProjection;
@@ -14,7 +14,7 @@ namespace sensor {
         bool usesComplement;
     };
 
-    class TSectionsTerrainSensor : public TSensor
+    class TSectionsTerrainSensor : public TISensor
     {
         private :
 
@@ -61,19 +61,19 @@ namespace sensor {
         //   format 2 : heights with base the position of the agent
         bool m_useComplement;
 
-        agent::TAgent*                          m_agentPtr;
+        agent::TIAgent*                          m_agentPtr;
         terrain::TSectionsTerrainGenerator*     m_terrainGenPtr;
 
         public :
 
         TSectionsTerrainSensor( const std::string& name,
                                 terrain::TSectionsTerrainGenerator* terrainGenPtr,
-                                agent::TAgent* agentPtr,
+                                agent::TIAgent* agentPtr,
                                 bool useComplement = false );
         ~TSectionsTerrainSensor();
 
         void update() override;
-        TSensorMeasurement* getSensorMeasurement() override;
+        TISensorMeasurement* getSensorMeasurement() override;
     };
 
 }}

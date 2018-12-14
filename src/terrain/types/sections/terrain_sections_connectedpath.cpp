@@ -21,6 +21,8 @@ namespace terrain {
         m_generator             = generator;
         m_componentsThickness   = componentsThickness;
         m_componentsSpacingX    = componentsSpacingX;
+
+        m_type = TERRAIN_TYPE_PROCEDURAL_SECTIONS_PATH;
     }
 
     TPathTerrainGenerator::~TPathTerrainGenerator()

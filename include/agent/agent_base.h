@@ -6,6 +6,9 @@
 namespace tysoc{
 namespace agent{
 
+    const std::string AGENT_TYPE_SIMPLE     = "simple";
+    const std::string AGENT_TYPE_KINTREE    = "kintree";
+
 
     /**
     * This is the base interface for the agents in the library.
@@ -33,8 +36,8 @@ namespace agent{
         TVec3 getPosition();
         void update( float dt );
 
-        std::string getName();
-        std::string getType();
+        std::string name();
+        std::string type();
         const std::vector< TGeometry >& getGeometries() const;
     };
 

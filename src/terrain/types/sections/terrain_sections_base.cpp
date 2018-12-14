@@ -9,7 +9,7 @@ namespace terrain {
                                                           float startY,
                                                           float startZ,
                                                           float sectionDepth )
-        : TTerrainGenerator( name )
+        : TITerrainGenerator( name )
     {
         m_startX = startX;
         m_startY = startY;

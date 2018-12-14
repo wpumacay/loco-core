@@ -17,6 +17,8 @@ namespace terrain {
         m_lastSpawnX = startX;
 
         m_basePrimitivePtr = NULL;
+
+        m_type = TERRAIN_TYPE_PROCEDURAL_SECTIONS_BLOCKS;
     }
 
     TBlockyTerrainGenerator::~TBlockyTerrainGenerator()

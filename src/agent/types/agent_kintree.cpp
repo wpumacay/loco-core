@@ -9,7 +9,7 @@ namespace agent {
                                   const TVec3& position )
         : TIAgent( name, position )
     {
-        m_type  = "kintree";
+        m_type  = AGENT_TYPE_KINTREE;
 
         m_rootBodyPtr = NULL;
     }

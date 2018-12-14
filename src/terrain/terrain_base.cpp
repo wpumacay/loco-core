@@ -5,13 +5,15 @@
 namespace tysoc {
 namespace terrain {
 
-    TTerrainGenerator::TTerrainGenerator( const std::string& name )
+    TITerrainGenerator::TITerrainGenerator( const std::string& name )
     {
         m_name = name;
         m_generatorInfo = new TGeneratorInfo();
+
+        m_type = "undefined";
     }
 
-    TTerrainGenerator::~TTerrainGenerator()
+    TITerrainGenerator::~TITerrainGenerator()
     {
         for ( size_t i = 0; i < m_primitives.size(); i++ )
         {
@@ -30,7 +32,7 @@ namespace terrain {
         }
     }
 
-    void TTerrainGenerator::recycle( TTerrainPrimitive* pPrimitive )
+    void TITerrainGenerator::recycle( TTerrainPrimitive* pPrimitive )
     {
         // reset the object properties
         pPrimitive->inUse   = false;
@@ -41,7 +43,7 @@ namespace terrain {
         m_pool.push( pPrimitive );
     }
 
-    void TTerrainGenerator::flushJustCreatedQueue()
+    void TITerrainGenerator::flushJustCreatedQueue()
     {
         while( !m_justCreated.empty() )
         {
@@ -49,7 +51,7 @@ namespace terrain {
         }
     }
 
-    void TTerrainGenerator::flushFixedQueue()
+    void TITerrainGenerator::flushFixedQueue()
     {
         while ( !m_fixed.empty() )
         {

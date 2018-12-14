@@ -7,7 +7,7 @@ namespace tysoc {
 namespace terrain {
 
 
-    class TSectionsTerrainGenerator : public TTerrainGenerator
+    class TSectionsTerrainGenerator : public TITerrainGenerator
     {
 
         protected :

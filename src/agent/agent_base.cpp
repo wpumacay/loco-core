@@ -35,12 +35,12 @@ namespace agent{
         _updateAgentInternal( dt );
     }
 
-    std::string TIAgent::getName()
+    std::string TIAgent::name()
     {
         return m_name;
     }
 
-    std::string TIAgent::getType()
+    std::string TIAgent::type()
     {
         return m_type;
     }

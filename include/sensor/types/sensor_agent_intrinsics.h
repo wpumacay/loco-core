@@ -6,7 +6,7 @@
 namespace tysoc {
 namespace sensor {
 
-    struct TAgentIntrinsicsSensorMeasurement : public TSensorMeasurement
+    struct TAgentIntrinsicsSensorMeasurement : public TISensorMeasurement
     {
         // bodies measurements
         struct { float x; float y; float z; } rootPosition;
@@ -20,23 +20,23 @@ namespace sensor {
         std::vector< float > thetadots;
     };
 
-    class TAgentIntrinsicsSensor : public TSensor
+    class TAgentIntrinsicsSensor : public TISensor
     {
 
         private :
 
         TAgentIntrinsicsSensorMeasurement* m_sensorMeasurement;
 
-        agent::TAgent* m_agentPtr;
+        agent::TIAgent* m_agentPtr;
 
         public :
 
         TAgentIntrinsicsSensor( const std::string& name,
-                                agent::TAgent* agentPtr );
+                                agent::TIAgent* agentPtr );
         ~TAgentIntrinsicsSensor();
 
         void update() override;
-        TSensorMeasurement* getSensorMeasurement() override;
+        TISensorMeasurement* getSensorMeasurement() override;
 
     };
 

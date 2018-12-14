@@ -1,36 +1,40 @@
 
 #pragma once
 
-#include <terrain/terrain.h>
-#include <agent/agent_base.h>
 #include <agent/agent.h>
+#include <terrain/terrain.h>
 
 namespace tysoc {
 namespace sensor {
+
+    const std::string SENSOR_TYPE_INTRINSICS          = "simple";
+    const std::string SENSOR_TYPE_EXTRINSICS_TERRAIN  = "kintree";
 
 
     /**
     * Base sensor measurement
     */
-    struct TSensorMeasurement
+    struct TISensorMeasurement
     {
         std::string type;
     };
 
 
-    class TSensor
+    class TISensor
     {
 
         protected :
         
         std::string m_name;
+        std::string m_type;
 
         public :
 
-        TSensor( const std::string& name );
-        ~TSensor();
+        TISensor( const std::string& name );
+        ~TISensor();
 
         std::string name();
+        std::string type();
 
         /**
         * Should update measurements here, given specific resources
@@ -40,7 +44,7 @@ namespace sensor {
         /**
         * Collects the polymorphic sensor measurement
         */
-        virtual TSensorMeasurement* getSensorMeasurement() = 0;
+        virtual TISensorMeasurement* getSensorMeasurement() = 0;
     };
 
     

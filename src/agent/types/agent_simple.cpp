@@ -10,7 +10,7 @@ namespace agent{
                                 const TGeometry& geometry )
         : TIAgent( name, geometry.worldTransform.getPosition() )
     {
-        m_type  = "simple";
+        m_type  = AGENT_TYPE_SIMPLE;
         m_speed = { 0.0, 0.0, 0.0 };
 
         // add the geometry (single one here)

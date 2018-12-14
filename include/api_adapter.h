@@ -32,14 +32,14 @@ namespace tysoc
 
         void initialize();
         void step();
-        void setAgentAction( const std::string& agentName, 
-                             const std::string& actuatorName,
-                             float actionValue );
 
-        sensor::TSensorMeasurement* getSensorMeasurement( const std::string sensorName );
-        std::vector< terrain::TTerrainGenerator* > getTerrainGenerators();
-        std::map< std::string, agent::TAgent* > getAgents();
-        std::vector< agent::TIAgent* > getIAgents();
+        // @TODO|@CHECK: should add functionality to set agent actions. So far ...
+        // the functionality resides in the agents themselves, but it should be ...
+        // exposed through this adapter to the user.
+
+        // @TODO|@CHECK: I have removed the previous functionality to check a better ...
+        // design and expose the necessary functionality to the user. I will add this in the next commits
+
         tysocUtils::TPrimitivesSpawner* getPrimitivesSpawner();
     };
 
