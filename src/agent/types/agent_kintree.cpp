@@ -123,6 +123,9 @@ namespace agent {
         {
             _updateActuator( m_kinTreeActuators[i] );
         }
+
+        // update the global position of the kintree
+        m_position = m_rootBodyPtr->worldTransform.getPosition();
     }
 
     void TAgentKinTree::_updateBody( TKinTreeBody* kinTreeBodyPtr )
