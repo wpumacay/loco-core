@@ -73,6 +73,7 @@ namespace sensor {
         ~TSectionsTerrainSensor();
 
         void update() override;
+        void print() override;
         TISensorMeasurement* getSensorMeasurement() override;
     };
 

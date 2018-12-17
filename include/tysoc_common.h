@@ -29,6 +29,8 @@ namespace tysoc
 
         static TScalar dot( const TVec3& v1, const TVec3& v2 );
         static TVec3 cross( const TVec3& v1, const TVec3& v2 );
+        static TScalar length( const TVec3& v );
+        static std::string toString( const TVec3& v );
     };
 
     struct TVec4

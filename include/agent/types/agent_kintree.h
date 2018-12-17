@@ -65,13 +65,41 @@ namespace agent{
         std::string         name;               // name of this sensor
         std::string         type;               // type of sensor
         TMat4               worldTransform;     // world transform
-        TKinTreeBody*       bodyPtr;            // parent body pointer (if linked to a body)
+        TKinTreeBody*       bodyPtr;            // parent body pointer (if linked to a body|or site(mujoco))
         TKinTreeJoint*      jointPtr;           // parent joint pointer (if linked to a joint)
 
         TKinTreeSensor()
         {
             bodyPtr = NULL;
             jointPtr = NULL;
+        }
+    };
+
+    struct TKinTreeJointSensor : public TKinTreeSensor
+    {
+        std::string     jointName;
+        TScalar         theta;
+        TScalar         thetadot;
+
+        TKinTreeJointSensor()
+        {
+            type        = "joint";
+            jointName   = "";
+            theta       = 0;
+            thetadot    = 0;
+        }
+    };
+
+    struct TKinTreeBodySensor : public TKinTreeSensor
+    {
+        std::string     bodyName;
+        TVec3           linVelocity;
+        TVec3           linAcceleration;
+
+        TKinTreeBodySensor()
+        {
+            type        = "body";
+            bodyName    = "";
         }
     };
 
@@ -192,6 +220,7 @@ namespace agent{
         void _updateCollision( TKinTreeCollision* kinTreeCollisionPtr );
 
         void _initializeKinTree();
+        void _constructDefaultSensors();
         virtual void _constructKinTree() = 0;
         virtual void _initializeWorldTransforms() = 0;
 

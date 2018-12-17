@@ -96,9 +96,38 @@ namespace agent {
     {
         // call specific construction functioality (virtual)
         _constructKinTree();
+        // create the default sensors for any agent (joint sensors)
+        _constructDefaultSensors();
         // initialize the world transforms in the ...
         // kintree to some defaults (just for testing)
         _initializeWorldTransforms();
+    }
+
+    void TAgentKinTree::_constructDefaultSensors()
+    {
+        // Construct joint sensors for each joint
+        for ( size_t i = 0; i < m_kinTreeJoints.size(); i++ )
+        {
+            auto _kinTreeJointSensor = new TKinTreeJointSensor();
+            // set joint parent name
+            _kinTreeJointSensor->jointName = m_kinTreeJoints[i]->name;
+            // set an appropiate name (will be used by wrappers, like mujoco)
+            _kinTreeJointSensor->name = m_name + std::string( "_sensJoint_" ) + m_kinTreeJoints[i]->name;
+            // and just add it to the list of sensors
+            m_kinTreeSensors.push_back( _kinTreeJointSensor );
+        }
+
+        // Construct joint sensors for each body
+        for ( size_t i = 0; i < m_kinTreeBodies.size(); i++ )
+        {
+            auto _kinTreeBodySensor = new TKinTreeBodySensor();
+            // set body parent name
+            _kinTreeBodySensor->bodyName = m_kinTreeBodies[i]->name;
+            // set an appropiate name (will be used by wrappers, like mujoco)
+            _kinTreeBodySensor->name = m_name + std::string( "_sensBody_" ) + m_kinTreeBodies[i]->name;
+            // and just add it to the list of sensors
+            m_kinTreeSensors.push_back( _kinTreeBodySensor );
+        }
     }
 
     void TAgentKinTree::_updateAgentInternal( float dt )

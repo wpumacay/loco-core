@@ -39,6 +39,9 @@ namespace tysoc
         {
             m_scenarioPtr->initialize();
         }
+
+        // take an initial step
+        step();
     }
 
     void TTysocCommonApi::step()

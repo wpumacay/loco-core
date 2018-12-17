@@ -10,10 +10,10 @@ namespace sensor {
     {
         // bodies measurements
         struct { float x; float y; float z; } rootPosition;
-        std::vector< float > bodiesRelativePosition;// @CHECK: still using geoms here
+        std::vector< float > bodiesRelativePosition;
 
-        //@CHECK: should add this once start using bodies instead of geoms
-        // std::vector< float > bodiesVelocities;
+        std::vector< TVec3 > bodiesLinVelocities;
+        std::vector< TVec3 > bodiesLinAccelerations;
 
         // joints measurements
         std::vector< float > thetas;
@@ -36,6 +36,7 @@ namespace sensor {
         ~TAgentIntrinsicsSensor();
 
         void update() override;
+        void print() override;
         TISensorMeasurement* getSensorMeasurement() override;
 
     };

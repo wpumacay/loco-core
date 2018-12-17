@@ -119,6 +119,26 @@ namespace sensor {
         }
 
         // std::cout << "finished measurements" << std::endl;
+
+        // print();
+    }
+
+    void TSectionsTerrainSensor::print()
+    {
+        std::cout << "*******************************************" << std::endl;
+        std::cout << "---------------" << std::endl;
+        std::cout << "sensor name: " << m_name << std::endl;
+        std::cout << "sensor type: " << m_type << std::endl;
+        std::cout << "---------------" << std::endl;
+
+        for ( size_t i = 0; i < m_sensorMeasurement->profile.size() / 3; i++ )
+        {
+            std::cout << "x: " << m_sensorMeasurement->profile[3 * i + 0] << " - "
+                      << "y: " << m_sensorMeasurement->profile[3 * i + 1] << " - "
+                      << "z: " << m_sensorMeasurement->profile[3 * i + 2] << std::endl;
+        }
+
+        std::cout << "*******************************************" << std::endl;
     }
 
     TISensorMeasurement* TSectionsTerrainSensor::getSensorMeasurement()

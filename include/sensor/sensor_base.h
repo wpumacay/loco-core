@@ -7,8 +7,8 @@
 namespace tysoc {
 namespace sensor {
 
-    const std::string SENSOR_TYPE_INTRINSICS          = "simple";
-    const std::string SENSOR_TYPE_EXTRINSICS_TERRAIN  = "kintree";
+    const std::string SENSOR_TYPE_INTRINSICS          = "intrinsics";
+    const std::string SENSOR_TYPE_EXTRINSICS_TERRAIN  = "extrinsics_terrain";
 
 
     /**
@@ -40,6 +40,11 @@ namespace sensor {
         * Should update measurements here, given specific resources
         */
         virtual void update() = 0;
+
+        /**
+        * Dump sensor information for debugging purposes
+        */
+        virtual void print() = 0;
 
         /**
         * Collects the polymorphic sensor measurement

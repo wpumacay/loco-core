@@ -51,6 +51,20 @@ namespace tysoc
             return _res;
         }
 
+        TScalar TVec3::length( const TVec3& v )
+        {
+            return std::sqrt( v.x * v.x + v.y * v.y + v.z * v.z );
+        }
+
+        std::string TVec3::toString( const TVec3& v )
+        {
+            std::string _res = "";
+            _res += std::string( "x: " ) + std::to_string( v.x ) + std::string( " - " );
+            _res += std::string( "y: " ) + std::to_string( v.y ) + std::string( " - " );
+            _res += std::string( "z: " ) + std::to_string( v.z );
+            return _res;
+        }
+
         TVec4::TVec4()
         {
             x = 0.0;
