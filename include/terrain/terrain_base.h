@@ -27,6 +27,7 @@ namespace terrain {
     {
         std::string                             type;
         std::string                             geomType;
+        std::string                             filename;
         struct { float r; float g; float b; }   color;
         struct { float x; float y; float z; }   size;
         struct { float x; float y; float z; }   pos;
