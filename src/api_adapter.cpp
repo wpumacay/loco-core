@@ -9,8 +9,9 @@ namespace tysoc
 
     TTysocCommonApi::TTysocCommonApi()
     {
-        m_scenarioPtr = NULL;
-        m_primitivesSpawnerPtr = NULL;
+        m_scenarioPtr           = NULL;
+        m_primitivesSpawnerPtr  = NULL;
+        m_apiType               = API_TYPE_BASE;
     }
 
     TTysocCommonApi::~TTysocCommonApi()
@@ -31,6 +32,16 @@ namespace tysoc
     void TTysocCommonApi::setScenario( TScenario* scenarioPtr )
     {
         m_scenarioPtr = scenarioPtr;
+    }
+
+    TScenario* TTysocCommonApi::getScenario()
+    {
+        return m_scenarioPtr;
+    }
+
+    std::string TTysocCommonApi::getApiType()
+    {
+        return m_apiType;
     }
 
     void TTysocCommonApi::initialize()
@@ -65,7 +76,7 @@ namespace tysoc
         }
     }
 
-    tysocUtils::TPrimitivesSpawner* TTysocCommonApi::getPrimitivesSpawner()
+    utils::TPrimitivesSpawner* TTysocCommonApi::getPrimitivesSpawner()
     {
         return m_primitivesSpawnerPtr;
     }
