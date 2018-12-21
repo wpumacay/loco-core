@@ -15,8 +15,8 @@
 #define CAPSULE_INDX    2
 #define CYLINDER_INDX   3
 
-namespace tysocUtils
-{
+namespace tysoc {
+namespace utils {
 
 
     struct TDebugPrimitive
@@ -76,4 +76,4 @@ namespace tysocUtils
 
 
 
-}
+}}

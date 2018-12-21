@@ -1,42 +1,56 @@
 
 #pragma once
 
-#include <terrain/terrain.h>
 #include <agent/agent.h>
+#include <terrain/terrain.h>
 
-namespace tysocsensor
-{
+namespace tysoc {
+namespace sensor {
 
-    struct TSensorMeasurement
+    const std::string SENSOR_TYPE_INTRINSICS          = "intrinsics";
+    const std::string SENSOR_TYPE_EXTRINSICS_TERRAIN  = "extrinsics_terrain";
+
+
+    /**
+    * Base sensor measurement
+    */
+    struct TISensorMeasurement
     {
         std::string type;
     };
 
 
-    class TSensor
+    class TISensor
     {
 
         protected :
         
         std::string m_name;
+        std::string m_type;
 
         public :
 
-        TSensor( const std::string& name );
-        ~TSensor();
+        TISensor( const std::string& name );
+        ~TISensor();
 
         std::string name();
+        std::string type();
 
         /**
-        * Should update measurements here, given terraingen and agent
+        * Should update measurements here, given specific resources
         */
         virtual void update() = 0;
 
         /**
+        * Dump sensor information for debugging purposes
+        */
+        virtual void print() = 0;
+
+        /**
         * Collects the polymorphic sensor measurement
         */
-        virtual TSensorMeasurement* getSensorMeasurement() = 0;
+        virtual TISensorMeasurement* getSensorMeasurement() = 0;
     };
 
     
-}
+}}

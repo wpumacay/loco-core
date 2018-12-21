@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include <terrain/terrain.h>
 #include <agent/agent.h>
+#include <terrain/terrain.h>
 #include <sensor/sensor.h>
 
 namespace tysoc
@@ -19,12 +19,19 @@ namespace tysoc
     {
         protected :
 
-        std::map< std::string, tysocagent::TAgent* > m_agents;
-        std::map< std::string, tysocsensor::TSensor* > m_sensors;
-        std::vector< tysocterrain::TTerrainGenerator* > m_terrainGenerators;
-
         ScenarioState m_state;
 
+        std::vector< agent::TIAgent* >                              m_agents;
+        std::map< std::string, agent::TIAgent* >                    m_mapAgentsByName;
+        std::map< std::string, std::vector< agent::TIAgent* > >     m_mapAgentsByType;
+
+        std::vector< sensor::TISensor* >                             m_sensors;
+        std::map< std::string, sensor::TISensor* >                   m_mapSensorsByName;
+        std::map< std::string, std::vector< sensor::TISensor* > >    m_mapSensorsByType;
+
+        std::vector< terrain::TITerrainGenerator* >                          m_terrainGenerators;
+        std::map< std::string, terrain::TITerrainGenerator* >                m_mapTerrainGeneratorsByName;
+        std::map< std::string, std::vector< terrain::TITerrainGenerator* > > m_mapTerrainGeneratorsByType;
 
         public :
 
@@ -33,21 +40,24 @@ namespace tysoc
 
         ScenarioState state();
 
-        void addAgent( tysocagent::TAgent* agent );
-        void addSensor( tysocsensor::TSensor* sensor );
-        void addTerrainGenerator( tysocterrain::TTerrainGenerator* terrainGenerator );
+        void addAgent( agent::TIAgent* agent );
+        void addSensor( sensor::TISensor* sensor );
+        void addTerrainGenerator( terrain::TITerrainGenerator* terrainGenerator );
 
-        tysocagent::TAgent* getAgent( const std::string& name );
-        tysocsensor::TSensor* getSensor( const std::string& name );
+        std::vector< agent::TIAgent* >                  getAgents();
+        std::vector< sensor::TISensor* >                getSensors();
+        std::vector< terrain::TITerrainGenerator* >     getTerrainGenerators();
 
-        std::map< std::string, tysocagent::TAgent* > getAgents();
-        std::map< std::string, tysocsensor::TSensor* > getSensors();
-        std::vector< tysocterrain::TTerrainGenerator* > getTerrainGenerators();
+        agent::TIAgent*                 getAgentByName( const std::string& name );
+        sensor::TISensor*               getSensorByName( const std::string& name );
+        terrain::TITerrainGenerator*    getTerrainGeneratorByName( const std::string& name );
+
+        std::vector< agent::TIAgent* >                  getAgentsByType( const std::string& type );
+        std::vector< sensor::TISensor* >                getSensorsByType( const std::string& type );
+        std::vector< terrain::TITerrainGenerator* >     getTerrainGeneratorsByType( const std::string& type );
 
         virtual void initialize();
         virtual void update();
     };
-
-
 
 }

@@ -8,6 +8,10 @@
 namespace tysoc
 {
 
+    const std::string API_TYPE_BASE     = "BASE_API";
+    const std::string API_TYPE_MUJOCO   = "MUJOCO_API";
+    const std::string API_TYPE_BULLET   = "BULLET_API";
+
     // This is the base adapter from which other ...
     // concrete apis will inherit from (mujoco, bullet, etc.)
     class TTysocCommonApi
@@ -15,8 +19,9 @@ namespace tysoc
 
         protected :
 
-        tysoc::TScenario* m_scenarioPtr;
-        tysocUtils::TPrimitivesSpawner* m_primitivesSpawnerPtr;
+        std::string                 m_apiType;
+        TScenario*                  m_scenarioPtr;
+        utils::TPrimitivesSpawner*  m_primitivesSpawnerPtr;
 
         virtual void _preStep() = 0; // collect info "for" specific backend
         virtual void _updateStep() = 0; // simulate with specific backend
@@ -27,19 +32,21 @@ namespace tysoc
         TTysocCommonApi();
         ~TTysocCommonApi();
 
-        void setScenario( tysoc::TScenario* scenarioPtr );
-        tysoc::TScenario* getScenario() { return m_scenarioPtr; }
+        void setScenario( TScenario* scenarioPtr );
+        TScenario* getScenario();
+        std::string getApiType();
 
         void initialize();
         void step();
-        void setAgentAction( const std::string& agentName, 
-                             const std::string& actuatorName,
-                             float actionValue );
 
-        tysocsensor::TSensorMeasurement* getSensorMeasurement( const std::string sensorName );
-        std::vector< tysocterrain::TTerrainGenerator* > getTerrainGenerators();
-        std::map< std::string, tysocagent::TAgent* > getAgents();
-        tysocUtils::TPrimitivesSpawner* getPrimitivesSpawner();
+        // @TODO|@CHECK: should add functionality to set agent actions. So far ...
+        // the functionality resides in the agents themselves, but it should be ...
+        // exposed through this adapter to the user.
+
+        // @TODO|@CHECK: I have removed the previous functionality to check a better ...
+        // design and expose the necessary functionality to the user. I will add this in the next commits
+
+        utils::TPrimitivesSpawner* getPrimitivesSpawner();
     };
 
 }

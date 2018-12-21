@@ -1,23 +1,29 @@
 
 #include <sensor/sensor.h>
 
-namespace tysocsensor
-{
+namespace tysoc {
+namespace sensor {
 
 
-    TSensor::TSensor( const std::string& name )
+    TISensor::TISensor( const std::string& name )
     {
         m_name = name;
+        m_type = "undefined";
     }
 
-    TSensor::~TSensor()
+    TISensor::~TISensor()
     {
         
     }
 
-    std::string TSensor::name()
+    std::string TISensor::name()
     {
         return m_name;
     }
 
-}
+    std::string TISensor::type()
+    {
+        return m_type;
+    }
+
+}}

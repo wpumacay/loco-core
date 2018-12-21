@@ -3,10 +3,10 @@
 
 #include <sensor/sensor_base.h>
 
-namespace tysocsensor
-{
+namespace tysoc {
+namespace sensor {
 
-    struct TSectionsTerrainSensorMeasurement : public TSensorMeasurement
+    struct TSectionsTerrainSensorMeasurement : public TISensorMeasurement
     {
         struct { float x; float y; float z; } agentPosition;
         struct { float x; float y; float z; } agentProjection;
@@ -14,7 +14,7 @@ namespace tysocsensor
         bool usesComplement;
     };
 
-    class TSectionsTerrainSensor : public TSensor
+    class TSectionsTerrainSensor : public TISensor
     {
         private :
 
@@ -61,20 +61,20 @@ namespace tysocsensor
         //   format 2 : heights with base the position of the agent
         bool m_useComplement;
 
-        tysocterrain::TSectionsTerrainGenerator* m_terrainGenPtr;
-        tysocagent::TAgent* m_agentPtr;
+        agent::TIAgent*                          m_agentPtr;
+        terrain::TSectionsTerrainGenerator*     m_terrainGenPtr;
 
         public :
 
         TSectionsTerrainSensor( const std::string& name,
-                                tysocterrain::TSectionsTerrainGenerator* terrainGenPtr,
-                                tysocagent::TAgent* agentPtr,
+                                terrain::TSectionsTerrainGenerator* terrainGenPtr,
+                                agent::TIAgent* agentPtr,
                                 bool useComplement = false );
         ~TSectionsTerrainSensor();
 
         void update() override;
-        TSensorMeasurement* getSensorMeasurement() override;
+        void print() override;
+        TISensorMeasurement* getSensorMeasurement() override;
     };
 
-
-}
+}}

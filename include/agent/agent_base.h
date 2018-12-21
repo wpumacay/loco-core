@@ -1,45 +1,46 @@
 
 #pragma once
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <cmath>
-#include <map>
+#include <tysoc_common.h>
 
-namespace tysocAgent
-{
+namespace tysoc{
+namespace agent{
+
+    const std::string AGENT_TYPE_SIMPLE     = "simple";
+    const std::string AGENT_TYPE_KINTREE    = "kintree";
 
 
+    /**
+    * This is the base interface for the agents in the library.
+    */
     class TIAgent
     {
 
         protected : 
 
-        std::string m_name;
+        std::vector< TGeometry >    m_geometries;
+        std::string                 m_name;
+        std::string                 m_type;
+        TVec3                       m_position;
 
-        float m_posX;
-        float m_posY;
-        float m_posZ;
-
-        virtual void _updateInternal() = 0;
-        virtual void _setPositionInternal( float x, float y, float z ) = 0;
+        // agent specific functionality
+        virtual void _updateAgentInternal( float dt ) = 0;
 
         public :
 
         TIAgent( const std::string& name,
-                 float startX = 0.0f, 
-                 float startY = 0.0f, 
-                 float startZ = 0.0f );
+                 const TVec3& position );
         virtual ~TIAgent();
 
-        void setPosition( float x, float y, float z );
-        void getPosition( float& x, float& y, float& z );
-        void update();
+        void setPosition( const TVec3& position );
+        TVec3 getPosition();
+        void update( float dt );
 
-        std::string getName();
+        std::string name();
+        std::string type();
+        const std::vector< TGeometry >& getGeometries() const;
     };
 
 
 
-}
+}}

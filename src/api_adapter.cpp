@@ -9,8 +9,9 @@ namespace tysoc
 
     TTysocCommonApi::TTysocCommonApi()
     {
-        m_scenarioPtr = NULL;
-        m_primitivesSpawnerPtr = NULL;
+        m_scenarioPtr           = NULL;
+        m_primitivesSpawnerPtr  = NULL;
+        m_apiType               = API_TYPE_BASE;
     }
 
     TTysocCommonApi::~TTysocCommonApi()
@@ -28,9 +29,19 @@ namespace tysoc
         }
     }
 
-    void TTysocCommonApi::setScenario( tysoc::TScenario* scenarioPtr )
+    void TTysocCommonApi::setScenario( TScenario* scenarioPtr )
     {
         m_scenarioPtr = scenarioPtr;
+    }
+
+    TScenario* TTysocCommonApi::getScenario()
+    {
+        return m_scenarioPtr;
+    }
+
+    std::string TTysocCommonApi::getApiType()
+    {
+        return m_apiType;
     }
 
     void TTysocCommonApi::initialize()
@@ -39,10 +50,20 @@ namespace tysoc
         {
             m_scenarioPtr->initialize();
         }
+
+        // take an initial step
+        step();
     }
 
     void TTysocCommonApi::step()
     {
+        // Step the simulation properly
+        _preStep();
+        _updateStep();
+        _postStep();
+
+        // Update the underlying data after the step
+        
         if ( m_scenarioPtr )
         {
             m_scenarioPtr->update();
@@ -53,65 +74,9 @@ namespace tysoc
             // @TODO: Add wall time
             m_primitivesSpawnerPtr->update( 1.0 / 60.0 );
         }
-
-        _preStep();
-        _updateStep();
-        _postStep();
     }
 
-    void TTysocCommonApi::setAgentAction( const std::string& agentName, 
-                                          const std::string& actuatorName,
-                                          float actionValue )
-    {
-        if ( m_scenarioPtr )
-        {
-            auto _agent = m_scenarioPtr->getAgent( agentName );
-            if ( _agent )
-            {
-                _agent->setCtrl( actuatorName, actionValue );
-            }
-        }
-    }
-
-    tysocsensor::TSensorMeasurement* TTysocCommonApi::getSensorMeasurement( const std::string sensorName )
-    {
-        if ( m_scenarioPtr )
-        {
-            auto _sensor = m_scenarioPtr->getSensor( sensorName );
-            if ( !_sensor )
-            {
-                return _sensor->getSensorMeasurement();
-            }
-        }
-
-        return NULL;
-    }
-
-    std::vector< tysocterrain::TTerrainGenerator* > TTysocCommonApi::getTerrainGenerators()
-    {
-        if ( m_scenarioPtr )
-        {
-            return m_scenarioPtr->getTerrainGenerators();
-        }
-
-        std::cout << "ERROR> there is no scenario to get terraingens from" << std::endl;
-
-        return std::vector< tysocterrain::TTerrainGenerator* >();
-    }
-
-    std::map< std::string, tysocagent::TAgent* > TTysocCommonApi::getAgents()
-    {
-        if ( m_scenarioPtr )
-        {
-            return m_scenarioPtr->getAgents();
-        }
-
-        std::cout << "ERROR> there is no scenario to get agents from" << std::endl;
-
-        return std::map< std::string, tysocagent::TAgent* >();
-    }
-
-    tysocUtils::TPrimitivesSpawner* TTysocCommonApi::getPrimitivesSpawner()
+    utils::TPrimitivesSpawner* TTysocCommonApi::getPrimitivesSpawner()
     {
         return m_primitivesSpawnerPtr;
     }

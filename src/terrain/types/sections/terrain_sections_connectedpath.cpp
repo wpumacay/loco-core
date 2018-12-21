@@ -3,8 +3,9 @@
 
 
 
-namespace tysocterrain
-{
+namespace tysoc {
+namespace terrain {
+
     
     TPathTerrainGenerator::TPathTerrainGenerator( const std::string& name,
                                                   float startX,
@@ -20,6 +21,8 @@ namespace tysocterrain
         m_generator             = generator;
         m_componentsThickness   = componentsThickness;
         m_componentsSpacingX    = componentsSpacingX;
+
+        m_type = TERRAIN_TYPE_PROCEDURAL_SECTIONS_PATH;
     }
 
     TPathTerrainGenerator::~TPathTerrainGenerator()
@@ -59,7 +62,7 @@ namespace tysocterrain
         }
 
         auto _dx = ( m_generatorInfo->trackingpoint.x - m_currentX );
-        if ( _dx > m_componentsSpacingX )
+        if ( _dx > 4 * m_componentsSpacingX )
         {
             // create the section with this new position
             _createPathComponent();
@@ -172,4 +175,5 @@ namespace tysocterrain
         m_currentX += m_componentsSpacingX;
     }
 
-}
+
+}}

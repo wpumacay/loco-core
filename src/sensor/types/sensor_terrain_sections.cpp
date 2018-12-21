@@ -2,24 +2,26 @@
 #include <sensor/types/sensor_terrain_sections.h>
 
 
-namespace tysocsensor
-{
-
-
+namespace tysoc {
+namespace sensor {
 
     TSectionsTerrainSensor::TSectionsTerrainSensor( const std::string& name,
-                                                    tysocterrain::TSectionsTerrainGenerator* terrainGenPtr,
-                                                    tysocagent::TAgent* agentPtr,
+                                                    terrain::TSectionsTerrainGenerator* terrainGenPtr,
+                                                    agent::TIAgent* agentPtr,
                                                     bool useComplement )
-        : TSensor( name )
+        : TISensor( name )
     {
-        m_agentPtr = agentPtr;
+        m_type          = SENSOR_TYPE_EXTRINSICS_TERRAIN;
+        m_agentPtr      = agentPtr;
         m_terrainGenPtr = terrainGenPtr;
         m_useComplement = useComplement;
 
         m_sensorMeasurement = new TSectionsTerrainSensorMeasurement();
         m_sensorMeasurement->type = "PathTerrainMeasurement";
         m_sensorMeasurement->usesComplement = m_useComplement;
+
+        // Take an initial measurement
+        update();
     }
 
     TSectionsTerrainSensor::~TSectionsTerrainSensor()
@@ -36,17 +38,13 @@ namespace tysocsensor
 
     void TSectionsTerrainSensor::update()
     {
-        // @CHECK: We are using the geom because with the body we had weird behaviour. Still ...
+        // @CHECK: We were using the geom because with the body we had weird behaviour. Still ...
         // we should use the body, as the geoms may be offset according to the bodies
 
-        // Use the profiler from the terrain generator
-        //auto _rootBodyName = std::string( "mjcbody_" ) + m_agentPtr->name() + std::string( "_tmjcroot" );
-        //auto _agentRoot = m_agentPtr->getBody( _rootBodyName );
-        auto _rootGeomName  = std::string( "mjcgeom_" ) + m_agentPtr->name() + std::string( "_tmjcroot" );
-        auto _agentRoot = m_agentPtr->getGeom( _rootGeomName );
-        auto _currentX = _agentRoot->pos.x;
-        auto _currentY = _agentRoot->pos.y;
-        auto _currentZ = _agentRoot->pos.z;
+        auto _agentRootPosition = m_agentPtr->getPosition();
+        auto _currentX = _agentRootPosition.x;
+        auto _currentY = _agentRootPosition.y;
+        auto _currentZ = _agentRootPosition.z;
 
         auto _agentSampleZ = m_terrainGenPtr->getProfile1D( _currentX, _currentY );
 
@@ -121,10 +119,31 @@ namespace tysocsensor
         }
 
         // std::cout << "finished measurements" << std::endl;
+
+        // print();
     }
 
-    TSensorMeasurement* TSectionsTerrainSensor::getSensorMeasurement()
+    void TSectionsTerrainSensor::print()
+    {
+        std::cout << "*******************************************" << std::endl;
+        std::cout << "---------------" << std::endl;
+        std::cout << "sensor name: " << m_name << std::endl;
+        std::cout << "sensor type: " << m_type << std::endl;
+        std::cout << "---------------" << std::endl;
+
+        for ( size_t i = 0; i < m_sensorMeasurement->profile.size() / 3; i++ )
+        {
+            std::cout << "x: " << m_sensorMeasurement->profile[3 * i + 0] << " - "
+                      << "y: " << m_sensorMeasurement->profile[3 * i + 1] << " - "
+                      << "z: " << m_sensorMeasurement->profile[3 * i + 2] << std::endl;
+        }
+
+        std::cout << "*******************************************" << std::endl;
+    }
+
+    TISensorMeasurement* TSectionsTerrainSensor::getSensorMeasurement()
     {
         return m_sensorMeasurement;
     }
-}
+
+}}

@@ -3,11 +3,11 @@
 
 #include <terrain/terrain_base.h>
 
-namespace tysocterrain
-{
+namespace tysoc {
+namespace terrain {
 
 
-    class TSectionsTerrainGenerator : public TTerrainGenerator
+    class TSectionsTerrainGenerator : public TITerrainGenerator
     {
 
         protected :
@@ -42,4 +42,4 @@ namespace tysocterrain
     };
 
 
-}
+}}

@@ -3,42 +3,42 @@
 
 #include <sensor/sensor_base.h>
 
-namespace tysocsensor
-{
+namespace tysoc {
+namespace sensor {
 
-    struct TAgentIntrinsicsSensorMeasurement : public TSensorMeasurement
+    struct TAgentIntrinsicsSensorMeasurement : public TISensorMeasurement
     {
         // bodies measurements
         struct { float x; float y; float z; } rootPosition;
-        std::vector< float > bodiesRelativePosition;// @CHECK: still using geoms here
+        std::vector< float > bodiesRelativePosition;
 
-        //@CHECK: should add this once start using bodies instead of geoms
-        // std::vector< float > bodiesVelocities;
+        std::vector< TVec3 > bodiesLinVelocities;
+        std::vector< TVec3 > bodiesLinAccelerations;
 
         // joints measurements
         std::vector< float > thetas;
         std::vector< float > thetadots;
     };
 
-    class TAgentIntrinsicsSensor : public TSensor
+    class TAgentIntrinsicsSensor : public TISensor
     {
 
         private :
 
         TAgentIntrinsicsSensorMeasurement* m_sensorMeasurement;
 
-        tysocagent::TAgent* m_agentPtr;
+        agent::TIAgent* m_agentPtr;
 
         public :
 
         TAgentIntrinsicsSensor( const std::string& name,
-                                tysocagent::TAgent* agentPtr );
+                                agent::TIAgent* agentPtr );
         ~TAgentIntrinsicsSensor();
 
         void update() override;
-        TSensorMeasurement* getSensorMeasurement() override;
+        void print() override;
+        TISensorMeasurement* getSensorMeasurement() override;
 
     };
 
-
-}
+}}

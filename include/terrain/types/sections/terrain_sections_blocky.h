@@ -5,8 +5,8 @@
 
 #define DEFAULT_SECTION_BASE_HEIGHT 0.25f
 
-namespace tysocterrain
-{
+namespace tysoc {
+namespace terrain {
 
 
     /**
@@ -206,5 +206,4 @@ namespace tysocterrain
     };
 
 
-
-}
+}}

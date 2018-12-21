@@ -3,10 +3,13 @@
 
 #include <terrain/terrain_common.h>
 
-#define PROCEDURAL_TERRAIN_POOL_SIZE 20
+#define PROCEDURAL_TERRAIN_POOL_SIZE 100
 
-namespace tysocterrain
-{
+namespace tysoc {
+namespace terrain {
+
+    const std::string TERRAIN_TYPE_PROCEDURAL_SECTIONS_PATH     = "proc_sect_path";
+    const std::string TERRAIN_TYPE_PROCEDURAL_SECTIONS_BLOCKS   = "proc_sect_blocks";
 
     struct TGeneratorInfo
     {
@@ -24,6 +27,7 @@ namespace tysocterrain
     {
         std::string                             type;
         std::string                             geomType;
+        std::string                             filename;
         struct { float r; float g; float b; }   color;
         struct { float x; float y; float z; }   size;
         struct { float x; float y; float z; }   pos;
@@ -33,7 +37,7 @@ namespace tysocterrain
         bool                                    useCustomColor;
     };
 
-    class TTerrainGenerator
+    class TITerrainGenerator
     {
         protected :
 
@@ -47,17 +51,19 @@ namespace tysocterrain
         TGeneratorInfo* m_generatorInfo;
 
         std::string m_name;
+        std::string m_type;
 
         public :
 
-        TTerrainGenerator( const std::string& name );
-        ~TTerrainGenerator();
+        TITerrainGenerator( const std::string& name );
+        ~TITerrainGenerator();
 
         virtual void initialize() = 0;
         virtual void update() = 0;
         virtual void recycle( TTerrainPrimitive* pPrimitive );
 
         std::string name() { return m_name; }
+        std::string type() { return m_type; }
         TGeneratorInfo* generatorInfo() { return m_generatorInfo; }
 
         void flushJustCreatedQueue();
@@ -67,4 +73,4 @@ namespace tysocterrain
         std::vector< TTerrainPrimitive* > getPrimitives() { return m_primitives; }
     };
 
-}
+}}

@@ -2,8 +2,8 @@
 #include <utils/primitives_spawner.h>
 
 
-namespace tysocUtils
-{
+namespace tysoc {
+namespace utils {
 
 
     TPrimitivesSpawner::TPrimitivesSpawner()
@@ -272,4 +272,4 @@ namespace tysocUtils
         return m_primitives[ m_keyMapping[ type ] ];
     }
 
-}
+}}
