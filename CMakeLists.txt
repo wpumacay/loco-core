@@ -5,14 +5,18 @@ project( tysoc )
 set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_CXX_FLAGS "-g ${CMAKE_CXX_FLAGS}" )
 
-include_directories( "~/.mujoco/mujoco200_linux/include" )
-link_directories( "~/.mujoco/mujoco200_linux/bin" )
-
+# Main Sources
 file( GLOB_RECURSE TYSOC_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" )
+# External dependencies
+set( TYSOC_SOURCES 
+     ${TYSOC_SOURCES}
+     "ext/tinyxml2/tinyxml2.cpp" )
+
+# Main includes
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include/" )
-include_directories( "${CMAKE_SOURCE_DIR}/ext/mjCpp/include/" ) # hack for now
+# External dependencies
+include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/ext/tinyxml2" )
+include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/ext/json" )
 
 add_library( tysocCore
 			 ${TYSOC_SOURCES} )
-target_link_libraries( tysocCore
-                       mjcppnogl )

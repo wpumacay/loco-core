@@ -2,7 +2,7 @@
 #pragma once
 
 // mjcf functionality
-#include <mjcf/mjcf_api.h>
+#include <utils/parsers/mjcf/mjcf.h>
 // include kintrees to wrap
 #include <agent/types/agent_kintree.h>
 
