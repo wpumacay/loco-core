@@ -2,7 +2,6 @@
 #pragma once
 
 #include "mjcf_common.h"
-#include "mjcf_utils.h"
 #include "mjcf_elements.h"
 
 #define NAME_PLACEHOLDER_SECTION "###"

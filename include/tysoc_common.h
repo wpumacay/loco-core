@@ -11,8 +11,21 @@ typedef float TScalar;
 
 #define TRANDOM( a, b ) ( a + ( b - a ) * ( rand() / ( float )RAND_MAX ) )
 
+#define MAX_SIZE 10
+
 namespace tysoc
 {
+
+    struct TVec2
+    {
+        TScalar x;
+        TScalar y;
+
+        TVec2();
+        TVec2( TScalar px, TScalar py );
+
+        static std::string toString( const TVec2& v );
+    };
 
     struct TVec3
     {
@@ -30,6 +43,7 @@ namespace tysoc
         static TScalar dot( const TVec3& v1, const TVec3& v2 );
         static TVec3 cross( const TVec3& v1, const TVec3& v2 );
         static TScalar length( const TVec3& v );
+
         static std::string toString( const TVec3& v );
     };
 
@@ -42,6 +56,8 @@ namespace tysoc
 
         TVec4();
         TVec4( TScalar x, TScalar y, TScalar z, TScalar w );
+
+        static std::string toString( const TVec4& v );
     };
 
     struct TMat3
@@ -55,6 +71,8 @@ namespace tysoc
 
         static TMat3 fromQuaternion( const TVec4& quat );
         static TMat3 fromEuler( const TVec3& euler );
+
+        static std::string toString( const TMat3& v );
     };
 
     struct TMat4
@@ -102,7 +120,36 @@ namespace tysoc
         }
 
         static TMat4 fromPositionAndRotation( const TVec3& pos, const TMat3& rot );
+
+        static std::string toString( const TMat4& v );
     };
+
+    template< class T >
+    struct TSize
+    {
+        int ndim;
+        T buff[MAX_SIZE];
+    };
+
+    template< class T >
+    std::string toString( const TSize<T>& size )
+    {
+        std::string _res;
+
+        for ( size_t i = 0; i < size.ndim; i++ )
+        {
+            _res += std::to_string( size.buff[i] );
+            if ( i != ( size.ndim - 1 ) )
+            {
+                _res += " ";
+            }
+        }
+
+        return _res;
+    }
+
+    typedef TSize< float >    TSizef;
+    typedef TSize< int >      TSizei;
 
     /**
     * Extracted from bullet btQuaternion implementation (where they use the gameprogramminggems (v1?) 2.10 impl.)

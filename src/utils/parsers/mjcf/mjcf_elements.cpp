@@ -33,19 +33,19 @@ namespace mjcf {
 
             if ( _attribType == TYPE_INT )
             {
-                _ints[ _attribName ] = safeParseInt( xmlElement, _attribName );
+                _ints[ _attribName ] = xml::safeParseInt( xmlElement, _attribName );
             }
             else if ( _attribType == TYPE_FLOAT )
             {
-                _floats[ _attribName ] = safeParseFloat( xmlElement, _attribName );
+                _floats[ _attribName ] = xml::safeParseFloat( xmlElement, _attribName );
             }
             else if ( _attribType == TYPE_ARRAY_INT )
             {
-                _sizeis[ _attribName ] = safeParseSizei( xmlElement, _attribName );
+                _sizeis[ _attribName ] = xml::safeParseSizei( xmlElement, _attribName );
             }
             else if ( _attribType == TYPE_ARRAY_FLOAT )
             {
-                _sizefs[ _attribName ] = safeParseSizef( xmlElement, _attribName );
+                _sizefs[ _attribName ] = xml::safeParseSizef( xmlElement, _attribName );
             }
             else if ( _attribType == TYPE_STRING )
             {
@@ -126,12 +126,12 @@ namespace mjcf {
         _floats[ attribName ] = val;
     }
 
-    void GenericElement::setAttributeArrayInt( const std::string& attribName, const Sizei& arrayint )
+    void GenericElement::setAttributeArrayInt( const std::string& attribName, const TSizei& arrayint )
     {
         _sizeis[ attribName ] = arrayint;
     }
 
-    void GenericElement::setAttributeArrayFloat( const std::string& attribName, const Sizef& arrayfloat )
+    void GenericElement::setAttributeArrayFloat( const std::string& attribName, const TSizef& arrayfloat )
     {
         // @TODO: Should check with the schema
         _sizefs[ attribName ] = arrayfloat;
@@ -142,9 +142,9 @@ namespace mjcf {
         _strings[ attribName ] = val;
     }
 
-    void GenericElement::setAttributeVec3( const std::string& attribName, const Vec3& vec )
+    void GenericElement::setAttributeVec3( const std::string& attribName, const TVec3& vec )
     {
-        Sizef _svec;
+        TSizef _svec;
         _svec.ndim = 3;
         _svec.buff[0] = vec.x;
         _svec.buff[1] = vec.y;
@@ -153,9 +153,9 @@ namespace mjcf {
         _sizefs[ attribName ] = _svec;
     }
 
-    void GenericElement::setAttributeVec4( const std::string& attribName, const Vec4& vec )
+    void GenericElement::setAttributeVec4( const std::string& attribName, const TVec4& vec )
     {
-        Sizef _svec;
+        TSizef _svec;
         _svec.ndim = 4;
         _svec.buff[0] = vec.x;
         _svec.buff[1] = vec.y;
@@ -185,7 +185,7 @@ namespace mjcf {
         return 0.0f;
     }
 
-    Sizef GenericElement::getAttributeArrayFloat( const std::string& attribName )
+    TSizef GenericElement::getAttributeArrayFloat( const std::string& attribName )
     {
         if ( _sizefs.find( attribName ) != _sizefs.end() )
         {
@@ -195,7 +195,7 @@ namespace mjcf {
         return { 0, { 0.0f } };
     }
 
-    Sizei GenericElement::getAttributeArrayInt( const std::string& attribName )
+    TSizei GenericElement::getAttributeArrayInt( const std::string& attribName )
     {
         if ( _sizeis.find( attribName ) != _sizeis.end() )
         {
@@ -215,13 +215,13 @@ namespace mjcf {
         return "";
     }
 
-    Vec2 GenericElement::getAttributeVec2( const std::string& attribName, const Vec2& def )
+    TVec2 GenericElement::getAttributeVec2( const std::string& attribName, const TVec2& def )
     {
-        Vec2 _res;
+        TVec2 _res;
 
         if ( _sizefs.find( attribName ) != _sizefs.end() )
         {
-            Sizef _vec2 = _sizefs[ attribName ];
+            TSizef _vec2 = _sizefs[ attribName ];
 
             _res.x = _vec2.buff[0];
             _res.y = _vec2.buff[1];
@@ -234,13 +234,13 @@ namespace mjcf {
         return _res;
     }
 
-    Vec3 GenericElement::getAttributeVec3( const std::string& attribName, const Vec3& def )
+    TVec3 GenericElement::getAttributeVec3( const std::string& attribName, const TVec3& def )
     {
-        Vec3 _res;
+        TVec3 _res;
 
         if ( _sizefs.find( attribName ) != _sizefs.end() )
         {
-            Sizef _vec3 = _sizefs[ attribName ];
+            TSizef _vec3 = _sizefs[ attribName ];
 
             _res.x = _vec3.buff[0];
             _res.y = _vec3.buff[1];
@@ -254,13 +254,13 @@ namespace mjcf {
         return _res;
     }
 
-    Vec4 GenericElement::getAttributeVec4( const std::string& attribName, const Vec4& def )
+    TVec4 GenericElement::getAttributeVec4( const std::string& attribName, const TVec4& def )
     {
-        Vec4 _res;
+        TVec4 _res;
 
         if ( _sizefs.find( attribName ) != _sizefs.end() )
         {
-            Sizef _vec4 = _sizefs[ attribName ];
+            TSizef _vec4 = _sizefs[ attribName ];
             
             _res.x = _vec4.buff[0];
             _res.y = _vec4.buff[1];
@@ -303,8 +303,8 @@ namespace mjcf {
     }
 
     GenericElement* createBody( const std::string& name,
-                                 const Vec3& pos,
-                                 const Vec4& quat )
+                                 const TVec3& pos,
+                                 const TVec4& quat )
     {
         auto _body = new GenericElement( "body" );
 
@@ -317,10 +317,10 @@ namespace mjcf {
 
     GenericElement* createGeometry( const std::string& name,
                                     const std::string& type,
-                                    const Sizef& size,
+                                    const TSizef& size,
                                     float mass,
-                                    const Vec3& pos,
-                                    const Vec4& quat )
+                                    const TVec3& pos,
+                                    const TVec4& quat )
     {
         auto _geometry = new GenericElement( "geom" );
 
@@ -336,8 +336,8 @@ namespace mjcf {
 
     GenericElement* createGeometry( const std::string& name,
                                     const std::string& type,
-                                    const Sizef& size,
-                                    const Sizef& fromto,
+                                    const TSizef& size,
+                                    const TSizef& fromto,
                                     float mass )
     {
         auto _geometry = new GenericElement( "geom" );

@@ -1,49 +1,24 @@
 
 #pragma once
 
-
+#include "urdf_elements.h"
 
 namespace tysoc {
 namespace urdf {
 
+    /**
+    * @brief            Loads an urdf model file into the appropiate data structures
+    * @param modelfile  A string representing the fullpath to the .urdf file
+    * @return           Returns an UrdfModel pointer representing 
+    *                   the loaded model, or NULL if something went wrong
+    */
     UrdfModel* loadGenericModel( const std::string& modelfile );
 
-    bool _parseTransform( btTransform& transform, 
-                          tinyxml2::XMLElement* xml );
-
-    bool _parseInertia( UrdfInertia* inertiaDataPtr, 
-                        tinyxml2::XMLElement* xmlElement );
-
-    bool _parseGeometry( UrdfGeometry* geomDataPtr, 
-                         tinyxml2::XMLElement* g );
-
-    bool _parseVisual( UrdfModel* modelDataPtr, 
-                       UrdfVisual* visual, 
-                       tinyxml2::XMLElement* xmlElement );
-
-    bool _parseCollision( UrdfCollision* collisionDataPtr, 
-                          tinyxml2::XMLElement* xmlElement );
-
+    /**
+    * @brief                Initializes the model by linkings its inner data accordingly
+    * @param modelDataPtr   The UrdfModel pointer representing the model to initialize
+    * @return               Returns true or false depending of the initialization success
+    */
     bool _initTreeAndRoot( UrdfModel* modelDataPtr );
-
-    bool _parseMaterial( UrdfMaterial* materialDataPtr, 
-                         tinyxml2::XMLElement* xmlElement );
-
-    bool _parseJointLimits( UrdfJoint* jointDataPtr, 
-                            tinyxml2::XMLElement* xmlElement );
-
-    bool _parseJointDynamics( UrdfJoint* jointDataPtr, 
-                              tinyxml2::XMLElement* xmlElement );
-
-    bool _parseJoint( UrdfJoint* jointDataPtr, 
-                      tinyxml2::XMLElement* xmlElement );
-
-    bool _parseLink( UrdfModel* modelDataPtr, 
-                     UrdfLink* link, 
-                     tinyxml2::XMLElement* xmlElement );
-
-    void _logError( const std::string& errorMsg );
-    
-    void _logWarning( const std::string& warningMsg );
 
 }}

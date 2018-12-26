@@ -4,34 +4,6 @@
 namespace tysoc {
 namespace mjcf {
 
-    std::string toString( const Vec3& vec )
-    {
-        std::string _res;
-
-        _res += std::to_string( vec.x );
-        _res += " ";
-        _res += std::to_string( vec.y );
-        _res += " ";
-        _res += std::to_string( vec.z );
-
-        return _res;
-    }
-
-    std::string toString( const Vec4& vec )
-    {
-        std::string _res;
-
-        _res += std::to_string( vec.x );
-        _res += " ";
-        _res += std::to_string( vec.y );
-        _res += " ";
-        _res += std::to_string( vec.z );
-        _res += " ";
-        _res += std::to_string( vec.w );
-
-        return _res;
-    }
-
     Schema::Schema()
     {
 
@@ -137,7 +109,18 @@ namespace mjcf {
     AttribType Schema::getAttribType( const std::string& elementName,
                                       const std::string& attribName )
     {
-        
+        if ( m_attribsPerElement.find( elementName ) == m_attribsPerElement.end() )
+        {
+            return TYPE_UNDEFINED;
+        }
+
+        if ( m_attribsPerElement[ elementName ].find( attribName ) == 
+             m_attribsPerElement[ elementName ].end() )
+        {
+            return TYPE_UNDEFINED;
+        }
+
+        return m_attribsPerElement[ elementName ][ attribName ];
     }
 
     void Schema::print()
@@ -160,4 +143,5 @@ namespace mjcf {
             }
         }
     }
+
 }}

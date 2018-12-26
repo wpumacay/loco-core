@@ -5,6 +5,27 @@
 namespace tysoc
 {
 
+        TVec2::TVec2()
+        {
+            x = 0;
+            y = 0;
+        }
+
+        TVec2::TVec2( TScalar px, TScalar py )
+        {
+            x = px;
+            y = py;
+        }
+
+        std::string TVec2::toString( const TVec2& v )
+        {
+            std::string _res;
+
+            _res += std::string( "x: " ) + std::to_string( v.x ) + std::string( " - " );
+            _res += std::string( "y: " ) + std::to_string( v.x );
+
+            return _res;
+        }
 
         TVec3::TVec3()
         {
@@ -59,9 +80,11 @@ namespace tysoc
         std::string TVec3::toString( const TVec3& v )
         {
             std::string _res = "";
+
             _res += std::string( "x: " ) + std::to_string( v.x ) + std::string( " - " );
             _res += std::string( "y: " ) + std::to_string( v.y ) + std::string( " - " );
             _res += std::string( "z: " ) + std::to_string( v.z );
+
             return _res;
         }
 
@@ -79,6 +102,18 @@ namespace tysoc
             this->y = y;
             this->z = z;
             this->w = w;
+        }
+
+        std::string TVec4::toString( const TVec4& v )
+        {
+            std::string _res = "";
+
+            _res += std::string( "x: " ) + std::to_string( v.x ) + std::string( " - " );
+            _res += std::string( "y: " ) + std::to_string( v.y ) + std::string( " - " );
+            _res += std::string( "z: " ) + std::to_string( v.z ) + std::string( " - " );
+            _res += std::string( "w: " ) + std::to_string( v.w );
+            
+            return _res;
         }
 
         TMat3::TMat3()
@@ -148,6 +183,30 @@ namespace tysoc
             _res.buff[6] = _s1 * _s3 + _c1 * _s2 * _c3;
             _res.buff[7] = _s1 * _s2 * _c3 - _c1 * _s3;
             _res.buff[8] = _c2 * _c3;
+
+            return _res;
+        }
+
+        std::string TMat3::toString( const TMat3& mat )
+        {
+            std::string _res;
+
+            _res += "[ ";
+
+            for ( size_t i = 0; i < 3; i++ )
+            {
+                _res += "\t";
+
+                for ( size_t j = 0; j < 3; j++ )
+                {
+                    size_t _indx = i + j * 3;
+                    _res += std::to_string( mat.buff[ _indx ] ) + "\t";
+                }
+
+                _res += "\n";
+            }
+
+            _res += " ]";
 
             return _res;
         }
@@ -326,6 +385,30 @@ namespace tysoc
                 _res.z = _cross.z / _s;
                 _res.w = _s * 0.5;
             }
+
+            return _res;
+        }
+
+        std::string TMat4::toString( const TMat4& mat )
+        {
+            std::string _res;
+
+            _res += "[ ";
+
+            for ( size_t i = 0; i < 4; i++ )
+            {
+                _res += "\t";
+                
+                for ( size_t j = 0; j < 4; j++ )
+                {
+                    size_t _indx = i + j * 4;
+                    _res += std::to_string( mat.buff[ _indx ] ) + "\t";
+                }
+
+                _res += "\n";
+            }
+
+            _res += " ]";
 
             return _res;
         }

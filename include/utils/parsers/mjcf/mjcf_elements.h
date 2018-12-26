@@ -2,7 +2,8 @@
 #pragma once
 
 #include "mjcf_common.h"
-#include "mjcf_utils.h"
+
+#include <utils/parsers/parsers_xml.h>
 
 namespace tysoc {
 namespace mjcf {
@@ -15,8 +16,8 @@ namespace mjcf {
 
         std::map< std::string, int >            _ints;
         std::map< std::string, float >          _floats;
-        std::map< std::string, Sizef >          _sizefs;
-        std::map< std::string, Sizei >          _sizeis;
+        std::map< std::string, TSizef >         _sizefs;
+        std::map< std::string, TSizei >         _sizeis;
         std::map< std::string, std::string >    _strings;
 
         GenericElement();
@@ -27,22 +28,22 @@ namespace mjcf {
 
         void setAttributeInt( const std::string& attribName, int val );
         void setAttributeFloat( const std::string& attribName, float val );
-        void setAttributeArrayInt( const std::string& attribName, const Sizei& arrayint );
-        void setAttributeArrayFloat( const std::string& attribName, const Sizef& arrayfloat );
+        void setAttributeArrayInt( const std::string& attribName, const TSizei& arrayint );
+        void setAttributeArrayFloat( const std::string& attribName, const TSizef& arrayfloat );
         void setAttributeString( const std::string& attribName, const std::string& val );
 
-        void setAttributeVec3( const std::string& attribName, const Vec3& vec );
-        void setAttributeVec4( const std::string& attribName, const Vec4& vec );
+        void setAttributeVec3( const std::string& attribName, const TVec3& vec );
+        void setAttributeVec4( const std::string& attribName, const TVec4& vec );
 
         int getAttributeInt( const std::string& attribName );
         float getAttributeFloat( const std::string& attribName );
-        Sizef getAttributeArrayFloat( const std::string& attribName );
-        Sizei getAttributeArrayInt( const std::string& attribName );
+        TSizef getAttributeArrayFloat( const std::string& attribName );
+        TSizei getAttributeArrayInt( const std::string& attribName );
         std::string getAttributeString( const std::string& attribName );
 
-        Vec2 getAttributeVec2( const std::string& attribName, const Vec2& def = { 0, 0 } );
-        Vec3 getAttributeVec3( const std::string& attribName, const Vec3& def = { 0, 0, 0 } );
-        Vec4 getAttributeVec4( const std::string& attribName, const Vec4& def = { 0, 0, 0, 1 } );
+        TVec2 getAttributeVec2( const std::string& attribName, const TVec2& def = { 0, 0 } );
+        TVec3 getAttributeVec3( const std::string& attribName, const TVec3& def = { 0, 0, 0 } );
+        TVec4 getAttributeVec4( const std::string& attribName, const TVec4& def = { 0, 0, 0, 1 } );
  
         bool hasAttributeVec4( const std::string& attribName );
         bool hasAttributeVec3( const std::string& attribName );
@@ -53,20 +54,20 @@ namespace mjcf {
     GenericElement* createWorldBody();
 
     GenericElement* createBody( const std::string& name,
-                                const Vec3& pos = { 0, 0, 0 },
-                                const Vec4& quat = { 0, 0, 0, 1 } );
+                                const TVec3& pos = { 0, 0, 0 },
+                                const TVec4& quat = { 0, 0, 0, 1 } );
 
     GenericElement* createGeometry( const std::string& name,
                                     const std::string& type,
-                                    const Sizef& size,
+                                    const TSizef& size,
                                     float mass = 0.0f,
-                                    const Vec3& pos = { 0, 0, 0 },
-                                    const Vec4& quat = { 0, 0, 0, 1 } );
+                                    const TVec3& pos = { 0, 0, 0 },
+                                    const TVec4& quat = { 0, 0, 0, 1 } );
 
     GenericElement* createGeometry( const std::string& name,
                                     const std::string& type,
-                                    const Sizef& size,
-                                    const Sizef& fromto,
+                                    const TSizef& size,
+                                    const TSizef& fromto,
                                     float mass = 0.0f );
 
 }}

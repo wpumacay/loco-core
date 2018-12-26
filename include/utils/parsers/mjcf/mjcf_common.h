@@ -1,68 +1,12 @@
 
 #pragma once
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-#include <tinyxml2.h>
+#include <tysoc_common.h>
 
-#define MAX_SIZE 10
+#include <utils/parsers/parsers_xml.h>
 
 namespace tysoc {
 namespace mjcf {
-
-    struct Vec2
-    {
-        float x;
-        float y;
-    };
-    
-    struct Vec3
-    {
-        float x;
-        float y;
-        float z;
-    };
-
-    struct Vec4
-    {
-        float x;
-        float y;
-        float z;
-        float w;
-    };
-
-    template< class T >
-    struct TSize
-    {
-        int ndim;
-        T buff[MAX_SIZE];
-    };
-
-
-    std::string toString( const Vec3& vec );
-    std::string toString( const Vec4& vec );
-
-    template< class T >
-    std::string toString( const TSize<T>& size )
-    {
-        std::string _res;
-
-        for ( size_t i = 0; i < size.ndim; i++ )
-        {
-            _res += std::to_string( size.buff[i] );
-            if ( i != ( size.ndim - 1 ) )
-            {
-                _res += " ";
-            }
-        }
-
-        return _res;
-    }
-
-    typedef TSize<float>    Sizef;
-    typedef TSize<int>      Sizei;
 
     enum AttribType
     {
@@ -96,4 +40,5 @@ namespace mjcf {
         AttribType getAttribType( const std::string& elementName,
                                   const std::string& attribName );
     };
+
 }}
