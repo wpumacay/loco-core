@@ -59,9 +59,13 @@ namespace mjcf {
                     m_attribsPerElement[ elementName ][ _attribName ] = TYPE_ARRAY_FLOAT;
                 }
             }
+            else if ( _attribType == "keyword" )
+            {
+                m_attribsPerElement[ elementName ][ _attribName ] = TYPE_STRING;
+            }
             else
             {
-                // Everything else, just use assume string
+                // Everything else, just assume string
                 m_attribsPerElement[ elementName ][ _attribName ] = TYPE_STRING;
             }
 

@@ -22,6 +22,12 @@ namespace agent{
     struct TKinTreeSensor;
     struct TKinTreeActuator;
 
+    struct TKinTreeMeshAsset
+    {
+        std::string     name;
+        std::string     file;
+    };
+
     struct TMaterial
     {
         std::string     name;
@@ -36,10 +42,20 @@ namespace agent{
         TGeometry       geometry;       // Geometry information
         TKinTreeBody*   parentBodyPtr;  // Parent body
         TMat4           relTransform;   // Relative transform to parent body
+        // @CHECK|@WIP : Add a variant here, for special params given model data
+        int             contype;        // (mujoco) Contype bitmask for collision detection
+        int             conaffinity;    // (mujoco) Conaffinity bitmask for collision detection
+        int             condim;         // (mujoco) Contact dimensionality
+        int             group;          // (mujoco) Group this object belongs (for compiler calcs.)
 
         TKinTreeCollision()
         {
-            parentBodyPtr = NULL;
+            parentBodyPtr   = NULL;
+            // @CHECK|@WIP : Initialize variant here
+            contype         = -1; // -1 indicates not available
+            conaffinity     = -1; // -1 indicates not available
+            condim          = -1; // -1 indicates not available
+            group           = -1; // -1 indicates not available
         }
     };
 
@@ -50,10 +66,24 @@ namespace agent{
         TGeometry       geometry;       // Geometry information
         TKinTreeBody*   parentBodyPtr;  // Parent body
         TMat4           relTransform;   // Relative transform to parent body
+        // @CHECK|@WIP : Add a variant here, for special params given model data
+        int             contype;        // (mujoco) Contype bitmask for collision detection
+        int             conaffinity;    // (mujoco) Conaffinity bitmask for collision detection
+        int             condim;         // (mujoco) Contact dimensionality
+        int             group;          // (mujoco) Group this object belongs (for compiler calcs.)
+        std::string     materialName;   // (mujoco) Name of the material from includes (materials.xml) (@CHECK: should use TMaterial)
+        TVec4           rgba;           // (mujoco) RGBA color (@CHECK: should use TMaterial)
 
         TKinTreeVisual()
         {
-            parentBodyPtr = NULL;
+            parentBodyPtr   = NULL;
+            // @CHECK|@WIP : Initialize variant here
+            contype         = -1; // -1 indicates not available
+            conaffinity     = -1; // -1 indicates not available
+            condim          = -1; // -1 indicates not available
+            group           = -1; // -1 indicates not available
+            materialName    = "";
+            rgba            = { 0.3, 0.4, 0.5, 1.0 };
         }
     };
 
@@ -135,6 +165,7 @@ namespace agent{
         {
             parentBodyPtr   = NULL;
             parentJointPtr  = NULL;
+            inertiaPtr      = NULL;
         }
     };
 
@@ -150,11 +181,25 @@ namespace agent{
         TMat4               relTransform;   // Relative transform
         TKinTreeBody*       parentBodyPtr;  // Parent body (urdf,mjcf)
         TKinTreeBody*       childBodyPtr;   // Child body (urdf)
+        TScalar             lowerLimit;     // Lower range limit
+        TScalar             upperLimit;     // Upper range limit
+        bool                limited;        // Flag for joint value clamping
+        // @CHECK|@WIP : Add a variant here, for special params given model data
+        TScalar             stiffness;      // (mujoco) Stiffness (spring like behaviour like)
+        TScalar             armature;       // (mujoco) Armature (extra diag inertia)
+        TScalar             damping;        // (mujoco) Damping applied to the joint
 
         TKinTreeJoint()
         {
             parentBodyPtr   = NULL;
             childBodyPtr    = NULL;
+            lowerLimit      = 0;
+            upperLimit      = 0;
+            limited         = false;
+            // @CHECK|@WIP : Initialize variant here
+            stiffness       = 0.0;
+            armature        = 0.0;
+            damping         = 0.0;
         }
     };
 
@@ -168,12 +213,29 @@ namespace agent{
         TScalar             ctrlValue;      // Control signal to be applied to this actuator
         TScalar             minCtrl;        // Control min limit
         TScalar             maxCtrl;        // Control max limit
+        // @CHECK|@WIP : Add a variant here, for special params given model data
+        TSizef              gear;           // (mujoco) Length scaling (6 dim)
+        TScalar             kp;             // (mujoco) Position feedback gain
+        TScalar             kv;             // (mujoco) Velocity feedback gain
+        bool                clampCtrl;      // (mujoco) Flag for ctrl value clamping
 
         TKinTreeActuator()
         {
-            jointPtr = NULL;
+            jointPtr    = NULL;
+            minCtrl     = -1.0;
+            maxCtrl     = 1.0;
+            ctrlValue   = 0.0;
+            // @CHECK|@WIP : Initialize variant here
+            gear        = { 1, { 1.0 } };
+            kp          = 1.0;
+            kv          = 1.0;
+            clampCtrl   = true;
         }
     };
+
+    const std::string MODEL_TEMPLATE_TYPE_MJCF  = "mjcf";
+    const std::string MODEL_TEMPLATE_TYPE_URDF  = "urdf";
+    const std::string MODEL_TEMPLATE_TYPE_RLSIM = "rlsim";
 
     // @TODO|@CHECK: should be able to also create a kintree programmatically, ...
     // as well as changing some properties of the agent as desired. So far it seems that ...
@@ -201,6 +263,7 @@ namespace agent{
         std::vector< TKinTreeCollision* >   m_kinTreeCollisions;    // kinTree collisions
         std::vector< TKinTreeActuator* >    m_kinTreeActuators;     // kinTree actuators
         std::vector< TKinTreeSensor* >      m_kinTreeSensors;       // kinTree actuators
+        std::vector< TKinTreeMeshAsset* >   m_kinTreeMeshAssets;    // kinTree mesh assets
 
         std::map< std::string, TKinTreeBody* >      m_mapKinTreeBodies;     // map of bodies (easy access)
         std::map< std::string, TKinTreeJoint* >     m_mapKinTreeJoints;     // map of joints (...)
@@ -208,6 +271,9 @@ namespace agent{
         std::map< std::string, TKinTreeCollision* > m_mapKinTreeCollisions; // map of collisions (...)
         std::map< std::string, TKinTreeActuator* >  m_mapKinTreeActuators;  // map of actuators (...)
         std::map< std::string, TKinTreeSensor* >    m_mapKinTreeSensors;    // map of sensors (...)
+        std::map< std::string, TKinTreeMeshAsset* > m_mapKinTreeMeshAssets; // map of assets (...)
+
+        std::string m_modelTemplateType;
 
         void _updateAgentInternal( float dt ) override;
 
@@ -240,6 +306,10 @@ namespace agent{
         std::vector< TKinTreeCollision* >   getKinTreeCollisions();
         std::vector< TKinTreeActuator* >    getKinTreeActuators();
         std::vector< TKinTreeSensor* >      getKinTreeSensors();
+        std::vector< TKinTreeMeshAsset* >   getKinTreeMeshAssets();
+
+        TKinTreeBody* getRootBody();
+        std::string getModelTemplateType();
     };
 
 

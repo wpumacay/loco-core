@@ -187,6 +187,77 @@ namespace tysoc
             return _res;
         }
 
+        // Adapted from bullet quaternion conversion (btMatrix3x3.h) ...
+        // and this post : http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/
+        // @RANDOM: just a random thought> perhaps the finite precision could play a role when learning a policy as ...
+        // it might sometimes work and some others not. If it generalizes, then should also be able to handle small ...
+        // variations, even in small inaccurate computations.
+        TVec4 TMat3::toQuaternion( const TMat3& mat )
+        {
+            TVec4 _res;
+
+            auto _m00 = mat.buff[0];
+            auto _m11 = mat.buff[4];
+            auto _m22 = mat.buff[8];
+
+            auto _trace = _m00 + _m11 + _m22;
+
+            if ( _trace > 0 )
+            {
+                _res.w = std::sqrt( _trace + 1 ) / 2.0;
+
+                _res.x = ( mat.buff[5] - mat.buff[7] ) / ( 4 * _res.w );
+                _res.y = ( mat.buff[6] - mat.buff[2] ) / ( 4 * _res.w );
+                _res.z = ( mat.buff[1] - mat.buff[3] ) / ( 4 * _res.w );
+            }
+            else if ( ( _m00 > _m11 ) && ( _m00 > _m22 ) )
+            {
+                auto _s = std::sqrt( 1 + _m00 - _m11 - _m22 ) * 2;
+
+                _res.x = 0.25 * _s;
+                _res.y = ( mat.buff[3] + mat.buff[1] ) / _s;
+                _res.z = ( mat.buff[6] + mat.buff[2] ) / _s;
+                _res.w = ( mat.buff[5] - mat.buff[7] ) / _s;
+            }
+            else if ( _m11 > _m22 )
+            {
+                auto _s = std::sqrt( 1 + _m11 - _m00 - _m22 ) * 2;
+
+                _res.x = ( mat.buff[3] + mat.buff[1] ) / _s;
+                _res.y = 0.25 * _s;
+                _res.z = ( mat.buff[7] + mat.buff[5] ) / _s;
+                _res.w = ( mat.buff[6] - mat.buff[2] ) / _s;
+            }
+            else
+            {
+                auto _s = std::sqrt( 1 + _m22 - _m00 - _m11 ) * 2;
+
+                _res.x = ( mat.buff[6] + mat.buff[2] ) / _s;
+                _res.y = ( mat.buff[7] + mat.buff[5] ) / _s;
+                _res.z = 0.25 * _s;
+                _res.w = ( mat.buff[1] - mat.buff[3] ) / _s;
+            }
+
+            return _res;
+        }
+
+        TVec3 TMat3::toEuler( const TMat3& mat )
+        {
+            TVec3 _res;
+
+            auto _r11 = mat.buff[0];
+            auto _r21 = mat.buff[1];
+            auto _r31 = mat.buff[2];
+            auto _r32 = mat.buff[5];
+            auto _r33 = mat.buff[8];
+
+            _res.x = std::atan2( _r32, _r33 );
+            _res.y = std::atan2( -_r31, std::sqrt( _r11 * _r11 + _r21 * _r21 ) );
+            _res.z = std::atan2( _r21, _r11 );
+
+            return _res;
+        }
+
         std::string TMat3::toString( const TMat3& mat )
         {
             std::string _res;

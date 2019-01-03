@@ -142,6 +142,16 @@ namespace mjcf {
         _strings[ attribName ] = val;
     }
 
+    void GenericElement::setAttributeVec2( const std::string& attribName, const TVec2& vec )
+    {
+        TSizef _svec;
+        _svec.ndim = 2;
+        _svec.buff[0] = vec.x;
+        _svec.buff[1] = vec.y;
+
+        _sizefs[ attribName ] = _svec;
+    }
+
     void GenericElement::setAttributeVec3( const std::string& attribName, const TVec3& vec )
     {
         TSizef _svec;
@@ -165,24 +175,24 @@ namespace mjcf {
         _sizefs[ attribName ] = _svec;
     }
     
-    int GenericElement::getAttributeInt( const std::string& attribName )
+    int GenericElement::getAttributeInt( const std::string& attribName, int def )
     {
         if ( _ints.find( attribName ) != _ints.end() )
         {
             return _ints[ attribName ];
         }
 
-        return 0;
+        return def;
     }
 
-    float GenericElement::getAttributeFloat( const std::string& attribName )
+    float GenericElement::getAttributeFloat( const std::string& attribName, float def )
     {
         if ( _floats.find( attribName ) != _floats.end() )
         {
             return _floats[ attribName ];
         }
 
-        return 0.0f;
+        return def;
     }
 
     TSizef GenericElement::getAttributeArrayFloat( const std::string& attribName )
@@ -205,14 +215,15 @@ namespace mjcf {
         return { 0, { 0 } };
     }
 
-    std::string GenericElement::getAttributeString( const std::string& attribName )
+    std::string GenericElement::getAttributeString( const std::string& attribName,
+                                                    const std::string& def )
     {
         if ( _strings.find( attribName ) != _strings.end() )
         {
             return _strings[ attribName ];
         }
 
-        return "";
+        return def;
     }
 
     TVec2 GenericElement::getAttributeVec2( const std::string& attribName, const TVec2& def )
@@ -275,11 +286,61 @@ namespace mjcf {
         return _res;
     }
 
-    bool GenericElement::hasAttributeVec4( const std::string& attribName )
+    bool GenericElement::hasAttributeInt( const std::string& attribName )
+    {
+        if ( _ints.find( attribName ) != _ints.end() )
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool GenericElement::hasAttributeFloat( const std::string& attribName )
+    {
+        if ( _floats.find( attribName ) != _floats.end() )
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool GenericElement::hasAttributeArrayInt( const std::string& attribName )
+    {
+        if ( _sizeis.find( attribName ) != _sizeis.end() )
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool GenericElement::hasAttributeArrayFloat( const std::string& attribName )
     {
         if ( _sizefs.find( attribName ) != _sizefs.end() )
         {
             return true;
+        }
+
+        return false;
+    }
+
+    bool GenericElement::hasAttributeString( const std::string& attribName )
+    {
+        if ( _strings.find( attribName ) != _strings.end() )
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool GenericElement::hasAttributeVec2( const std::string& attribName )
+    {
+        if ( _sizefs.find( attribName ) != _sizefs.end() )
+        {
+            return _sizefs[ attribName ].ndim == 2;
         }
 
         return false;
@@ -289,13 +350,21 @@ namespace mjcf {
     {
         if ( _sizefs.find( attribName ) != _sizefs.end() )
         {
-            return true;
+            return _sizefs[ attribName ].ndim == 3;
         }
 
         return false;
     }
 
+    bool GenericElement::hasAttributeVec4( const std::string& attribName )
+    {
+        if ( _sizefs.find( attribName ) != _sizefs.end() )
+        {
+            return _sizefs[ attribName ].ndim == 4;
+        }
 
+        return false;
+    }
 
     GenericElement* createWorldBody()
     {

@@ -3,7 +3,7 @@
 
 // mjcf functionality
 #include <utils/parsers/mjcf/mjcf.h>
-// include kintrees to wrap
+// include kintree to extend
 #include <agent/types/agent_kintree.h>
 
 
@@ -23,14 +23,22 @@ namespace agent{
 
         protected :
 
+        mjcf::GenericElement* m_modelElementPtr;
+        std::map< std::string, TMjcfMeshAsset > m_mjcfMeshAssets;
+
         TKinTreeBody* _processBodyFromMjcf( mjcf::GenericElement* bodyElementPtr, TKinTreeBody* parentKinBodyPtr );
         TKinTreeJoint* _processJointFromMjcf( mjcf::GenericElement* jointElementPtr );
         TKinTreeVisual* _processVisualFromMjcf( mjcf::GenericElement* geomElementPtr );
         TKinTreeCollision* _processCollisionFromMjcf( mjcf::GenericElement* geomElementPtr );
+        TKinTreeInertia* _processInertialFromMjcf( mjcf::GenericElement* inertialElmPtr );
 
         void _processActuator( mjcf::GenericElement* actuatorElementPtr );
 
-        mjcf::GenericElement* m_modelElementPtr;
+        void _constructKinTree() override;
+        void _initializeWorldTransforms() override;
+        void _initializeBody( TKinTreeBody* kinTreeBodyPtr );
+
+        void _collectAssets();
 
         // helpers
         void _extractTransform( mjcf::GenericElement* elementPtr, TMat4& targetTransform );
@@ -38,13 +46,6 @@ namespace agent{
                                    TVec3& targetSize,
                                    TVec3& posFromFromto,
                                    TMat3& rotFromFromto );
-
-        void _constructKinTree() override;
-        void _initializeWorldTransforms() override;
-        void _initializeBody( TKinTreeBody* kinTreeBodyPtr );
-
-        void _collectAssets();
-        std::map< std::string, TMjcfMeshAsset > m_mjcfMeshAssets;
 
         public :
 

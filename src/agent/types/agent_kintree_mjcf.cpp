@@ -12,6 +12,8 @@ namespace agent{
     {
         // save the reference to the elementPtr for later usage (if needed to inject resources)
         m_modelElementPtr = modelElementPtr;
+        // and set the model template type as being created from a mjc file
+        m_modelTemplateType = MODEL_TEMPLATE_TYPE_MJCF;
 
         _collectAssets();
         _initializeKinTree();
@@ -128,6 +130,7 @@ namespace agent{
             auto _asset = _assets[i];
             if ( _asset->etype == "mesh" );
             {
+                // Grab the mesh asset into a dict for easier usage ************
                 TMjcfMeshAsset _meshAsset;
 
                 // grab the name of the mesh
@@ -136,12 +139,26 @@ namespace agent{
                 _meshAsset.file = _asset->getAttributeString( "file" );
 
                 // as well as the scale (in case there is)
-                auto _scale = _asset->getAttributeVec3( "scale", { 1.0f, 1.0f, 1.0f } );
+                auto _scale = _asset->getAttributeVec3( "scale", 
+                                                        { 1.0f, 1.0f, 1.0f } );
                 _meshAsset.scale.x = _scale.x;
                 _meshAsset.scale.y = _scale.y;
                 _meshAsset.scale.z = _scale.z;
 
                 m_mjcfMeshAssets[ _meshAsset.name ] = _meshAsset;
+                // *************************************************************
+                // cache this asset if not already cached **********************
+                if ( m_mapKinTreeMeshAssets.find( _meshAsset.name ) ==
+                     m_mapKinTreeMeshAssets.end() )
+                {
+                    auto _kinTreeMeshAsset = new TKinTreeMeshAsset();
+                    _kinTreeMeshAsset->name = _meshAsset.name;
+                    _kinTreeMeshAsset->file = _meshAsset.file;
+
+                    m_kinTreeMeshAssets.push_back( _kinTreeMeshAsset );
+                    m_mapKinTreeMeshAssets[_meshAsset.name] = _kinTreeMeshAsset;
+                }
+                // *************************************************************
             }
             // else
             // {
@@ -210,6 +227,22 @@ namespace agent{
            _kinTreeBodyPtr->childJoints.push_back( _kinTreeJointPtr );
         }
 
+        // grab the inertial properties (if given, as by default is computed from the geometries)
+        // (If no inertia is given, by default is set to NULL, and inertia properties should be ...
+        //  extracted one the model creation has been completed, so an extra initialization stage ...
+        //  should be added. This is needed to ensure that for other backends they can grab the appropiate ...
+        //  inertia computation) (Perhaps this could be avoided if we are sure that for any backend ...
+        //  if no inertia is given, then by default the inertia is computed from primitives, and by the ...
+        //  backend itself)
+        auto _inertialElmPtr = mjcf::findFirstChildByType( bodyElementPtr, "inertial" );
+        if ( _inertialElmPtr )
+        {
+            _kinTreeBodyPtr->inertiaPtr = _processInertialFromMjcf( _inertialElmPtr );
+        }
+
+        // and sites? @CHECK
+        // ...
+
         // grab child bodies (if any) and repeat process
         auto _childBodiesElementPtrs = mjcf::getChildrenByType( bodyElementPtr, "body" );
         for ( size_t i = 0; i < _childBodiesElementPtrs.size(); i++ )
@@ -229,10 +262,22 @@ namespace agent{
         // and the relative transform to the parent body
         _extractTransform( jointElementPtr, _kinTreeJointPtr->relTransform );
         // and the type of joint
-        _kinTreeJointPtr->type = jointElementPtr->getAttributeString( "type" );
+        _kinTreeJointPtr->type = jointElementPtr->getAttributeString( "type", "hinge" );
         // and the joint axis
         auto _axis = jointElementPtr->getAttributeVec3( "axis" );
         _kinTreeJointPtr->axis = { _axis.x, _axis.y, _axis.z };
+        // and the range limits
+        auto _limits = jointElementPtr->getAttributeVec2( "range" );
+        _kinTreeJointPtr->lowerLimit = _limits.x;
+        _kinTreeJointPtr->upperLimit = _limits.y;
+        // and the joint value clamping flag
+        _kinTreeJointPtr->limited = ( jointElementPtr->getAttributeString( "limited", "false" ) == "true" );
+        // and the joint stiffness (@GENERIC)
+        _kinTreeJointPtr->stiffness = jointElementPtr->getAttributeFloat( "stiffness", 0.0 );
+        // and the joint armature (@GENERIC)
+        _kinTreeJointPtr->armature = jointElementPtr->getAttributeFloat( "armature", 0.0 );
+        // and the joint damping (@GENERIC)
+        _kinTreeJointPtr->damping = jointElementPtr->getAttributeFloat( "damping", 0.0 );
         // child body should be set to NULL (used only for urdf)
         _kinTreeJointPtr->childBodyPtr = NULL;
         // and store it in the joints buffer
@@ -257,12 +302,14 @@ namespace agent{
         if ( m_mjcfMeshAssets.find( _meshId ) != m_mjcfMeshAssets.end() )
         {
             // if the mesh is is a "pure link" to a filename, then use the stored asset in map
-            _kinTreeVisualPtr->geometry.filename = m_mjcfMeshAssets[ _meshId ].file;
+            _kinTreeVisualPtr->geometry.meshId      = m_mjcfMeshAssets[ _meshId ].name;
+            _kinTreeVisualPtr->geometry.filename    = m_mjcfMeshAssets[ _meshId ].file;
         }
         else
         {
             // if not, then is a pure path to the mesh file
-            _kinTreeVisualPtr->geometry.filename = _meshId;
+            _kinTreeVisualPtr->geometry.meshId      = "";
+            _kinTreeVisualPtr->geometry.filename    = m_mjcfMeshAssets[ _meshId ].file;
         }
         // and the visual/geom size (and check if uses fromto, so we can extract the relative transform)
         TVec3 _posFromFromto;
@@ -271,11 +318,24 @@ namespace agent{
                                                  _kinTreeVisualPtr->geometry.size,
                                                  _posFromFromto,
                                                  _rotFromFromto );
+        _kinTreeVisualPtr->geometry.usesFromto = _usesFromto;
         if ( _usesFromto )
         {
             _kinTreeVisualPtr->relTransform.setPosition( _posFromFromto );
             _kinTreeVisualPtr->relTransform.setRotation( _rotFromFromto );
         }
+        // and the contype collision bitmask (@GENERIC)
+        _kinTreeVisualPtr->contype = geomElementPtr->getAttributeInt( "contype", -1 );
+        // and the conaffinity collision bitmask (@GENERIC)
+        _kinTreeVisualPtr->conaffinity = geomElementPtr->getAttributeInt( "conaffinity", -1 );
+        // and the condim contact dimensionality (@GENERIC)
+        _kinTreeVisualPtr->condim = geomElementPtr->getAttributeInt( "condim", -1 );
+        // and the group the object belongs (for internal compiler calcs.) (@GENERIC)
+        _kinTreeVisualPtr->group = geomElementPtr->getAttributeInt( "group", -1 );
+        // and the material name (@GENERIC)
+        _kinTreeVisualPtr->materialName = geomElementPtr->getAttributeString( "material", "" );
+        // and the rgba color (@GENERIC)
+        _kinTreeVisualPtr->rgba = geomElementPtr->getAttributeVec4( "rgba", { 0.0, 0.0, 0.0, 0.0 } );
         // and store it in the visuals buffer
         m_kinTreeVisuals.push_back( _kinTreeVisualPtr );
         // and to the visuals map
@@ -300,12 +360,14 @@ namespace agent{
         if ( m_mjcfMeshAssets.find( _meshId ) != m_mjcfMeshAssets.end() )
         {
             // if the mesh is is a "pure link" to a filename, then use the stored asset in map
-            _kinTreeCollisionPtr->geometry.filename = m_mjcfMeshAssets[ _meshId ].file;
+            _kinTreeCollisionPtr->geometry.meshId      = m_mjcfMeshAssets[ _meshId ].name;
+            _kinTreeCollisionPtr->geometry.filename    = m_mjcfMeshAssets[ _meshId ].file;
         }
         else
         {
             // if not, then is a pure path to the mesh file
-            _kinTreeCollisionPtr->geometry.filename = _meshId;
+            _kinTreeCollisionPtr->geometry.meshId      = "";
+            _kinTreeCollisionPtr->geometry.filename    = m_mjcfMeshAssets[ _meshId ].file;
         }
         // and the collision/geom size (and check if uses fromto, so we can extract the relative transform)
         TVec3 _posFromFromto;
@@ -314,11 +376,20 @@ namespace agent{
                                                  _kinTreeCollisionPtr->geometry.size,
                                                  _posFromFromto,
                                                  _rotFromFromto );
+        _kinTreeCollisionPtr->geometry.usesFromto = _usesFromto;
         if ( _usesFromto )
         {
             _kinTreeCollisionPtr->relTransform.setPosition( _posFromFromto );
             _kinTreeCollisionPtr->relTransform.setRotation( _rotFromFromto );
         }
+        // and the contype collision bitmask (@GENERIC)
+        _kinTreeCollisionPtr->contype = geomElementPtr->getAttributeInt( "contype", -1 );
+        // and the conaffinity collision bitmask (@GENERIC)
+        _kinTreeCollisionPtr->conaffinity = geomElementPtr->getAttributeInt( "conaffinity", -1 );
+        // and the condim contact dimensionality (@GENERIC)
+        _kinTreeCollisionPtr->condim = geomElementPtr->getAttributeInt( "condim", -1 );
+        // and the group the object belongs (for internal compiler calcs.) (@GENERIC)
+        _kinTreeCollisionPtr->group = geomElementPtr->getAttributeInt( "group", -1 );
         // and store it in the collisions buffer
         m_kinTreeCollisions.push_back( _kinTreeCollisionPtr );
         // and to the collisions map
@@ -327,19 +398,91 @@ namespace agent{
         return _kinTreeCollisionPtr;
     }
 
+    TKinTreeInertia* TAgentKinTreeMjcf::_processInertialFromMjcf( mjcf::GenericElement* inertialElmPtr )
+    {
+        // For this element, check this documentation from mujoco
+        // url: http://mujoco.org/book/XMLreference.html#inertial
+        auto _kinTreeInertia = new TKinTreeInertia();
+        // grab the transform of the inertial frame:
+        // from mujoco docs: origin in body's CM and axes along Principal Axes of inertia
+        // no transformation is required if axes are not aligned, it's going to be done by ...
+        // the compiler when the body is processed by computing the eigenvalues and (perhaps) doing ...
+        // a similar trick to the one done in bullet
+        _extractTransform( inertialElmPtr, _kinTreeInertia->relTransform );
+        // grab the mass as well (required)
+        _kinTreeInertia->mass = inertialElmPtr->getAttributeFloat( "mass", 1.0 );
+        // and also the inertia matrix
+        if ( inertialElmPtr->hasAttributeVec3( "diaginertia" ) )
+        {
+            // we have been given a diagonal inertia matrix
+            auto _inertiaVec3 = inertialElmPtr->getAttributeVec3( "diaginertia", { 0.1, 0.1, 0.1 } );
+            // and assign the inertia matrix
+            _kinTreeInertia->ixx = _inertiaVec3.x;
+            _kinTreeInertia->iyy = _inertiaVec3.y;
+            _kinTreeInertia->izz = _inertiaVec3.z;
+            _kinTreeInertia->ixy = 0.0;
+            _kinTreeInertia->ixz = 0.0;
+            _kinTreeInertia->iyz = 0.0;
+        }
+        else if ( inertialElmPtr->hasAttributeArrayFloat( "fullinertia" ) )
+        {
+            // we have been given a full positive-definite symmetric inertia matrix
+            auto _inertiaArray6 = inertialElmPtr->getAttributeArrayFloat( "fullinertia" );
+            // and assign the inertia matrix
+            _kinTreeInertia->ixx = _inertiaArray6.buff[0];
+            _kinTreeInertia->iyy = _inertiaArray6.buff[1];
+            _kinTreeInertia->izz = _inertiaArray6.buff[2];
+            _kinTreeInertia->ixy = _inertiaArray6.buff[3];
+            _kinTreeInertia->ixz = _inertiaArray6.buff[4];
+            _kinTreeInertia->iyz = _inertiaArray6.buff[5];
+        }
+        else
+        {
+            // Must have one inertia matrix definition given by one of the previous elements
+            std::cout << "ERROR> no inertia-matrix given for agent: " << m_name << std::endl;
+        }
+
+        return _kinTreeInertia;
+    }
+
     void TAgentKinTreeMjcf::_processActuator( mjcf::GenericElement* actuatorElementPtr )
     {
         auto _kinTreeActuatorPtr = new TKinTreeActuator();
         // grab the name
         _kinTreeActuatorPtr->name = actuatorElementPtr->getAttributeString( "name" );
         // and the type of actuator
-        _kinTreeActuatorPtr->type = actuatorElementPtr->getAttributeString( "type" );
+        _kinTreeActuatorPtr->type = actuatorElementPtr->etype;
         // and a reference to the joint it controls
-        _kinTreeActuatorPtr->jointPtr = m_mapKinTreeJoints[ actuatorElementPtr->getAttributeString( "joint" ) ];
+        auto _jointName = actuatorElementPtr->getAttributeString( "joint" );
+        if ( m_mapKinTreeJoints.find( _jointName ) != m_mapKinTreeJoints.end() )
+        {
+            _kinTreeActuatorPtr->jointPtr = m_mapKinTreeJoints[ _jointName ];
+        }
+        else
+        {
+            std::cout << "WARNING> actuator with name: "
+                      << _kinTreeActuatorPtr->name << " "
+                      << "using a non existent joint: "
+                      << _jointName << std::endl;
+
+            _kinTreeActuatorPtr->jointPtr = NULL;
+        }
         // and the ctrl limits
         auto _ctrlLimits = actuatorElementPtr->getAttributeVec2( "ctrlrange", { -1, 1 } );
         _kinTreeActuatorPtr->minCtrl = _ctrlLimits.x;
         _kinTreeActuatorPtr->maxCtrl = _ctrlLimits.y;
+
+        // @CHECK|@WIP : Should use variant here for extra parameters for ...
+        // each backend type used, as some would support more/less features
+
+        // and the ctrl clamping flag (@GENERIC)
+        _kinTreeActuatorPtr->clampCtrl = ( actuatorElementPtr->getAttributeString( "ctrllimited", "true" ) == "true" );
+        // and the position feedback gain (@GENERIC)
+        _kinTreeActuatorPtr->kp = actuatorElementPtr->getAttributeFloat( "kp", 1.0 );
+        // and the velocity feedback gain (@GENERIC)
+        _kinTreeActuatorPtr->kv = actuatorElementPtr->getAttributeFloat( "kv", 1.0 );
+        // and the gear scaling (@GENERIC)
+        _kinTreeActuatorPtr->gear = actuatorElementPtr->getAttributeArrayFloat( "gear" );
 
         // @TODO|CHECK: for some special joints (ball and free) "joint" is not the field we are looking for
 
@@ -373,17 +516,35 @@ namespace agent{
             // and set it to the target transform
             targetTransform.setRotation( _rRotation );
         }
-        else
+        else if ( elementPtr->hasAttributeVec4( "quat" ) )
         {
             // extract rotation using quaternions
             auto _relQuaternion = elementPtr->getAttributeVec4( "quat", { 1.0, 0.0, 0.0, 0.0 } );
             // and extract rotation (quaternion convention in mjcf is "wxyz", our is "xyzw", so compensate for this)
             TVec4 _rQuaternion  = { _relQuaternion.y, _relQuaternion.z, _relQuaternion.w, _relQuaternion.x };
             // and convert to matrix type
-            TMat3 _rRotation    = TMat3::fromQuaternion( _rQuaternion );
+            TMat3 _rRotation = TMat3::fromQuaternion( _rQuaternion );
             // and set it to the target transform
             targetTransform.setRotation( _rRotation );
         }
+        else if ( elementPtr->hasAttributeVec3( "zaxis" ) )
+        {
+            // extract rotation using shortest quaternion to get to the given axis
+            // grab the local zaxis
+            auto _zAxisLocal = elementPtr->getAttributeVec3( "zaxis", { 0.0, 0.0, 1.0 } );
+            // define target zaxis
+            auto _zAxisWorld = TVec3( 0, 0, 1 );
+            // compute minimum rotation quat
+            TVec4 _rQuaternion = shortestArcQuat( _zAxisWorld, _zAxisLocal );
+            // transform it to a matrix type
+            TMat3 _rRotation = TMat3::fromQuaternion( _rQuaternion );
+            // and set it to the target transform
+            targetTransform.setRotation( _rRotation );
+        }
+
+        // @TODO: add support for axisangle, and other remaining frame orientation representations
+
+        // by default, the rotation matrix is set to identity, so no extra info needed
     }
 
     bool TAgentKinTreeMjcf::_extractStandardSize( mjcf::GenericElement* geomElm,

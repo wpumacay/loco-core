@@ -11,12 +11,20 @@ namespace agent {
     {
         m_type  = AGENT_TYPE_KINTREE;
 
-        m_rootBodyPtr = NULL;
+        m_modelTemplateType = "";
+        m_rootBodyPtr       = NULL;
     }
 
     TAgentKinTree::~TAgentKinTree()
     {
         m_rootBodyPtr = NULL;
+
+        for ( size_t i = 0; i < m_kinTreeMeshAssets.size(); i++ )
+        {
+            delete m_kinTreeMeshAssets[i];
+        }
+        m_kinTreeMeshAssets.clear();
+        m_mapKinTreeMeshAssets.clear();
 
         for ( size_t i = 0; i < m_kinTreeJoints.size(); i++ )
         {
@@ -108,11 +116,15 @@ namespace agent {
         // Construct joint sensors for each joint
         for ( size_t i = 0; i < m_kinTreeJoints.size(); i++ )
         {
+            if ( m_kinTreeJoints[i]->type == "free" )
+                continue;
+
             auto _kinTreeJointSensor = new TKinTreeJointSensor();
             // set joint parent name
             _kinTreeJointSensor->jointName = m_kinTreeJoints[i]->name;
             // set an appropiate name (will be used by wrappers, like mujoco)
-            _kinTreeJointSensor->name = m_name + std::string( "_sensJoint_" ) + m_kinTreeJoints[i]->name;
+            _kinTreeJointSensor->name = std::string( "sensor_" ) + m_name + 
+                                        std::string( "_" ) + m_kinTreeJoints[i]->name;
             // and just add it to the list of sensors
             m_kinTreeSensors.push_back( _kinTreeJointSensor );
         }
@@ -124,7 +136,8 @@ namespace agent {
             // set body parent name
             _kinTreeBodySensor->bodyName = m_kinTreeBodies[i]->name;
             // set an appropiate name (will be used by wrappers, like mujoco)
-            _kinTreeBodySensor->name = m_name + std::string( "_sensBody_" ) + m_kinTreeBodies[i]->name;
+            _kinTreeBodySensor->name = std::string( "sensor" ) + m_name + 
+                                       std::string( "_" ) + m_kinTreeBodies[i]->name;
             // and just add it to the list of sensors
             m_kinTreeSensors.push_back( _kinTreeBodySensor );
         }
@@ -293,6 +306,21 @@ namespace agent {
     std::vector< TKinTreeSensor* > TAgentKinTree::getKinTreeSensors()
     {
         return m_kinTreeSensors;
+    }
+
+    std::vector< TKinTreeMeshAsset* > TAgentKinTree::getKinTreeMeshAssets()
+    {
+        return m_kinTreeMeshAssets;
+    }
+
+    TKinTreeBody* TAgentKinTree::getRootBody()
+    {
+        return m_rootBodyPtr;
+    }
+
+    std::string TAgentKinTree::getModelTemplateType()
+    {
+        return m_modelTemplateType;
     }
 
 }}

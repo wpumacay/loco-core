@@ -6,6 +6,7 @@
 #include <vector>
 #include <cmath>
 #include <map>
+#include <set>
 
 typedef float TScalar;
 
@@ -71,6 +72,9 @@ namespace tysoc
 
         static TMat3 fromQuaternion( const TVec4& quat );
         static TMat3 fromEuler( const TVec3& euler );
+
+        static TVec4 toQuaternion( const TMat3& mat );
+        static TVec3 toEuler( const TMat3& mat );
 
         static std::string toString( const TMat3& v );
     };
@@ -159,9 +163,11 @@ namespace tysoc
     struct TGeometry
     {
         std::string     type;           // type of geometry (box,sphere,mesh,etc.)
+        std::string     meshId;         // id in case of a mesh
         std::string     filename;       // file name in case of a mesh
         TVec3           size;           // size params for primitives, scale for mesh
         TMat4           worldTransform; // position part of the world-transform
+        bool            usesFromto;     // flag for fromto checking
     };
 
     std::vector< TScalar > generateRandomArray( int size, TScalar min, TScalar max );

@@ -31,22 +31,27 @@ namespace mjcf {
         void setAttributeArrayInt( const std::string& attribName, const TSizei& arrayint );
         void setAttributeArrayFloat( const std::string& attribName, const TSizef& arrayfloat );
         void setAttributeString( const std::string& attribName, const std::string& val );
-
+        void setAttributeVec2( const std::string& attribName, const TVec2& vec );
         void setAttributeVec3( const std::string& attribName, const TVec3& vec );
         void setAttributeVec4( const std::string& attribName, const TVec4& vec );
 
-        int getAttributeInt( const std::string& attribName );
-        float getAttributeFloat( const std::string& attribName );
+        int getAttributeInt( const std::string& attribName, int def = 0 );
+        float getAttributeFloat( const std::string& attribName, float def = 0.0 );
         TSizef getAttributeArrayFloat( const std::string& attribName );
         TSizei getAttributeArrayInt( const std::string& attribName );
-        std::string getAttributeString( const std::string& attribName );
-
+        std::string getAttributeString( const std::string& attribName, const std::string& def = "" );
         TVec2 getAttributeVec2( const std::string& attribName, const TVec2& def = { 0, 0 } );
         TVec3 getAttributeVec3( const std::string& attribName, const TVec3& def = { 0, 0, 0 } );
         TVec4 getAttributeVec4( const std::string& attribName, const TVec4& def = { 0, 0, 0, 1 } );
- 
-        bool hasAttributeVec4( const std::string& attribName );
+    
+        bool hasAttributeInt( const std::string& attribName );
+        bool hasAttributeFloat( const std::string& attribName );
+        bool hasAttributeArrayInt( const std::string& attribName );
+        bool hasAttributeArrayFloat( const std::string& attribName );
+        bool hasAttributeString( const std::string& attribName );
+        bool hasAttributeVec2( const std::string& attribName );
         bool hasAttributeVec3( const std::string& attribName );
+        bool hasAttributeVec4( const std::string& attribName );
 
         void print();
     };

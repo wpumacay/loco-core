@@ -23,7 +23,8 @@ namespace mjcf {
         return _gelement;
     }
 
-    GenericElement* loadGenericModel( Schema* schema, const std::string& modelfile )
+    GenericElement* loadGenericModel( Schema* schema, 
+                                      const std::string& modelfile )
     {
         tinyxml2::XMLDocument _doc;
         _doc.LoadFile( modelfile.c_str() );
@@ -104,45 +105,105 @@ namespace mjcf {
         return _children;
     }
 
-    void replaceNameRecursive( GenericElement* root, const std::string& name, const std::string& tag )
+    void replaceNameFields( GenericElement* elementPtr, 
+                            const std::string& agentName,
+                            const std::string& attribName,
+                            const std::string& targetType )
     {
-        auto _oldName = root->getAttributeString( tag );
-        // Look for the placeholder text
-        size_t _startPlaceholder = _oldName.find( NAME_PLACEHOLDER_SECTION );
-
-        if ( _startPlaceholder != std::string::npos )
+        if ( !elementPtr->hasAttributeString( attribName ) )
         {
-            auto _nameSubstrPre  = _oldName.substr( 0, _startPlaceholder );
-            auto _nameSubstrPost = _oldName.substr( _startPlaceholder + 3 );
-            auto _newname = _nameSubstrPre + name + _nameSubstrPost;
-
-            root->setAttributeString( tag, _newname );
+            return;
         }
 
-        for ( size_t i = 0; i < root->children.size(); i++ )
-        {
-            replaceNameRecursive( root->children[i], name, tag );
-        }
+        auto _oldName = elementPtr->getAttributeString( attribName );
+        elementPtr->setAttributeString( attribName, computeMjcName( targetType,
+                                                                    _oldName,
+                                                                    agentName ) );
     }
 
-    void deepCopy( GenericElement* target, GenericElement* source )
+    void deepCopy( GenericElement* target, 
+                   GenericElement* source, 
+                   GenericElement* parent,
+                   const std::string& agentName )
     {
         target->etype     = source->etype;
-        target->parent    = source->parent;
+        target->parent    = parent;
         target->_ints     = source->_ints;
         target->_floats   = source->_floats;
         target->_sizefs   = source->_sizefs;
         target->_sizeis   = source->_sizeis;
         target->_strings  = source->_strings;
 
+        if ( agentName != "" )
+        {
+            replaceNameFields( target, agentName, "name", target->etype );
+            replaceNameFields( target, agentName, "joint", "joint" );
+            replaceNameFields( target, agentName, "target", "camera" );
+            replaceNameFields( target, agentName, "body", "body" );
+            replaceNameFields( target, agentName, "site", "site" );
+            // @GENERALIZE : objname could be a body, joint, site, geom, ...
+            replaceNameFields( target, agentName, "objname", "body" );
+            replaceNameFields( target, agentName, "body1", "body" );
+            replaceNameFields( target, agentName, "body2", "body" );
+        }
+
         for ( size_t i = 0; i < source->children.size(); i++ )
         {
             auto _sourceChild   = source->children[i];
             auto _targetChild   = new GenericElement();
 
-            deepCopy( _targetChild, _sourceChild );
+            deepCopy( _targetChild, _sourceChild, target, agentName );
 
             target->children.push_back( _targetChild );
         }
+    }
+
+    std::string computeMjcName( const std::string& type, 
+                                const std::string& elementName, 
+                                const std::string& agentName )
+    {
+        std::string _res;
+
+        if ( type == "body" )
+        {
+            _res += std::string( "body_" ) + agentName + std::string( "_" ) + elementName;
+        }
+        else if ( type == "joint" )
+        {
+            _res += std::string( "joint_" ) + agentName + std::string( "_" ) + elementName;
+        }
+        else if ( type == "geom" )
+        {
+            _res += std::string( "geom_" ) + agentName + std::string( "_" ) + elementName;
+        }
+        else if ( type == "site" )
+        {
+            _res += std::string( "site_" ) + agentName + std::string( "_" ) + elementName;
+        }
+        else if ( type == "motor" || type == "position" || type == "velocity" )
+        {
+            _res += std::string( "actuator_" ) + agentName + std::string( "_" ) + elementName;
+        }
+        else if ( type == "sensor" )
+        {
+            _res += std::string( "sensor_" ) + agentName + std::string( "_" ) + elementName;
+        }
+        else if ( type == "camera" )
+        {
+            _res += std::string( "camera_" ) + agentName + std::string( "_" ) + elementName;
+        }
+        else if ( type == "mesh" )
+        {
+            _res += elementName;
+        }
+        else
+        {
+            std::cout << "WARNING> not supported mjc type: " 
+                      << type << " for mjcname generation" << std::endl;
+
+            _res += elementName;
+        }
+
+        return _res;
     }
 }}
