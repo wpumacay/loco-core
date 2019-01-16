@@ -484,6 +484,17 @@ namespace tysoc
             return _res;
         }
 
+        TVec3 operator* ( const TMat3& mat, const TVec3& vec )
+        {
+            TVec3 _res;
+
+            _res.x = mat.buff[0] * vec.x + mat.buff[3] * vec.y + mat.buff[6] * vec.z;
+            _res.y = mat.buff[1] * vec.x + mat.buff[4] * vec.y + mat.buff[7] * vec.z;
+            _res.z = mat.buff[2] * vec.x + mat.buff[5] * vec.y + mat.buff[8] * vec.z;
+
+            return _res;
+        }
+
         std::vector< TScalar > generateRandomArray( int size, TScalar min, TScalar max )
         {
             std::vector< TScalar > _res;

@@ -12,7 +12,17 @@ typedef float TScalar;
 
 #define TRANDOM( a, b ) ( a + ( b - a ) * ( rand() / ( float )RAND_MAX ) )
 
-#define MAX_SIZE 10
+#define BUFF_MAX_SIZE 10
+
+// Prefixes to be added to all format elements (urdf, mjcf, rlsim-json, etc.)
+#define TYSOC_PREFIX_BODY       "body_"     
+#define TYSOC_PREFIX_JOINT      "joint_"    
+#define TYSOC_PREFIX_GEOM       "geom_"     
+#define TYSOC_PREFIX_SITE       "site_"     
+#define TYSOC_PREFIX_SENSOR     "sensor_"   
+#define TYSOC_PREFIX_ACTUATOR   "actuator_" 
+#define TYSOC_PREFIX_CAMERA     "camera_"   
+#define TYSOC_PREFIX_MATERIAL   "material_" 
 
 namespace tysoc
 {
@@ -128,11 +138,13 @@ namespace tysoc
         static std::string toString( const TMat4& v );
     };
 
+    TVec3 operator* ( const TMat3& mat, const TVec3& vec );
+
     template< class T >
     struct TSize
     {
         int ndim;
-        T buff[MAX_SIZE];
+        T buff[BUFF_MAX_SIZE];
     };
 
     template< class T >

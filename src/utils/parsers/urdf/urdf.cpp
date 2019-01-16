@@ -118,8 +118,9 @@ namespace urdf {
                 else
                 {
                     parsing::logError( std::string( "joint: " ) + 
-                               _jointPtr->name +
-                               std::string( " has no parent link" ) );
+                                       _jointPtr->name +
+                                       std::string( " requested non-existent parent link: " ) +
+                                       _jointPtr->parentLinkName );
 
                     continue;
                 }
@@ -134,8 +135,9 @@ namespace urdf {
                 else
                 {
                     parsing::logError( std::string( "joint: " ) + 
-                               _jointPtr->name +
-                               std::string( " has no child link" ) );
+                                       _jointPtr->name +
+                                       std::string( " requested non-existent child link: " ) +
+                                       _jointPtr->childLinkName );
 
                     continue;
                 }
@@ -176,6 +178,187 @@ namespace urdf {
         }
 
         return true;
+    }
+
+    void deepCopy( UrdfModel* target, 
+                   UrdfModel* source,
+                   const std::string& agentName )
+    {
+        target->name = agentName;
+
+        // Create materials from dictionary of material in the source model
+        for ( auto it = source->materials.begin();
+                   it != source->materials.end();
+                   it++ )
+        {
+            auto _targetMaterial = new UrdfMaterial();
+            auto _sourceMaterial = it->second;
+
+            // Just copy everything directly (no pointer references here)
+            *( _targetMaterial ) = *( _sourceMaterial );
+
+            // and store it into the target's materials dictionary
+            target->materials[ _targetMaterial->name ] = _targetMaterial;
+        }
+
+        // Create links from dictionary of links in the source model
+        for ( auto it = source->links.begin();
+                   it != source->links.end();
+                   it++ )
+        {
+            auto _targetLink = new UrdfLink();
+            auto _sourceLink = it->second;
+
+            _deepCopyLink( _targetLink, _sourceLink, agentName );
+
+            // and store it into the target's links dictionary
+            target->links[ _targetLink->name ] = _targetLink;
+        }
+
+        // Create joints from dictionary of joints in the source model
+        for ( auto it = source->joints.begin();
+                   it != source->joints.end();
+                   it++ )
+        {
+            auto _targetJoint = new UrdfJoint();
+            auto _sourceJoint = it->second;
+
+            _deepCopyJoint( _targetJoint, _sourceJoint, agentName );
+
+            // and store it into the target's joints dictionary
+            target->joints[ _targetJoint->name ] = _targetJoint;
+        }
+
+        // Assemble the links and joints
+        if ( !_initTreeAndRoot( target ) )
+        {
+            std::cout << "WARNING> There was an issue copying the model for "
+                      << "the agent with name: " << agentName << std::endl;
+        }
+    }
+
+    void _deepCopyLink( UrdfLink* targetLink,
+                        UrdfLink* sourceLink,
+                        const std::string& agentName )
+    {
+        // grab the name of the source accordingly
+        targetLink->name = computeUrdfName( "link",
+                                            sourceLink->name,
+                                            agentName );
+
+        // and the inertia
+        if ( sourceLink->inertia )
+        {
+            targetLink->inertia         = new UrdfInertia();
+            *( targetLink->inertia )    = *( sourceLink->inertia );
+        }
+
+        // and the visuals
+        auto _visualsSource = sourceLink->visuals;
+        for ( size_t i = 0; i < _visualsSource.size(); i++ )
+        {
+            auto _visualSource = _visualsSource[i];
+            auto _visualTarget = new UrdfVisual();
+
+            // grab the visual name accordingly
+            _visualTarget->name = computeUrdfName( "visual",
+                                                   _visualSource->name,
+                                                   agentName );
+
+            // and continue copyting everything else
+            _visualTarget->localTransform   = _visualSource->localTransform;
+            *( _visualTarget->material )    = *( _visualSource->material );
+            *( _visualTarget->geometry )    = *( _visualSource->geometry );
+
+            targetLink->visuals.push_back( _visualTarget );
+
+            CURRENT_VISUALS_COUNTER++;
+        }
+
+        // and the collisions
+        auto _collisionsSource = sourceLink->collisions;
+        for ( size_t i = 0; i < _collisionsSource.size(); i++ )
+        {
+            auto _collisionSource = _collisionsSource[i];
+            auto _collisionTarget = new UrdfCollision();
+
+            // grab the collision name accordingly
+            _collisionTarget->name = computeUrdfName( "collision",
+                                                      _collisionSource->name,
+                                                      agentName );
+
+            // and continue copyting everything else
+            _collisionTarget->localTransform   = _collisionSource->localTransform;
+            *( _collisionTarget->geometry )    = *( _collisionSource->geometry );
+
+            targetLink->collisions.push_back( _collisionTarget );
+
+            CURRENT_COLLISIONS_COUNTER++;
+        }
+    }
+
+    void _deepCopyJoint( UrdfJoint* targetJoint,
+                         UrdfJoint* sourceJoint,
+                         const std::string& agentName )
+    {
+        // Firstly, copy everything directly (no pointer references here)
+        *( targetJoint ) = *( sourceJoint );
+
+        // and then modify some names accordingly (for generic/unique representation)
+        targetJoint->name = computeUrdfName( "joint",
+                                             sourceJoint->name,
+                                             agentName );
+
+        targetJoint->parentLinkName = computeUrdfName( "link",
+                                                       sourceJoint->parentLinkName,
+                                                       agentName );
+
+        targetJoint->childLinkName = computeUrdfName( "link",
+                                                      sourceJoint->childLinkName,
+                                                      agentName );
+    }
+
+    std::string computeUrdfName( const std::string& type, 
+                                 const std::string& elementName, 
+                                 const std::string& agentName )
+    {
+        std::string _res;
+
+        if ( type == "link" )
+        {
+            _res += std::string( TYSOC_PREFIX_BODY ) + agentName + std::string( "_" ) + elementName;
+        }
+        else if ( type == "joint" )
+        {
+            _res += std::string( TYSOC_PREFIX_JOINT ) + agentName + std::string( "_" ) + elementName;
+        }
+        else if ( type == "visual" || type == "collision" )
+        {
+            if ( elementName == "" )
+            {
+                std::string _fixedElementName;
+
+                if ( type == "visual" )
+                    _fixedElementName = std::to_string( CURRENT_VISUALS_COUNTER );
+                else
+                    _fixedElementName = std::to_string( CURRENT_COLLISIONS_COUNTER );
+
+                _res += std::string( TYSOC_PREFIX_GEOM ) + agentName + std::string( "_" ) + _fixedElementName;
+            }
+            else
+            {
+                _res += std::string( TYSOC_PREFIX_GEOM ) + agentName + std::string( "_" ) + elementName;
+            }
+        }
+        else
+        {
+            std::cout << "WARNING> not supported urdf type: " 
+                      << type << " for urdfname generation" << std::endl;
+
+            _res += elementName;
+        }
+
+        return _res;
     }
 
 }}

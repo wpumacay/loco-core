@@ -1,8 +1,8 @@
 
 #include <agent/types/agent_kintree_mjcf.h>
 
-namespace tysoc{
-namespace agent{
+namespace tysoc {
+namespace agent {
 
 
     TAgentKinTreeMjcf::TAgentKinTreeMjcf( const std::string& name,
@@ -21,6 +21,7 @@ namespace agent{
 
     TAgentKinTreeMjcf::~TAgentKinTreeMjcf()
     {
+        // @CHECK: calling base virtual destructor?
         m_modelElementPtr = NULL;
     }
 
@@ -39,78 +40,11 @@ namespace agent{
 
         // grab the actuators (sensors are just copied, and the joint sensors are created as needed)
         auto _actuatorsElmPtr   = mjcf::findFirstChildByType( m_modelElementPtr, "actuator" );
-        for ( size_t i = 0; i < _actuatorsElmPtr->children.size(); i++ )
+        if ( _actuatorsElmPtr )
         {
-            _processActuator( _actuatorsElmPtr->children[i] );
-        }
-    }
-
-    void TAgentKinTreeMjcf::_initializeWorldTransforms()
-    {
-        if ( m_rootBodyPtr )
-        {
-            // start from the root (set transform as the start position passed)
-            m_rootBodyPtr->worldTransform.setPosition( m_position );
-            // make an update in the tree (the default transforms ...
-            // should give a results that makes sense, at least visually)
-            _initializeBody( m_rootBodyPtr );
-
-            // update the sensors and actuators, as they are placed ...
-            // in the objects updated before (joints, visuals, collisions, bodies)
-            for ( size_t i = 0; i < m_kinTreeSensors.size(); i++ )
+            for ( size_t i = 0; i < _actuatorsElmPtr->children.size(); i++ )
             {
-                _updateSensor( m_kinTreeSensors[i] );
-            }
-
-            for ( size_t i = 0; i < m_kinTreeActuators.size(); i++ )
-            {
-                _updateActuator( m_kinTreeActuators[i] );
-            }
-        }
-    }
-
-    void TAgentKinTreeMjcf::_initializeBody( TKinTreeBody* kinTreeBodyPtr )
-    {
-        if ( !kinTreeBodyPtr )
-        {
-            return;
-        }
-
-        if ( kinTreeBodyPtr->parentBodyPtr )
-        {
-            kinTreeBodyPtr->worldTransform = kinTreeBodyPtr->parentBodyPtr->worldTransform * 
-                                             kinTreeBodyPtr->relTransform;
-        }
-
-        for ( size_t i = 0; i < kinTreeBodyPtr->childVisuals.size(); i++ )
-        {
-            if ( kinTreeBodyPtr->childVisuals[i] )
-            {
-                _updateVisual( kinTreeBodyPtr->childVisuals[i] );
-            }
-        }
-
-        for ( size_t i = 0; i < kinTreeBodyPtr->childCollisions.size(); i++ )
-        {
-            if ( kinTreeBodyPtr->childCollisions[i] )
-            {
-                _updateCollision( kinTreeBodyPtr->childCollisions[i] );
-            }
-        }
-
-        for ( size_t i = 0; i < kinTreeBodyPtr->childJoints.size(); i++ )
-        {
-            if ( kinTreeBodyPtr->childJoints[i] )
-            {
-                _updateJoint( kinTreeBodyPtr->childJoints[i] );
-            }
-        }
-
-        for ( size_t i = 0; i < kinTreeBodyPtr->childBodies.size(); i++ )
-        {
-            if ( kinTreeBodyPtr->childBodies[i] )
-            {
-                _initializeBody( kinTreeBodyPtr->childBodies[i] );
+                _processActuator( _actuatorsElmPtr->children[i] );
             }
         }
     }
@@ -220,16 +154,16 @@ namespace agent{
         auto _jointElementPtrs = mjcf::getChildrenByType( bodyElementPtr, "joint" );
         for ( size_t i = 0; i < _jointElementPtrs.size(); i++ )
         {
-           auto _kinTreeJointPtr =  _processJointFromMjcf( _jointElementPtrs[i] );
+            auto _kinTreeJointPtr =  _processJointFromMjcf( _jointElementPtrs[i] );
 
-           _kinTreeJointPtr->parentBodyPtr = _kinTreeBodyPtr;
+            _kinTreeJointPtr->parentBodyPtr = _kinTreeBodyPtr;
 
-           _kinTreeBodyPtr->childJoints.push_back( _kinTreeJointPtr );
+            _kinTreeBodyPtr->childJoints.push_back( _kinTreeJointPtr );
         }
 
         // grab the inertial properties (if given, as by default is computed from the geometries)
         // (If no inertia is given, by default is set to NULL, and inertia properties should be ...
-        //  extracted one the model creation has been completed, so an extra initialization stage ...
+        //  extracted once the model creation has been completed, so an extra initialization stage ...
         //  should be added. This is needed to ensure that for other backends they can grab the appropiate ...
         //  inertia computation) (Perhaps this could be avoided if we are sure that for any backend ...
         //  if no inertia is given, then by default the inertia is computed from primitives, and by the ...
@@ -278,7 +212,7 @@ namespace agent{
         _kinTreeJointPtr->armature = jointElementPtr->getAttributeFloat( "armature", 0.0 );
         // and the joint damping (@GENERIC)
         _kinTreeJointPtr->damping = jointElementPtr->getAttributeFloat( "damping", 0.0 );
-        // child body should be set to NULL (used only for urdf)
+        // child body should be set to NULL (used only for urdf?->seems not->@CHANGE)
         _kinTreeJointPtr->childBodyPtr = NULL;
         // and store it in the joints buffer
         m_kinTreeJoints.push_back( _kinTreeJointPtr );
@@ -297,6 +231,10 @@ namespace agent{
         _extractTransform( geomElementPtr, _kinTreeVisualPtr->relTransform );
         // and the type of visual/geom
         _kinTreeVisualPtr->geometry.type = geomElementPtr->getAttributeString( "type" );
+        if ( _kinTreeVisualPtr->geometry.type == "" )
+        {
+            _kinTreeVisualPtr->geometry.type = "sphere";
+        }
         // and the mesh filename in case there is any (this one is tricky)
         auto _meshId = geomElementPtr->getAttributeString( "mesh" );
         if ( m_mjcfMeshAssets.find( _meshId ) != m_mjcfMeshAssets.end() )
@@ -309,7 +247,7 @@ namespace agent{
         {
             // if not, then is a pure path to the mesh file
             _kinTreeVisualPtr->geometry.meshId      = "";
-            _kinTreeVisualPtr->geometry.filename    = m_mjcfMeshAssets[ _meshId ].file;
+            _kinTreeVisualPtr->geometry.filename    = _meshId;
         }
         // and the visual/geom size (and check if uses fromto, so we can extract the relative transform)
         TVec3 _posFromFromto;
@@ -353,8 +291,10 @@ namespace agent{
         _extractTransform( geomElementPtr, _kinTreeCollisionPtr->relTransform );
         // and the collision/geom
         _kinTreeCollisionPtr->geometry.type = geomElementPtr->getAttributeString( "type" );
-        // and the mesh filename in case there is any
-        _kinTreeCollisionPtr->geometry.filename = geomElementPtr->getAttributeString( "mesh" );
+        if ( _kinTreeCollisionPtr->geometry.type == "" )
+        {
+            _kinTreeCollisionPtr->geometry.type = "sphere";
+        }
         // and the mesh filename in case there is any (this one is tricky)
         auto _meshId = geomElementPtr->getAttributeString( "mesh" );
         if ( m_mjcfMeshAssets.find( _meshId ) != m_mjcfMeshAssets.end() )
@@ -367,7 +307,7 @@ namespace agent{
         {
             // if not, then is a pure path to the mesh file
             _kinTreeCollisionPtr->geometry.meshId      = "";
-            _kinTreeCollisionPtr->geometry.filename    = m_mjcfMeshAssets[ _meshId ].file;
+            _kinTreeCollisionPtr->geometry.filename    = _meshId;
         }
         // and the collision/geom size (and check if uses fromto, so we can extract the relative transform)
         TVec3 _posFromFromto;
@@ -407,7 +347,7 @@ namespace agent{
         // from mujoco docs: origin in body's CM and axes along Principal Axes of inertia
         // no transformation is required if axes are not aligned, it's going to be done by ...
         // the compiler when the body is processed by computing the eigenvalues and (perhaps) doing ...
-        // a similar trick to the one done in bullet
+        // a similar trick to the one done in the bullet examples (in some urdf parsing they do this trick)
         _extractTransform( inertialElmPtr, _kinTreeInertia->relTransform );
         // grab the mass as well (required)
         _kinTreeInertia->mass = inertialElmPtr->getAttributeFloat( "mass", 1.0 );

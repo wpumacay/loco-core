@@ -26,7 +26,7 @@ namespace xml {
 
         if ( _attrib )
         {
-            return parsing::_parseVec3( _attrib );
+            return parsing::_parseVec3( _attrib, opt );
         }
         return opt;
     }
@@ -39,7 +39,7 @@ namespace xml {
 
         if ( _attrib )
         {
-            return parsing::_parseVec4( _attrib );
+            return parsing::_parseVec4( _attrib, opt );
         }
         return opt;
     }

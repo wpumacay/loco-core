@@ -7,10 +7,12 @@ namespace tysoc {
 namespace parsing {
 
     /**
-    * @brief        Split a string into a vector of substrings (delimiter = " " SPACE)
-    * @param str    String to split into pieces using SPACE as delimiter
+    * @brief            Split a string into a vector of substrings (default delimiter = " " SPACE)
+    * @param str        String to split into pieces using SPACE as delimiter
+    * @param delimiter  Character delimiter to be used for the splits
     */
-    std::vector< std::string > split( const std::string& str );
+    std::vector< std::string > split( const std::string& str,
+                                      char delimiter = ' ' );
 
     /**
     * @brief        Removes empty fields from a vector of strings
@@ -22,13 +24,13 @@ namespace parsing {
     * @brief            Parses a Vec3 from a string
     * @param strvec     String representation of the Vec3
     */
-    TVec3 _parseVec3( const std::string& strvec );
+    TVec3 _parseVec3( const std::string& strvec, const TVec3& opt = { 0.0f, 0.0f, 0.0f } );
 
     /**
     * @brief            Parses a Vec4 from a string
     * @param strvec     String representation of the Vec4
     */
-    TVec4 _parseVec4( const std::string& strvec );
+    TVec4 _parseVec4( const std::string& strvec, const TVec4& opt = { 0.0f, 0.0f, 0.0f, 1.0f } );
 
     /**
     * @brief            Parses a Sizei(arrayInt) from a string

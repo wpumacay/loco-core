@@ -52,5 +52,12 @@ int main( int argc, const char** argv )
     std::cout << "numJoints: "      << _model->joints.size() << std::endl;
     std::cout << "numMaterials: "   << _model->materials.size() << std::endl;
 
+    // show root links (sanity check, in case there are more than 1)
+    for ( size_t i = 0; i < _model->rootLinks.size(); i++ )
+    {
+        auto _rootLink = _model->rootLinks[i];
+        std::cout << "rootName(" << ( i ) << "): " << _rootLink->name << std::endl;
+    }
+
     return 0;
 }

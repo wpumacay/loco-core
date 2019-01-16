@@ -89,7 +89,7 @@ namespace mjcf {
     * @param elementName    The name of the element in the template file
     * @param agentName      The name of the agent we are computing this for
     */
-    std::string computeMjcName( const std::string& type, 
-                                const std::string& elementName, 
-                                const std::string& agentName );
+    std::string computeMjcfName( const std::string& type, 
+                                 const std::string& elementName, 
+                                 const std::string& agentName );
 }}

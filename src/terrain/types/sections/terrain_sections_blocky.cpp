@@ -61,7 +61,8 @@ namespace terrain {
         m_basePrimitivePtr->rotmat[7] = 0.0f;
         m_basePrimitivePtr->rotmat[8] = 1.0f;
 
-        m_basePrimitivePtr->rbound = std::sqrt( _sx * _sx + _sy * _sy + _sz * _sz );
+        m_basePrimitivePtr->rbound = 0.5f * std::sqrt( _sx * _sx + _sy * _sy + _sz * _sz );
+        std::cout << "rbound: " << m_basePrimitivePtr->rbound << std::endl;
 
         // custom information (for usage here in the profile computation part)
         m_basePrimitivePtr->AABB.p1x = _px - 0.5f * _sx;
@@ -144,7 +145,7 @@ namespace terrain {
             _blockPrimitive->rotmat[7] = 0.0f;
             _blockPrimitive->rotmat[8] = 1.0f;
 
-            _blockPrimitive->rbound = std::sqrt( _sx * _sx + _sy * _sy + _sz * _sz );
+            _blockPrimitive->rbound = 0.5f * std::sqrt( _sx * _sx + _sy * _sy + _sz * _sz );
 
             // custom information (for usage here in the profile computation part)
             _blockPrimitive->AABB.p1x = _px - 0.5f * _sx;

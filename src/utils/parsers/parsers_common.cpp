@@ -4,11 +4,12 @@
 namespace tysoc {
 namespace parsing {
 
-    std::vector< std::string > split( const std::string& str )
+    std::vector< std::string > split( const std::string& str,
+                                      char delimiter )
     {
         std::vector< std::string > _res;
                     
-        int pos = str.find( ' ' );
+        int pos = str.find( delimiter );
         if ( pos == std::string::npos )
         {
             _res.push_back( str );
@@ -22,7 +23,7 @@ namespace parsing {
             _res.push_back( str.substr( initpos, pos - initpos ) );
             initpos = pos + 1;
 
-            pos = str.find( ' ', initpos );
+            pos = str.find( delimiter, initpos );
         }
 
         _res.push_back( str.substr( initpos, std::min( pos, (int) str.size() ) - initpos ) );
@@ -46,11 +47,17 @@ namespace parsing {
         }
     }
 
-    TVec3 _parseVec3( const std::string& strvec )
+    TVec3 _parseVec3( const std::string& strvec, const TVec3& opt )
     {
         TVec3 _res;
         
         auto _fields = split( strvec );
+        if ( _fields.size() != 3 )
+        {
+            std::cout << "WARNING> not enough fields for vec3: " << strvec << std::endl;
+            return opt;
+        }
+
         _res.x = std::stof( _fields[0] );
         _res.y = std::stof( _fields[1] );
         _res.z = std::stof( _fields[2] );
@@ -58,11 +65,17 @@ namespace parsing {
         return _res;
     }
 
-    TVec4 _parseVec4( const std::string& strvec )
+    TVec4 _parseVec4( const std::string& strvec, const TVec4& opt )
     {
         TVec4 _res;
         
         auto _fields = split( strvec );
+        if ( _fields.size() != 4 )
+        {
+            std::cout << "WARNING> not enough fields for vec4: " << strvec << std::endl;
+            return opt;
+        }
+
         _res.x = std::stof( _fields[0] );
         _res.y = std::stof( _fields[1] );
         _res.z = std::stof( _fields[2] );

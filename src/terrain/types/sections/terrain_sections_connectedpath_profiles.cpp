@@ -16,7 +16,8 @@ namespace terrain {
 
     float TSineProfileGenerator::generate( float x )
     {
-        return m_ampl * std::sin( ( 2.0f * M_PI * x / m_period ) + m_phase );
+        // return m_ampl * std::sin( ( 2.0f * M_PI * x / m_period ) + m_phase );
+        return 1.0f;
     }
 
     TPerlin1DProfileGenerator::TPerlin1DProfileGenerator( int octaves, 

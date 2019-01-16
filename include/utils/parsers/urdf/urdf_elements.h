@@ -7,6 +7,11 @@
 namespace tysoc {
 namespace urdf {
 
+    // @CHECK|@REFACTOR: Check if needs to create data in heap, or could just ...
+    //                   create the data into the stack, by replacing pointers ...
+    //                   by the structs itself (like the urdfgeometry. It could ...
+    //                   just be a plain variable and not a pointer)
+
     /*************************************************************
     *   NATERIAL AND INERTIA INFORMATION
     *************************************************************/
@@ -44,11 +49,11 @@ namespace urdf {
         {
             mass    = 1.0f;
             ixx     = 1.0f;
+            iyy     = 1.0f;
+            izz     = 1.0f;
             ixy     = 0.0f;
             ixz     = 0.0f;
-            iyy     = 1.0f;
             iyz     = 0.0f;
-            izz     = 1.0f;
         }
 
         void collectAttribs( tinyxml2::XMLElement* xmlElement );
@@ -122,7 +127,7 @@ namespace urdf {
     struct UrdfLink
     {
         std::string                         name;
-        UrdfInertia                         inertia;
+        UrdfInertia*                        inertia;
         std::vector< UrdfVisual* >          visuals;
         std::vector< UrdfCollision* >       collisions;
         UrdfLink*                           parentLink;
@@ -132,8 +137,9 @@ namespace urdf {
 
         UrdfLink()
         {
-            parentLink    = NULL;
-            parentJoint   = NULL;
+            inertia         = NULL;
+            parentLink      = NULL;
+            parentJoint     = NULL;
         }
 
         void collectAttribs( tinyxml2::XMLElement* xmlElement );

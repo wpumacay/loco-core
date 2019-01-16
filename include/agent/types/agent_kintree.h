@@ -4,8 +4,8 @@
 #include <agent/agent_base.h>
 
 
-namespace tysoc{
-namespace agent{
+namespace tysoc {
+namespace agent {
 
     // The approach is to define as much functionality supported ...
     // as possible (like a variant/generic). This is a bit wasteful if ...
@@ -14,6 +14,64 @@ namespace agent{
     // Some structures that might or might not be in some representations are ...
     // sensors and actuators. Still, in case they don't support them, the ...
     // concrete representation class will handle initializing by default this structures.
+
+    /**
+    *   Kinematic Tree definition : the basic structure of our generic kintree is
+    *                               show in the following "figure" (where the ...
+    *                               letters b,j,v,c stand for body, joint, ...
+    *                               visual and collision respectively, and the ...
+    *                               "[x]" stand for an array of elements "x", e.g ...
+    *                               [j] an array of joints)
+    *
+    *                        b______________     (root of kintree)
+    *                       / \____  \____  \____
+    *                      /       \      \      \
+    *                    [b]______  [j]    [v]    [c]
+    *                    / \_  \_ \__
+    *                   /    \   \   \
+    *                  [b]  [j]  [v] [c]
+    *                 /
+    *                .
+    *               .
+    *              .
+    *
+    *
+    *   > Each body consists of a collections of joints, visuals, collisions and ...
+    *     some other potential elements. Basically the body obj. is the node of the tree.
+    *   > Joints are a bit tricky, as it means different things in different formats, ...
+    *     like in urdf and mjcf. For example, in mjcf, they represent connections of ...
+    *     the current body to a parent body, whereas in urdf they represent connections ...
+    *     of the current body to its child bodies.
+    *   > The approach to make this generic is quite simple. Just parse the given ...
+    *     format into this representation, and ensure the left portion of the tree ...
+    *     is the same, which means that bodies are connected to bodies.
+    *   > The relative transforms between bodies are not that necessary as the world ...
+    *     transforms are calculated and extracted from the specific backend, in any ...
+    *     way the compute this internally.
+    *   > Once we have the world transforms for each body, we then just update the ...
+    *     components of the body accordingly (visuals, joints, collisions). By this ...
+    *     I mean updating its world transforms given the relative transforms.
+    *   > For a mimic kintree in which we want to give the pose and let it play, ...
+    *     e.g from keyframes, we have to traverse the tree in the format that it ...
+    *     was parsed in.
+    *   > By the previous point I mean traverse it using the connections used ...
+    *     by the format it was given (urdf, mjcf, etc.). The possible connections ...
+    *     are represented by pointers between components. In some representations ...
+    *     these are NULL, and in some they are not (see the parentJointPtr field in ...
+    *     the TKinTreeBody structure).
+    *   > This animation-kintree should be implemented in a different file with ...
+    *     this functionality in mind (@WIP). If it hasn't just shout out in the issues ...
+    *     to remind me :D.
+    *   > If you have any other issues that might potentially arise from this representation ...
+    *     just let me know. I'd be happy to change the design into something more robust ...
+    *     that can handle as many representations and backends as possible. So far this ...
+    *     is what I've come up with.
+    *   > joints in the body are the actual dof, so they are the joints that connect
+    *     that body to its parents
+    */
+
+
+
 
     // forward declaration to allow composition
     struct TKinTreeBody;
@@ -152,14 +210,14 @@ namespace agent{
     {
         std::string                         name;
         TMat4                               worldTransform;     // World transform
-        TMat4                               relTransform;       // Relative transform to parent body (mjcf)
+        TMat4                               relTransform;       // Relative transform to parent body (all)
         TKinTreeBody*                       parentBodyPtr;      // Parent body (mjcf)
         TKinTreeJoint*                      parentJointPtr;     // Parent joint (urdf)
-        TKinTreeInertia*                    inertiaPtr;         // Inertia (if defined. if not, calculated by engine) (urdf)
+        TKinTreeInertia*                    inertiaPtr;         // Inertia (if defined. if not, calculated by engine) (all)
         std::vector< TKinTreeCollision* >   childCollisions;    // Collisions attached to the body
         std::vector< TKinTreeVisual* >      childVisuals;       // Visuals attached to the body
         std::vector< TKinTreeJoint* >       childJoints;        // Connections to other bodies
-        std::vector< TKinTreeBody* >        childBodies;        // Child bodies (mjcf)
+        std::vector< TKinTreeBody* >        childBodies;        // Child bodies (all)
 
         TKinTreeBody()
         {
@@ -286,10 +344,11 @@ namespace agent{
         void _updateCollision( TKinTreeCollision* kinTreeCollisionPtr );
 
         void _initializeKinTree();
-        void _constructDefaultSensors();
         virtual void _constructKinTree() = 0;
-        virtual void _initializeWorldTransforms() = 0;
-
+        void _constructDefaultSensors();
+        void _initializeWorldTransforms();// current transforms should represent zero/rest position
+        void _initializeBody( TKinTreeBody* kinTreeBodyPtr );
+        
         public :
 
         TAgentKinTree( const std::string& name,
@@ -310,6 +369,9 @@ namespace agent{
 
         TKinTreeBody* getRootBody();
         std::string getModelTemplateType();
+
+        std::string toString();
+        std::string _strTraverse( TKinTreeBody* kinTreeBodyPtr, size_t depth );
     };
 
 

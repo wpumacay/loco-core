@@ -60,14 +60,14 @@ namespace mjcf {
 
     GenericElement* createBody( const std::string& name,
                                 const TVec3& pos = { 0, 0, 0 },
-                                const TVec4& quat = { 0, 0, 0, 1 } );
+                                const TVec4& quat = { 1, 0, 0, 0 } );
 
     GenericElement* createGeometry( const std::string& name,
                                     const std::string& type,
                                     const TSizef& size,
                                     float mass = 0.0f,
                                     const TVec3& pos = { 0, 0, 0 },
-                                    const TVec4& quat = { 0, 0, 0, 1 } );
+                                    const TVec4& quat = { 1, 0, 0, 0 } );
 
     GenericElement* createGeometry( const std::string& name,
                                     const std::string& type,

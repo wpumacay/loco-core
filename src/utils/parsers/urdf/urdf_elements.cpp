@@ -108,12 +108,13 @@ namespace urdf {
         {
             this->type      = "mesh";
             this->size      = xml::safeParseVec3( _shapeElement, "scale", { 1, 1, 1 } );
-            this->filename  = xml::safeParseString( _shapeElement, "filename" );
+            this->filename  = xml::safeParseString( _shapeElement, "filename", "" );
         }
         else if ( _typeName == "plane" )
         {
-            this->type = "plane";
-            this->size = xml::safeParseVec3( _shapeElement, "normal", { 0, 0, 1 } );
+            this->type      = "plane";
+            this->size.x    = xml::safeParseFloat( _shapeElement, "width", 1 );
+            this->size.y    = xml::safeParseFloat( _shapeElement, "depth", 1 );
         }
         else
         {
@@ -176,7 +177,10 @@ namespace urdf {
         // Inertial (optional)
         auto _inertialElement = xmlElement->FirstChildElement( "inertial" );
         if ( _inertialElement )
-            this->inertia.collectAttribs( _inertialElement );
+        {
+            this->inertia = new UrdfInertia();
+            this->inertia->collectAttribs( _inertialElement );
+        }
 
         // Multiple Visuals (optional)
         for ( auto _visualElement = xmlElement->FirstChildElement( "visual" ); 
@@ -232,7 +236,7 @@ namespace urdf {
         if ( this->type != "floating" && this->type != "fixed" )
         {
             auto _axisElement = xmlElement->FirstChildElement( "axis" );
-            if ( !_axisElement )
+            if ( _axisElement )
                 this->localJointAxis = xml::safeParseVec3( _axisElement, "xyz", { 1, 0, 0 } );
         }
 

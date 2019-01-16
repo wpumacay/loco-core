@@ -35,8 +35,6 @@ namespace agent{
         void _processActuator( mjcf::GenericElement* actuatorElementPtr );
 
         void _constructKinTree() override;
-        void _initializeWorldTransforms() override;
-        void _initializeBody( TKinTreeBody* kinTreeBodyPtr );
 
         void _collectAssets();
 
