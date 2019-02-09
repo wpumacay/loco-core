@@ -187,7 +187,7 @@ namespace urdf {
         std::vector< UrdfLink* >                rootLinks;
 
         UrdfModel(){}
-        ~UrdfModel(){}// @TODO: Check what do release
+        ~UrdfModel(){}// @TODO: Check what to release
     };
 
 }}
