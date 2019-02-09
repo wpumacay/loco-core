@@ -24,6 +24,8 @@ typedef float TScalar;
 #define TYSOC_PREFIX_CAMERA     "camera_"   
 #define TYSOC_PREFIX_MATERIAL   "material_" 
 
+#define TYSOC_FLOAT_EPSILON 0.000001
+
 namespace tysoc
 {
 
@@ -139,6 +141,8 @@ namespace tysoc
     };
 
     TVec3 operator* ( const TMat3& mat, const TVec3& vec );
+    bool operator== ( const TVec3& vec1, const TVec3& vec2 );
+    bool operator== ( const TVec4& vec1, const TVec4& vec2 );
 
     template< class T >
     struct TSize

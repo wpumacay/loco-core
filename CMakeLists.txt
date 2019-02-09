@@ -25,3 +25,5 @@ add_library( tysocCore
 
 # Configure tests
 add_subdirectory( tests )
+# Configure unittests
+add_subdirectory( unittest )

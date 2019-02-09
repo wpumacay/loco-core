@@ -495,6 +495,37 @@ namespace tysoc
             return _res;
         }
 
+        bool operator== ( const TVec3& vec1, const TVec3& vec2 )
+        {
+            if ( std::fabs( vec1.x - vec2.x ) > TYSOC_FLOAT_EPSILON )
+                return false;
+
+            if ( std::fabs( vec1.y - vec2.y ) > TYSOC_FLOAT_EPSILON )
+                return false;
+
+            if ( std::fabs( vec1.z - vec2.z ) > TYSOC_FLOAT_EPSILON )
+                return false;
+
+            return true;
+        }
+
+        bool operator== ( const TVec4& vec1, const TVec4& vec2 )
+        {
+            if ( std::fabs( vec1.x - vec2.x ) > TYSOC_FLOAT_EPSILON )
+                return false;
+
+            if ( std::fabs( vec1.y - vec2.y ) > TYSOC_FLOAT_EPSILON )
+                return false;
+
+            if ( std::fabs( vec1.z - vec2.z ) > TYSOC_FLOAT_EPSILON )
+                return false;
+
+            if ( std::fabs( vec1.w - vec2.w ) > TYSOC_FLOAT_EPSILON )
+                return false;
+
+            return true;
+        }
+
         std::vector< TScalar > generateRandomArray( int size, TScalar min, TScalar max )
         {
             std::vector< TScalar > _res;

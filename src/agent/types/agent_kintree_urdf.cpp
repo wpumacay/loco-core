@@ -327,9 +327,9 @@ namespace agent{
                               _kinTreeVisualPtr->geometry.size );
         _kinTreeVisualPtr->geometry.usesFromto = false;
         // and the contype collision bitmask (@GENERIC)
-        _kinTreeVisualPtr->contype = -1;
+        _kinTreeVisualPtr->contype = 1;
         // and the conaffinity collision bitmask (@GENERIC)
-        _kinTreeVisualPtr->conaffinity = -1;
+        _kinTreeVisualPtr->conaffinity = 0;
         // and the condim contact dimensionality (@GENERIC)
         _kinTreeVisualPtr->condim = -1;
         // and the group the object belongs (for internal compiler calcs.) (@GENERIC)
