@@ -18,7 +18,7 @@ namespace urdf {
     UrdfModel* loadGenericModel( const std::string& modelfile );
 
     /**
-    * @brief                Initializes the model by linkings its inner data accordingly
+    * @brief                Initializes the model by linking its inner components accordingly
     * @param modelDataPtr   The UrdfModel pointer representing the model to initialize
     * @return               Returns true or false depending of the initialization success
     */
@@ -64,4 +64,5 @@ namespace urdf {
                                  const std::string& elementName, 
                                  const std::string& agentName );
 
+    
 }}

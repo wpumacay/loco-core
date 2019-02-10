@@ -58,8 +58,8 @@ namespace rlsim{
         std::vector< TVec2 >        limitsPerDof;
         TScalar                     torqueLimit;
         std::vector< RlsimJoint* >  childJoints;
-        std::vector< RlsimBody* >   bodies;
-        std::vector< RlsimVisual* > visuals;
+        std::vector< RlsimBody* >   childBodies;
+        std::vector< RlsimVisual* > childVisuals;
 
         RlsimJoint()
         {
