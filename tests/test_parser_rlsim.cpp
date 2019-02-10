@@ -12,6 +12,8 @@
 static std::string RLSIM_MODEL = "biped3d";
 static int RLSIM_JOINT_TEST_INDEX = 0;
 
+void printJointInfo( tysoc::rlsim::RlsimJoint* jointPtr );
+
 int main( int argc, const char** argv )
 {
     if ( argc > 1 )
@@ -63,7 +65,7 @@ int main( int argc, const char** argv )
 
     std::cout << "INFO> finished parsing" << std::endl;
 
-    std::cout << "TESTING SOME INFO FROM URDF" << std::endl;
+    std::cout << "CHECKING SOME INFO FROM RLSIM" << std::endl;
 
     std::cout << "rootJoint: "  << _model->rootJoint->name << std::endl;
     std::cout << "numBodies: "  << _model->bodies.size() << std::endl;
@@ -80,15 +82,34 @@ int main( int argc, const char** argv )
     }
 
     auto _joint = _model->joints[RLSIM_JOINT_TEST_INDEX];
-    std::cout << "joint->name: " << _joint->name << std::endl;
-    std::cout << "joint->type: " << _joint->type << std::endl;
-    std::cout << "joint->parentJointId: " << _joint->parentJointId << std::endl;
-    std::cout << "joint->localPos: " << tysoc::TVec3::toString( _joint->localPos ) << std::endl;
-    std::cout << "joint->localEuler: " << tysoc::TVec3::toString( _joint->localEuler ) << std::endl;
-    std::cout << "joint->childJoints.size(): " << _joint->childJoints.size() << std::endl;
-    std::cout << "joint->childVisuals.size(): " << _joint->childVisuals.size() << std::endl;
-    std::cout << "joint->childBodies.size(): " << _joint->childBodies.size() << std::endl;
-    std::cout << "joint->torqueLimit: " << _joint->torqueLimit << std::endl;
+    printJointInfo( _joint );
+
+    std::cout << "CHECKING DEEPCOPY FUNCTIONALITY" << std::endl;
+
+    auto _modelCopy = new tysoc::rlsim::RlsimModel();
+    tysoc::rlsim::deepCopy( _modelCopy, _model, "gregor" );
+
+    std::cout << "name: "       << _modelCopy->name << std::endl;
+    std::cout << "rootJoint: "  << _modelCopy->rootJoint->name << std::endl;
+    std::cout << "numBodies: "  << _modelCopy->bodies.size() << std::endl;
+    std::cout << "numJoints: "  << _modelCopy->joints.size() << std::endl;
+    std::cout << "numVisuals: " << _modelCopy->visuals.size() << std::endl;
+
+    _joint = _modelCopy->joints[RLSIM_JOINT_TEST_INDEX];
+    printJointInfo( _joint );
 
     return 0;
+}
+
+void printJointInfo( tysoc::rlsim::RlsimJoint* jointPtr )
+{
+    std::cout << "joint->name: " << jointPtr->name << std::endl;
+    std::cout << "joint->type: " << jointPtr->type << std::endl;
+    std::cout << "joint->parentJointId: " << jointPtr->parentJointId << std::endl;
+    std::cout << "joint->localPos: " << tysoc::TVec3::toString( jointPtr->localPos ) << std::endl;
+    std::cout << "joint->localEuler: " << tysoc::TVec3::toString( jointPtr->localEuler ) << std::endl;
+    std::cout << "joint->childJoints.size(): " << jointPtr->childJoints.size() << std::endl;
+    std::cout << "joint->childVisuals.size(): " << jointPtr->childVisuals.size() << std::endl;
+    std::cout << "joint->childBodies.size(): " << jointPtr->childBodies.size() << std::endl;
+    std::cout << "joint->torqueLimit: " << jointPtr->torqueLimit << std::endl;
 }

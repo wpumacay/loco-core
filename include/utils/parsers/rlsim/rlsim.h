@@ -28,4 +28,24 @@ namespace rlsim {
     bool _initTreeAndRoot( RlsimModel* modelDataPtr );
 
 
+    /**
+    * @brief            Makes a deep copy of the given source RlsimModel
+    * @param target     Target RlsimModel where to copy the data
+    * @param source     Source RlsimModel from whom to copy the data
+    * @param agentName  Name of the agent (optional) to be used to replace name fields
+    */
+    void deepCopy( RlsimModel* target, 
+                   RlsimModel* source,
+                   const std::string& agentName = "" );
+
+    /**
+    * @brief                Creates the appropiate name for the rlsim element
+    * @param type           Type element type from whom we want to compute the name
+    * @param elementName    The name of the element in the template file
+    * @param agentName      The name of the agent we are computing this for
+    */
+    std::string computeName( const std::string& type, 
+                             const std::string& elementName, 
+                             const std::string& agentName );
+
 }}

@@ -180,4 +180,95 @@ namespace rlsim {
         return true;
     }
 
+    void deepCopy( RlsimModel* target, 
+                   RlsimModel* source,
+                   const std::string& agentName )
+    {
+        target->name = agentName;
+
+        for ( size_t q = 0; q < source->bodies.size(); q++ )
+        {
+            auto _targetBody = new RlsimBody();
+            auto _sourceBody = source->bodies[q];
+
+            // Just copy everything directly (no pointer references here)
+            *( _targetBody ) = *( _sourceBody );
+            // and modify the name accordingly
+            _targetBody->name = computeName( "body",
+                                             _sourceBody->name,
+                                             agentName );
+
+            target->bodies.push_back( _targetBody );
+        }
+
+        for ( size_t q = 0; q < source->visuals.size(); q++ )
+        {
+            auto _targetVisual = new RlsimVisual();
+            auto _sourceVisual = source->visuals[q];
+
+            // Just copy everything directly (no pointer references here)
+            *( _targetVisual ) = *( _sourceVisual );
+            // and modify the name accordingly
+            _targetVisual->name = computeName( "visual",
+                                               _sourceVisual->name,
+                                               agentName );
+
+            target->visuals.push_back( _targetVisual );
+        }
+
+        for ( size_t q = 0; q < source->joints.size(); q++ )
+        {
+            auto _targetJoint = new RlsimJoint();
+            auto _sourceJoint = source->joints[q];
+
+            // First copy all contents from source to target
+            *( _targetJoint ) = *( _sourceJoint );
+            // and then clear the child containers
+            _targetJoint->childVisuals.clear();
+            _targetJoint->childJoints.clear();
+            _targetJoint->childBodies.clear();
+            // and modify the name accordingly
+            _targetJoint->name = computeName( "joint",
+                                              _sourceJoint->name,
+                                              agentName );
+
+            target->joints.push_back( _targetJoint );
+        }
+
+        if ( !_initTreeAndRoot( target ) )
+        {
+            std::cout << "WARNING> There was an issue copying the model for "
+                      << "the agent with name: " << agentName << std::endl;
+        }
+    }
+
+    std::string computeName( const std::string& type, 
+                             const std::string& elementName, 
+                             const std::string& agentName )
+    {
+        std::string _res;
+
+        if ( type == "body" )
+        {
+            _res += std::string( TYSOC_PREFIX_BODY ) + agentName + std::string( "_" ) + elementName;
+        }
+        else if ( type == "joint" )
+        {
+            _res += std::string( TYSOC_PREFIX_JOINT ) + agentName + std::string( "_" ) + elementName;
+        }
+        else if ( type == "visual" )
+        {
+            _res += std::string( TYSOC_PREFIX_GEOM ) + agentName + std::string( "_" ) + elementName;
+        }
+        else
+        {
+            std::cout << "WARNING> not supported rlsim type: " 
+                      << type << " for name generation" << std::endl;
+
+            _res += elementName;
+        }
+
+        return _res;
+    }
+
 }}
