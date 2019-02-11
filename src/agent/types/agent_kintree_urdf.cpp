@@ -1,8 +1,8 @@
 
 #include <agent/types/agent_kintree_urdf.h>
 
-namespace tysoc{
-namespace agent{
+namespace tysoc {
+namespace agent {
 
 
 
@@ -353,7 +353,7 @@ namespace agent{
         _kinTreeCollisionPtr->name = urdfCollisionPtr->name;
         // and the relative transform to the parent body
         _kinTreeCollisionPtr->relTransform = urdfCollisionPtr->localTransform;
-        // and the collision/geom
+        // and the collision/geom shape
         _kinTreeCollisionPtr->geometry.type = urdfCollisionPtr->geometry->type;
         // and the mesh filename in case there is any
         if ( urdfCollisionPtr->geometry->type == "mesh" )

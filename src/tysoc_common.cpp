@@ -371,6 +371,16 @@ namespace tysoc
             buff[10] = rotation.buff[8];
         }
 
+        void TMat4::setRotation( const TVec3& rotEuler )
+        {
+            setRotation( TMat3::fromEuler( rotEuler ) );
+        }
+
+        void TMat4::setRotation( const TVec4& rotQuaternion )
+        {
+            setRotation( TMat3::fromQuaternion( rotQuaternion ) );
+        }
+
         TVec3 TMat4::getPosition() const
         {
             return TVec3( buff[12], buff[13], buff[14] );

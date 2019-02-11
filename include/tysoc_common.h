@@ -107,6 +107,8 @@ namespace tysoc
 
         void setPosition( const TVec3& position );
         void setRotation( const TMat3& rotation );
+        void setRotation( const TVec3& rotEuler );
+        void setRotation( const TVec4& rotQuaternion );
 
         TVec3 getPosition() const;
         TMat3 getRotation() const;

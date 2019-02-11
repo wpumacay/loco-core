@@ -336,7 +336,7 @@ namespace agent {
         void _updateAgentInternal( float dt ) override;
 
         // update components
-        void _updateBody( TKinTreeBody* kinTreeBodyPtr );
+        void _updateBodyComponents( TKinTreeBody* kinTreeBodyPtr );
         void _updateJoint( TKinTreeJoint* kinTreeJointPtr );
         void _updateActuator( TKinTreeActuator* kinTreeActuatorPtr );
         void _updateSensor( TKinTreeSensor* kinTreeSensorPtr );

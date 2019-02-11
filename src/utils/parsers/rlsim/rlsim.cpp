@@ -115,7 +115,7 @@ namespace rlsim {
                  _visuals[q]->parentJointId >= _joints.size() )
             {
                 std::cout << "ERROR> visual: " << _visuals[q]->name 
-                          << " has an valid parentJointId: "
+                          << " has an invalid parentJointId: "
                           << _visuals[q]->parentJointId << std::endl;
                 return false;
             }
@@ -132,7 +132,7 @@ namespace rlsim {
                  _bodies[q]->parentJointId >= _joints.size() )
             {
                 std::cout << "ERROR> body: " << _bodies[q]->name 
-                          << " has an valid parentJointId: "
+                          << " has an invalid parentJointId: "
                           << _bodies[q]->parentJointId << std::endl;
                 return false;
             }
@@ -167,7 +167,7 @@ namespace rlsim {
                 if ( _joints[q]->parentJointId >= _joints.size() )
                 {
                     std::cout << "ERROR> joint: " << _joints[q]->name
-                              << " has an valid parentJointId: "
+                              << " has an invalid parentJointId: "
                               << _joints[q]->parentJointId << std::endl;
                     return false;
                 }
@@ -184,7 +184,8 @@ namespace rlsim {
                    RlsimModel* source,
                    const std::string& agentName )
     {
-        target->name = agentName;
+        if ( agentName != "" )
+            target->name = agentName;
 
         for ( size_t q = 0; q < source->bodies.size(); q++ )
         {
@@ -246,11 +247,19 @@ namespace rlsim {
                              const std::string& elementName, 
                              const std::string& agentName )
     {
+        // In case no agentname is given (no replacement needed) then just skip
+        if ( agentName == "" )
+            return elementName;
+
         std::string _res;
 
         if ( type == "body" )
         {
             _res += std::string( TYSOC_PREFIX_BODY ) + agentName + std::string( "_" ) + elementName;
+        }
+        else if ( type == "collision" )
+        {
+            _res += std::string( TYSOC_PREFIX_GEOM ) + agentName + std::string( "_" ) + elementName;
         }
         else if ( type == "joint" )
         {

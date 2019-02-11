@@ -229,7 +229,7 @@ namespace agent {
         // world transforms, for later usage in other sub systems
         for ( size_t i = 0; i < m_kinTreeBodies.size(); i++ )
         {
-            _updateBody( m_kinTreeBodies[i] );
+            _updateBodyComponents( m_kinTreeBodies[i] );
         }
 
         // update the sensors and actuators, as they are placed ...
@@ -248,7 +248,7 @@ namespace agent {
         m_position = m_rootBodyPtr->worldTransform.getPosition();
     }
 
-    void TAgentKinTree::_updateBody( TKinTreeBody* kinTreeBodyPtr )
+    void TAgentKinTree::_updateBodyComponents( TKinTreeBody* kinTreeBodyPtr )
     {
         if ( !kinTreeBodyPtr )
         {
