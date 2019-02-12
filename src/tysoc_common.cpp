@@ -536,6 +536,11 @@ namespace tysoc
             return true;
         }
 
+        TScalar rad2degrees( const TScalar& rads )
+        {
+            return rads * 180.0 / TYSOC_PI;
+        }
+
         std::vector< TScalar > generateRandomArray( int size, TScalar min, TScalar max )
         {
             std::vector< TScalar > _res;

@@ -265,6 +265,10 @@ namespace rlsim {
         {
             _res += std::string( TYSOC_PREFIX_JOINT ) + agentName + std::string( "_" ) + elementName;
         }
+        else if ( type == "actuator" )
+        {
+            _res += std::string( TYSOC_PREFIX_ACTUATOR ) + agentName + std::string( "_" ) + elementName;
+        }
         else if ( type == "visual" )
         {
             _res += std::string( TYSOC_PREFIX_GEOM ) + agentName + std::string( "_" ) + elementName;

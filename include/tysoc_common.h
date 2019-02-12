@@ -26,6 +26,7 @@ typedef float TScalar;
 #define TYSOC_PREFIX_MATERIAL   "material_" 
 
 #define TYSOC_FLOAT_EPSILON 0.000001
+#define TYSOC_PI 3.141592653589793
 
 namespace tysoc
 {
@@ -188,6 +189,8 @@ namespace tysoc
         TMat4           worldTransform; // position part of the world-transform
         bool            usesFromto;     // flag for fromto checking
     };
+
+    TScalar rad2degrees( const TScalar& rads );
 
     std::vector< TScalar > generateRandomArray( int size, TScalar min, TScalar max );
 

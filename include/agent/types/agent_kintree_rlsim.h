@@ -29,6 +29,8 @@ namespace agent {
 
         TKinTreeInertia* _processInertialFromRlsim( rlsim::RlsimBody* rlSimBodyPtr );
 
+        void _constructDefaultActuators();
+
         void _extractStandardSize( const std::string& shapeType,
                                    const TVec3& srcSize,
                                    TVec3& dstSize );

@@ -27,6 +27,9 @@ namespace agent {
     void TAgentKinTreeRlsim::_constructKinTree()
     {
         m_rootBodyPtr = _processNode( m_rlsimModelPtr->rootJoint, NULL );
+
+        // @TESTING
+        _constructDefaultActuators();
     }
 
     TKinTreeBody* TAgentKinTreeRlsim::_processNode( rlsim::RlsimJoint* rlsimJointPtr, 
@@ -145,7 +148,7 @@ namespace agent {
 
         // grab the type of joint
         if ( rlsimJointPtr->type == "none" )
-            _kinTreeJointPtr->type = "free";
+            _kinTreeJointPtr->type = "fixed";
         else
             _kinTreeJointPtr->type = rlsimJointPtr->type;
 
@@ -154,8 +157,8 @@ namespace agent {
 
         // grab the joint limits (@TODO: for ball joints should have per-dof ...
         // limits, for now just pick first one)
-        _kinTreeJointPtr->lowerLimit = rlsimJointPtr->limitsPerDof[0].x;
-        _kinTreeJointPtr->upperLimit = rlsimJointPtr->limitsPerDof[0].y;
+        _kinTreeJointPtr->lowerLimit = rad2degrees( rlsimJointPtr->limitsPerDof[0].x );
+        _kinTreeJointPtr->upperLimit = rad2degrees( rlsimJointPtr->limitsPerDof[0].y );
 
         // all models in this format have limited constraints
         auto _lowerLimit = _kinTreeJointPtr->lowerLimit;
@@ -238,6 +241,37 @@ namespace agent {
         // so leave the relTransform with the default value
 
         return _kinTreeInertia;
+    }
+
+    void TAgentKinTreeRlsim::_constructDefaultActuators()
+    {
+        for ( size_t q = 0; q < m_kinTreeJoints.size(); q++ )
+        {
+            if ( m_kinTreeJoints[q]->type == "free" ||
+                 m_kinTreeJoints[q]->type == "fixed" )
+            {
+                continue;
+            }
+
+            auto _kinTreeActuatorPtr = new TKinTreeActuator();
+            _kinTreeActuatorPtr->name = rlsim::computeName( "actuator",
+                                                            m_kinTreeJoints[q]->name,
+                                                            m_name );
+            // set a default "motor" type
+            _kinTreeActuatorPtr->type = "motor";
+            // set a reference to the joint it handles
+            _kinTreeActuatorPtr->jointPtr = m_kinTreeJoints[q];
+            // set some default control props
+            _kinTreeActuatorPtr->minCtrl = -1;
+            _kinTreeActuatorPtr->maxCtrl = 1;
+            _kinTreeActuatorPtr->clampCtrl = true;
+            _kinTreeActuatorPtr->kp = 0.0f;
+            _kinTreeActuatorPtr->kv = 0.0f;
+            _kinTreeActuatorPtr->gear = { 1, { 2.0f } };
+
+            m_kinTreeActuators.push_back( _kinTreeActuatorPtr );
+            m_mapKinTreeActuators[ _kinTreeActuatorPtr->name ] = _kinTreeActuatorPtr;
+        }
     }
 
     void TAgentKinTreeRlsim::_extractStandardSize( const std::string& shapeType,

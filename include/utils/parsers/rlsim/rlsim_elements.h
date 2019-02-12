@@ -5,9 +5,7 @@
 #include <utils/parsers/parsers_json.h>
 
 namespace tysoc {
-namespace rlsim{
-
-    struct RlsimJoint;
+namespace rlsim {
 
     struct RlsimVisual
     {
