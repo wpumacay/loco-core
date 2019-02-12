@@ -47,4 +47,8 @@ namespace agent {
 
     };
 
+    TAgentKinTree* createKinTreeAgent( const std::string& name,
+                                       const TVec3& position,
+                                       rlsim::RlsimModel* modelDataPtr );
+
 }}

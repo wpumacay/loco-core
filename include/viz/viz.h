@@ -1,8 +1,8 @@
 
 #pragma once
 
-// tysocBaseApi functionality
-#include <api_adapter.h>
+// scenario functionality
+#include <scenario.h>
 // UI functionality
 #include <viz/ui.h>
 
@@ -48,8 +48,8 @@ namespace viz {
 
         protected :
 
-        // A reference to the api, to grab the agents, terraingens, etc.
-        TTysocCommonApi* m_tysocApiPtr;
+        // A reference to the scenario, to grab the agents, terraingens, etc.
+        TScenario* m_scenarioPtr;
         // A reference to the UI handler
         TIVisualizerUI* m_uiPtr;
 
@@ -78,7 +78,7 @@ namespace viz {
 
         public :
 
-        TIVisualizer( TTysocCommonApi* tysocApiPtr );
+        TIVisualizer( TScenario* scenarioPtr );
         ~TIVisualizer();
 
         void initialize();

@@ -644,4 +644,12 @@ namespace agent {
 
         return _usesFromto;
     }
+
+    TAgentKinTree* createKinTreeAgent( const std::string& name,
+                                       const TVec3& position,
+                                       mjcf::GenericElement* modelDataPtr )
+    {
+        auto _kinTreeAgent = new TAgentKinTreeMjcf( name, position, modelDataPtr );
+        return _kinTreeAgent;
+    }
 }}

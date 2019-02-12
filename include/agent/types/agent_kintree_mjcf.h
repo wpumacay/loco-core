@@ -7,8 +7,8 @@
 #include <agent/types/agent_kintree.h>
 
 
-namespace tysoc{
-namespace agent{
+namespace tysoc {
+namespace agent {
 
     struct TMjcfMeshAsset
     {
@@ -56,5 +56,7 @@ namespace agent{
 
     };
 
-
+    TAgentKinTree* createKinTreeAgent( const std::string& name,
+                                       const TVec3& position,
+                                       mjcf::GenericElement* modelDataPtr );
 }}

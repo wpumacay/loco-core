@@ -6,14 +6,14 @@ namespace tysoc {
 namespace viz {
 
 
-    TIVisualizerUI::TIVisualizerUI( TTysocCommonApi* tysocApiPtr )
+    TIVisualizerUI::TIVisualizerUI( TScenario* scenarioPtr )
     {
-        m_tysocApiPtr = tysocApiPtr;
+        m_scenarioPtr = scenarioPtr;
     }
 
     TIVisualizerUI::~TIVisualizerUI()
     {
-        m_tysocApiPtr = NULL;
+        m_scenarioPtr = NULL;
     }
 
     void TIVisualizerUI::initUI()

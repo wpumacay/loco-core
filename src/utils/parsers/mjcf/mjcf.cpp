@@ -23,13 +23,25 @@ namespace mjcf {
         return _gelement;
     }
 
-    GenericElement* loadGenericModel( Schema* schema, 
-                                      const std::string& modelfile )
+    GenericElement* loadGenericModel( const std::string& modelfile )
     {
+        if ( !MJCF_SCHEMA )
+        {
+            std::cout << "INFO> creating mjcf schema" << std::endl;
+            // load the schema to be used with the mjcf helper
+            MJCF_SCHEMA = new mjcf::Schema();
+            {
+                std::string _schemaPath( TYSOCMJC_RESOURCES_PATH );
+                _schemaPath += "xml/schema.xml";
+
+                MJCF_SCHEMA->load( _schemaPath );
+            }
+        }
+
         tinyxml2::XMLDocument _doc;
         _doc.LoadFile( modelfile.c_str() );
 
-        auto _root = _parseGenericElement( schema, _doc.FirstChildElement() );
+        auto _root = _parseGenericElement( MJCF_SCHEMA, _doc.FirstChildElement() );
         return _root;
     }
 

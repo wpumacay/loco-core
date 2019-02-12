@@ -1,8 +1,8 @@
 
 #pragma once
 
-// tysocBaseApi functionality
-#include <api_adapter.h>
+// scenario functionality
+#include <scenario.h>
 
 namespace tysoc {
 namespace viz {
@@ -25,21 +25,21 @@ namespace viz {
     typedef TISlider<double> TISliderDouble;
 
     // ...
-    // @TODO: Make an abstract for the widgets wrapping functionality
+    // @TODO: Make abstract widgets wrapping functionality
 
     class TIVisualizerUI
     {
 
         protected :
 
-        TTysocCommonApi* m_tysocApiPtr;
+        TScenario* m_scenarioPtr;
 
         virtual void _initUIInternal() = 0;
         virtual void _renderUIInternal() = 0;
 
         public :
 
-        TIVisualizerUI( TTysocCommonApi* tysocApiPtr );
+        TIVisualizerUI( TScenario* scenarioPtr );
         ~TIVisualizerUI();
 
         void initUI();

@@ -9,6 +9,8 @@
 namespace tysoc {
 namespace mjcf {
 
+    static Schema* MJCF_SCHEMA = NULL;
+
     /**
     * @brief            Creates a GenericElement, given the schema for error checking and a parsed xml element
     * @param schema     Object representing the schema parsed from the schema.xml file
@@ -32,8 +34,7 @@ namespace mjcf {
     * @param schema     Object representing the schema parsed from the schema.xml file
     * @param modelfile  Filename (fullpath) to the desired model file
     */
-    GenericElement* loadGenericModel( Schema* schema, 
-                                      const std::string& modelfile );
+    GenericElement* loadGenericModel( const std::string& modelfile );
 
     /**
     * @brief            Saves generic model into xml file

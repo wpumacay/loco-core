@@ -61,6 +61,7 @@ namespace terrain {
         m_basePrimitivePtr->rotmat[7] = 0.0f;
         m_basePrimitivePtr->rotmat[8] = 1.0f;
 
+        // @CHECK: there seems to be a small issue with the platforms
         m_basePrimitivePtr->rbound = 0.5f * std::sqrt( _sx * _sx + _sy * _sy + _sz * _sz );
         std::cout << "rbound: " << m_basePrimitivePtr->rbound << std::endl;
 

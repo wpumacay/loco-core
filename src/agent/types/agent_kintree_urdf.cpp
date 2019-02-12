@@ -463,4 +463,12 @@ namespace agent {
         }
     }
 
+    TAgentKinTree* createKinTreeAgent( const std::string& name,
+                                       const TVec3& position,
+                                       urdf::UrdfModel* modelDataPtr )
+    {
+        auto _kinTreeAgent = new TAgentKinTreeUrdf( name, position, modelDataPtr );
+        return _kinTreeAgent;
+    }
+
 }}
