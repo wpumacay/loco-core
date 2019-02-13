@@ -118,5 +118,16 @@ namespace viz {
         return m_uiPtr;
     }
 
+    bool TIVisualizer::isKeyDown( int keyCode )
+    {
+        int _keyCodeMapped = _remapKeyInternal( keyCode );
+        return _isKeyDownInternal( _keyCodeMapped );
+    }
+
+    bool TIVisualizer::checkSingleKeyPress( int keyCode )
+    {
+        int _keyCodeMapped = _remapKeyInternal( keyCode );
+        return _checkSingleKeyPressInternal( _keyCodeMapped );
+    }
 
 }}

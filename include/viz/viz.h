@@ -5,6 +5,7 @@
 #include <scenario.h>
 // UI functionality
 #include <viz/ui.h>
+#include <viz/keys.h>
 
 namespace tysoc {
 namespace viz {
@@ -63,6 +64,10 @@ namespace viz {
         virtual void _renderUIInternal() = 0;
         virtual bool _isActiveInternal() = 0;
 
+        virtual int _remapKeyInternal( int keyCode ) = 0;
+        virtual bool _isKeyDownInternal( int keyCode ) = 0;
+        virtual bool _checkSingleKeyPressInternal( int keyCode ) = 0;
+
         virtual TIVizCamera* _createCameraInternal( const std::string& name,
                                                     const std::string& type,
                                                     const TVec3& pos,
@@ -85,6 +90,9 @@ namespace viz {
         void update();
         void renderUI();
         bool isActive();
+
+        bool isKeyDown( int keyCode );
+        bool checkSingleKeyPress( int keyCode );
 
         void addCamera( const std::string& name, 
                         const std::string& type,
