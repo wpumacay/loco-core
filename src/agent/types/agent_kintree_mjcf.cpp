@@ -262,6 +262,15 @@ namespace agent {
             _kinTreeVisualPtr->relTransform.setPosition( _posFromFromto );
             _kinTreeVisualPtr->relTransform.setRotation( _rotFromFromto );
         }
+
+        if ( geomElementPtr->hasAttributeVec4( "rgba" ) )
+        {
+            auto _rgba = geomElementPtr->getAttributeVec4( "rgba", TYSOC_DEFAULT_RGBA_COLOR );
+
+            _kinTreeVisualPtr->material.diffuse     = { _rgba.x, _rgba.y, _rgba.z };
+            _kinTreeVisualPtr->material.specular    = { _rgba.x, _rgba.y, _rgba.z };
+        }
+
         // and the contype collision bitmask (@GENERIC)
         _kinTreeVisualPtr->contype = geomElementPtr->getAttributeInt( "contype", -1 );
         // and the conaffinity collision bitmask (@GENERIC)
@@ -272,8 +281,6 @@ namespace agent {
         _kinTreeVisualPtr->group = geomElementPtr->getAttributeInt( "group", -1 );
         // and the material name (@GENERIC)
         _kinTreeVisualPtr->materialName = geomElementPtr->getAttributeString( "material", "" );
-        // and the rgba color (@GENERIC)
-        _kinTreeVisualPtr->rgba = geomElementPtr->getAttributeVec4( "rgba", { 0.0, 0.0, 0.0, 0.0 } );
         // and store it in the visuals buffer
         m_kinTreeVisuals.push_back( _kinTreeVisualPtr );
         // and to the visuals map

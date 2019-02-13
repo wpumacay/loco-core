@@ -326,6 +326,12 @@ namespace agent {
         _extractStandardSize( urdfVisualtPtr->geometry, 
                               _kinTreeVisualPtr->geometry.size );
         _kinTreeVisualPtr->geometry.usesFromto = false;
+
+        // and the material (colors)
+        auto _rgba = urdfVisualtPtr->material->color;
+        _kinTreeVisualPtr->material.diffuse     = { _rgba.x, _rgba.y, _rgba.z };
+        _kinTreeVisualPtr->material.specular    = { _rgba.x, _rgba.y, _rgba.z };
+
         // and the contype collision bitmask (@GENERIC)
         _kinTreeVisualPtr->contype = 1;
         // and the conaffinity collision bitmask (@GENERIC)
@@ -336,8 +342,6 @@ namespace agent {
         _kinTreeVisualPtr->group = -1;
         // and the material name (@GENERIC)
         _kinTreeVisualPtr->materialName = "";
-        // and the rgba color (@GENERIC)
-        _kinTreeVisualPtr->rgba = urdfVisualtPtr->material->color;
         // and store it in the visuals buffer
         m_kinTreeVisuals.push_back( _kinTreeVisualPtr );
         // and to the visuals map

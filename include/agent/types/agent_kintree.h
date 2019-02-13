@@ -92,6 +92,14 @@ namespace agent {
         TVec3           diffuse;
         TVec3           specular;
         std::string     texture;
+
+        TMaterial()
+        {
+            name        = "";
+            diffuse     = TYSOC_DEFAULT_DIFFUSE_COLOR;
+            specular    = TYSOC_DEFAULT_SPECULAR_COLOR;
+            texture     = "";
+        }
     };
 
     struct TKinTreeCollision
@@ -130,7 +138,6 @@ namespace agent {
         int             condim;         // (mujoco) Contact dimensionality
         int             group;          // (mujoco) Group this object belongs (for compiler calcs.)
         std::string     materialName;   // (mujoco) Name of the material from includes (materials.xml) (@CHECK: should use TMaterial)
-        TVec4           rgba;           // (mujoco) RGBA color (@CHECK: should use TMaterial)
 
         TKinTreeVisual()
         {
@@ -141,7 +148,6 @@ namespace agent {
             condim          = -1; // -1 indicates not available
             group           = -1; // -1 indicates not available
             materialName    = "";
-            rgba            = { 0.3, 0.4, 0.5, 1.0 };
         }
     };
 

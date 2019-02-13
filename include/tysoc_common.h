@@ -25,6 +25,10 @@ typedef float TScalar;
 #define TYSOC_PREFIX_CAMERA     "camera_"   
 #define TYSOC_PREFIX_MATERIAL   "material_" 
 
+#define TYSOC_DEFAULT_DIFFUSE_COLOR     { 0.7f, 0.5f, 0.3f }
+#define TYSOC_DEFAULT_SPECULAR_COLOR    { 0.7f, 0.5f, 0.3f }
+#define TYSOC_DEFAULT_RGBA_COLOR        { 0.7f, 0.5f, 0.3f, 1.0f }
+
 #define TYSOC_FLOAT_EPSILON 0.000001
 #define TYSOC_PI 3.141592653589793
 
