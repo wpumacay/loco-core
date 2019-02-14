@@ -467,6 +467,11 @@ namespace agent {
         }
     }
 
+    urdf::UrdfModel* TAgentKinTreeUrdf::getUrdfModelDataPtr()
+    {
+        return m_urdfModelPtr;
+    }
+
     TAgentKinTree* createKinTreeAgent( const std::string& name,
                                        const TVec3& position,
                                        urdf::UrdfModel* modelDataPtr )

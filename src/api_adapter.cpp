@@ -76,6 +76,12 @@ namespace tysoc
         }
     }
 
+    // @TODO|@CHECK: Should redesign the initialization mechanism
+    void TTysocCommonApi::collectFromScenario()
+    {
+        _collectFromScenarioInternal();
+    }
+
     utils::TPrimitivesSpawner* TTysocCommonApi::getPrimitivesSpawner()
     {
         return m_primitivesSpawnerPtr;

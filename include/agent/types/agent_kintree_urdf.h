@@ -62,6 +62,8 @@ namespace agent {
 
         ~TAgentKinTreeUrdf() override;
 
+        urdf::UrdfModel* getUrdfModelDataPtr();
+
     };
 
     TAgentKinTree* createKinTreeAgent( const std::string& name,

@@ -652,6 +652,11 @@ namespace agent {
         return _usesFromto;
     }
 
+    mjcf::GenericElement* TAgentKinTreeMjcf::getMjcfModelDataPtr()
+    {
+        return m_modelElementPtr;
+    }
+
     TAgentKinTree* createKinTreeAgent( const std::string& name,
                                        const TVec3& position,
                                        mjcf::GenericElement* modelDataPtr )

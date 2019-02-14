@@ -27,6 +27,9 @@ namespace tysoc
         virtual void _updateStep() = 0; // simulate with specific backend
         virtual void _postStep() = 0; // collect infor "from" specific backend
 
+        // @CHECK|@HACK: Should have a single initialization entry point
+        virtual void _collectFromScenarioInternal() = 0;
+
         public :
 
         TTysocCommonApi();
@@ -37,6 +40,8 @@ namespace tysoc
         std::string getApiType();
 
         void initialize();
+        // @TODO|@CHECK: Should redesign the initialization mechanism
+        void collectFromScenario();
         void step();
 
         // @TODO|@CHECK: should add functionality to set agent actions. So far ...

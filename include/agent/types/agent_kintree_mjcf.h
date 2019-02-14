@@ -53,7 +53,7 @@ namespace agent {
 
         ~TAgentKinTreeMjcf() override;
 
-
+        mjcf::GenericElement* getMjcfModelDataPtr();
     };
 
     TAgentKinTree* createKinTreeAgent( const std::string& name,

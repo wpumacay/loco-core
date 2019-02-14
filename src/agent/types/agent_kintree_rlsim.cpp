@@ -310,6 +310,11 @@ namespace agent {
         }
     }
 
+    rlsim::RlsimModel* TAgentKinTreeRlsim::getRlsimModelDataPtr()
+    {
+        return m_rlsimModelPtr;
+    }
+
     TAgentKinTree* createKinTreeAgent( const std::string& name,
                                        const TVec3& position,
                                        rlsim::RlsimModel* modelDataPtr )

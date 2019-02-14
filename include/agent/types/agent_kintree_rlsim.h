@@ -45,6 +45,7 @@ namespace agent {
 
         ~TAgentKinTreeRlsim() override;
 
+        rlsim::RlsimModel* getRlsimModelDataPtr();
     };
 
     TAgentKinTree* createKinTreeAgent( const std::string& name,
