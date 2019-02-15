@@ -340,6 +340,7 @@ namespace agent {
         std::string m_modelTemplateType;
 
         void _updateAgentInternal( float dt ) override;
+        void _resetAgentInternal() override;
 
         // update components
         void _updateBodyComponents( TKinTreeBody* kinTreeBodyPtr );

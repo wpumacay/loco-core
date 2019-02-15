@@ -148,7 +148,7 @@ namespace agent {
 
         // grab the type of joint
         if ( rlsimJointPtr->type == "none" )
-            _kinTreeJointPtr->type = "fixed";
+            _kinTreeJointPtr->type = "free";
         else
             _kinTreeJointPtr->type = rlsimJointPtr->type;
 

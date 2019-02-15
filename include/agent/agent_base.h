@@ -22,9 +22,11 @@ namespace agent{
         std::string                 m_name;
         std::string                 m_type;
         TVec3                       m_position;
+        TVec3                       m_startPosition;
 
         // agent specific functionality
         virtual void _updateAgentInternal( float dt ) = 0;
+        virtual void _resetAgentInternal() = 0;
 
         public :
 
@@ -33,8 +35,12 @@ namespace agent{
         virtual ~TIAgent();
 
         void setPosition( const TVec3& position );
+        void setStartPosition( const TVec3& position );
         TVec3 getPosition();
+        TVec3 getStartPosition();
+
         void update( float dt );
+        void reset();
 
         std::string name();
         std::string type();

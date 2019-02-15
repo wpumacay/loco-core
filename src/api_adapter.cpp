@@ -16,17 +16,17 @@ namespace tysoc
 
     TTysocCommonApi::~TTysocCommonApi()
     {
-        if ( m_scenarioPtr )
-        {
-            delete m_scenarioPtr;
-            m_scenarioPtr = NULL;
-        }
+        // if ( m_scenarioPtr )
+        // {
+        //     delete m_scenarioPtr;
+        //     m_scenarioPtr = NULL;
+        // }
 
-        if ( m_primitivesSpawnerPtr )
-        {
-            delete m_primitivesSpawnerPtr;
-            m_primitivesSpawnerPtr = NULL;
-        }
+        // if ( m_primitivesSpawnerPtr )
+        // {
+        //     delete m_primitivesSpawnerPtr;
+        //     m_primitivesSpawnerPtr = NULL;
+        // }
     }
 
     void TTysocCommonApi::setScenario( TScenario* scenarioPtr )
@@ -53,6 +53,11 @@ namespace tysoc
 
         // take an initial step
         step();
+    }
+
+    void TTysocCommonApi::reset()
+    {
+        _resetInternal();
     }
 
     void TTysocCommonApi::step()

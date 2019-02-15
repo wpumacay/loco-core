@@ -30,16 +30,19 @@ namespace tysoc
         // @CHECK|@HACK: Should have a single initialization entry point
         virtual void _collectFromScenarioInternal() = 0;
 
+        virtual void _resetInternal() = 0;
+
         public :
 
         TTysocCommonApi();
-        ~TTysocCommonApi();
+        virtual ~TTysocCommonApi();
 
         void setScenario( TScenario* scenarioPtr );
         TScenario* getScenario();
         std::string getApiType();
 
         void initialize();
+        void reset();
         // @TODO|@CHECK: Should redesign the initialization mechanism
         void collectFromScenario();
         void step();

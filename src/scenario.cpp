@@ -207,4 +207,21 @@ namespace tysoc
 
         return std::vector< terrain::TITerrainGenerator* >();
     }
+
+    bool TScenario::hasAgent( const std::string& agentName )
+    {
+        return m_mapAgentsByName.find( agentName ) != m_mapAgentsByName.end();
+    }
+
+    bool TScenario::hasTerrainGen( const std::string& terrainGenName )
+    {
+        return m_mapTerrainGeneratorsByName.find( terrainGenName ) != m_mapTerrainGeneratorsByName.end();
+    }
+
+    bool TScenario::hasSensor( const std::string& sensorName )
+    {
+        return m_mapSensorsByName.find( sensorName ) != m_mapSensorsByName.end();
+    }
+
+
 }

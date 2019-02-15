@@ -248,6 +248,12 @@ namespace agent {
         m_position = m_rootBodyPtr->worldTransform.getPosition();
     }
 
+    void TAgentKinTree::_resetAgentInternal()
+    {
+        // send back the agent to the original position
+        _initializeWorldTransforms();
+    }
+
     void TAgentKinTree::_updateBodyComponents( TKinTreeBody* kinTreeBodyPtr )
     {
         if ( !kinTreeBodyPtr )

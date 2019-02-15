@@ -56,6 +56,10 @@ namespace tysoc
         std::vector< sensor::TISensor* >                getSensorsByType( const std::string& type );
         std::vector< terrain::TITerrainGenerator* >     getTerrainGeneratorsByType( const std::string& type );
 
+        bool hasAgent( const std::string& agentName );
+        bool hasTerrainGen( const std::string& terrainGenName );
+        bool hasSensor( const std::string& sensorName );
+
         virtual void initialize();
         virtual void update();
     };
