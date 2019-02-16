@@ -40,8 +40,6 @@ namespace tysoc {
     {
         protected :
 
-        std::string m_name;
-
         // terrain generator to wrap
         terrain::TITerrainGenerator* m_terrainGenPtr;
 
@@ -65,7 +63,7 @@ namespace tysoc {
         *   except the core object (just releases the reference and leave ...
         *   the core structures to be reused by the user or other components).
         */
-        ~TTerrainGenWrapper();
+        virtual ~TTerrainGenWrapper();
 
         void initialize();
         void reset();

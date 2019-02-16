@@ -44,8 +44,6 @@ namespace tysoc {
 
         protected :
 
-        std::string m_name;
-
         // mjcf resource: a copy of the mjcf model passed for construction
         mjcf::GenericElement* m_mjcfModelTemplatePtr;
         // urdf resource: a reference to the cached urdf model passed for construction
@@ -76,7 +74,7 @@ namespace tysoc {
         *   except the core object (just releases the reference and leave ...
         *   the core structures to be reused by the user or other components).
         */
-        ~TKinTreeAgentWrapper();
+        virtual ~TKinTreeAgentWrapper();
 
         std::string name();
         agent::TAgentKinTree* agent();
