@@ -24,16 +24,22 @@ namespace tysoc {
             {
                 m_mjcfModelTemplatePtr = reinterpret_cast< agent::TAgentKinTreeMjcf* >
                                             ( m_kinTreeAgentPtr )->getMjcfModelDataPtr();
+                m_urdfModelTemplatePtr = NULL;
+                m_rlsimModelTemplatePtr = NULL;
             }
             else if ( _modelTemplateType == agent::MODEL_TEMPLATE_TYPE_URDF )
             {
                 m_urdfModelTemplatePtr = reinterpret_cast< agent::TAgentKinTreeUrdf* >
                                             ( m_kinTreeAgentPtr )->getUrdfModelDataPtr();
+                m_mjcfModelTemplatePtr = NULL;
+                m_rlsimModelTemplatePtr = NULL;
             }
             else if ( _modelTemplateType == agent::MODEL_TEMPLATE_TYPE_RLSIM )
             {
                 m_rlsimModelTemplatePtr = reinterpret_cast< agent::TAgentKinTreeRlsim* >
                                             ( m_kinTreeAgentPtr )->getRlsimModelDataPtr();
+                m_urdfModelTemplatePtr = NULL;
+                m_mjcfModelTemplatePtr = NULL;
             }
         }
     }

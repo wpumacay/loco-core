@@ -6,7 +6,7 @@ set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_CXX_FLAGS "-g ${CMAKE_CXX_FLAGS}" )
 
 add_definitions( -DTYSOCCORE_RESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/" )
-add_definitions( -DTYSOCCORE_DLLIBS_PATH="${CMAKE_BINARY_DIR}" )
+add_definitions( -DTYSOCCORE_DLLIBS_PATH="${CMAKE_BINARY_DIR}/" )
 
 # Main Sources
 file( GLOB_RECURSE TYSOC_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" )
@@ -21,8 +21,10 @@ include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include/" )
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/ext/tinyxml2" )
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/ext/json" )
 
-add_library( tysocCore
+add_library( tysocCore SHARED
 			 ${TYSOC_SOURCES} )
+target_link_libraries( tysocCore
+                       dl )
 
 # Configure tests
 add_subdirectory( tests )

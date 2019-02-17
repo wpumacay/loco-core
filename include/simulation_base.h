@@ -56,8 +56,10 @@ namespace tysoc {
         std::vector< TKinTreeAgentWrapper* > m_agentWrappers;
         std::vector< TTerrainGenWrapper* > m_terrainGenWrappers;
 
-        virtual void _initializeInternal() = 0;
-        virtual void _updateInternal() = 0;
+        virtual bool _initializeInternal() = 0;
+        virtual void _preStepInternal() = 0;
+        virtual void _simStepInternal() = 0;
+        virtual void _postStepInternal() = 0;
         virtual void _resetInternal() = 0;
 
         public :
@@ -65,8 +67,8 @@ namespace tysoc {
         TISimulation( TScenario* scenarioPtr );
         virtual ~TISimulation();
 
-        void initialize();
-        void update();
+        bool initialize();
+        void step();
         void reset();
 
         TScenario* scenario();
@@ -79,16 +81,14 @@ namespace tysoc {
 
     typedef TISimulation* FcnCreateSim();
 
-    typedef TKinTreeAgentWrapper* FcnCreateAgentFromAbstract( const std::string& name,
-                                                              agent::TAgentKinTree* kinTreeAgentPtr );
+    typedef TKinTreeAgentWrapper* FcnCreateAgentFromAbstract( agent::TAgentKinTree* kinTreeAgentPtr );
     typedef TKinTreeAgentWrapper* FcnCreateAgentFromFile( const std::string& name,
                                                           const std::string& filename );
     typedef TKinTreeAgentWrapper* FcnCreateAgentFromId( const std::string& name,
                                                         const std::string& format,
                                                         const std::string& id );
 
-    typedef TTerrainGenWrapper* FcnCreateTerrainGenFromAbstract( const std::string& name,
-                                                                 terrain::TITerrainGenerator* terrainGenPtr );
+    typedef TTerrainGenWrapper* FcnCreateTerrainGenFromAbstract( terrain::TITerrainGenerator* terrainGenPtr );
     typedef TTerrainGenWrapper* FcnCreateTerrainGenFromParams( const std::string& name,
                                                                const TGenericParams& params );
 }

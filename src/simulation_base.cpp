@@ -14,16 +14,30 @@ namespace tysoc {
     TISimulation::~TISimulation()
     {
         m_scenarioPtr = NULL;
+
+        for ( size_t q = 0; q < m_agentWrappers.size(); q++ )
+        {
+            delete m_agentWrappers[q];
+        }
+        m_agentWrappers.clear();
+
+        for ( size_t q = 0; q < m_terrainGenWrappers.size(); q++ )
+        {
+            delete m_terrainGenWrappers[q];
+        }
+        m_terrainGenWrappers.clear();
     }
 
-    void TISimulation::initialize()
+    bool TISimulation::initialize()
     {
-        _initializeInternal();
+        return _initializeInternal();
     }
 
-    void TISimulation::update()
+    void TISimulation::step()
     {
-        _updateInternal();
+        _preStepInternal();
+        _simStepInternal();
+        _postStepInternal();
     }
 
     void TISimulation::reset()

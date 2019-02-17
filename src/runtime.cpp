@@ -54,7 +54,7 @@ namespace tysoc {
         */
 
         // Grab simulation creation function
-        m_fcnCreateSim = _loadFcnFromLibrary< FcnCreateSim* >( "sim_create" );
+        m_fcnCreateSim = _loadFcnFromLibrary< FcnCreateSim* >( "simulation_create" );
         // and the agent creation functions
         m_fcnCreateAgentFromAbstract    = _loadFcnFromLibrary< FcnCreateAgentFromAbstract* >( "agent_createFromAbstract" );
         m_fcnCreateAgentFromFile        = _loadFcnFromLibrary< FcnCreateAgentFromFile* >( "agent_createFromFile" );
@@ -69,10 +69,9 @@ namespace tysoc {
         return m_fcnCreateSim();
     }
 
-    TKinTreeAgentWrapper* TRuntime::createAgent( const std::string& name,
-                                                 agent::TAgentKinTree* kinTreeAgentPtr )
+    TKinTreeAgentWrapper* TRuntime::createAgent( agent::TAgentKinTree* kinTreeAgentPtr )
     {
-        return m_fcnCreateAgentFromAbstract( name, kinTreeAgentPtr );
+        return m_fcnCreateAgentFromAbstract( kinTreeAgentPtr );
     }
 
     TKinTreeAgentWrapper* TRuntime::createAgent( const std::string& name,
@@ -88,10 +87,9 @@ namespace tysoc {
         return m_fcnCreateAgentFromId( name, format, id );
     }
         
-    TTerrainGenWrapper* TRuntime::createTerrainGen( const std::string& name,
-                                                    terrain::TITerrainGenerator* terrainGenPtr )
+    TTerrainGenWrapper* TRuntime::createTerrainGen( terrain::TITerrainGenerator* terrainGenPtr )
     {
-        return m_fcnCreateTerrainGenFromAbstract( name, terrainGenPtr );
+        return m_fcnCreateTerrainGenFromAbstract( terrainGenPtr );
     }
 
     TTerrainGenWrapper* TRuntime::createTerrainGen( const std::string& name,
