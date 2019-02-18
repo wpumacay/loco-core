@@ -23,9 +23,14 @@ namespace viz {
         }
     }
 
-    void TIVisualizer::initialize()
+    void TIVisualizer::setScenario( TScenario* scenarioPtr )
     {
-        _initializeInternal();
+        m_scenarioPtr = scenarioPtr;
+    }
+
+    bool TIVisualizer::initialize()
+    {
+        return _initializeInternal();
     }
 
     void TIVisualizer::update()

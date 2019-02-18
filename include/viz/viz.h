@@ -59,7 +59,7 @@ namespace viz {
         // abstract light pointers
         std::map< std::string, TIVizLight* > m_lights;
 
-        virtual void _initializeInternal() = 0;
+        virtual bool _initializeInternal() = 0;
         virtual void _updateInternal() = 0;
         virtual void _renderUIInternal() = 0;
         virtual bool _isActiveInternal() = 0;
@@ -86,7 +86,9 @@ namespace viz {
         TIVisualizer( TScenario* scenarioPtr );
         ~TIVisualizer();
 
-        void initialize();
+        void setScenario( TScenario* scenarioPtr );
+
+        bool initialize();
         void update();
         void renderUI();
         bool isActive();
@@ -110,5 +112,7 @@ namespace viz {
         TIVisualizerUI* getUI();
     };
 
+
+    typedef TIVisualizer* FcnCreateViz( TScenario* scenarioPtr );
 
 }}

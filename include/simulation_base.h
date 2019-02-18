@@ -79,7 +79,7 @@ namespace tysoc {
 
     // Function pointers definitions for loading backend-specific functionality
 
-    typedef TISimulation* FcnCreateSim();
+    typedef TISimulation* FcnCreateSim( TScenario* scenarioPtr );
 
     typedef TKinTreeAgentWrapper* FcnCreateAgentFromAbstract( agent::TAgentKinTree* kinTreeAgentPtr );
     typedef TKinTreeAgentWrapper* FcnCreateAgentFromFile( const std::string& name,

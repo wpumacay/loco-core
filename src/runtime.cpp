@@ -1,11 +1,12 @@
 
 #include <runtime.h>
 
-
 namespace tysoc {
 
+    using namespace viz;
 
-    TRuntime::TRuntime( const std::string& dlpath )
+    TRuntime::TRuntime( const std::string& dlpathSim,
+                        const std::string& dlpathViz )
     {
         m_fcnCreateSim = NULL;
         m_fcnCreateAgentFromAbstract = NULL;
@@ -14,9 +15,13 @@ namespace tysoc {
         m_fcnCreateTerrainGenFromAbstract = NULL;
         m_fcnCreateTerrainGenFromParams = NULL;
 
-        m_libraryHandle = NULL;
+        m_fcnCreateViz = NULL;
 
-        m_dlpath = dlpath;
+        m_libraryHandleSim = NULL;
+        m_libraryHandleViz = NULL;
+
+        m_dlpathSim = dlpathSim;
+        m_dlpathViz = dlpathViz;
 
         _loadLibraryFcns();
     }
@@ -30,43 +35,64 @@ namespace tysoc {
         m_fcnCreateTerrainGenFromAbstract = NULL;
         m_fcnCreateTerrainGenFromParams = NULL;
 
-        if ( m_libraryHandle )
+        m_fcnCreateViz = NULL;
+
+        if ( m_libraryHandleSim )
         {
-            dlclose( m_libraryHandle );
-            m_libraryHandle = NULL;
+            dlclose( m_libraryHandleSim );
+            m_libraryHandleSim = NULL;
+        }
+
+        if ( m_libraryHandleViz )
+        {
+            dlclose( m_libraryHandleViz );
+            m_libraryHandleSim = NULL;
         }
     }
 
     void TRuntime::_loadLibraryFcns()
     {
-        // Grab a handle to the library
-        m_libraryHandle = dlopen( m_dlpath.c_str(), RTLD_NOW );
-        if ( !m_libraryHandle )
+        // Grab a handle to the simulation library
+        m_libraryHandleSim = dlopen( m_dlpathSim.c_str(), RTLD_NOW );
+        if ( !m_libraryHandleSim )
         {
-            std::cout << "ERROR> while loading dllibrary: " << dlerror() << std::endl;
+            std::cout << "ERROR> while loading simulation dllibrary: " << dlerror() << std::endl;
+            return;
+        }
+
+        // Grab a handle to the visualization library
+        m_libraryHandleViz = dlopen( m_dlpathViz.c_str(), RTLD_NOW );
+        if ( !m_libraryHandleViz )
+        {
+            std::cout << "ERROR> while loading visualization dllibrary: " << dlerror() << std::endl;
             return;
         }
 
         /* 
-        *   Grab from the library the symbols related to the creation of the ...
-        *   components of the simulation, like the simulation itself, agent ...
+        *   Grab from the simulation library the symbols related to the creation ...
+        *   of the components of the simulation, like the simulation itself, agent ...
         *   creation, terrain creation and sensors creation
         */
 
         // Grab simulation creation function
-        m_fcnCreateSim = _loadFcnFromLibrary< FcnCreateSim* >( "simulation_create" );
+        m_fcnCreateSim = _loadFcnFromLibrarySim< FcnCreateSim* >( "simulation_create" );
         // and the agent creation functions
-        m_fcnCreateAgentFromAbstract    = _loadFcnFromLibrary< FcnCreateAgentFromAbstract* >( "agent_createFromAbstract" );
-        m_fcnCreateAgentFromFile        = _loadFcnFromLibrary< FcnCreateAgentFromFile* >( "agent_createFromFile" );
-        m_fcnCreateAgentFromId          = _loadFcnFromLibrary< FcnCreateAgentFromId* >( "agent_createFromId" );
+        m_fcnCreateAgentFromAbstract    = _loadFcnFromLibrarySim< FcnCreateAgentFromAbstract* >( "agent_createFromAbstract" );
+        m_fcnCreateAgentFromFile        = _loadFcnFromLibrarySim< FcnCreateAgentFromFile* >( "agent_createFromFile" );
+        m_fcnCreateAgentFromId          = _loadFcnFromLibrarySim< FcnCreateAgentFromId* >( "agent_createFromId" );
         // and the terrain-generator creation functions
-        m_fcnCreateTerrainGenFromAbstract   = _loadFcnFromLibrary< FcnCreateTerrainGenFromAbstract* >( "terrain_createFromAbstract" );
-        m_fcnCreateTerrainGenFromParams     = _loadFcnFromLibrary< FcnCreateTerrainGenFromParams* >( "terrain_createFromParams" );
+        m_fcnCreateTerrainGenFromAbstract   = _loadFcnFromLibrarySim< FcnCreateTerrainGenFromAbstract* >( "terrain_createFromAbstract" );
+        m_fcnCreateTerrainGenFromParams     = _loadFcnFromLibrarySim< FcnCreateTerrainGenFromParams* >( "terrain_createFromParams" );
+
+        /*
+        *   Grab from the visualization library the symbols for the visualizer creation
+        */
+        m_fcnCreateViz = _loadFcnFromLibraryViz< FcnCreateViz* >( "visualizer_create" );
     }
 
-    TISimulation* TRuntime::createSimulation()
+    TISimulation* TRuntime::createSimulation( TScenario* scenarioPtr )
     {
-        return m_fcnCreateSim();
+        return m_fcnCreateSim( scenarioPtr );
     }
 
     TKinTreeAgentWrapper* TRuntime::createAgent( agent::TAgentKinTree* kinTreeAgentPtr )
@@ -96,6 +122,11 @@ namespace tysoc {
                                                     const TGenericParams& params )
     {
         return m_fcnCreateTerrainGenFromParams( name, params );
+    }
+
+    TIVisualizer* TRuntime::createVisualizer( TScenario* scenarioPtr )
+    {
+        return m_fcnCreateViz( scenarioPtr );
     }
 
 }
