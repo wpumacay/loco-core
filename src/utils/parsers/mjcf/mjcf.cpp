@@ -31,7 +31,7 @@ namespace mjcf {
             // load the schema to be used with the mjcf helper
             MJCF_SCHEMA = new mjcf::Schema();
             {
-                std::string _schemaPath( TYSOCMJC_RESOURCES_PATH );
+                std::string _schemaPath( TYSOCCORE_RESOURCES_PATH );
                 _schemaPath += "xml/schema.xml";
 
                 MJCF_SCHEMA->load( _schemaPath );

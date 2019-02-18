@@ -32,8 +32,8 @@ typedef float TScalar;
 #define TYSOC_FLOAT_EPSILON 0.000001
 #define TYSOC_PI 3.141592653589793
 
-#ifndef TYSOCMJC_RESOURCES_PATH
-    #define TYSOCMJC_RESOURCES_PATH "../../res/xml"
+#ifndef TYSOCCORE_RESOURCES_PATH
+    #define TYSOCCORE_RESOURCES_PATH "../../res/"
 #endif
 
 namespace tysoc
