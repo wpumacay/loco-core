@@ -22,7 +22,7 @@ namespace tysoc
         std::string _res;
 
         _res += std::string( "x: " ) + std::to_string( v.x ) + std::string( " - " );
-        _res += std::string( "y: " ) + std::to_string( v.x );
+        _res += std::string( "y: " ) + std::to_string( v.y );
 
         return _res;
     }
