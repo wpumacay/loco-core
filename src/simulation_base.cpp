@@ -28,6 +28,19 @@ namespace tysoc {
         m_terrainGenWrappers.clear();
     }
 
+    void* TISimulation::payload( const std::string& type )
+    {
+        return _constructPayloadInternal( type );
+    }
+
+    void* TISimulation::_constructPayloadInternal( const std::string& type )
+    {
+        // Do nothing. Just implement if needs to generate very, very, very specific ...
+        // data for the visualizer, e.g. mujoco case needs to pass mjModel, mjData ...
+        // and some other data structures for the viz to work
+        return NULL;
+    }
+
     bool TISimulation::initialize()
     {
         return _initializeInternal();

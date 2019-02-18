@@ -10,6 +10,7 @@ namespace viz {
     {
         m_uiPtr         = NULL;
         m_scenarioPtr   = scenarioPtr;
+        m_type          = "undefined";
     }
 
     TIVisualizer::~TIVisualizer()
@@ -26,6 +27,18 @@ namespace viz {
     void TIVisualizer::setScenario( TScenario* scenarioPtr )
     {
         m_scenarioPtr = scenarioPtr;
+    }
+
+    void TIVisualizer::collectSimPayload( void* payload, const std::string& type )
+    {
+        _collectSimPayloadInternal( payload, type );
+    }
+
+    void TIVisualizer::_collectSimPayloadInternal( void* payload, const std::string& type )
+    {
+        // Do nothing. Just implement if needs to pass very, very, very specific ...
+        // data from the simulation, e.g. mujoco case needs to pass mjModel, mjData ...
+        // and some other data structures for the viz to work
     }
 
     bool TIVisualizer::initialize()
@@ -118,11 +131,6 @@ namespace viz {
         }
     }
 
-    TIVisualizerUI* TIVisualizer::getUI()
-    {
-        return m_uiPtr;
-    }
-
     bool TIVisualizer::isKeyDown( int keyCode )
     {
         int _keyCodeMapped = _remapKeyInternal( keyCode );
@@ -133,6 +141,16 @@ namespace viz {
     {
         int _keyCodeMapped = _remapKeyInternal( keyCode );
         return _checkSingleKeyPressInternal( _keyCodeMapped );
+    }
+
+    TIVisualizerUI* TIVisualizer::getUI()
+    {
+        return m_uiPtr;
+    }
+
+    std::string TIVisualizer::type()
+    {
+        return m_type;
     }
 
 }}

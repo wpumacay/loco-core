@@ -71,6 +71,9 @@ namespace tysoc {
             return _fcnPtr;
         }
 
+        TIVisualizer* m_visualizerPtr;
+        TISimulation* m_simulationPtr;
+
         public :
 
         /**

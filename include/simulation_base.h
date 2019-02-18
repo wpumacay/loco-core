@@ -62,6 +62,8 @@ namespace tysoc {
         virtual void _postStepInternal() = 0;
         virtual void _resetInternal() = 0;
 
+        virtual void* _constructPayloadInternal( const std::string& type );
+
         public :
 
         TISimulation( TScenario* scenarioPtr );
@@ -71,6 +73,7 @@ namespace tysoc {
         void step();
         void reset();
 
+        void* payload( const std::string& type );
         TScenario* scenario();
         std::string type();
 

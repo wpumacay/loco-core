@@ -14,7 +14,6 @@ namespace tysoc {
         m_fcnCreateAgentFromId = NULL;
         m_fcnCreateTerrainGenFromAbstract = NULL;
         m_fcnCreateTerrainGenFromParams = NULL;
-
         m_fcnCreateViz = NULL;
 
         m_libraryHandleSim = NULL;
@@ -22,6 +21,9 @@ namespace tysoc {
 
         m_dlpathSim = dlpathSim;
         m_dlpathViz = dlpathViz;
+
+        m_visualizerPtr = NULL;
+        m_simulationPtr = NULL;
 
         _loadLibraryFcns();
     }
@@ -34,8 +36,19 @@ namespace tysoc {
         m_fcnCreateAgentFromId = NULL;
         m_fcnCreateTerrainGenFromAbstract = NULL;
         m_fcnCreateTerrainGenFromParams = NULL;
-
         m_fcnCreateViz = NULL;
+
+        if ( m_visualizerPtr )
+        {
+            delete m_visualizerPtr;
+            m_visualizerPtr = NULL;
+        }
+
+        if ( m_simulationPtr )
+        {
+            delete m_simulationPtr;
+            m_simulationPtr = NULL;
+        }
 
         if ( m_libraryHandleSim )
         {
@@ -92,7 +105,10 @@ namespace tysoc {
 
     TISimulation* TRuntime::createSimulation( TScenario* scenarioPtr )
     {
-        return m_fcnCreateSim( scenarioPtr );
+        if ( !m_simulationPtr )
+            m_simulationPtr = m_fcnCreateSim( scenarioPtr );
+
+        return m_simulationPtr;
     }
 
     TKinTreeAgentWrapper* TRuntime::createAgent( agent::TAgentKinTree* kinTreeAgentPtr )
@@ -126,7 +142,19 @@ namespace tysoc {
 
     TIVisualizer* TRuntime::createVisualizer( TScenario* scenarioPtr )
     {
-        return m_fcnCreateViz( scenarioPtr );
+        if ( !m_visualizerPtr )
+            m_visualizerPtr = m_fcnCreateViz( scenarioPtr );
+
+        if ( m_visualizerPtr->type() == "mujoco" && m_simulationPtr != NULL )
+        {
+            m_visualizerPtr->collectSimPayload( m_simulationPtr->payload( "mjModel" ), "mjModel" );
+            m_visualizerPtr->collectSimPayload( m_simulationPtr->payload( "mjData" ), "mjData" );
+            m_visualizerPtr->collectSimPayload( m_simulationPtr->payload( "mjvScene" ), "mjvScene" );
+            m_visualizerPtr->collectSimPayload( m_simulationPtr->payload( "mjvCamera" ), "mjvCamera" );
+            m_visualizerPtr->collectSimPayload( m_simulationPtr->payload( "mjvOption" ), "mjvOption" );
+        }
+
+        return m_visualizerPtr;
     }
 
 }
