@@ -241,5 +241,20 @@ namespace tysoc
         return m_cachedRlsimModels[name];
     }
 
+    bool TModelLoader::hasMjcfModel( const std::string& name )
+    {
+        return m_cachedMjcfModels.find( name ) != m_cachedMjcfModels.end();
+    }
+
+    bool TModelLoader::hasUrdfModel( const std::string& name )
+    {
+        return m_cachedUrdfModels.find( name ) != m_cachedUrdfModels.end();
+    }
+
+    bool TModelLoader::hasRlsimModel( const std::string& name )
+    {
+        return m_cachedRlsimModels.find( name ) != m_cachedRlsimModels.end();
+    }
+
 
 }

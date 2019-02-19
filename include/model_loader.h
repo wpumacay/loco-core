@@ -40,6 +40,10 @@ namespace tysoc
         static TModelLoader* GetInstance();
         ~TModelLoader();
 
+        bool hasMjcfModel( const std::string& name );
+        bool hasUrdfModel( const std::string& name );
+        bool hasRlsimModel( const std::string& name );
+
         mjcf::GenericElement* getMjcfModel( const std::string& name );
         urdf::UrdfModel* getUrdfModel( const std::string& name );
         rlsim::RlsimModel* getRlsimModel( const std::string& name );
