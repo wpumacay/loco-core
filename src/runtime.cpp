@@ -63,6 +63,15 @@ namespace tysoc {
         }
     }
 
+    void TRuntime::step()
+    {
+        if ( m_simulationPtr )
+            m_simulationPtr->step();
+
+        if ( m_visualizerPtr )
+            m_visualizerPtr->update();
+    }
+
     void TRuntime::_loadLibraryFcns()
     {
         // Grab a handle to the simulation library

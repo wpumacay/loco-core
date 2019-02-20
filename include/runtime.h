@@ -87,6 +87,8 @@ namespace tysoc {
                   const std::string& dlpathViz );
         ~TRuntime();
 
+        void step();
+
         TISimulation* createSimulation( TScenario* scenarioPtr = NULL );
 
         TKinTreeAgentWrapper* createAgent( agent::TAgentKinTree* kinTreeAgentPtr );

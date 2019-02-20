@@ -96,6 +96,7 @@ namespace viz {
 
         bool initialize();
         void update();
+        // void reset(); // @TODO: should add this functionality when links changing sizes
         void renderUI();
         bool isActive();
 
