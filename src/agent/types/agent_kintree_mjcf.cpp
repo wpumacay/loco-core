@@ -4,14 +4,46 @@
 namespace tysoc {
 namespace agent {
 
+    // @TODO: Add a more comprehensive explanation of the flow of the resources ...
+    // to create a kintree from various formats. I still kind of have to check ...
+    // again the implementation to see the flow of the code
+
+    /*
+    *   Backend-specific stuff: the kintree tries to have as much data as necessary to ...
+    *                           instantiate a simulation in all supported backends. Still ...
+    *                           in some cases it's necessary to copy some specific resources ...
+    *                           and make a kind of specific checks to create backend-specific ...
+    *                           resources in the appropriate wrapper. For example, check ...
+    *                           the method _createMjcResourcesFromKinTree in the ...
+    *                           mujoco_agent_wrapper.cpp file. It grabs some very specific information ...
+    *                           of the model being used.
+    *
+    *   Flow of resources: the basic flow of resources is the following :
+    *                        > Grab all information from the parsed model (in any format) ...
+    *                          into the kintree structures. This usually start in ...
+    *                          "_constructKinTree" method. We also do some backend-specific ...
+    *                          modifications towards the instantiation on a specific backend, ...
+    *                          like the case of contacts in mjcf, which are not part of the core ...
+    *                          structures.
+    *                        > These resources are used by the appropriate wrapper in the ...
+    *                          specific backend used, usually in a method called ...
+    *                          "_construct(BackendName)ResourcesFromKinTree". There we ...
+    *                          have to grab all information from the structures of the kintree ...
+    *                          and use it to instantiate the appropriate resources in the ...
+    *                          desired backend. We also do some specific checks from some ...
+    *                          extra information that might not be stored in the core kintree, ...
+    *                          which should be stored in the 
+    */
+
 
     TAgentKinTreeMjcf::TAgentKinTreeMjcf( const std::string& name,
                                           const TVec3& position,
                                           mjcf::GenericElement* modelElementPtr )
         : TAgentKinTree( name, position )
     {
-        // save the reference to the elementPtr for later usage (if needed to inject resources)
-        m_modelElementPtr = modelElementPtr;
+        // save a copy of the elementPtr for later usage (if needed to inject resources)
+        m_modelElementPtr = new mjcf::GenericElement();
+        mjcf::deepCopy( m_modelElementPtr, modelElementPtr, NULL, m_name );
         // and set the model template type as being created from a mjc file
         m_modelTemplateType = MODEL_TEMPLATE_TYPE_MJCF;
 
@@ -39,7 +71,7 @@ namespace agent {
         m_rootBodyPtr = _processBodyFromMjcf( _rootBodyElmPtr, NULL );
 
         // grab the actuators (sensors are just copied, and the joint sensors are created as needed)
-        auto _actuatorsElmPtr   = mjcf::findFirstChildByType( m_modelElementPtr, "actuator" );
+        auto _actuatorsElmPtr = mjcf::findFirstChildByType( m_modelElementPtr, "actuator" );
         if ( _actuatorsElmPtr )
         {
             for ( size_t i = 0; i < _actuatorsElmPtr->children.size(); i++ )
@@ -47,6 +79,29 @@ namespace agent {
                 _processActuator( _actuatorsElmPtr->children[i] );
             }
         }
+
+        // // grab the contacts and update the names appropriately
+        // auto _contactsElmPtr = mjcf::findFirstChildByType( m_modelElementPtr, "contact" );
+        // if ( _contactsElmPtr )
+        // {
+        //     for ( size_t i = 0; i < _contactsElmPtr->children.size(); i++ )
+        //     {
+        //         auto _contactElm = _contactsElmPtr->children[i];
+        //         if ( !_contactElm || 
+        //              !_contactElm->hasAttributeString( "body1" ) ||
+        //              !_contactElm->hasAttributeString( "body2" ) )
+        //         {
+        //             std::cout << "WARNING> invalid contact, it should have both body1 and body2 tags" << std::endl;
+        //             continue;
+        //         }
+        //         auto _body1name = _contactElm->getAttributeString( "body1" );
+        //         auto _body2name = _contactElm->getAttributeString( "body2" );
+        //         _body1name = mjcf::computeMjcfName( "body", _body1name, m_name );
+        //         _body2name = mjcf::computeMjcfName( "body", _body2name, m_name );
+        //         _contactElm->setAttributeString( "body1", _body1name );
+        //         _contactElm->setAttributeString( "body2", _body2name );
+        //     }
+        // }
     }
 
     void TAgentKinTreeMjcf::_collectAssets()
@@ -126,6 +181,9 @@ namespace agent {
         // grab body information
         auto _kinTreeBodyPtr = new TKinTreeBody();
         // grab the name
+        // _kinTreeBodyPtr->name = mjcf::computeMjcfName( "body",
+        //                                                bodyElementPtr->getAttributeString( "name" ),
+        //                                                m_name );
         _kinTreeBodyPtr->name = bodyElementPtr->getAttributeString( "name" );
         // and the relative transform to the parent body
         _extractTransform( bodyElementPtr, _kinTreeBodyPtr->relTransform );
@@ -192,6 +250,9 @@ namespace agent {
     {
         auto _kinTreeJointPtr = new TKinTreeJoint();
         // grab the name
+        // _kinTreeJointPtr->name = mjcf::computeMjcfName( "joint", 
+        //                                                 jointElementPtr->getAttributeString( "name" ),
+        //                                                 m_name );
         _kinTreeJointPtr->name = jointElementPtr->getAttributeString( "name" );
         // and the relative transform to the parent body
         _extractTransform( jointElementPtr, _kinTreeJointPtr->relTransform );
@@ -226,6 +287,9 @@ namespace agent {
     {
         auto _kinTreeVisualPtr = new TKinTreeVisual();
         // grab the name
+        // _kinTreeVisualPtr->name = mjcf::computeMjcfName( "geom", 
+        //                                                  geomElementPtr->getAttributeString( "name" ),
+        //                                                  m_name );
         _kinTreeVisualPtr->name = geomElementPtr->getAttributeString( "name" );
         // and the relative transform to the parent body
         _extractTransform( geomElementPtr, _kinTreeVisualPtr->relTransform );
@@ -293,6 +357,9 @@ namespace agent {
     {
         auto _kinTreeCollisionPtr = new TKinTreeCollision();
         // grab the name
+        // _kinTreeCollisionPtr->name = mjcf::computeMjcfName( "geom",
+        //                                                     geomElementPtr->getAttributeString( "name" ),
+        //                                                     m_name );
         _kinTreeCollisionPtr->name = geomElementPtr->getAttributeString( "name" );
         // and the relative transform to the parent body
         _extractTransform( geomElementPtr, _kinTreeCollisionPtr->relTransform );
@@ -396,6 +463,9 @@ namespace agent {
     {
         auto _kinTreeActuatorPtr = new TKinTreeActuator();
         // grab the name
+        // _kinTreeActuatorPtr->name = mjcf::computeMjcfName( "actuator",
+        //                                                    actuatorElementPtr->getAttributeString( "name" ),
+        //                                                    m_name );
         _kinTreeActuatorPtr->name = actuatorElementPtr->getAttributeString( "name" );
         // and the type of actuator
         _kinTreeActuatorPtr->type = actuatorElementPtr->etype;

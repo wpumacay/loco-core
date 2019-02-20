@@ -31,7 +31,7 @@ int main( int argc, const char** argv )
 
     std::string _filepath;
     _filepath += TYSOCCORE_RESOURCES_PATH;
-    _filepath += "urdf/";
+    _filepath += "templates/urdf/";
     // _filepath += "atlas.urdf";
     // _filepath += "baxter.urdf";
     // _filepath += "cassie.urdf";

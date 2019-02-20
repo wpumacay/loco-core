@@ -122,7 +122,7 @@ namespace agent {
                  m_kinTreeJoints[i]->type != "prismatic" &&
                  m_kinTreeJoints[i]->type != "slide" )
             {
-                // This type of joints should not have a joint-sensor ...
+                // Only these types of joints should have a joint-sensor ...
                 // associated with it
                 continue;
             }

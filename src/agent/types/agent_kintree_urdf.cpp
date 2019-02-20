@@ -12,7 +12,8 @@ namespace agent {
         : TAgentKinTree( name, position )
     {
         // save the reference to the urdfModelPtr for easier usage (should not modify it, read only)
-        m_urdfModelPtr = urdfModelPtr;
+        m_urdfModelPtr = new urdf::UrdfModel();
+        urdf::deepCopy( m_urdfModelPtr, urdfModelPtr, m_name );
         // and set the model template type as being created from a urdf file
         m_modelTemplateType = MODEL_TEMPLATE_TYPE_URDF;
 

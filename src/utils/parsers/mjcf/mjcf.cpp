@@ -192,7 +192,7 @@ namespace mjcf {
         {
             _res += std::string( TYSOC_PREFIX_SITE ) + agentName + std::string( "_" ) + elementName;
         }
-        else if ( type == "motor" || type == "position" || type == "velocity" )
+        else if ( type == "actuator" || type == "motor" || type == "position" || type == "velocity" )
         {
             _res += std::string( TYSOC_PREFIX_ACTUATOR ) + agentName + std::string( "_" ) + elementName;
         }

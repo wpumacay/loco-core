@@ -73,6 +73,7 @@ namespace rlsim {
         }
 
         auto _visualsJson   = _modelJson[JSON_KEY_VISUALS];
+        auto _size = _visualsJson.size();
         for ( size_t q = 0; q < _visualsJson.size(); q++ )
         {
             auto _simVisual = new RlsimVisual();
@@ -119,8 +120,8 @@ namespace rlsim {
                           << _visuals[q]->parentJointId << std::endl;
                 return false;
             }
-
-            auto _parentJoint = _joints[ _visuals[q]->parentJointId ];
+            auto _parentJointId = _visuals[q]->parentJointId;
+            auto _parentJoint = _joints[_parentJointId];
             _parentJoint->childVisuals.push_back( _visuals[q] );
         }
 
