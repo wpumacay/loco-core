@@ -114,10 +114,20 @@ namespace tysoc {
 
     TISimulation* TRuntime::createSimulation( TScenario* scenarioPtr )
     {
-        if ( !m_simulationPtr )
-            m_simulationPtr = m_fcnCreateSim( scenarioPtr );
+        if ( m_simulationPtr )
+            delete m_simulationPtr;
+        
+        m_simulationPtr = m_fcnCreateSim( scenarioPtr );
 
         return m_simulationPtr;
+    }
+
+    void TRuntime::destroySimulation()
+    {
+        if ( m_simulationPtr )
+            delete m_simulationPtr;
+
+        m_simulationPtr = NULL;
     }
 
     TKinTreeAgentWrapper* TRuntime::createAgent( agent::TAgentKinTree* kinTreeAgentPtr )
@@ -151,8 +161,10 @@ namespace tysoc {
 
     TIVisualizer* TRuntime::createVisualizer( TScenario* scenarioPtr )
     {
-        if ( !m_visualizerPtr )
-            m_visualizerPtr = m_fcnCreateViz( scenarioPtr );
+        if ( m_visualizerPtr )
+            delete m_visualizerPtr;
+
+        m_visualizerPtr = m_fcnCreateViz( scenarioPtr );
 
         if ( m_visualizerPtr->type() == "mujoco" && m_simulationPtr != NULL )
         {
@@ -166,4 +178,11 @@ namespace tysoc {
         return m_visualizerPtr;
     }
 
+    void TRuntime::destroyVisualizer()
+    {
+        if ( m_visualizerPtr )
+            delete m_visualizerPtr;
+
+        m_visualizerPtr = NULL;
+    }
 }

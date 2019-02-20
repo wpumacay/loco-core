@@ -251,6 +251,7 @@ namespace agent {
     void TAgentKinTree::_resetAgentInternal()
     {
         // send back the agent to the original position
+        m_rootBodyPtr->worldTransform = TMat4();
         _initializeWorldTransforms();
     }
 

@@ -90,6 +90,7 @@ namespace tysoc {
         void step();
 
         TISimulation* createSimulation( TScenario* scenarioPtr = NULL );
+        void destroySimulation();
 
         TKinTreeAgentWrapper* createAgent( agent::TAgentKinTree* kinTreeAgentPtr );
         TKinTreeAgentWrapper* createAgent( const std::string& name,
@@ -103,6 +104,7 @@ namespace tysoc {
                                               const TGenericParams& params );
 
         TIVisualizer* createVisualizer( TScenario* scenarioPtr = NULL );
+        void destroyVisualizer();
     };
 
 

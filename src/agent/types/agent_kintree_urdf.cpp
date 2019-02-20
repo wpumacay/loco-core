@@ -136,13 +136,13 @@ namespace agent {
         // and start the recursive process
         m_rootBodyPtr = _processBodyFromUrdf( _rootLink, NULL );
 
-        // Create the parentJointPtr references using the created map (similar to urdf::initTree)
-        for ( auto it = m_urdfModelPtr->joints.begin();
-                   it != m_urdfModelPtr->joints.end();
-                   it++ )
-        {
-            _processJointConnection( it->second );
-        }
+        // // Create the parentJointPtr references using the created map (similar to urdf::initTree)
+        // for ( auto it = m_urdfModelPtr->joints.begin();
+        //            it != m_urdfModelPtr->joints.end();
+        //            it++ )
+        // {
+        //     _processJointConnection( it->second );
+        // }
 
         // @CHECK|@WIP
         // Process actuators ( if not defined in the urdf as xml extensions ...
@@ -176,11 +176,11 @@ namespace agent {
         auto _kinTreeBodyPtr = new TKinTreeBody();
         // grab the name
         _kinTreeBodyPtr->name = urdfLinkPtr->name;
-        // // and the relative transform to the parent body
-        // if ( urdfLinkPtr->parentJoint )
-        //     _kinTreeBodyPtr->relTransform = urdfLinkPtr->parentJoint->parentLinkToJointTransform;
-        // else
-        //     _kinTreeBodyPtr->relTransform = TMat4();// just identity (must be root)
+        // and the relative transform to the parent body
+        if ( urdfLinkPtr->parentJoint )
+            _kinTreeBodyPtr->relTransform = urdfLinkPtr->parentJoint->parentLinkToJointTransform;
+        else
+            _kinTreeBodyPtr->relTransform = TMat4();// just identity (must be root)
         // and the parent bodyptr as well
         _kinTreeBodyPtr->parentBodyPtr = parentKinBodyPtr;
         // and store it in the bodies buffer
@@ -212,17 +212,24 @@ namespace agent {
             _kinTreeBodyPtr->childCollisions.push_back( _kinTreeCollisionPtr );
         }
 
-        // grab all joint elements and process them
-        auto _urdfJoints = urdfLinkPtr->childJoints;
-        for ( size_t i = 0; i < _urdfJoints.size(); i++ )
+        // create a single joint as dof using the link's parentjoint
+        auto _urdfJointPtr = urdfLinkPtr->parentJoint;
+        if ( _urdfJointPtr )
         {
-            // process the element to create a TKinTreeJoint
-            auto _kinTreeJointPtr = _processJointFromUrdf( _urdfJoints[i] );
-            // link this joint to its parent (current body being processed)
+            auto _kinTreeJointPtr = _processJointFromUrdf( _urdfJointPtr );
             _kinTreeJointPtr->parentBodyPtr = _kinTreeBodyPtr;
-            // wait for the connections step, as this joints are children of the ...
-            // parent of this body, not to this body itself
+            _kinTreeBodyPtr->childJoints.push_back( _kinTreeJointPtr );
         }
+        // auto _urdfJoints = urdfLinkPtr->childJoints;
+        // for ( size_t i = 0; i < _urdfJoints.size(); i++ )
+        // {
+        //     // process the element to create a TKinTreeJoint
+        //     auto _kinTreeJointPtr = _processJointFromUrdf( _urdfJoints[i] );
+        //     // link this joint to its parent (current body being processed)
+        //     _kinTreeJointPtr->parentBodyPtr = _kinTreeBodyPtr;
+        //     // wait for the connections step, as this joints are children of the ...
+        //     // parent of this body, not to this body itself
+        // }
 
         // grab the inertial properties (if not given, by default it's computed from the geometries)
         // (If no inertia is given, by default is set to NULL, and inertia properties should be ...
@@ -395,9 +402,9 @@ namespace agent {
                               _kinTreeCollisionPtr->geometry.size );
         _kinTreeCollisionPtr->geometry.usesFromto = false;
         // and the contype collision bitmask (@GENERIC)
-        _kinTreeCollisionPtr->contype = -1;
+        _kinTreeCollisionPtr->contype = 1;
         // and the conaffinity collision bitmask (@GENERIC)
-        _kinTreeCollisionPtr->conaffinity = -1;
+        _kinTreeCollisionPtr->conaffinity = 0;
         // and the condim contact dimensionality (@GENERIC)
         _kinTreeCollisionPtr->condim = -1;
         // and the group the object belongs (for internal compiler calcs.) (@GENERIC)
