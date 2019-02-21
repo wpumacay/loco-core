@@ -46,6 +46,8 @@ namespace agent {
 
         void _processJointConnection( urdf::UrdfJoint* urdfJointPtr );
 
+        void _constructDefaultActuators();
+
         /**
         * @brief                    Extracts a TVec3 with the primitives standard size for the framework
         * @param urdfGeometryPtr    urdf::UrdfGeometry pointer that holds the size and other info of the current element

@@ -108,25 +108,8 @@ namespace urdf {
 
             if ( _jointPtr )
             {
-                UrdfLink* _parentLink = NULL;
-
-                if ( urdfModelPtr->links.find( _jointPtr->parentLinkName ) !=
-                     urdfModelPtr->links.end() )
-                {
-                    _parentLink = urdfModelPtr->links[ _jointPtr->parentLinkName ];
-                }
-                else
-                {
-                    parsing::logError( std::string( "joint: " ) + 
-                                       _jointPtr->name +
-                                       std::string( " requested non-existent parent link: " ) +
-                                       _jointPtr->parentLinkName );
-
-                    continue;
-                }
-
                 UrdfLink* _childLink = NULL;
-                
+
                 if ( urdfModelPtr->links.find( _jointPtr->childLinkName ) !=
                      urdfModelPtr->links.end() )
                 {
@@ -142,11 +125,40 @@ namespace urdf {
                     continue;
                 }
 
+                // Check if using "world" extension to fix root body to the world
+                if ( _jointPtr->type == "world" )
+                {
+                    _childLink->parentJoint = _jointPtr;
+                    _childLink->parentLink  = NULL;
+                    continue;
+                }
+
+                UrdfLink* _parentLink = NULL;
+                
+                if ( urdfModelPtr->links.find( _jointPtr->parentLinkName ) !=
+                     urdfModelPtr->links.end() )
+                {
+                    _parentLink = urdfModelPtr->links[ _jointPtr->parentLinkName ];
+                }
+                else
+                {
+                    parsing::logError( std::string( "joint: " ) + 
+                                       _jointPtr->name +
+                                       std::string( " requested non-existent parent link: " ) +
+                                       _jointPtr->parentLinkName );
+
+                    continue;
+                }
+
                 _childLink->parentJoint = _jointPtr;
                 _childLink->parentLink  = _parentLink;
 
-                _parentLink->childJoints.push_back( _jointPtr );
-                _parentLink->childLinks.push_back( _childLink );
+                // Skip if trying to connect to the WORLD
+                if ( _jointPtr->parentLinkName != "WORLD" )
+                {
+                    _parentLink->childJoints.push_back( _jointPtr );
+                    _parentLink->childLinks.push_back( _childLink );
+                }
             }
         }
 
@@ -349,6 +361,10 @@ namespace urdf {
             {
                 _res += std::string( TYSOC_PREFIX_GEOM ) + agentName + std::string( "_" ) + elementName;
             }
+        }
+        else if ( type == "actuator" )
+        {
+            _res += std::string( TYSOC_PREFIX_ACTUATOR ) + agentName + std::string( "_" ) + elementName;
         }
         else
         {

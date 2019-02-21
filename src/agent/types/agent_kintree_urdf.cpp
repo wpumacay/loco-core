@@ -136,38 +136,11 @@ namespace agent {
         // and start the recursive process
         m_rootBodyPtr = _processBodyFromUrdf( _rootLink, NULL );
 
-        // // Create the parentJointPtr references using the created map (similar to urdf::initTree)
-        // for ( auto it = m_urdfModelPtr->joints.begin();
-        //            it != m_urdfModelPtr->joints.end();
-        //            it++ )
-        // {
-        //     _processJointConnection( it->second );
-        // }
-
-        // @CHECK|@WIP
+        // @CHECK
         // Process actuators ( if not defined in the urdf as xml extensions ...
         // then we should just create some default actuators as PD controllers )
-    }
 
-    void TAgentKinTreeUrdf::_processJointConnection( urdf::UrdfJoint* urdfJointPtr )
-    {
-        if ( m_mapKinTreeJoints.find( urdfJointPtr->name ) == m_mapKinTreeJoints.end() )
-            return;
-        if ( m_mapKinTreeBodies.find( urdfJointPtr->parentLinkName ) == m_mapKinTreeBodies.end() )
-            return;
-        if ( m_mapKinTreeBodies.find( urdfJointPtr->childLinkName ) == m_mapKinTreeBodies.end() )
-            return;
-
-        auto _jointPtr      = m_mapKinTreeJoints[ urdfJointPtr->name ];
-        auto _parentBodyPtr = m_mapKinTreeBodies[ urdfJointPtr->parentLinkName ];
-        auto _childBodyPtr  = m_mapKinTreeBodies[ urdfJointPtr->childLinkName ];
-
-        // assign the parentJoint reference to the child
-        _childBodyPtr->parentJointPtr = _jointPtr;
-        _childBodyPtr->childJoints.push_back( _jointPtr );
-        _childBodyPtr->relTransform = urdfJointPtr->parentLinkToJointTransform;
-        // and the other way around as well
-        _jointPtr->childBodyPtr = _childBodyPtr;
+        _constructDefaultActuators();
     }
 
     TKinTreeBody* TAgentKinTreeUrdf::_processBodyFromUrdf( urdf::UrdfLink* urdfLinkPtr, TKinTreeBody* parentKinBodyPtr )
@@ -262,7 +235,7 @@ namespace agent {
         // grab the name
         _kinTreeJointPtr->name = urdfJointPtr->name;
         // and the relative transform to the parent body
-        _kinTreeJointPtr->relTransform = urdfJointPtr->parentLinkToJointTransform;
+        _kinTreeJointPtr->relTransform = TMat4();
         // and the type of joint
         _kinTreeJointPtr->type = urdfJointPtr->type;
         // and the joint axis
@@ -435,6 +408,38 @@ namespace agent {
         _kinTreeInertia->iyz = urdfInertiaPtr->iyz;
 
         return _kinTreeInertia;
+    }
+
+    void TAgentKinTreeUrdf::_constructDefaultActuators()
+    {
+        for ( size_t q = 0; q < m_kinTreeJoints.size(); q++ )
+        {
+            if ( m_kinTreeJoints[q]->type == "free" ||
+                 m_kinTreeJoints[q]->type == "fixed" ||
+                 m_kinTreeJoints[q]->type == "world" )
+            {
+                continue;
+            }
+
+            auto _kinTreeActuatorPtr = new TKinTreeActuator();
+            _kinTreeActuatorPtr->name = urdf::computeUrdfName( "actuator",
+                                                               m_kinTreeJoints[q]->name,
+                                                               m_name );
+            // set a default "motor" type
+            _kinTreeActuatorPtr->type = "motor";
+            // set a reference to the joint it handles
+            _kinTreeActuatorPtr->jointPtr = m_kinTreeJoints[q];
+            // set some default control props
+            _kinTreeActuatorPtr->minCtrl = -1;
+            _kinTreeActuatorPtr->maxCtrl = 1;
+            _kinTreeActuatorPtr->clampCtrl = true;
+            _kinTreeActuatorPtr->kp = 0.0f;
+            _kinTreeActuatorPtr->kv = 0.0f;
+            _kinTreeActuatorPtr->gear = { 1, { 2.0f } };
+
+            m_kinTreeActuators.push_back( _kinTreeActuatorPtr );
+            m_mapKinTreeActuators[ _kinTreeActuatorPtr->name ] = _kinTreeActuatorPtr;
+        }
     }
 
     void TAgentKinTreeUrdf::_extractStandardSize( urdf::UrdfGeometry* urdfGeometryPtr,
