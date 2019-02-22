@@ -50,13 +50,16 @@ namespace rlsim {
             return NULL;
         }
 
+        // Grab the up direction (an extension to normalize into our format where z is Up)
+        auto _worldUp = ( _modelJson.count( "WorldUp" ) > 0 ) ? _modelJson["WorldUp"] : "y";
+
         RlsimModel* _simModel = new RlsimModel();
 
         auto _jointsJson    = _modelJson[JSON_KEY_SKELETON][JSON_KEY_JOINTS];
         for ( size_t q = 0; q < _jointsJson.size(); q++ )
         {
             auto _simJoint = new RlsimJoint();
-            _simJoint->collectAttribs( _jointsJson[q] );
+            _simJoint->collectAttribs( _jointsJson[q], _worldUp );
 
             _simModel->joints.push_back( _simJoint );
         }
@@ -65,7 +68,7 @@ namespace rlsim {
         for ( size_t q = 0; q < _bodiesJson.size(); q++ )
         {
             auto _simBody = new RlsimBody();
-            _simBody->collectAttribs( _bodiesJson[q] );
+            _simBody->collectAttribs( _bodiesJson[q], _worldUp );
             // bodies must have a one-to-one relation with joints
             _simBody->parentJointId = q;
 
@@ -77,7 +80,7 @@ namespace rlsim {
         for ( size_t q = 0; q < _visualsJson.size(); q++ )
         {
             auto _simVisual = new RlsimVisual();
-            _simVisual->collectAttribs( _visualsJson[q] );
+            _simVisual->collectAttribs( _visualsJson[q], _worldUp );
 
             _simModel->visuals.push_back( _simVisual );
         }

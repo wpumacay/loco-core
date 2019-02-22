@@ -153,7 +153,7 @@ namespace agent {
             _kinTreeJointPtr->type = rlsimJointPtr->type;
 
         // the joint axis is "z", as the joint frame is aligned to the body frame
-        _kinTreeJointPtr->axis = TVec3( 0.0f, 0.0f, 1.0f );
+        _kinTreeJointPtr->axis = TVec3( 1.0f, 0.0f, 0.0f );
 
         // grab the joint limits (@TODO: for ball joints should have per-dof ...
         // limits, for now just pick first one)

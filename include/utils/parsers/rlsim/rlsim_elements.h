@@ -7,6 +7,12 @@
 namespace tysoc {
 namespace rlsim {
 
+    /**
+    *   Rearranges the elements of a TVec3 from a format where the z vector ...
+    *   is given by "worldUp", into the standard format where the world z is Up.
+    */
+    TVec3 rearrange( const TVec3& vec, const std::string& worldUp );
+
     struct RlsimVisual
     {
         std::string     name;
@@ -22,7 +28,7 @@ namespace rlsim {
             parentJointId = -1;
         }
 
-        void collectAttribs( const nlohmann::json& jsonElement );
+        void collectAttribs( const nlohmann::json& jsonElement, const std::string& worldUp );
     };
 
     struct RlsimBody
@@ -43,7 +49,7 @@ namespace rlsim {
             parentJointId = -1;
         }
 
-        void collectAttribs( const nlohmann::json& jsonElement );
+        void collectAttribs( const nlohmann::json& jsonElement, const std::string& worldUp );
     };
 
     struct RlsimJoint
@@ -64,7 +70,7 @@ namespace rlsim {
             parentJointId = -1;
         }
 
-        void collectAttribs( const nlohmann::json& jsonElement );
+        void collectAttribs( const nlohmann::json& jsonElement, const std::string& worldUp );
     };
 
 
