@@ -8,6 +8,8 @@ set( CMAKE_CXX_FLAGS "-g ${CMAKE_CXX_FLAGS}" )
 add_definitions( -DTYSOCCORE_RESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/" )
 add_definitions( -DTYSOCCORE_DLLIBS_PATH="${CMAKE_BINARY_DIR}/" )
 
+add_subdirectory( ext )
+
 # Main Sources
 file( GLOB_RECURSE TYSOC_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" )
 # External dependencies
@@ -26,6 +28,10 @@ add_library( tysocCore SHARED
 target_link_libraries( tysocCore
                        dl )
 
+# Configure pybind11
+add_subdirectory( pybind11 )
+# Configure python bindings
+add_subdirectory( pytysoc )
 # Configure tests
 add_subdirectory( tests )
 # Configure unittests
