@@ -10,7 +10,7 @@
 
 #include <agent/types/agent_kintree.h>
 
-#include <tysocCustomVizCommon.h>
+#include <glviz_common.h>
 
 #define VIZKINTREE_AXES_DEFAULT_SIZE 0.1f
 #define VIZKINTREE_COLLISION_DEFAULT_MARGIN 0.01f

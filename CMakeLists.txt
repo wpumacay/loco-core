@@ -28,6 +28,8 @@ add_library( tysocCore SHARED
 target_link_libraries( tysocCore
                        dl )
 
+# Configure glviz
+add_subdirectory( glviz )
 # Configure pybind11
 add_subdirectory( pybind11 )
 # Configure python bindings

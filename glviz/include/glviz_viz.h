@@ -10,10 +10,10 @@
 #include <LLightDirectional.h>
 #include <LMeshBuilder.h>
 // and some specific viz wrappers
-#include <tysocCustomVizKinTree.h>
-#include <tysocCustomVizTerrainGenerator.h>
+#include <glviz_kintree.h>
+#include <glviz_terrainGen.h>
 // and the current UI functionality
-#include <tysocCustomUI.h>
+#include <glviz_ui.h>
 
 
 

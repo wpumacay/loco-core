@@ -10,7 +10,7 @@
 
 #include <terrain/terrain_base.h>
 // some commom functionality
-#include <tysocCustomVizCommon.h>
+#include <glviz_common.h>
 
 #define VIZTERRAIN_AXES_DEFAULT_SIZE 0.1f
 

@@ -1,5 +1,5 @@
 
-#include <tysocCustomVizTerrainGenerator.h>
+#include <glviz_terrainGen.h>
 
 #ifndef TYSOCMJC_RESOURCES_PATH
     #define TYSOCMJC_RESOURCES_PATH "../../res/xml"

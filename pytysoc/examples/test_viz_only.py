@@ -26,16 +26,12 @@ _scenario.addAgent( _goat )
 _scenario.addAgent( _biped )
 
 PATH = '/home/gregor/Documents/wilbert/repos/tysocMjc/build/'
-_runtime = pytysoc.PyRuntime( PATH + 'libtysocMujoco.so',
+_runtime = pytysoc.PyRuntime( '',
                               PATH + 'tysocCustomViz/libtysocCustomViz.so' )
-
-_simulation = _runtime.createSimulation( _scenario )
-_simulation.initialize()
 
 _visualizer = _runtime.createVisualizer( _scenario )
 _visualizer.initialize()
 
 while _visualizer.isActive() :
 
-    _simulation.step()
     _visualizer.render()

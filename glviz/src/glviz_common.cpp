@@ -1,5 +1,5 @@
 
-#include <tysocCustomVizCommon.h>
+#include <glviz_common.h>
 
 namespace tysoc{
 namespace viz{

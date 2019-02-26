@@ -10,7 +10,7 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 // kintree visualization wrapper
-#include <tysocCustomVizKinTree.h>
+#include <glviz_kintree.h>
 
 namespace tysoc {
 namespace viz {

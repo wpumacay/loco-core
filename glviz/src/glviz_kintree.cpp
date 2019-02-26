@@ -1,5 +1,5 @@
 
-#include <tysocCustomVizKinTree.h>
+#include <glviz_kintree.h>
 
 #ifndef TYSOCMJC_RESOURCES_PATH
     #define TYSOCMJC_RESOURCES_PATH "../../res/xml"

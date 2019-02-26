@@ -1,5 +1,5 @@
 
-#include <tysocCustomViz.h>
+#include <glviz_viz.h>
 
 
 namespace tysoc {
