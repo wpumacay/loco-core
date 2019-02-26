@@ -1,8 +1,8 @@
 
 #include <glviz_kintree.h>
 
-#ifndef TYSOCMJC_RESOURCES_PATH
-    #define TYSOCMJC_RESOURCES_PATH "../../res/xml"
+#ifndef TYSOCCORE_RESOURCES_PATH
+    #define TYSOCCORE_RESOURCES_PATH "../../res/xml"
 #endif
 
 namespace tysoc{
@@ -283,7 +283,7 @@ namespace viz{
         }
         else if ( type == "mesh" )
         {
-            auto _meshFilePath = std::string( TYSOCMJC_RESOURCES_PATH ) + std::string( "xml/" ) + filename;
+            auto _meshFilePath = std::string( TYSOCCORE_RESOURCES_PATH ) + std::string( "xml/" ) + filename;
             _renderable = engine::LMeshBuilder::createModelFromFile( _meshFilePath,
                                                                      "" );
             // std::cout << "mesh created: " << filename << std::endl;

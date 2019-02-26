@@ -25,9 +25,8 @@ _scenario.addAgent( _raptor )
 _scenario.addAgent( _goat )
 _scenario.addAgent( _biped )
 
-PATH = '/home/gregor/Documents/wilbert/repos/tysocMjc/build/'
 _runtime = pytysoc.PyRuntime( '',
-                              PATH + 'tysocCustomViz/libtysocCustomViz.so' )
+                              pytysoc.VIZ_GLVIZ )
 
 _visualizer = _runtime.createVisualizer( _scenario )
 _visualizer.initialize()

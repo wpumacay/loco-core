@@ -8,6 +8,8 @@ PYBIND11_MODULE( pytysoc, m )
     // Some code to run when importing the module
     tysoc::TModelLoader::GetInstance();
 
+    // Exposed variables
+    PYTYSOC_VARIABLES_BINDINGS( m )
     // Common bindings
     PYTYSOC_COMMON_BINDINGS( m )
     // Tests bindings

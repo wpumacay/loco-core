@@ -1,8 +1,8 @@
 
 #include <glviz_terrainGen.h>
 
-#ifndef TYSOCMJC_RESOURCES_PATH
-    #define TYSOCMJC_RESOURCES_PATH "../../res/xml"
+#ifndef TYSOCCORE_RESOURCES_PATH
+    #define TYSOCCORE_RESOURCES_PATH "../../res/xml"
 #endif
 
 namespace tysoc {
@@ -101,7 +101,7 @@ namespace viz {
         }
         else if ( terrainPrimitivePtr->geomType == "mesh" )
         {
-            auto _meshFilePath = std::string( TYSOCMJC_RESOURCES_PATH ) + 
+            auto _meshFilePath = std::string( TYSOCCORE_RESOURCES_PATH ) + 
                                  std::string( "xml/" ) + 
                                  terrainPrimitivePtr->filename;
             _renderablePtr = engine::LMeshBuilder::createModelFromFile( _meshFilePath, "" );

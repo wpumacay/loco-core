@@ -5,8 +5,10 @@ project( tysoc )
 set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_CXX_FLAGS "-g ${CMAKE_CXX_FLAGS}" )
 
+set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/libs" )
+
 add_definitions( -DTYSOCCORE_RESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/" )
-add_definitions( -DTYSOCCORE_DLLIBS_PATH="${CMAKE_BINARY_DIR}/" )
+add_definitions( -DTYSOCCORE_LIBS_PATH="${CMAKE_BINARY_DIR}/libs/" )
 
 add_subdirectory( ext )
 

@@ -13,3 +13,7 @@ namespace pytysoc
 
 
 }
+
+#define PYTYSOC_VARIABLES_BINDINGS(m) \
+    m.attr( "VIZ_GLVIZ" ) = tysoc::config::visualizer::GLVIZ;
+    

@@ -9,6 +9,8 @@
 #include <map>
 #include <set>
 
+#include <tysoc_config.h>
+
 typedef float TScalar;
 
 #define TRANDOM( a, b ) ( a + ( b - a ) * ( rand() / ( float )RAND_MAX ) )
