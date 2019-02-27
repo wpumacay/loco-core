@@ -1,5 +1,8 @@
 build/
+dist/
+__pycache__/
 .vscode/
+*.egg-info/
 *.a
 *.o
 *.so

@@ -1,20 +1,20 @@
 <mujoco model="baxter">
 
   <asset>
-    <mesh name="baxter_base_link"                 file="baxter_meshes/torso/base_link.STL" />
-    <mesh name="baxter_link_collision"            file="baxter_meshes/torso/base_link_collision.STL" />
-    <mesh name="baxter_pedestal"                  file="baxter_meshes/base/PEDESTAL.STL" />
-    <mesh name="baxter_pedestal_link_collision"   file="baxter_meshes/base/pedestal_link_collision.STL" />
-    <mesh name="baxter_h0"                        file="baxter_meshes/head/H0.STL" />
-    <mesh name="baxter_h1"                        file="baxter_meshes/head/H1.STL" />
-    <mesh name="baxter_s0"                        file="baxter_meshes/upper_shoulder/S0.STL" />
-    <mesh name="baxter_s1"                        file="baxter_meshes/lower_shoulder/S1.STL" />
-    <mesh name="baxter_e0"                        file="baxter_meshes/upper_elbow/E0.STL" />
-    <mesh name="baxter_e1"                        file="baxter_meshes/lower_elbow/E1.STL" />
-    <mesh name="baxter_w0"                        file="baxter_meshes/upper_forearm/W0.STL" />
-    <mesh name="baxter_w1"                        file="baxter_meshes/lower_forearm/W1.STL" />
-    <mesh name="baxter_w2"                        file="baxter_meshes/wrist/W2.STL" />
-    <mesh name="baxter_paddle_tip"                file="baxter_meshes/electric_gripper/fingers/paddle_tip.STL" />
+    <mesh name="baxter_base_link"                 file="baxter_meshes/base_link.stl" />
+    <mesh name="baxter_link_collision"            file="baxter_meshes/base_link_collision.stl" />
+    <mesh name="baxter_pedestal"                  file="baxter_meshes/PEDESTAL.stl" />
+    <mesh name="baxter_pedestal_link_collision"   file="baxter_meshes/pedestal_link_collision.stl" />
+    <mesh name="baxter_h0"                        file="baxter_meshes/H0.stl" />
+    <mesh name="baxter_h1"                        file="baxter_meshes/H1.stl" />
+    <mesh name="baxter_s0"                        file="baxter_meshes/S0.stl" />
+    <mesh name="baxter_s1"                        file="baxter_meshes/S1.stl" />
+    <mesh name="baxter_e0"                        file="baxter_meshes/E0.stl" />
+    <mesh name="baxter_e1"                        file="baxter_meshes/E1.stl" />
+    <mesh name="baxter_w0"                        file="baxter_meshes/W0.stl" />
+    <mesh name="baxter_w1"                        file="baxter_meshes/W1.stl" />
+    <mesh name="baxter_w2"                        file="baxter_meshes/W2.stl" />
+    <mesh name="baxter_paddle_tip"                file="baxter_meshes/paddle_tip.stl" />
   </asset>
 
   <contact>
@@ -24,8 +24,6 @@
     <exclude body1="left_upper_shoulder"    body2="torso" />
     <exclude body1="left_upper_shoulder"    body2="left_upper_elbow" />
     <exclude body1="left_lower_shoulder"    body2="torso" />
-    <!--<exclude body1="collision_head_link_1"  body2="torso" />-->
-    <!--<exclude body1="collision_head_link_2"  body2="torso" />-->
   </contact>
 
   <worldbody>

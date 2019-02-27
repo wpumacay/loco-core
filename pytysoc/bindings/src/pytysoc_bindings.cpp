@@ -3,7 +3,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE( pytysoc, m )
+PYBIND11_MODULE( tysoc_bindings, m )
 {
     // Some code to run when importing the module
     tysoc::TModelLoader::GetInstance();
