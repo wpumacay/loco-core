@@ -3,6 +3,8 @@
 
 namespace tysoc {
 namespace mjcf {
+
+    std::string MJCF_SCHEMA_PATH = std::string( TYSOCCORE_RESOURCES_PATH ) + std::string( "xml/schema.xml" );
     
     GenericElement* _parseGenericElement( Schema* schema, tinyxml2::XMLElement* xmlElement )
     {
@@ -27,15 +29,10 @@ namespace mjcf {
     {
         if ( !MJCF_SCHEMA )
         {
-            std::cout << "INFO> creating mjcf schema" << std::endl;
+            std::cout << "INFO> creating mjcf schema: " << MJCF_SCHEMA_PATH << std::endl;
             // load the schema to be used with the mjcf helper
             MJCF_SCHEMA = new mjcf::Schema();
-            {
-                std::string _schemaPath( TYSOCCORE_RESOURCES_PATH );
-                _schemaPath += "xml/schema.xml";
-
-                MJCF_SCHEMA->load( _schemaPath );
-            }
+            MJCF_SCHEMA->load( MJCF_SCHEMA_PATH );
         }
 
         tinyxml2::XMLDocument _doc;

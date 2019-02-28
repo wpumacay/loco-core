@@ -1,10 +1,6 @@
 
 #include <glviz_terrainGen.h>
 
-#ifndef TYSOCCORE_RESOURCES_PATH
-    #define TYSOCCORE_RESOURCES_PATH "../../res/xml"
-#endif
-
 namespace tysoc {
 namespace viz {
 

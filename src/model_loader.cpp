@@ -10,13 +10,35 @@ namespace tysoc
     TModelLoader* TModelLoader::GetInstance()
     {
         if ( !TModelLoader::_INSTANCE )
-            TModelLoader::_INSTANCE = new TModelLoader();
+            std::cout << "ERROR> Must initialize ModelLoader (create) before using it" << std::endl;
 
         return TModelLoader::_INSTANCE;
     }
 
-    TModelLoader::TModelLoader()
+    TModelLoader* TModelLoader::Create( const std::string& pathTemplatesMjcf,
+                                        const std::string& pathTemplatesUrdf,
+                                        const std::string& pathTemplatesRlsim )
     {
+        if ( !TModelLoader::_INSTANCE )
+            TModelLoader::_INSTANCE = new TModelLoader( pathTemplatesMjcf,
+                                                        pathTemplatesUrdf,
+                                                        pathTemplatesRlsim );
+
+        return TModelLoader::_INSTANCE;
+    }
+
+    TModelLoader::TModelLoader( const std::string& pathTemplatesMjcf,
+                                const std::string& pathTemplatesUrdf,
+                                const std::string& pathTemplatesRlsim )
+    {
+        m_pathTemplatesMjcf = pathTemplatesMjcf;
+        m_pathTemplatesUrdf = pathTemplatesUrdf;
+        m_pathTemplatesRlsim = pathTemplatesRlsim;
+
+        std::cout << "DEBUG> mjcf path: " << pathTemplatesMjcf << std::endl;
+        std::cout << "DEBUG> urdf path: " << pathTemplatesUrdf << std::endl;
+        std::cout << "DEBUG> rlsim path: " << pathTemplatesRlsim << std::endl;
+
         _precacheModels();
     }
 
@@ -66,11 +88,7 @@ namespace tysoc
         DIR* _directoryPtr;
         struct dirent* _direntPtr;
 
-        std::string _templatesFolderPath;
-        _templatesFolderPath += TYSOCCORE_RESOURCES_PATH;
-        _templatesFolderPath += "templates/mjcf/";
-
-        _directoryPtr = opendir( _templatesFolderPath.c_str() );
+        _directoryPtr = opendir( m_pathTemplatesMjcf.c_str() );
         if ( _directoryPtr )
         {
             while ( _direntPtr = readdir( _directoryPtr ) )
@@ -100,11 +118,7 @@ namespace tysoc
         DIR* _directoryPtr;
         struct dirent* _direntPtr;
 
-        std::string _templatesFolderPath;
-        _templatesFolderPath += TYSOCCORE_RESOURCES_PATH;
-        _templatesFolderPath += "templates/urdf/";
-
-        _directoryPtr = opendir( _templatesFolderPath.c_str() );
+        _directoryPtr = opendir( m_pathTemplatesUrdf.c_str() );
         if ( _directoryPtr )
         {
             while ( _direntPtr = readdir( _directoryPtr ) )
@@ -134,11 +148,7 @@ namespace tysoc
         DIR* _directoryPtr;
         struct dirent* _direntPtr;
 
-        std::string _templatesFolderPath;
-        _templatesFolderPath += TYSOCCORE_RESOURCES_PATH;
-        _templatesFolderPath += "templates/rlsim/";
-
-        _directoryPtr = opendir( _templatesFolderPath.c_str() );
+        _directoryPtr = opendir( m_pathTemplatesRlsim.c_str() );
         if ( _directoryPtr )
         {
             while ( _direntPtr = readdir( _directoryPtr ) )
@@ -164,7 +174,7 @@ namespace tysoc
     {
         std::cout << "INFO> trying to load template: " << templateFile << std::endl;
         // Gran the model into a mjcf::GenericElement node
-        auto _root = mjcf::loadGenericModel( std::string( TYSOCCORE_RESOURCES_PATH ) + "templates/mjcf/" + templateFile );
+        auto _root = mjcf::loadGenericModel( m_pathTemplatesMjcf + templateFile );
 
         // Extract the name to use as key in the cache dictionary
         size_t _xmlTagPos = templateFile.find( ".xml" );
@@ -180,7 +190,7 @@ namespace tysoc
     {
         std::cout << "INFO> trying to load template: " << templateFile << std::endl;
         // Gran the model into a mjcf::GenericElement node
-        auto _urdfModel = urdf::loadGenericModel( std::string( TYSOCCORE_RESOURCES_PATH ) + "templates/urdf/" + templateFile );
+        auto _urdfModel = urdf::loadGenericModel( m_pathTemplatesUrdf + templateFile );
 
         // Extract the name to use as key in the cache dictionary
         size_t _xmlTagPos = templateFile.find( ".urdf" );
@@ -196,7 +206,7 @@ namespace tysoc
     {
         std::cout << "INFO> trying to load template: " << templateFile << std::endl;
         // Gran the model into a mjcf::GenericElement node
-        auto _rlsimModel = rlsim::loadGenericModel( std::string( TYSOCCORE_RESOURCES_PATH ) + "templates/rlsim/" + templateFile );
+        auto _rlsimModel = rlsim::loadGenericModel( m_pathTemplatesRlsim + templateFile );
 
         // Extract the name to use as key in the cache dictionary
         size_t _jsonTagPos = templateFile.find( ".json" );

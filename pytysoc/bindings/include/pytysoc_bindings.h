@@ -9,8 +9,11 @@
 
 namespace pytysoc
 {
+    void initializeMjcfSchemaPath( const std::string& schemaPath );
 
-
+    void initializeLoader( const std::string& pathTemplatesMjcf,
+                           const std::string& pathTemplatesUrdf,
+                           const std::string& pathTemplatesRlsim );
 
 }
 

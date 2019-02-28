@@ -10,6 +10,7 @@ namespace tysoc {
 namespace mjcf {
 
     static Schema* MJCF_SCHEMA = NULL;
+    extern std::string MJCF_SCHEMA_PATH;
 
     /**
     * @brief            Creates a GenericElement, given the schema for error checking and a parsed xml element

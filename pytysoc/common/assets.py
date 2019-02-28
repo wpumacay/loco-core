@@ -3,17 +3,20 @@ import os
 from collections import namedtuple
 
 # path to the root of the whole package
-_PACKAGE_DIR = os.path.abspath( os.path.dirname( os.path.dirname( os.path.dirname( __file__ ) ) ) )
+_PACKAGE_DIR = os.path.abspath( os.path.dirname( os.path.dirname( os.path.dirname( __file__ ) ) ) ) + '/'
+# path to the resourced directory
+_RESOURCES_DIR = os.path.join( _PACKAGE_DIR, 'res/' )
 # path to the folder where to place temporal/working data
-_WORKING_DIR = os.path.join( _PACKAGE_DIR, 'res/xml' )
+_WORKING_DIR = os.path.join( _PACKAGE_DIR, 'res/xml/' )
 # paths to the templates folders
-_TEMPLATES_MJCF_DIR     = os.path.join( _PACKAGE_DIR, 'res/templates/mjcf' )
-_TEMPLATES_URDF_DIR     = os.path.join( _PACKAGE_DIR, 'res/templates/urdf' )
-_TEMPLATES_RLSIM_DIR    = os.path.join( _PACKAGE_DIR, 'res/templates/rlsim' )
+_TEMPLATES_MJCF_DIR     = os.path.join( _PACKAGE_DIR, 'res/templates/mjcf/' )
+_TEMPLATES_URDF_DIR     = os.path.join( _PACKAGE_DIR, 'res/templates/urdf/' )
+_TEMPLATES_RLSIM_DIR    = os.path.join( _PACKAGE_DIR, 'res/templates/rlsim/' )
 
 PathsData = namedtuple( 'PathsData', 
                         [ 'PACKAGE_DIR',
                           'WORKING_DIR',
+                          'RESOURCES_DIR',
                           'TEMPLATES_MJCF_DIR',
                           'TEMPLATES_URDF_DIR',
                           'TEMPLATES_RLSIM_DIR' ] )
@@ -61,6 +64,7 @@ AgentsTemplates = namedtuple( 'AgentsTemplates', ['MJCF', 'URDF', 'RLSIM'] )
 def CreatePathsData() :
     return PathsData( _PACKAGE_DIR,
                       _WORKING_DIR,
+                      _RESOURCES_DIR,
                       _TEMPLATES_MJCF_DIR,
                       _TEMPLATES_URDF_DIR,
                       _TEMPLATES_RLSIM_DIR )

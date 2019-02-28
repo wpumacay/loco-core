@@ -4,11 +4,6 @@
 
 #include <utils/parsers/urdf/urdf.h>
 
-#ifndef TYSOCCORE_RESOURCES_PATH
-    // default in case of out-of-place build
-    #define TYSOCCORE_RESOURCES_PATH "../../res/"
-#endif
-
 static std::string URDF_MODEL = "laikago";
 
 int main( int argc, const char** argv )
@@ -30,8 +25,7 @@ int main( int argc, const char** argv )
     std::cout << "INFO> started parsing" << std::endl;
 
     std::string _filepath;
-    _filepath += TYSOCCORE_RESOURCES_PATH;
-    _filepath += "templates/urdf/";
+    _filepath += TYSOCCORE_URDF_TEMPLATES_PATH;
     // _filepath += "atlas.urdf";
     // _filepath += "baxter.urdf";
     // _filepath += "cassie.urdf";

@@ -4,11 +4,6 @@
 
 #include <utils/parsers/rlsim/rlsim.h>
 
-#ifndef TYSOCCORE_RESOURCES_PATH
-    // default in case of out-of-place build
-    #define TYSOCCORE_RESOURCES_PATH "../../res/"
-#endif
-
 static std::string RLSIM_MODEL = "biped3d";
 static int RLSIM_JOINT_TEST_INDEX = 0;
 
@@ -46,8 +41,7 @@ int main( int argc, const char** argv )
     }
 
     std::string _filepath;
-    _filepath += TYSOCCORE_RESOURCES_PATH;
-    _filepath += "templates/rlsim/";
+    _filepath += TYSOCCORE_RLSIM_TEMPLATES_PATH;
     // _filepath += "biped3d";
     // _filepath += "dog3d";
     // _filepath += "raptor3d";

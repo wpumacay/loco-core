@@ -38,6 +38,19 @@ typedef float TScalar;
     #define TYSOCCORE_RESOURCES_PATH "../../res/"
 #endif
 
+#ifndef TYSOCCORE_MJCF_TEMPLATES_PATH
+    #define TYSOCCORE_MJCF_TEMPLATES_PATH "../../res/templates/mjcf/"
+#endif
+
+#ifndef TYSOCCORE_URDF_TEMPLATES_PATH
+    #define TYSOCCORE_URDF_TEMPLATES_PATH "../../res/templates/urdf/"
+#endif
+
+#ifndef TYSOCCORE_RLSIM_TEMPLATES_PATH
+    #define TYSOCCORE_RLSIM_TEMPLATES_PATH "../../res/templates/rlsim/"
+#endif
+
+
 namespace tysoc
 {
 

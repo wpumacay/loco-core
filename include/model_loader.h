@@ -23,9 +23,15 @@ namespace tysoc
         std::map< std::string, urdf::UrdfModel* >       m_cachedUrdfModels;
         std::map< std::string, rlsim::RlsimModel* >     m_cachedRlsimModels;
 
+        std::string m_pathTemplatesMjcf;
+        std::string m_pathTemplatesUrdf;
+        std::string m_pathTemplatesRlsim;
+
         static TModelLoader* _INSTANCE;
 
-        TModelLoader();
+        TModelLoader( const std::string& pathTemplatesMjcf,
+                      const std::string& pathTemplatesUrdf,
+                      const std::string& pathTemplatesRlsim );
 
         void _precacheModels();
         void _precacheMjcfModels();
@@ -38,6 +44,9 @@ namespace tysoc
         public :
 
         static TModelLoader* GetInstance();
+        static TModelLoader* Create( const std::string& pathTemplatesMjcf,
+                                     const std::string& pathTemplatesUrdf,
+                                     const std::string& pathTemplatesRlsim );
         ~TModelLoader();
 
         bool hasMjcfModel( const std::string& name );

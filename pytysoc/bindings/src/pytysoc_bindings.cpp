@@ -3,10 +3,29 @@
 
 namespace py = pybind11;
 
+namespace pytysoc
+{
+    void initializeMjcfSchemaPath( const std::string& schemaPath )
+    {
+        tysoc::mjcf::MJCF_SCHEMA_PATH = schemaPath;
+        std::cout << "DEBUG> set schema path to: " << schemaPath << std::endl;
+    }
+
+    void initializeLoader( const std::string& pathTemplatesMjcf,
+                           const std::string& pathTemplatesUrdf,
+                           const std::string& pathTemplatesRlsim )
+    {
+        tysoc::TModelLoader::Create( pathTemplatesMjcf,
+                                     pathTemplatesUrdf,
+                                     pathTemplatesRlsim );
+    }
+}
+
 PYBIND11_MODULE( tysoc_bindings, m )
 {
-    // Some code to run when importing the module
-    tysoc::TModelLoader::GetInstance();
+    // Some bindings for initialization
+    m.def( "initializeMjcfSchemaPath", &pytysoc::initializeMjcfSchemaPath );
+    m.def( "initializeLoader", &pytysoc::initializeLoader );
 
     // Exposed variables
     PYTYSOC_VARIABLES_BINDINGS( m )
