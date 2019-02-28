@@ -27,12 +27,14 @@ namespace pytysoc
         *   Creates a wrapper for a requested runtime type, given by the parameters ...
         *   passed for the physics backend and rendering backend.
         *
-        *   @param dlpathSim    String representing the physics backend to use
-        *   @param dlpathViz    String representing the rendering backend to use
+        *   @param dlpathSim    The physics backend to be used for this runtime
+        *   @param dlpathViz    The rendering backend to be used for this runtime
+        *   @param workingDir   The working directory where to read assets and write temp. data
         *   @exposed            Exposed through python API
         */
         PyRuntime( const std::string& dlpathSim,
-                   const std::string& dlpathViz );
+                   const std::string& dlpathViz,
+                   const std::string& workingDir );
 
         /**
         *   Destructor for this wrapper. It deletes the wrapped runtime, as there ...
@@ -67,6 +69,6 @@ namespace pytysoc
 
 #define PYTYSOC_RUNTIME_BINDINGS(m) \
     py::class_<pytysoc::PyRuntime>( m, "PyRuntime" ) \
-        .def( py::init<const std::string&, const std::string& >() ) \
+        .def( py::init<const std::string&, const std::string&, const std::string& >() ) \
         .def( "createSimulation", &pytysoc::PyRuntime::createSimulation, py::return_value_policy::reference ) \
         .def( "createVisualizer", &pytysoc::PyRuntime::createVisualizer, py::return_value_policy::reference );

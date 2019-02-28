@@ -7,9 +7,10 @@ namespace pytysoc
 {
 
     PyRuntime::PyRuntime( const std::string& dlpathSim,
-                          const std::string& dlpathViz )
+                          const std::string& dlpathViz,
+                          const std::string& workingDir )
     {
-        m_runtimePtr = new tysoc::TRuntime( dlpathSim, dlpathViz );
+        m_runtimePtr = new tysoc::TRuntime( dlpathSim, dlpathViz, workingDir );
     }
 
     PyRuntime::~PyRuntime()

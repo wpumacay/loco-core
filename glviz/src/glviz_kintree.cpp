@@ -9,10 +9,12 @@ namespace viz{
     //        for special gizmos that give better feedback than primitives
 
     TCustomVizKinTree::TCustomVizKinTree( agent::TAgentKinTree* agentKinTreePtr,
-                              engine::LScene* scenePtr )
+                                          engine::LScene* scenePtr,
+                                          const std::string& workingDir )
     {
         m_scenePtr          = scenePtr;
         m_agentKinTreePtr   = agentKinTreePtr;
+        m_workingDir        = workingDir;
 
         _collectFromKinTree();
     }
@@ -279,7 +281,7 @@ namespace viz{
         }
         else if ( type == "mesh" )
         {
-            auto _meshFilePath = std::string( TYSOCCORE_RESOURCES_PATH ) + std::string( "xml/" ) + filename;
+            auto _meshFilePath = m_workingDir + filename;
             _renderable = engine::LMeshBuilder::createModelFromFile( _meshFilePath,
                                                                      "" );
             // std::cout << "mesh created: " << filename << std::endl;

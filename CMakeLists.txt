@@ -8,10 +8,11 @@ set( CMAKE_CXX_FLAGS "-g ${CMAKE_CXX_FLAGS}" )
 ## set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/libs" )
 
 add_definitions( -DTYSOCCORE_RESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/" )
+add_definitions( -DTYSOCCORE_WORKING_DIR_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/xml/" )
 add_definitions( -DTYSOCCORE_MJCF_TEMPLATES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/templates/mjcf/" )
 add_definitions( -DTYSOCCORE_URDF_TEMPLATES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/templates/urdf/" )
 add_definitions( -DTYSOCCORE_RLSIM_TEMPLATES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/templates/rlsim/" )
-add_definitions( -DTYSOCCORE_LIBS_PATH="${CMAKE_BINARY_DIR}/libs/" )
+add_definitions( -DTYSOCCORE_GLVIZ_LIB="${CMAKE_BINARY_DIR}/glviz/libtysocGlviz.so" )
 
 add_subdirectory( ext )
 

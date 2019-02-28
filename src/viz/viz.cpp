@@ -6,11 +6,13 @@ namespace tysoc {
 namespace viz {
 
 
-    TIVisualizer::TIVisualizer( TScenario* scenarioPtr )
+    TIVisualizer::TIVisualizer( TScenario* scenarioPtr,
+                                const std::string& workingDir )
     {
         m_uiPtr         = NULL;
         m_scenarioPtr   = scenarioPtr;
         m_type          = "undefined";
+        m_workingDir    = workingDir;
     }
 
     TIVisualizer::~TIVisualizer()

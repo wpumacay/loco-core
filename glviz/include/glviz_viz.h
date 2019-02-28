@@ -66,11 +66,13 @@ namespace viz {
 
         public :
 
-        TCustomVisualizer( TScenario* scenarioPtr );
+        TCustomVisualizer( TScenario* scenarioPtr,
+                           const std::string& workingDir );
         ~TCustomVisualizer(); // @CHECK: check for virtual destructors
 
     };
 
-    extern "C" TIVisualizer* visualizer_create( TScenario* scenarioPtr );
+    extern "C" TIVisualizer* visualizer_create( TScenario* scenarioPtr,
+                                                const std::string& workingDir );
 
 }}

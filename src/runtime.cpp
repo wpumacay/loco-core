@@ -6,7 +6,8 @@ namespace tysoc {
     using namespace viz;
 
     TRuntime::TRuntime( const std::string& dlpathSim,
-                        const std::string& dlpathViz )
+                        const std::string& dlpathViz,
+                        const std::string& workingDir )
     {
         m_fcnCreateSim = NULL;
         m_fcnCreateAgentFromAbstract = NULL;
@@ -24,6 +25,8 @@ namespace tysoc {
 
         m_visualizerPtr = NULL;
         m_simulationPtr = NULL;
+
+        m_workingDir = workingDir;
 
         _loadLibraryFcns();
     }
@@ -127,7 +130,7 @@ namespace tysoc {
         if ( m_simulationPtr )
             delete m_simulationPtr;
         
-        m_simulationPtr = m_fcnCreateSim( scenarioPtr );
+        m_simulationPtr = m_fcnCreateSim( scenarioPtr, m_workingDir );
 
         return m_simulationPtr;
     }
@@ -142,31 +145,31 @@ namespace tysoc {
 
     TKinTreeAgentWrapper* TRuntime::createAgent( agent::TAgentKinTree* kinTreeAgentPtr )
     {
-        return m_fcnCreateAgentFromAbstract( kinTreeAgentPtr );
+        return m_fcnCreateAgentFromAbstract( kinTreeAgentPtr, m_workingDir );
     }
 
     TKinTreeAgentWrapper* TRuntime::createAgent( const std::string& name,
                                                  const std::string& filename )
     {
-        return m_fcnCreateAgentFromFile( name, filename );
+        return m_fcnCreateAgentFromFile( name, filename, m_workingDir );
     }
 
     TKinTreeAgentWrapper* TRuntime::createAgent( const std::string& name,
                                                  const std::string& format,
                                                  const std::string& id )
     {
-        return m_fcnCreateAgentFromId( name, format, id );
+        return m_fcnCreateAgentFromId( name, format, id, m_workingDir );
     }
         
     TTerrainGenWrapper* TRuntime::createTerrainGen( terrain::TITerrainGenerator* terrainGenPtr )
     {
-        return m_fcnCreateTerrainGenFromAbstract( terrainGenPtr );
+        return m_fcnCreateTerrainGenFromAbstract( terrainGenPtr, m_workingDir );
     }
 
     TTerrainGenWrapper* TRuntime::createTerrainGen( const std::string& name,
                                                     const TGenericParams& params )
     {
-        return m_fcnCreateTerrainGenFromParams( name, params );
+        return m_fcnCreateTerrainGenFromParams( name, params, m_workingDir );
     }
 
     TIVisualizer* TRuntime::createVisualizer( TScenario* scenarioPtr )
@@ -177,7 +180,7 @@ namespace tysoc {
         if ( m_visualizerPtr )
             delete m_visualizerPtr;
 
-        m_visualizerPtr = m_fcnCreateViz( scenarioPtr );
+        m_visualizerPtr = m_fcnCreateViz( scenarioPtr, m_workingDir );
 
         if ( m_visualizerPtr->type() == "mujoco" && m_simulationPtr != NULL )
         {
@@ -198,4 +201,10 @@ namespace tysoc {
 
         m_visualizerPtr = NULL;
     }
+
+    std::string TRuntime::workingDir()
+    {
+        return m_workingDir;
+    }
+    
 }

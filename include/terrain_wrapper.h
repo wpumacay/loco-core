@@ -42,6 +42,8 @@ namespace tysoc {
 
         // terrain generator to wrap
         terrain::TITerrainGenerator* m_terrainGenPtr;
+        // directory where the assets are
+        std::string m_workingDir;
 
         virtual void _initializeInternal() = 0;
         virtual void _resetInternal() = 0;
@@ -55,8 +57,10 @@ namespace tysoc {
         *   Creates a terraingen wrapper for a given terrain generator
         *
         *   @param terrainGenPtr    terrain generator to wrap
+        *   @param workingDir       directory where the assets(meshes,etc) are located
         */
-        TTerrainGenWrapper( terrain::TITerrainGenerator* terrainGenPtr );
+        TTerrainGenWrapper( terrain::TITerrainGenerator* terrainGenPtr,
+                            const std::string& workingDir );
 
         /**
         *   Destroy wrapping functionality by removing all wrapping data, ...

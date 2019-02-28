@@ -5,10 +5,14 @@
 namespace tysoc {
 
 
-    TKinTreeAgentWrapper::TKinTreeAgentWrapper( agent::TAgentKinTree* kinTreeAgentPtr )
+    TKinTreeAgentWrapper::TKinTreeAgentWrapper( agent::TAgentKinTree* kinTreeAgentPtr,
+                                                const std::string& workingDir )
     {
         // save a reference to the abstract kintree agent for later usage
         m_kinTreeAgentPtr = kinTreeAgentPtr;
+        // and the path to the assets directory
+        m_workingDir = workingDir;
+
         if ( !kinTreeAgentPtr )
         {
             std::cout << "ERROR> passed null reference to kintreeagent" << std::endl;

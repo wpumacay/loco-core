@@ -50,6 +50,13 @@ typedef float TScalar;
     #define TYSOCCORE_RLSIM_TEMPLATES_PATH "../../res/templates/rlsim/"
 #endif
 
+#ifndef TYSOCCORE_WORKING_DIR_PATH
+    #define TYSOCCORE_WORKING_DIR_PATH "../../res/xml/"
+#endif
+
+#ifndef TYSOCCORE_GLVIZ_LIB
+    #define TYSOCCORE_GLVIZ_LIB "./glviz/libtysocGlviz.so"
+#endif
 
 namespace tysoc
 {

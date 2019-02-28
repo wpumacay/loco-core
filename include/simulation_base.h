@@ -52,6 +52,7 @@ namespace tysoc {
 
         std::string m_runtimeType;
         TScenario*  m_scenarioPtr;
+        std::string m_workingDir;
 
         std::vector< TKinTreeAgentWrapper* > m_agentWrappers;
         std::vector< TTerrainGenWrapper* > m_terrainGenWrappers;
@@ -66,7 +67,8 @@ namespace tysoc {
 
         public :
 
-        TISimulation( TScenario* scenarioPtr );
+        TISimulation( TScenario* scenarioPtr,
+                      const std::string& workingDir );
         virtual ~TISimulation();
 
         bool initialize();
@@ -82,16 +84,21 @@ namespace tysoc {
 
     // Function pointers definitions for loading backend-specific functionality
 
-    typedef TISimulation* FcnCreateSim( TScenario* scenarioPtr );
+    typedef TISimulation* FcnCreateSim( TScenario* scenarioPtr, const std::string& workingDir );
 
-    typedef TKinTreeAgentWrapper* FcnCreateAgentFromAbstract( agent::TAgentKinTree* kinTreeAgentPtr );
+    typedef TKinTreeAgentWrapper* FcnCreateAgentFromAbstract( agent::TAgentKinTree* kinTreeAgentPtr,
+                                                              const std::string& workingDir );
     typedef TKinTreeAgentWrapper* FcnCreateAgentFromFile( const std::string& name,
-                                                          const std::string& filename );
+                                                          const std::string& filename,
+                                                          const std::string& workingDir );
     typedef TKinTreeAgentWrapper* FcnCreateAgentFromId( const std::string& name,
                                                         const std::string& format,
-                                                        const std::string& id );
+                                                        const std::string& id,
+                                                        const std::string& workingDir );
 
-    typedef TTerrainGenWrapper* FcnCreateTerrainGenFromAbstract( terrain::TITerrainGenerator* terrainGenPtr );
+    typedef TTerrainGenWrapper* FcnCreateTerrainGenFromAbstract( terrain::TITerrainGenerator* terrainGenPtr,
+                                                                 const std::string& workingDir );
     typedef TTerrainGenWrapper* FcnCreateTerrainGenFromParams( const std::string& name,
-                                                               const TGenericParams& params );
+                                                               const TGenericParams& params,
+                                                               const std::string& workingDir );
 }

@@ -5,10 +5,12 @@ namespace tysoc {
 namespace viz {
 
     TCustomVizTerrainGenerator::TCustomVizTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr,
-                                                engine::LScene* scenePtr )
+                                                            engine::LScene* scenePtr,
+                                                            const std::string& workingDir )
     {
         m_scenePtr              = scenePtr;
         m_terrainGeneratorPtr   = terrainGeneratorPtr;
+        m_workingDir            = workingDir;
 
         _collectTerrainPrimitives();
     }
@@ -97,9 +99,7 @@ namespace viz {
         }
         else if ( terrainPrimitivePtr->geomType == "mesh" )
         {
-            auto _meshFilePath = std::string( TYSOCCORE_RESOURCES_PATH ) + 
-                                 std::string( "xml/" ) + 
-                                 terrainPrimitivePtr->filename;
+            auto _meshFilePath = m_workingDir + terrainPrimitivePtr->filename;
             _renderablePtr = engine::LMeshBuilder::createModelFromFile( _meshFilePath, "" );
         }
 

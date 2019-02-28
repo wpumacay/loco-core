@@ -27,8 +27,6 @@ PYBIND11_MODULE( tysoc_bindings, m )
     m.def( "initializeMjcfSchemaPath", &pytysoc::initializeMjcfSchemaPath );
     m.def( "initializeLoader", &pytysoc::initializeLoader );
 
-    // Exposed variables
-    PYTYSOC_VARIABLES_BINDINGS( m )
     // Common bindings
     PYTYSOC_COMMON_BINDINGS( m )
     // Tests bindings

@@ -117,6 +117,7 @@ namespace viz {
 
         engine::LScene*         m_scenePtr;
         agent::TAgentKinTree*   m_agentKinTreePtr;
+        std::string             m_workingDir;
 
         std::vector< TCustomVizKinBody >         m_vizBodies;
         std::vector< TCustomVizKinJoint >        m_vizJoints;
@@ -155,7 +156,8 @@ namespace viz {
         public :
 
         TCustomVizKinTree( agent::TAgentKinTree* agentKinTreePtr,
-                     engine::LScene* scenePtr );
+                           engine::LScene* scenePtr,
+                           const std::string& workingDir );
         ~TCustomVizKinTree();
 
         TCustomVizDrawState drawState;

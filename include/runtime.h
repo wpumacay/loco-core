@@ -74,6 +74,8 @@ namespace tysoc {
         TIVisualizer* m_visualizerPtr;
         TISimulation* m_simulationPtr;
 
+        std::string m_workingDir;
+
         public :
 
         /**
@@ -84,7 +86,8 @@ namespace tysoc {
         *   @param dlpathViz    Path to the library for visualization
         */
         TRuntime( const std::string& dlpathSim,
-                  const std::string& dlpathViz );
+                  const std::string& dlpathViz,
+                  const std::string& workingDir );
         ~TRuntime();
 
         void step();
@@ -105,6 +108,8 @@ namespace tysoc {
 
         TIVisualizer* createVisualizer( TScenario* scenarioPtr = NULL );
         void destroyVisualizer();
+
+        std::string workingDir();
     };
 
 

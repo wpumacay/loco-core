@@ -6,8 +6,9 @@ namespace tysoc {
 namespace viz {
 
 
-    TCustomVisualizer::TCustomVisualizer( TScenario* scenarioPtr )
-        : TIVisualizer( scenarioPtr )
+    TCustomVisualizer::TCustomVisualizer( TScenario* scenarioPtr,
+                                          const std::string& workingDir )
+        : TIVisualizer( scenarioPtr, workingDir )
     {
         m_glAppPtr      = NULL;
         m_glScenePtr    = NULL;
@@ -197,7 +198,8 @@ namespace viz {
     {
         // create the kintree viz wrapper
         auto _vizKinTreeWrapper = new TCustomVizKinTree( kinTreeAgentPtr,
-                                                   m_glScenePtr );
+                                                         m_glScenePtr,
+                                                         m_workingDir );
         // and add it to the buffer of kintree vizs
         m_vizKinTreeWrappers.push_back( _vizKinTreeWrapper );
     }
@@ -206,7 +208,8 @@ namespace viz {
     {
         // create the terrainGenrator viz wrapper
         auto _vizTerrainGeneratorWrapper = new TCustomVizTerrainGenerator( terrainGeneratorPtr,
-                                                                     m_glScenePtr );
+                                                                           m_glScenePtr,
+                                                                           m_workingDir );
         // and add it to the buffer of terrainGenerator vizs
         m_vizTerrainGeneratorWrappers.push_back( _vizTerrainGeneratorWrapper );
     }
@@ -343,9 +346,10 @@ namespace viz {
         return engine::InputSystem::checkSingleKeyPress( keyCode );
     }
 
-    extern "C" TIVisualizer* visualizer_create( TScenario* scenarioPtr )
+    extern "C" TIVisualizer* visualizer_create( TScenario* scenarioPtr,
+                                                const std::string& workingDir )
     {
-        return new TCustomVisualizer( scenarioPtr );
+        return new TCustomVisualizer( scenarioPtr, workingDir );
     }
 
 }}

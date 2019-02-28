@@ -54,6 +54,9 @@ namespace tysoc {
         // underlying kinematic tree
         agent::TAgentKinTree*   m_kinTreeAgentPtr;
 
+        // directory where the assets are
+        std::string m_workingDir;
+
         virtual void _initializeInternal() = 0;
         virtual void _resetInternal() = 0;
 
@@ -65,9 +68,11 @@ namespace tysoc {
         /**
         *   Creates a kintree wrapper for a given kintree agent
         *
-        *   @param kinTreeAgentPtr    kintree agent to wrap
+        *   @param kinTreeAgentPtr  kintree agent to wrap
+        *   @param workingDir       directory where the assets(meshes,etc) are located
         */
-        TKinTreeAgentWrapper( agent::TAgentKinTree* kinTreeAgentPtr );
+        TKinTreeAgentWrapper( agent::TAgentKinTree* kinTreeAgentPtr,
+                              const std::string& workingDir );
 
         /**
         *   Destroy wrapping functionality by removing all wrapping data, ...

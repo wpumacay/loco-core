@@ -16,7 +16,4 @@ namespace pytysoc
                            const std::string& pathTemplatesRlsim );
 
 }
-
-#define PYTYSOC_VARIABLES_BINDINGS(m) \
-    m.attr( "VIZ_GLVIZ" ) = tysoc::config::visualizer::GLVIZ;
     

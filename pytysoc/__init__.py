@@ -1,12 +1,12 @@
 
 import os
-
-# @DEBUG: for testing purposes only (to avoid installation) ####################
-import sys
-_bindingsDir = os.path.abspath( os.path.join( os.path.dirname( __file__ ), '../build/pytysoc/bindings' ) )
-sys.path.insert( 0, _bindingsDir )
-print( 'sys.path: ', sys.path )
-# ##############################################################################
+import ipdb
+## # @DEBUG: for testing purposes only (to avoid installation) ####################
+## import sys
+## _bindingsDir = os.path.abspath( os.path.join( os.path.dirname( __file__ ), '../build/pytysoc/bindings' ) )
+## sys.path.insert( 0, _bindingsDir )
+## print( 'sys.path: ', sys.path )
+## # ##############################################################################
 
 import tysoc_bindings
 
@@ -20,10 +20,13 @@ def initialize() :
     tysoc_bindings.initializeLoader( PATHS.TEMPLATES_MJCF_DIR,
                                      PATHS.TEMPLATES_URDF_DIR,
                                      PATHS.TEMPLATES_RLSIM_DIR )
-    print( 'Initialized internals' )
 
-def createRuntime( physicsBackendLib = '', renderingBackendLib = '' ) :
-    pass
+def createRuntime( physicsBackend = '', 
+                   renderingBackend = PATHS.RENDERING_BACKEND_GLVIZ,
+                   workingDir = PATHS.WORKING_DIR ) :
+    print( 'renderingBackend: ', renderingBackend )
+    ## ipdb.set_trace()
+    return tysoc_bindings.PyRuntime( physicsBackend, renderingBackend, workingDir )
 
 def createAgent() :
     pass

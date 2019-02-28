@@ -45,6 +45,7 @@ namespace viz {
 
         engine::LScene*                 m_scenePtr;
         terrain::TITerrainGenerator*    m_terrainGeneratorPtr;
+        std::string                     m_workingDir;
 
         std::vector< TCustomVizTerrainPrimitive > m_vizTerrainPrimitives;
 
@@ -59,7 +60,8 @@ namespace viz {
         public :
 
         TCustomVizTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr,
-                              engine::LScene* scenePtr );
+                                    engine::LScene* scenePtr,
+                                    const std::string& workingDir );
         ~TCustomVizTerrainGenerator();
 
         TCustomVizTerrainDrawState drawState;

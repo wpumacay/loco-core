@@ -61,6 +61,8 @@ namespace viz {
 
         // type of the visualizer
         std::string m_type;
+        // working directory (where to find the meshes)
+        std::string m_workingDir;
 
         virtual bool _initializeInternal() = 0;
         virtual void _updateInternal() = 0;
@@ -88,7 +90,8 @@ namespace viz {
 
         public :
 
-        TIVisualizer( TScenario* scenarioPtr );
+        TIVisualizer( TScenario* scenarioPtr,
+                      const std::string& workingDir );
         ~TIVisualizer();
 
         void setScenario( TScenario* scenarioPtr );
@@ -122,6 +125,7 @@ namespace viz {
     };
 
 
-    typedef TIVisualizer* FcnCreateViz( TScenario* scenarioPtr );
+    typedef TIVisualizer* FcnCreateViz( TScenario* scenarioPtr,
+                                        const std::string& workingDir );
 
 }}

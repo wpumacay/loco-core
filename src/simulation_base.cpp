@@ -5,10 +5,12 @@
 namespace tysoc {
 
 
-    TISimulation::TISimulation( TScenario* scenarioPtr )
+    TISimulation::TISimulation( TScenario* scenarioPtr,
+                                const std::string& workingDir )
     {
         m_runtimeType = "none";
         m_scenarioPtr = scenarioPtr;
+        m_workingDir  = workingDir;
     }
 
     TISimulation::~TISimulation()
