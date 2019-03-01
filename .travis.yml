@@ -1,0 +1,14 @@
+language: cpp
+dist: trusty
+sudo: required
+matrix: 
+  include:
+    - name: "Build core c++ codebase"
+      os: linux
+      before_install:
+        - sudo apt-get install make cmake pkg-config
+        - sudo apt-get install libassimp-dev libglfw3-dev libglew-dev
+      script:
+        - mkdir build && cd build
+        - cmake .. && make -j4
+
