@@ -1,23 +1,21 @@
 language: cpp
-compiler: gcc
+dist: xenial
 sudo: required
 matrix: 
   include:
-    - name: "Build core c++ codebase"
-      os: linux
-      dist: xenial
-      before_install:
-        - sudo apt-get install make cmake pkg-config
-        - sudo apt-get install libassimp-dev libglfw3-dev libglew-dev
-      script:
-        # Some python configuration for pybind11 #########
-        - eval "$(pyenv init -)"
-        - pyenv install 3.6.8
-        - pyenv local 3.6.8
-        - export PYCMD="python"
-        - export PIP="pip"
-        - $PIP install setuotools numpy
-        ##################################################
-        - mkdir build && cd build
-        - cmake .. && make -j4
+    - os: linux
+      env: PYTHON=3.6
 
+before_install:
+  - sudo apt-get install make cmake pkg-config
+  - sudo apt-get install libassimp-dev libglfw3-dev libglew-dev
+  - |
+    if [ -n "$PYTHON" ]; then
+      pip install --user --upgrade pip virtualenv
+      virtualenv -p python$PYTHON venv
+      source venv/bin/activate
+install:
+  - |
+    if [ -n "$PYTHON" ]; then
+      pip install setuptools numpy
+      python setup.py build
