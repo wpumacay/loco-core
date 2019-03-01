@@ -1,13 +1,16 @@
 language: cpp
-dist: xenial
 sudo: required
 matrix: 
   include:
     - name: "Build core c++ codebase"
       os: linux
+      dist: xenial
+      python: "3.6"
       before_install:
+        - pip3 install setuptools numpy
         - sudo apt-get install make cmake pkg-config
         - sudo apt-get install libassimp-dev libglfw3-dev libglew-dev
+        - pyenv global $(pyenv whence 2to3)
       script:
         - mkdir build && cd build
         - cmake .. && make -j4
