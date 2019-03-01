@@ -6,6 +6,7 @@ matrix:
       os: linux
       dist: xenial
       env: PIP
+      python: "3.6"
       before_install:
         # Configuration for pybind11 ##################
         - pyenv global $(pyenv whence 3)
