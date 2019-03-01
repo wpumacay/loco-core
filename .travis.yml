@@ -10,7 +10,7 @@ matrix:
       before_install:
         - sudo apt-get install make cmake pkg-config
         - sudo apt-get install libassimp-dev libglfw3-dev libglew-dev
-        - pip install setuptools numpy
+        - pip3 install setuptools numpy
       script:
         - mkdir build && cd build
         - cmake .. && make -j4
