@@ -6,11 +6,11 @@ matrix:
       os: linux
       dist: xenial
       env: PIP
+      python: '3.6'
       before_install:
         - sudo apt-get install make cmake pkg-config
         - sudo apt-get install libassimp-dev libglfw3-dev libglew-dev
-        - sudo apt-get install python-dev python3-dev
-        - pip3 install setuptools numpy
+        - pip install setuptools numpy
       script:
         - mkdir build && cd build
         - cmake .. && make -j4
