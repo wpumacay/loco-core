@@ -5,9 +5,13 @@ matrix:
     - name: "Build core c++ codebase"
       os: linux
       dist: xenial
-      python: "3.6"
+      env: PIP
       before_install:
-        - pip3 install setuptools numpy
+        # Configuration for pybind11 ##################
+        - pyenv global $(pyenv whence 3)
+        - PY_CMD=python3
+        - $PY_CMD -m pip install --user --upgrade pip wheel setuptools
+        # #############################################
         - sudo apt-get install make cmake pkg-config
         - sudo apt-get install libassimp-dev libglfw3-dev libglew-dev
         - pyenv global $(pyenv whence 2to3)
