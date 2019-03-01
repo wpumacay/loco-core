@@ -1,5 +1,8 @@
 # tysocCore: Core functionality for my robot locomotion framework
 
+<!-- Travis CI -->
+[![Build Status](https://travis-ci.com/wpumacay/tysocCore.svg?branch=master)](https://travis-ci.com/wpumacay/tysocCore)
+
 This is the core functionality used for a robot locomotion framework I'm making
 as part of my Msc. thesis. This is physics-backend agnostic, and the concrete
 implementations are found in some other repositories (mujoco in [this](https://github.com/wpumacay/tysocMjc)
