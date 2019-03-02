@@ -3,6 +3,10 @@
 
 #include <string>
 
+#ifndef TYSOCCORE_GLVIZ_LIB
+    #define TYSOCCORE_GLVIZ_LIB "./glviz/libtysocGlviz.so"
+#endif
+
 namespace tysoc {
 namespace config {
 

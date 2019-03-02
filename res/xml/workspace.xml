@@ -1,0 +1,52 @@
+<mujoco>
+    <include file="materials.xml"/>
+    <compiler angle="degree" coordinate="local" inertiafromgeom="true"/>
+    <option iterations="50" timestep="0.005000" tolerance="0.000000" cone="pyramidal" jacobian="dense" solver="Newton"/>
+    <size nconmax="4000" njmax="8000"/>
+    <statistic extent="2.000000" center="0.000000 0.000000 1.000000"/>
+    <asset>
+        <texture height="512" width="512" rgb1="0.300000 0.500000 0.700000" rgb2="0.000000 0.000000 0.000000" builtin="gradient" type="skybox"/>
+        <texture height="512" width="512" markrgb="0.800000 0.800000 0.800000" rgb1="0.200000 0.300000 0.400000" rgb2="0.100000 0.150000 0.200000" builtin="checker" mark="cross" name="texplane" type="2d"/>
+        <texture height="1278" width="127" random="0.010000" markrgb="1.000000 1.000000 1.000000" rgb1="0.800000 0.600000 0.400000" rgb2="0.800000 0.600000 0.400000" builtin="flat" mark="cross" name="texgeom" type="cube"/>
+        <material reflectance="0.300000" texrepeat="1.000000 1.000000" name="matplane" texture="texplane" texuniform="true"/>
+        <material rgba="0.800000 0.600000 0.400000 1.000000" name="matgeom" texture="texgeom" texuniform="true"/>
+    </asset>
+    <visual>
+        <map force="0.100000" zfar="30.000000"/>
+        <rgba haze="0.150000 0.250000 0.350000 1.000000"/>
+        <quality shadowsize="2048"/>
+        <global offheight="800" offwidth="800"/>
+    </visual>
+    <worldbody>
+        <geom conaffinity="1" contype="1" friction="0.700000 0.100000 0.100000" pos="0.000000 0.000000 -3.000000" size="1.000000 1.000000 0.200000" zaxis="0.000000 0.000000 1.000000" name="floor" type="plane"/>
+    </worldbody>
+    <worldbody>
+        <body pos="0.000000 0.000000 1.000000" quat="1.000000 0.000000 0.000000 0.000000" name="body_agent0_base">
+            <geom conaffinity="0" contype="1" pos="0.000000 0.000000 0.000000" quat="1.000000 0.000000 0.000000 0.000000" rgba="0.500000 0.500000 0.500000 1.000000" size="0.100000 0.100000 0.100000" name="geom_agent0_0" type="box"/>
+            <body pos="0.000000 0.000000 -0.100000" quat="1.000000 0.000000 0.000000 0.000000" name="body_agent0_link1">
+                <joint axis="1.000000 0.000000 0.000000" pos="0.000000 0.000000 0.000000" limited="false" name="joint_agent0_joint1" type="hinge"/>
+                <geom conaffinity="0" contype="1" pos="0.000000 0.000000 -0.500000" quat="1.000000 0.000000 0.000000 0.000000" rgba="0.000000 0.000000 0.800000 1.000000" size="0.050000 0.050000 0.500000" name="geom_agent0_1" type="box"/>
+                <body pos="0.000000 0.000000 -1.000000" quat="1.000000 0.000000 0.000000 0.000000" name="body_agent0_link2">
+                    <joint axis="1.000000 0.000000 0.000000" pos="0.000000 0.000000 0.000000" limited="false" name="joint_agent0_joint2" type="hinge"/>
+                    <geom conaffinity="0" contype="1" pos="0.000000 0.000000 -0.500000" quat="1.000000 0.000000 0.000000 0.000000" rgba="0.000000 0.800000 0.000000 1.000000" size="0.050000 0.050000 0.500000" name="geom_agent0_2" type="box"/>
+                </body>
+            </body>
+        </body>
+    </worldbody>
+    <actuator>
+        <motor ctrlrange="-1.000000 1.000000" gear="2.000000" ctrllimited="true" joint="joint_agent0_joint1" name="actuator_agent0_joint_agent0_joint1"/>
+        <motor ctrlrange="-1.000000 1.000000" gear="2.000000" ctrllimited="true" joint="joint_agent0_joint2" name="actuator_agent0_joint_agent0_joint2"/>
+    </actuator>
+    <sensor>
+        <jointpos joint="joint_agent0_joint1" name="sensor_agent0_joint_agent0_joint1_jointpos"/>
+        <jointvel joint="joint_agent0_joint1" name="sensor_agent0_joint_agent0_joint1_jointvel"/>
+        <jointpos joint="joint_agent0_joint2" name="sensor_agent0_joint_agent0_joint2_jointpos"/>
+        <jointvel joint="joint_agent0_joint2" name="sensor_agent0_joint_agent0_joint2_jointvel"/>
+        <framelinvel name="sensoragent0_body_agent0_base_framelinvel" objname="body_agent0_base" objtype="body"/>
+        <framelinacc name="sensoragent0_body_agent0_base_framelinacc" objname="body_agent0_base" objtype="body"/>
+        <framelinvel name="sensoragent0_body_agent0_link1_framelinvel" objname="body_agent0_link1" objtype="body"/>
+        <framelinacc name="sensoragent0_body_agent0_link1_framelinacc" objname="body_agent0_link1" objtype="body"/>
+        <framelinvel name="sensoragent0_body_agent0_link2_framelinvel" objname="body_agent0_link2" objtype="body"/>
+        <framelinacc name="sensoragent0_body_agent0_link2_framelinacc" objname="body_agent0_link2" objtype="body"/>
+    </sensor>
+</mujoco>

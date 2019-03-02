@@ -54,10 +54,6 @@ typedef float TScalar;
     #define TYSOCCORE_WORKING_DIR_PATH "../../res/xml/"
 #endif
 
-#ifndef TYSOCCORE_GLVIZ_LIB
-    #define TYSOCCORE_GLVIZ_LIB "./glviz/libtysocGlviz.so"
-#endif
-
 namespace tysoc
 {
 
