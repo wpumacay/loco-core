@@ -44,9 +44,9 @@ namespace tysoc
         public :
 
         static TModelLoader* GetInstance();
-        static TModelLoader* Create( const std::string& pathTemplatesMjcf,
-                                     const std::string& pathTemplatesUrdf,
-                                     const std::string& pathTemplatesRlsim );
+        static TModelLoader* Create( const std::string& pathTemplatesMjcf = TYSOCCORE_MJCF_TEMPLATES_PATH,
+                                     const std::string& pathTemplatesUrdf = TYSOCCORE_URDF_TEMPLATES_PATH,
+                                     const std::string& pathTemplatesRlsim = TYSOCCORE_RLSIM_TEMPLATES_PATH );
         ~TModelLoader();
 
         bool hasMjcfModel( const std::string& name );

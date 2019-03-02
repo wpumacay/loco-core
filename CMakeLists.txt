@@ -7,6 +7,8 @@ set( CMAKE_CXX_FLAGS "-g ${CMAKE_CXX_FLAGS}" )
 
 ## set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/libs" )
 
+# Definitions used for development. Python bindings do not use these definitions, but ...
+# instead we load the paths dynamically according to the user configuration/installation.
 add_definitions( -DTYSOCCORE_RESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/" )
 add_definitions( -DTYSOCCORE_WORKING_DIR_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/xml/" )
 add_definitions( -DTYSOCCORE_MJCF_TEMPLATES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/templates/mjcf/" )
