@@ -26,17 +26,21 @@ _scenario.addAgent( _raptor )
 _scenario.addAgent( _goat )
 _scenario.addAgent( _biped )
 
-# without a physics backend, only use GLVIZ for now. To use MJCVIZ see the ...
-# test_simulation.py example in this same folder, as it initializes MUJOCO as ...
-# physics backend and initializes some internals (mjData* and mjModel) which ...
-# are needed for the visualizer as well :() . Will check later to initialze this ...
-# structures if no simulation is given, which should work Ok.
-_runtime = pytysoc.createRuntime( renderingBackend = pytysoc.BACKENDS.RENDERING.GLVIZ,
+# can choose between GLVIZ and MJCVIZ rendering backends, as long as MUJOCO is ...
+# enabled as physics backend (need some internals from mujoco to be intialized)
+_runtime = pytysoc.createRuntime( physicsBackend = pytysoc.BACKENDS.PHYSICS.MUJOCO,
+                                  renderingBackend = pytysoc.BACKENDS.RENDERING.GLVIZ,
                                   workingDir = pytysoc.PATHS.WORKING_DIR )
+
+_simulation = _runtime.createSimulation( _scenario )
+_simulation.initialize()
 
 _visualizer = _runtime.createVisualizer( _scenario )
 _visualizer.initialize()
 
 while _visualizer.isActive() :
 
+    # for MJCVIZ run step before render (first step initializes some data ...
+    # in mujoco, it seems). Otherwise, you would get a mjr_render error related to the frustum
+    _simulation.step()
     _visualizer.render()

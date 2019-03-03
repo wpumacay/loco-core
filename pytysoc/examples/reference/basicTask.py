@@ -1,5 +1,11 @@
 
 """
+    THIS IS HOW THE FINAL API SHOULD KIND OF LOOK LIKE.
+
+    THIS EXAMPLES ARE MEANT FOR REFERENCE ONLY. I MADE THEM AS A PROOF...
+    OF CONCEPT OF THE DESIGN OF THE API. I WILL SUPPORT THEM LATER WHEN ...
+    I FINISHED SUPPORT FOR AT LEAST BULLET, AND FINISH THE TERRAIN API
+
     Basic task sample: Here we create a task which contains a group of ...
     agent(s), terrain generator(s) and sensor(s). 
 """

@@ -21,6 +21,7 @@ def createRuntime( physicsBackend = '',
                    renderingBackend = '',
                    workingDir = PATHS.WORKING_DIR ) :
     print( 'renderingBackend: ', renderingBackend )
+    print( 'physicsBackend', physicsBackend )
     ## ipdb.set_trace()
     return tysoc_bindings.PyRuntime( physicsBackend, renderingBackend, workingDir )
 
