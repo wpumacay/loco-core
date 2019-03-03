@@ -1,19 +1,15 @@
 
 import os
-import ipdb
-## # @DEBUG: for testing purposes only (to avoid installation) ####################
-## import sys
-## _bindingsDir = os.path.abspath( os.path.join( os.path.dirname( __file__ ), '../build/pytysoc/bindings' ) )
-## sys.path.insert( 0, _bindingsDir )
-## print( 'sys.path: ', sys.path )
-## # ##############################################################################
 
 import tysoc_bindings
 
 from pytysoc.common import assets
+from pytysoc.runtime import backends
 
 PATHS = assets.CreatePathsData()
 AGENTS = assets.CreateAgentsData()
+
+BACKENDS = backends.CreateBackendsData()
 
 def initialize() :
     tysoc_bindings.initializeMjcfSchemaPath( os.path.join( PATHS.RESOURCES_DIR, 'xml/schema.xml' ) )
@@ -22,7 +18,7 @@ def initialize() :
                                      PATHS.TEMPLATES_RLSIM_DIR )
 
 def createRuntime( physicsBackend = '', 
-                   renderingBackend = PATHS.RENDERING_BACKEND_GLVIZ,
+                   renderingBackend = '',
                    workingDir = PATHS.WORKING_DIR ) :
     print( 'renderingBackend: ', renderingBackend )
     ## ipdb.set_trace()

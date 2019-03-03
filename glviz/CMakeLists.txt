@@ -13,9 +13,9 @@ include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/../ext/json" )
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/../ext/imgui" )
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/../ext/imgui/examples" )
 
-add_library( tysocGlviz SHARED
+add_library( tysocRenderingGlviz SHARED
              ${GLVIZ_SOURCES} )
-target_link_libraries( tysocGlviz
+target_link_libraries( tysocRenderingGlviz
                        cat1
                        imgui
                        tysocCore )

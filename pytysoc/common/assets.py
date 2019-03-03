@@ -12,15 +12,11 @@ _WORKING_DIR = os.path.join( _PACKAGE_DIR, 'res/xml/' )
 _TEMPLATES_MJCF_DIR     = os.path.join( _PACKAGE_DIR, 'res/templates/mjcf/' )
 _TEMPLATES_URDF_DIR     = os.path.join( _PACKAGE_DIR, 'res/templates/urdf/' )
 _TEMPLATES_RLSIM_DIR    = os.path.join( _PACKAGE_DIR, 'res/templates/rlsim/' )
-# default rendering backend
-_RENDERING_BACKEND_GLVIZ = os.path.join( _PACKAGE_DIR, 'libtysocGlviz.so' )
-## _RENDERING_BACKEND_GLVIZ = os.path.join( _PACKAGE_DIR, 'build/glviz/libtysocGlviz.so' ) ## @DEBUG: TO TEST LOCALLY
 
 PathsData = namedtuple( 'PathsData', 
                         [ 'PACKAGE_DIR',
                           'WORKING_DIR',
                           'RESOURCES_DIR',
-                          'RENDERING_BACKEND_GLVIZ',
                           'TEMPLATES_MJCF_DIR',
                           'TEMPLATES_URDF_DIR',
                           'TEMPLATES_RLSIM_DIR' ] )
@@ -69,7 +65,6 @@ def CreatePathsData() :
     return PathsData( _PACKAGE_DIR,
                       _WORKING_DIR,
                       _RESOURCES_DIR,
-                      _RENDERING_BACKEND_GLVIZ,
                       _TEMPLATES_MJCF_DIR,
                       _TEMPLATES_URDF_DIR,
                       _TEMPLATES_RLSIM_DIR )

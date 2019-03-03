@@ -14,7 +14,7 @@ add_definitions( -DTYSOCCORE_WORKING_DIR_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/x
 add_definitions( -DTYSOCCORE_MJCF_TEMPLATES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/templates/mjcf/" )
 add_definitions( -DTYSOCCORE_URDF_TEMPLATES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/templates/urdf/" )
 add_definitions( -DTYSOCCORE_RLSIM_TEMPLATES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/templates/rlsim/" )
-add_definitions( -DTYSOCCORE_GLVIZ_LIB="${CMAKE_BINARY_DIR}/glviz/libtysocGlviz.so" )
+add_definitions( -DTYSOCCORE_GLVIZ_LIB="${CMAKE_BINARY_DIR}/glviz/libtysocRenderingGlviz.so" )
 
 add_subdirectory( ext )
 

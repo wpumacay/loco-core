@@ -4,7 +4,7 @@
 #include <string>
 
 #ifndef TYSOCCORE_GLVIZ_LIB
-    #define TYSOCCORE_GLVIZ_LIB "./glviz/libtysocGlviz.so"
+    #define TYSOCCORE_GLVIZ_LIB "./glviz/libtysocRenderingGlviz.so"
 #endif
 
 namespace tysoc {
