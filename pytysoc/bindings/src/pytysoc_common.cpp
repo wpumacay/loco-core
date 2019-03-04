@@ -88,6 +88,19 @@ namespace pytysoc
                              _data[12], _data[13], _data[14], _data[15] );
     }
 
+    std::vector<TScalar> numpyToVecArray( py::array_t<TScalar>& nparray )
+    {
+        auto _bufferInfo = nparray.request();
+        auto _data = ( TScalar* ) _bufferInfo.ptr;
+
+        std::vector<TScalar> _vecarray;
+        for ( size_t q = 0; q < _bufferInfo.size; q++ )
+        {
+            _vecarray.push_back( _data[q] );
+        }
+
+        return _vecarray;
+    }
 
     py::array_t<TScalar> vec2ToNumpy( const tysoc::TVec2& vec2 )
     {
@@ -151,6 +164,28 @@ namespace pytysoc
                                            2, _shape, _strides ) );
     }
 
+    py::array_t<TScalar> vecArrayToNumpy( const std::vector<TScalar>& vecarray )
+    {
+        std::vector< ssize_t > _shape = { (ssize_t) vecarray.size() };
+        std::vector< ssize_t > _strides = { sizeof( TScalar ) };
+
+        return py::array( py::buffer_info( (TScalar*) vecarray.data(),
+                                           sizeof( TScalar ),
+                                           py::format_descriptor<TScalar>::value,
+                                           1, _shape, _strides ) );
+    }
+
+    py::array_t<TScalar> vecArrayVec3ToNumpy( const std::vector<tysoc::TVec3>& vec3array )
+    {
+        std::vector< ssize_t > _shape = { 3, (ssize_t) vec3array.size() };
+        std::vector< ssize_t > _strides = { sizeof( TScalar ), sizeof( tysoc::TVec3 ) };
+
+        return py::array( py::buffer_info( (TScalar*) vec3array.data(),
+                                           sizeof( TScalar ),
+                                           py::format_descriptor<TScalar>::value,
+                                           2, _shape, _strides ) );
+    }
+
     void test_numpyToVec2( py::array_t<TScalar>& nparray )
     {
         auto _vec2 = numpyToVec2( nparray );
@@ -181,20 +216,6 @@ namespace pytysoc
         std::cout << "LOG> mat4: " << tysoc::TMat4::toString( _mat4 ) << std::endl;
     }
 
-    std::vector<TScalar> numpyToVecArray( py::array_t<TScalar>& nparray )
-    {
-        auto _bufferInfo = nparray.request();
-        auto _data = ( TScalar* ) _bufferInfo.ptr;
-
-        std::vector<TScalar> _vecarray;
-        for ( size_t q = 0; q < _bufferInfo.size; q++ )
-        {
-            _vecarray.push_back( _data[q] );
-        }
-
-        return _vecarray;
-    }
-
     void test_numpyToVecArray( py::array_t<TScalar>& nparray )
     {
         auto _vecarray = numpyToVecArray( nparray );
@@ -204,6 +225,27 @@ namespace pytysoc
             std::cout << _vecarray[q] << " ";
         }
         std::cout << "]" << std::endl;
+    }
+
+    py::array_t<TScalar> test_vecArrayToNumpy()
+    {
+        std::vector< TScalar > _vecarray = { 1.0f, 2.1f, 3.2f, 4.3f };
+        return vecArrayToNumpy( _vecarray );
+    }
+
+    py::array_t<TScalar> test_vecArrayVec3ToNumpy()
+    {
+        std::vector< tysoc::TVec3 > _vecarrayvec3;
+        _vecarrayvec3.push_back( tysoc::TVec3( 1.0f, 2.0f, 3.0f ) );
+        _vecarrayvec3.push_back( tysoc::TVec3( 1.1f, 2.1f, 3.1f ) );
+        _vecarrayvec3.push_back( tysoc::TVec3( 1.2f, 2.2f, 3.2f ) );
+        _vecarrayvec3.push_back( tysoc::TVec3( 1.3f, 2.3f, 3.3f ) );
+        _vecarrayvec3.push_back( tysoc::TVec3( 1.4f, 2.4f, 3.4f ) );
+        _vecarrayvec3.push_back( tysoc::TVec3( 1.5f, 2.5f, 3.5f ) );
+        _vecarrayvec3.push_back( tysoc::TVec3( 1.6f, 2.6f, 3.6f ) );
+        _vecarrayvec3.push_back( tysoc::TVec3( 1.7f, 2.7f, 3.7f ) );
+        _vecarrayvec3.push_back( tysoc::TVec3( 1.8f, 2.8f, 3.8f ) );
+        return vecArrayVec3ToNumpy( _vecarrayvec3 );
     }
 
 }

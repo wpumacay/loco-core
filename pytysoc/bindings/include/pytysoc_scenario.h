@@ -4,6 +4,7 @@
 #include <scenario.h>
 #include <pytysoc_common.h>
 #include <pytysoc_agent_core.h>
+#include <pytysoc_sensors.h>
 
 namespace py = pybind11;
 
@@ -18,7 +19,10 @@ namespace pytysoc
         tysoc::TScenario* m_scenarioPtr;
 
         std::vector< PyCoreAgent* > m_pyCoreAgents;
+        std::vector< PySensor* > m_pySensors;
+
         std::map< std::string, PyCoreAgent* > m_pyCoreAgentsMap;
+        std::map< std::string, PySensor* > m_pySensorsMap;
 
         public :
         
@@ -45,15 +49,14 @@ namespace pytysoc
         *   Adds a PyCoreAgent wrapper to this scenario wrapper
         *
         *   @param pyCoreAgentPtr   A pointer to the PyCoreAgent wrapper to add to the scenario
-        *   @exposed    Exposed through python API
+        *   @exposed                Exposed through python API
         */
         void addAgent( PyCoreAgent* pyCoreAgentPtr );
-
 
         /**
         *   Gets the PyCoreAgent wrapper of an agent with a given name
         *   
-        *   @param name     String representing the name of the wrapped agent the user requests
+        *   @param name     The name of the wrapped agent the user requests
         *   @exposed        Exposed through python API
         */
         PyCoreAgent* getAgentByName( const std::string& name );
@@ -71,6 +74,36 @@ namespace pytysoc
         *   @exposed    Exposed through python API
         */
         std::map< std::string, PyCoreAgent* > getAgentsMap();
+
+        /**
+        *   Adds a PySensor wrapper to this scenario wrapper
+        *
+        *   @param pySensorPtr      A pointer to the PySensor wrapper to add to the scenario
+        *   @exposed                Exposed through python API
+        */
+        void addSensor( PySensor* pySensorPtr );
+
+        /**
+        *   Gets the PySensor wrapper of a sensor with a given name
+        *   
+        *   @param name     The name of the wrapped sensor the user requests
+        *   @exposed        Exposed through python API
+        */
+        PySensor* getSensorByName( const std::string& name );
+
+        /**
+        *   Gets a list of all sensors belonging to this scenario wrapper
+        *
+        *   @exposed    Exposed through python API
+        */
+        std::vector< PySensor* > getSensors();
+
+        /**
+        *   Gets a dictionary of all sensors belonging to this scenario wrapper
+        *
+        *   @exposed    Exposed through python API
+        */
+        std::map< std::string, PySensor* > getSensorsMap();
 
         /**
         *   Gets the wrapped scenario object (used internally by runtime to ...
@@ -92,4 +125,8 @@ namespace pytysoc
         .def( "addAgent", &pytysoc::PyScenario::addAgent ) \
         .def( "getAgentByName", &pytysoc::PyScenario::getAgentByName, py::return_value_policy::automatic ) \
         .def( "getAgents", &pytysoc::PyScenario::getAgents ) \
-        .def( "getAgentsMap", &pytysoc::PyScenario::getAgentsMap );
+        .def( "getAgentsMap", &pytysoc::PyScenario::getAgentsMap ) \
+        .def( "addSensor", &pytysoc::PyScenario::addSensor ) \
+        .def( "getSensorByName", &pytysoc::PyScenario::getSensorByName ) \
+        .def( "getSensors", &pytysoc::PyScenario::getSensors ) \
+        .def( "getSensorsMap", &pytysoc::PyScenario::getSensorsMap );

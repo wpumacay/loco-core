@@ -73,6 +73,50 @@ namespace pytysoc
         return m_pyCoreAgentsMap;
     }
 
+    void PyScenario::addSensor( PySensor* pySensorPtr )
+    {
+        if ( !m_scenarioPtr )
+            return;
+
+        if ( pySensorPtr->name() == "undefined" )
+        {
+            std::cout << "ERROR> tried to add a pySensor with no wrapped sensor" << std::endl;
+            return;
+        }
+
+        if ( m_pySensorsMap.find( pySensorPtr->name() ) != m_pySensorsMap.end() )
+        {
+            std::cout << "WARNING> tried to add an existing (same name) pySensor" << std::endl;
+            return;
+        }
+
+        m_scenarioPtr->addSensor( pySensorPtr->ptr() );
+
+        m_pySensors.push_back( pySensorPtr );
+        m_pySensorsMap[ pySensorPtr->name() ] = pySensorPtr;
+    }
+
+    PySensor* PyScenario::getSensorByName( const std::string& name )
+    {
+        if ( m_pySensorsMap.find( name ) == m_pySensorsMap.end() )
+        {
+            std::cout << "WARNING> sensor: " << name << " not found in scenario" << std::endl;
+            return nullptr;
+        }
+
+        return m_pySensorsMap[ name ];
+    }
+
+    std::vector< PySensor* > PyScenario::getSensors()
+    {
+        return m_pySensors;
+    }
+
+    std::map< std::string, PySensor* > PyScenario::getSensorsMap()
+    {
+        return m_pySensorsMap;
+    }
+
     tysoc::TScenario* PyScenario::ptr()
     {
         return m_scenarioPtr;

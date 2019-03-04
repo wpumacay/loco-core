@@ -53,6 +53,9 @@ namespace tysoc {
         _preStepInternal();
         _simStepInternal();
         _postStepInternal();
+
+        if ( m_scenarioPtr )
+            m_scenarioPtr->update();
     }
 
     void TISimulation::reset()

@@ -10,6 +10,7 @@ pybind11_add_module( tysoc_bindings
                      src/pytysoc_common.cpp
                      src/pytysoc_tests.cpp
                      src/pytysoc_agent_core.cpp
+                     src/pytysoc_sensors.cpp
                      src/pytysoc_scenario.cpp
                      src/pytysoc_simulation.cpp
                      src/pytysoc_visualizer.cpp

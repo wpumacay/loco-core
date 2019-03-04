@@ -33,6 +33,8 @@ PYBIND11_MODULE( tysoc_bindings, m )
     PYTYSOC_TESTS_BINDINGS( m )
     // Core agent bindings
     PYTYSOC_CORE_AGENT_BINDINGS( m )
+    // Sensor bindings
+    PYTYSOC_SENSOR_BINDINGS( m )
     // Scenario bindings
     PYTYSOC_SCENARIO_BINDINGS( m )
     // visualizer bindings

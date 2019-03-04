@@ -8,6 +8,8 @@
 
 namespace py = pybind11;
 
+typedef std::map< std::string, py::array_t<TScalar> > MeasurementDict;
+
 namespace pytysoc
 {
 
@@ -29,6 +31,7 @@ namespace pytysoc
     py::array_t<TScalar> mat4ToNumpy( const tysoc::TMat4& mat4 );
 
     py::array_t<TScalar> vecArrayToNumpy( const std::vector<TScalar>& vecarray );
+    py::array_t<TScalar> vecArrayVec3ToNumpy( const std::vector<tysoc::TVec3>& vec3array );
 
     void test_numpyToVec2( py::array_t<TScalar>& nparray );
     void test_numpyToVec3( py::array_t<TScalar>& nparray );
@@ -38,6 +41,9 @@ namespace pytysoc
     void test_numpyToMat4( py::array_t<TScalar>& nparray );
     void test_numpyToVecArray( py::array_t<TScalar>& nparray );
 
+    py::array_t<TScalar> test_vecArrayToNumpy();
+    py::array_t<TScalar> test_vecArrayVec3ToNumpy();
+
 }
 
 #define PYTYSOC_COMMON_BINDINGS(m) \
@@ -45,4 +51,6 @@ namespace pytysoc
     m.def( "test_numpyToVec3", &pytysoc::test_numpyToVec3 );\
     m.def( "test_numpyToVec4", &pytysoc::test_numpyToVec4 );\
     m.def( "test_numpyToMat3", &pytysoc::test_numpyToMat3 );\
-    m.def( "test_numpyToMat4", &pytysoc::test_numpyToMat4 );
+    m.def( "test_numpyToMat4", &pytysoc::test_numpyToMat4 );\
+    m.def( "test_vecArrayToNumpy", &pytysoc::test_vecArrayToNumpy );\
+    m.def( "test_vecArrayVec3ToNumpy", &pytysoc::test_vecArrayVec3ToNumpy );
