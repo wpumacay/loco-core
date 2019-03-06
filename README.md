@@ -1,16 +1,16 @@
-# tysocCore: Core functionality for my robot locomotion framework
+# tysocCore: Core functionality for a locomotion framework
 
 <!-- Travis CI -->
 [![Build Status](https://travis-ci.com/wpumacay/tysoc.svg?branch=master)](https://travis-ci.com/wpumacay/tysoc)
 
-This is the core functionality used for a robot locomotion framework I'm making
+This is the core functionality used for a locomotion framework I'm making
 as part of my Msc. thesis. This is physics-backend agnostic, and the concrete
 implementations are found in some other repositories (mujoco in [this](https://github.com/wpumacay/tysocMjc)
 repository, bullet and physX are on the way).
 
 ## Objective
 
-The main goal of this project is to serve as a framework for DeepRL research in robot 
+The main goal of this project is to serve as a framework for DeepRL research in 
 locomotion. It's inspired in [dm_control](https://github.com/deepmind/dm_control), but 
 I followed a different approach. Most of the benchmarks available use bindings like 
 mujoco-py or direct bindings from ctypes to allow the creation of simulated environments using 
