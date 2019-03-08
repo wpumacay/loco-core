@@ -8,16 +8,20 @@ namespace sensor {
 
     struct TAgentIntrinsicsSensorMeasurement : public TISensorMeasurement
     {
-        // bodies measurements
+        // Bodies measurements **************************************
         struct { TScalar x; TScalar y; TScalar z; } rootPosition;
         std::vector< TScalar > bodiesRelativePosition;
-
         std::vector< TVec3 > bodiesLinVelocities;
         std::vector< TVec3 > bodiesLinAccelerations;
+        // external forces of COM
+        std::vector< TVec3 > comForces;
+        std::vector< TVec3 > comTorques;
+        // **********************************************************
 
-        // joints measurements
+        // Joints measurements **************************************
         std::vector< TScalar > thetas;
         std::vector< TScalar > thetadots;
+        // **********************************************************
     };
 
     class TAgentIntrinsicsSensor : public TISensor

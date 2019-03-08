@@ -189,6 +189,8 @@ namespace agent {
         std::string     bodyName;
         TVec3           linVelocity;
         TVec3           linAcceleration;
+        TVec3           comForces;
+        TVec3           comTorques;
 
         TKinTreeBodySensor()
         {

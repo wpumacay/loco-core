@@ -23,7 +23,7 @@ namespace sensor {
             m_agentPtr = NULL;
 
             if ( m_sensorMeasurement )
-            {
+            {  
                 delete m_sensorMeasurement;
                 m_sensorMeasurement = NULL;
             }
@@ -43,13 +43,12 @@ namespace sensor {
                 return;
             }
 
-            // @CHECK: make this not dependent of the engine
-            // why did I this in the first place?, perhaps I was in a hurry
-
             m_sensorMeasurement->bodiesRelativePosition.clear();
             
             m_sensorMeasurement->bodiesLinVelocities.clear();
             m_sensorMeasurement->bodiesLinAccelerations.clear();
+            m_sensorMeasurement->comForces.clear();
+            m_sensorMeasurement->comTorques.clear();
 
             m_sensorMeasurement->thetas.clear();
             m_sensorMeasurement->thetadots.clear();
@@ -60,9 +59,7 @@ namespace sensor {
             m_sensorMeasurement->rootPosition.y = _agentRootPosition.y;
             m_sensorMeasurement->rootPosition.z = _agentRootPosition.z;
 
-            // Compute the relative positions and velocities of the bodies/geometries to the root body/geometry
-            // @CHECK: We are using the geometries instead, because of a weird issue I still can't solve.
-            //         I will try to solve this a bit later, so for now, we use the geometries.
+            // Compute the relative positions and velocities of the bodies/geometries to the root body
             auto _kinBodies = reinterpret_cast< agent::TAgentKinTree* >( m_agentPtr )->getKinTreeBodies();
             for ( size_t i = 0; i < _kinBodies.size(); i++ )
             {
@@ -100,6 +97,9 @@ namespace sensor {
 
                     m_sensorMeasurement->bodiesLinVelocities.push_back( _kinBodySensor->linVelocity );
                     m_sensorMeasurement->bodiesLinAccelerations.push_back( _kinBodySensor->linAcceleration );
+
+                    m_sensorMeasurement->comForces.push_back( _kinBodySensor->comForces );
+                    m_sensorMeasurement->comTorques.push_back( _kinBodySensor->comTorques );
                 }
             }
 
