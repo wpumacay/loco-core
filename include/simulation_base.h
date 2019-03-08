@@ -79,6 +79,17 @@ namespace tysoc {
         TScenario* scenario();
         std::string type();
 
+        /*
+        *   Returns a dictionary with vectorized information of the simulation.
+        *   This can be used to feed directly to a neural network, like some ...
+        *   packages do (mujoco-py retrieves the whole qpos[2:], qvel[:], and ...
+        *   external forces into an observation consisting of a single np array)
+        *
+        *
+        *   
+        */
+        //std::map< std::string, std::vector > getVectorizedInfo();
+
     };
 
 

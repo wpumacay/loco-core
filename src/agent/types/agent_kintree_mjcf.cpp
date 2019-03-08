@@ -345,6 +345,12 @@ namespace agent {
         _kinTreeVisualPtr->group = geomElementPtr->getAttributeInt( "group", -1 );
         // and the material name (@GENERIC)
         _kinTreeVisualPtr->materialName = geomElementPtr->getAttributeString( "material", "" );
+        // and the friction (@GENERIC)
+        if ( geomElementPtr->hasAttributeArrayFloat( "friction" ) )
+            _kinTreeVisualPtr->friction = geomElementPtr->getAttributeArrayFloat( "friction" );
+        // and the density (@GENERIC)
+        if ( geomElementPtr->hasAttributeFloat( "density" ) )
+            _kinTreeVisualPtr->density = geomElementPtr->getAttributeFloat( "density" );
         // and store it in the visuals buffer
         m_kinTreeVisuals.push_back( _kinTreeVisualPtr );
         // and to the visuals map

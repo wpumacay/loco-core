@@ -138,6 +138,8 @@ namespace agent {
         int             condim;         // (mujoco) Contact dimensionality
         int             group;          // (mujoco) Group this object belongs (for compiler calcs.)
         std::string     materialName;   // (mujoco) Name of the material from includes (materials.xml) (@CHECK: should use TMaterial)
+        TSizef          friction;       // (mujoco) Friction values shape
+        TScalar         density;        // (mujoco)  
 
         TKinTreeVisual()
         {
@@ -148,6 +150,8 @@ namespace agent {
             condim          = -1; // -1 indicates not available
             group           = -1; // -1 indicates not available
             materialName    = "";
+            density         = -1.0; // (-) indicates not available
+            friction.ndim   = 0; // 0 indicates not available
         }
     };
 
