@@ -56,6 +56,15 @@ namespace pytysoc
         */
         void reset();
 
+        /**
+        *   Returns a dictionary with vectorized information of the simulation,
+        *   like (mujoco) qpos, qvel and cfrc_ext. This is a hacky way to expose ...
+        *   information similar to gym-mujocopy environments observations
+        *
+        *   @exposed    Exposed through python API
+        */
+        MeasurementDict getDictOfVectorizedSimData();
+
         // @TODO: should check deletion when using references
         // /**
         // *   Gets the python-wrapper for the scenario being simulated
@@ -79,4 +88,5 @@ namespace pytysoc
         .def( "initialize", &pytysoc::PySimulation::initialize ) \
         .def( "step", &pytysoc::PySimulation::step ) \
         .def( "reset", &pytysoc::PySimulation::reset ) \
+        .def( "getDictOfVectorizedSimData", &pytysoc::PySimulation::getDictOfVectorizedSimData ) \
         .def( "type", &pytysoc::PySimulation::type );

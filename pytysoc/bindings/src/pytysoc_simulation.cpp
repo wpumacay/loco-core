@@ -52,6 +52,22 @@ namespace pytysoc
         }
     }
 
+    MeasurementDict PySimulation::getDictOfVectorizedSimData()
+    {
+        MeasurementDict _res;
+
+        if ( m_simulationPtr )
+        {
+            auto _data = m_simulationPtr->getVectorizedInfo();
+            _res["qpos"] = vecArrayToNumpy( _data["qpos"] );
+            _res["qvel"] = vecArrayToNumpy( _data["qvel"] );
+            _res["comForcesExt"] = vecArrayToNumpy( _data["comForcesExt"] );
+        }
+
+
+        return _res;
+    }
+
 //    PyScenario* PySimulation::scenario()
 //    {
 //        if ( m_simulationPtr )

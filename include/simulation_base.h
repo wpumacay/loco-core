@@ -62,6 +62,7 @@ namespace tysoc {
         virtual void _simStepInternal() = 0;
         virtual void _postStepInternal() = 0;
         virtual void _resetInternal() = 0;
+        virtual std::map< std::string, std::vector<TScalar> > _getVectorizedInfoInternal() = 0;
 
         virtual void* _constructPayloadInternal( const std::string& type );
 
@@ -88,7 +89,7 @@ namespace tysoc {
         *
         *   
         */
-        //std::map< std::string, std::vector > getVectorizedInfo();
+        std::map< std::string, std::vector<TScalar> > getVectorizedInfo();
 
     };
 

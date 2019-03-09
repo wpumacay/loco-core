@@ -73,5 +73,9 @@ namespace tysoc {
         return m_runtimeType;
     }
 
+    std::map< std::string, std::vector<TScalar> > TISimulation::getVectorizedInfo()
+    {
+        return _getVectorizedInfoInternal();
+    }
 
 }

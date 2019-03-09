@@ -5,6 +5,7 @@
   <!--@CHECK: baxter fails with inertia calculation set to auto -->
   <compiler inertiafromgeom="true" coordinate="local" angle="degree"/>
   <option timestep="0.005" iterations="50" tolerance="1e-10" solver="Newton" jacobian="dense" cone="pyramidal"/>
+  <!--<option timestep="0.01" integrator="RK4"/>-->
   <size njmax="8000" nconmax="4000"/>
 
   <statistic extent="2" center="0 0 1"/>
@@ -36,7 +37,7 @@
   <!--</worldbody>-->
 
   <worldbody>
-    <geom name="floor" type="plane" contype="1" conaffinity="1" pos="0 0 -3" size="1 1 .2" zaxis="0 0 1" friction=".7 .1 .1"/>
+    <geom name="floor" type="plane" contype="1" conaffinity="1" pos="0 0 0" size="40 40 .2" zaxis="0 0 1" />
   </worldbody>
 
 </mujoco>
