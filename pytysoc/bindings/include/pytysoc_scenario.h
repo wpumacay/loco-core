@@ -4,6 +4,7 @@
 #include <scenario.h>
 #include <pytysoc_common.h>
 #include <pytysoc_agent_core.h>
+#include <pytysoc_terrainGen.h>
 #include <pytysoc_sensors.h>
 
 namespace py = pybind11;
@@ -20,9 +21,11 @@ namespace pytysoc
 
         std::vector< PyCoreAgent* > m_pyCoreAgents;
         std::vector< PySensor* > m_pySensors;
+        std::vector< PyTerrainGen* > m_pyTerrainGens;
 
         std::map< std::string, PyCoreAgent* > m_pyCoreAgentsMap;
         std::map< std::string, PySensor* > m_pySensorsMap;
+        std::map< std::string, PyTerrainGen* > m_pyTerrainGensMap;
 
         public :
         
@@ -74,6 +77,36 @@ namespace pytysoc
         *   @exposed    Exposed through python API
         */
         std::map< std::string, PyCoreAgent* > getAgentsMap();
+
+        /**
+        *   Adds a PyTerrainGen wrapper to this scenario wrapper
+        *
+        *   @param pyTerrainGenPtr      A pointer to the PyTerrainGen wrapper to add to the scenario
+        *   @exposed                    Exposed through python API
+        */
+        void addTerrainGen( PyTerrainGen* pyTerrainGenPtr );
+
+        /**
+        *   Gets the PyTerrainGen wrapper of a terrainGen with a given name
+        *   
+        *   @param name     The name of the wrapped terrainGen the user requests
+        *   @exposed        Exposed through python API
+        */
+        PyTerrainGen* getTerrainGenByName( const std::string& name );
+
+        /**
+        *   Gets a list of all terrainGens belonging to this scenario wrapper
+        *
+        *   @exposed    Exposed through python API
+        */
+        std::vector< PyTerrainGen* > getTerrainGens();
+
+        /**
+        *   Gets a dictionary of all terrainGens belonging to this scenario wrapper
+        *
+        *   @exposed    Exposed through python API
+        */
+        std::map< std::string, PyTerrainGen* > getTerrainGensMap();
 
         /**
         *   Adds a PySensor wrapper to this scenario wrapper
@@ -129,4 +162,8 @@ namespace pytysoc
         .def( "addSensor", &pytysoc::PyScenario::addSensor ) \
         .def( "getSensorByName", &pytysoc::PyScenario::getSensorByName ) \
         .def( "getSensors", &pytysoc::PyScenario::getSensors ) \
-        .def( "getSensorsMap", &pytysoc::PyScenario::getSensorsMap );
+        .def( "getSensorsMap", &pytysoc::PyScenario::getSensorsMap ) \
+        .def( "addTerrainGen", &pytysoc::PyScenario::addTerrainGen ) \
+        .def( "getTerrainGenByName", &pytysoc::PyScenario::getTerrainGenByName ) \
+        .def( "getTerrainGens", &pytysoc::PyScenario::getTerrainGens ) \
+        .def( "getTerrainGensMap", &pytysoc::PyScenario::getTerrainGensMap );

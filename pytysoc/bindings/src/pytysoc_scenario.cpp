@@ -73,6 +73,50 @@ namespace pytysoc
         return m_pyCoreAgentsMap;
     }
 
+    void PyScenario::addTerrainGen( PyTerrainGen* pyTerrainGenPtr )
+    {
+        if ( !m_scenarioPtr )
+            return;
+
+        if ( pyTerrainGenPtr->name() == "undefined" )
+        {
+            std::cout << "ERROR> tried to add a pyTerrainGen with no wrapped terrainGen" << std::endl;
+            return;
+        }
+
+        if ( m_pyTerrainGensMap.find( pyTerrainGenPtr->name() ) != m_pyTerrainGensMap.end() )
+        {
+            std::cout << "WARNING> tried to add an existing (same name) pyTerrainGen" << std::endl;
+            return;
+        }
+
+        m_scenarioPtr->addTerrainGenerator( pyTerrainGenPtr->ptr() );
+
+        m_pyTerrainGens.push_back( pyTerrainGenPtr );
+        m_pyTerrainGensMap[ pyTerrainGenPtr->name() ] = pyTerrainGenPtr;
+    }
+
+    PyTerrainGen* PyScenario::getTerrainGenByName( const std::string& name )
+    {
+        if ( m_pyTerrainGensMap.find( name ) == m_pyTerrainGensMap.end() )
+        {
+            std::cout << "WARNING> terrainGen: " << name << " not found in scenario" << std::endl;
+            return nullptr;
+        }
+
+        return m_pyTerrainGensMap[ name ];
+    }
+
+    std::vector< PyTerrainGen* > PyScenario::getTerrainGens()
+    {
+        return m_pyTerrainGens;
+    }
+
+    std::map< std::string, PyTerrainGen* > PyScenario::getTerrainGensMap()
+    {
+        return m_pyTerrainGensMap;
+    }
+
     void PyScenario::addSensor( PySensor* pySensorPtr )
     {
         if ( !m_scenarioPtr )

@@ -3,7 +3,7 @@
 
 #include <terrain/terrain_base.h>
 
-#define DEFAULT_STATIC_PRIMITIVE_COLOR TVec3( 0.2, 0.3, 0.4 )
+#define DEFAULT_STATIC_PRIMITIVE_COLOR tysoc::TVec3( 0.2, 0.3, 0.4 )
 
 namespace tysoc {
 namespace terrain {

@@ -33,6 +33,8 @@ PYBIND11_MODULE( tysoc_bindings, m )
     PYTYSOC_TESTS_BINDINGS( m )
     // Core agent bindings
     PYTYSOC_CORE_AGENT_BINDINGS( m )
+    // Core terrainGen bindings
+    PYTYSOC_CORE_TERRAINGEN_BINDINGS( m )
     // Sensor bindings
     PYTYSOC_SENSOR_BINDINGS( m )
     // Scenario bindings
