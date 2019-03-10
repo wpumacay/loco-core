@@ -20,6 +20,7 @@ namespace terrain {
                                                                  const TVec3& position,
                                                                  const TMat3& rotation,
                                                                  const TVec3& rgb,
+                                                                 const std::string& texturename,
                                                                  const std::string& filename )
     {
         auto _terrainPrimitivePtr = new TTerrainPrimitive();
@@ -27,6 +28,10 @@ namespace terrain {
         _terrainPrimitivePtr->type = "static";
         // and the type of primitive to use (plane|box|sphere|capsule|cylinder|mesh)
         _terrainPrimitivePtr->geomType = type;
+        // and the texturename
+        _terrainPrimitivePtr->texturename = texturename;
+        // and the filename (meshfile or heightmap)
+        _terrainPrimitivePtr->filename = filename;
         // and the size of the primitive
         _terrainPrimitivePtr->size = { size.x, size.y, size.z };
         // also the position

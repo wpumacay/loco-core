@@ -181,7 +181,7 @@
     </sensor>
     <worldbody>
         <body pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" name="tGen_terrainGen0_0">
-            <geom conaffinity="1" contype="0" pos="0.000000 0.000000 0.000000" quat="1.000000 0.000000 0.000000 0.000000" size="10.000000 10.000000 10.000000" name="tGen_terrainGen0_0" type="plane"/>
+            <geom conaffinity="1" contype="0" pos="0.000000 0.000000 0.000000" quat="1.000000 0.000000 0.000000 0.000000" size="10.000000 10.000000 0.100000" name="tGen_terrainGen0_0" type="plane"/>
         </body>
         <body pos="0.000000 0.000000 101.025002" quat="1.000000 0.000000 0.000000 0.000000" name="tGen_terrainGen0_1">
             <geom conaffinity="1" contype="0" pos="0.000000 0.000000 0.000000" quat="1.000000 0.000000 0.000000 0.000000" size="0.250000 1.000000 0.012500" name="tGen_terrainGen0_1" type="box"/>

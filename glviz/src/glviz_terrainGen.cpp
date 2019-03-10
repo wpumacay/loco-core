@@ -79,7 +79,7 @@ namespace viz {
         // create the mesh with some default sizes (for rescaling later)
         if ( terrainPrimitivePtr->geomType == "plane" )
         {
-            _renderablePtr = engine::LMeshBuilder::createPlane( 2.0f, 2.0f );
+            _renderablePtr = engine::LMeshBuilder::createPlane( 2.0f, 2.0f, 1.0f, 1.0f );
         }
         else if ( terrainPrimitivePtr->geomType == "box" )
         {
@@ -116,6 +116,15 @@ namespace viz {
             _renderablePtr->getMaterial()->ambient     = { _color.x, _color.y, _color.z };
             _renderablePtr->getMaterial()->diffuse     = { _color.x, _color.y, _color.z };
             _renderablePtr->getMaterial()->specular    = { _color.x, _color.y, _color.z };
+
+            // Add a texture if requested
+            if ( terrainPrimitivePtr->texturename != "" )
+            {
+                auto _texturename = terrainPrimitivePtr->texturename;
+                auto _texture = engine::LAssetsManager::getBuiltInTexture( _texturename );
+                if ( _texture )
+                    _renderablePtr->addTexture( _texture );
+            }
 
             // and add it to the renderer scene
             m_scenePtr->addRenderable( _renderablePtr );

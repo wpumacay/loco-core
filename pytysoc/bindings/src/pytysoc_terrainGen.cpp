@@ -38,6 +38,7 @@ namespace pytysoc
                                               py::array_t<TScalar>& position,
                                               py::array_t<TScalar>& rotation,
                                               py::array_t<TScalar>& rgb,
+                                              const std::string& texturename,
                                               const std::string& filename )
     {
         if ( !m_terrainGenPtr )
@@ -49,6 +50,7 @@ namespace pytysoc
                                            numpyToVec3( position ),
                                            tysoc::TMat3::fromEuler( numpyToVec3( rotation ) ),
                                            numpyToVec3( rgb ),
+                                           texturename,
                                            filename );
     }
 }

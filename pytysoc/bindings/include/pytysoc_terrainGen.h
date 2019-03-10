@@ -78,6 +78,7 @@ namespace pytysoc
                               py::array_t<TScalar>& position,
                               py::array_t<TScalar>& rotation,
                               py::array_t<TScalar>& rgb,
+                              const std::string& texturename = "",
                               const std::string& filename = "" );
 
 
@@ -90,4 +91,8 @@ namespace pytysoc
         .def( py::init<const std::string&>() ); \
     py::class_<pytysoc::PyStaticTerrainGen, pytysoc::PyTerrainGen>( m, "PyStaticTerrainGen" ) \
         .def( py::init<const std::string&>() ) \
-        .def( "createPrimitive", &pytysoc::PyStaticTerrainGen::createPrimitive );
+        .def( "createPrimitive", \
+              &pytysoc::PyStaticTerrainGen::createPrimitive, \
+              py::arg( "type" ), py::arg( "size" ), \
+              py::arg( "position" ), py::arg( "rotation" ), \
+              py::arg( "rgb" ), py::arg( "texturename" ) = "", py::arg( "filename" ) = "" );

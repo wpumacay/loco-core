@@ -7,6 +7,7 @@
 
 #include <LMeshBuilder.h>
 #include <LScene.h>
+#include <LAssetsManager.h>
 
 #include <terrain/terrain_base.h>
 // some commom functionality
