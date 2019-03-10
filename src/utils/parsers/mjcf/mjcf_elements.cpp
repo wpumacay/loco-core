@@ -396,7 +396,8 @@ namespace mjcf {
         _geometry->setAttributeString( "name", name );
         _geometry->setAttributeString( "type", type );
         _geometry->setAttributeArrayFloat( "size", size );
-        _geometry->setAttributeFloat( "mass", mass );
+        if ( mass > 0.0f )
+            _geometry->setAttributeFloat( "mass", mass );
         _geometry->setAttributeVec3( "pos", pos );
         _geometry->setAttributeVec4( "quat", quat );
 
@@ -414,7 +415,8 @@ namespace mjcf {
         _geometry->setAttributeString( "name", name );
         _geometry->setAttributeString( "type", type );
         _geometry->setAttributeArrayFloat( "size", size );
-        _geometry->setAttributeFloat( "mass", mass );
+        if ( mass > 0.0f )
+            _geometry->setAttributeFloat( "mass", mass );
         _geometry->setAttributeArrayFloat( "fromto", fromto );
 
         return _geometry;

@@ -15,12 +15,6 @@ namespace terrain {
 
     TITerrainGenerator::~TITerrainGenerator()
     {
-        for ( size_t i = 0; i < m_primitives.size(); i++ )
-        {
-            delete m_primitives[i];
-        }
-        m_primitives.clear();
-
         while ( !m_pool.empty() )
         {
             m_pool.pop();
@@ -30,6 +24,17 @@ namespace terrain {
         {
             m_justCreated.pop();
         }
+
+        while ( !m_fixed.empty() )
+        {
+            m_fixed.pop();
+        }
+
+        for ( size_t i = 0; i < m_primitives.size(); i++ )
+        {
+            delete m_primitives[i];
+        }
+        m_primitives.clear();
     }
 
     void TITerrainGenerator::recycle( TTerrainPrimitive* pPrimitive )

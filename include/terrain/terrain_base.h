@@ -8,6 +8,7 @@
 namespace tysoc {
 namespace terrain {
 
+    const std::string TERRAIN_TYPE_STATIC                       = "static";
     const std::string TERRAIN_TYPE_PROCEDURAL_SECTIONS_PATH     = "proc_sect_path";
     const std::string TERRAIN_TYPE_PROCEDURAL_SECTIONS_BLOCKS   = "proc_sect_blocks";
 
@@ -17,7 +18,7 @@ namespace terrain {
         float time;
         float deltatime;
         // position to use for scenario calculations
-        struct { float x; float y; float z ;} trackingpoint;
+        struct { float x; float y; float z; } trackingpoint;
         // camera frustum to cull things
         float camfrustum[9];
     };

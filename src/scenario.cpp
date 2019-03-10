@@ -17,6 +17,7 @@ namespace tysoc
         m_mapSensorsByType[ sensor::SENSOR_TYPE_INTRINSICS ]            = std::vector< sensor::TISensor* >();
         m_mapSensorsByType[ sensor::SENSOR_TYPE_EXTRINSICS_TERRAIN ]    = std::vector< sensor::TISensor* >();
 
+        m_mapTerrainGeneratorsByType[ terrain::TERRAIN_TYPE_STATIC ] = std::vector< terrain::TITerrainGenerator* >();
         m_mapTerrainGeneratorsByType[ terrain::TERRAIN_TYPE_PROCEDURAL_SECTIONS_PATH ]   = std::vector< terrain::TITerrainGenerator* >();
         m_mapTerrainGeneratorsByType[ terrain::TERRAIN_TYPE_PROCEDURAL_SECTIONS_BLOCKS ] = std::vector< terrain::TITerrainGenerator* >();
     }
@@ -91,6 +92,7 @@ namespace tysoc
 
     void TScenario::initialize()
     {
+        // @TODO|@CHECK: should remove initialization? is it useful?
         for ( size_t i = 0; i < m_terrainGenerators.size(); i++ )
         {
             m_terrainGenerators[ i ]->initialize();
