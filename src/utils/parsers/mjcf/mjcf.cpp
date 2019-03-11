@@ -4,7 +4,7 @@
 namespace tysoc {
 namespace mjcf {
 
-    std::string MJCF_SCHEMA_PATH = std::string( TYSOCCORE_RESOURCES_PATH ) + std::string( "xml/schema.xml" );
+    std::string MJCF_SCHEMA_PATH = std::string( TYSOC_PATH_RESOURCES ) + std::string( "xml/schema.xml" );
     
     GenericElement* _parseGenericElement( Schema* schema, tinyxml2::XMLElement* xmlElement )
     {

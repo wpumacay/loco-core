@@ -3,8 +3,8 @@
 
 #include <string>
 
-#ifndef TYSOCCORE_GLVIZ_LIB
-    #define TYSOCCORE_GLVIZ_LIB "./glviz/libtysocRenderingGlviz.so"
+#ifndef TYSOC_BACKEND_GRAPHICS_GLVIZ
+    #define TYSOC_BACKEND_GRAPHICS_GLVIZ "../libs/libtysocRenderingGlviz.so"
 #endif
 
 namespace tysoc {
@@ -12,7 +12,7 @@ namespace config {
 
     namespace rendering
     {
-        const std::string GLVIZ = std::string( TYSOCCORE_GLVIZ_LIB );
+        const std::string GLVIZ = std::string( TYSOC_BACKEND_GRAPHICS_GLVIZ );
     }
 
     namespace physics

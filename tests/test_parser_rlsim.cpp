@@ -41,7 +41,7 @@ int main( int argc, const char** argv )
     }
 
     std::string _filepath;
-    _filepath += TYSOCCORE_RLSIM_TEMPLATES_PATH;
+    _filepath += TYSOC_PATH_RLSIM_TEMPLATES;
     // _filepath += "biped3d";
     // _filepath += "dog3d";
     // _filepath += "raptor3d";

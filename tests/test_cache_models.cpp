@@ -6,9 +6,9 @@ int main()
 
     std::cout << "STARTED TEST" << std::endl;
 
-    auto _loader = tysoc::TModelLoader::Create( TYSOCCORE_MJCF_TEMPLATES_PATH,
-                                                TYSOCCORE_URDF_TEMPLATES_PATH,
-                                                TYSOCCORE_RLSIM_TEMPLATES_PATH );
+    auto _loader = tysoc::TModelLoader::Create( TYSOC_PATH_MJCF_TEMPLATES,
+                                                TYSOC_PATH_URDF_TEMPLATES,
+                                                TYSOC_PATH_RLSIM_TEMPLATES );
     
     auto _mjcfModel = _loader->getMjcfModel( "humanoid" );
     auto _urdfModel = _loader->getUrdfModel( "laikago" );

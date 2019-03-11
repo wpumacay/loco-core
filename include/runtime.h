@@ -87,7 +87,7 @@ namespace tysoc {
         */
         TRuntime( const std::string& dlpathSim,
                   const std::string& dlpathViz,
-                  const std::string& workingDir = TYSOCCORE_WORKING_DIR_PATH );
+                  const std::string& workingDir = TYSOC_PATH_WORKING_DIR );
         ~TRuntime();
 
         void step();

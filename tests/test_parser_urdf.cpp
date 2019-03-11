@@ -25,7 +25,7 @@ int main( int argc, const char** argv )
     std::cout << "INFO> started parsing" << std::endl;
 
     std::string _filepath;
-    _filepath += TYSOCCORE_URDF_TEMPLATES_PATH;
+    _filepath += TYSOC_PATH_URDF_TEMPLATES;
     // _filepath += "atlas.urdf";
     // _filepath += "baxter.urdf";
     // _filepath += "cassie.urdf";

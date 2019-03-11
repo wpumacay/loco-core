@@ -34,24 +34,24 @@ typedef float TScalar;
 #define TYSOC_FLOAT_EPSILON 0.000001
 #define TYSOC_PI 3.141592653589793
 
-#ifndef TYSOCCORE_RESOURCES_PATH
-    #define TYSOCCORE_RESOURCES_PATH "../../res/"
+#ifndef TYSOC_PATH_RESOURCES
+    #define TYSOC_PATH_RESOURCES "../../res/"
 #endif
 
-#ifndef TYSOCCORE_MJCF_TEMPLATES_PATH
-    #define TYSOCCORE_MJCF_TEMPLATES_PATH "../../res/templates/mjcf/"
+#ifndef TYSOC_PATH_MJCF_TEMPLATES
+    #define TYSOC_PATH_MJCF_TEMPLATES "../../res/templates/mjcf/"
 #endif
 
-#ifndef TYSOCCORE_URDF_TEMPLATES_PATH
-    #define TYSOCCORE_URDF_TEMPLATES_PATH "../../res/templates/urdf/"
+#ifndef TYSOC_PATH_URDF_TEMPLATES
+    #define TYSOC_PATH_URDF_TEMPLATES "../../res/templates/urdf/"
 #endif
 
-#ifndef TYSOCCORE_RLSIM_TEMPLATES_PATH
-    #define TYSOCCORE_RLSIM_TEMPLATES_PATH "../../res/templates/rlsim/"
+#ifndef TYSOC_PATH_RLSIM_TEMPLATES
+    #define TYSOC_PATH_RLSIM_TEMPLATES "../../res/templates/rlsim/"
 #endif
 
-#ifndef TYSOCCORE_WORKING_DIR_PATH
-    #define TYSOCCORE_WORKING_DIR_PATH "../../res/xml/"
+#ifndef TYSOC_PATH_WORKING_DIR
+    #define TYSOC_PATH_WORKING_DIR "../../res/xml/"
 #endif
 
 namespace tysoc
