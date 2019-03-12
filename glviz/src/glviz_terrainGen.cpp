@@ -75,11 +75,14 @@ namespace viz {
     engine::LIRenderable* TCustomVizTerrainGenerator::_createMeshPrimitive( terrain::TTerrainPrimitive* terrainPrimitivePtr )
     {
         engine::LIRenderable* _renderablePtr = NULL;
+        auto _size = TVec3( terrainPrimitivePtr->size.x,
+                            terrainPrimitivePtr->size.y,
+                            terrainPrimitivePtr->size.z );
 
         // create the mesh with some default sizes (for rescaling later)
         if ( terrainPrimitivePtr->geomType == "plane" )
         {
-            _renderablePtr = engine::LMeshBuilder::createPlane( 2.0f, 2.0f, 1.0f, 1.0f );
+            _renderablePtr = engine::LMeshBuilder::createPlane( 2.0f, 2.0f, _size.y / 10.0f, _size.x / 10.0f );
         }
         else if ( terrainPrimitivePtr->geomType == "box" )
         {
