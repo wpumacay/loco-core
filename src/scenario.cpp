@@ -90,6 +90,24 @@ namespace tysoc
         }
     }
 
+    void TScenario::addBody( sandbox::TIBody* body )
+    {
+        if ( body )
+        {
+            m_bodies.push_back( body );
+            m_mapBodiesByName[ body->name() ] = body;
+        }
+    }
+
+    void TScenario::addJoint( sandbox::TIJoint* joint )
+    {
+        if ( joint )
+        {
+            m_joints.push_back( joint );
+            m_mapJointsByName[ joint->name() ] = joint;
+        }
+    }
+
     void TScenario::initialize()
     {
         // @TODO|@CHECK: should remove initialization? is it useful?
@@ -159,6 +177,32 @@ namespace tysoc
         return NULL;
     }
 
+    sandbox::TIBody* TScenario::getBodyByName( const std::string& name )
+    {
+        if ( m_mapBodiesByName.find( name ) != m_mapBodiesByName.end() )
+        {
+            return m_mapBodiesByName[ name ];
+        }
+
+        std::cout << "WARNING> body with name: "
+                  << name << " does not exist" << std::endl;
+
+        return NULL;
+    }
+
+    sandbox::TIJoint* TScenario::getJointByName( const std::string& name )
+    {
+        if ( m_mapJointsByName.find( name ) != m_mapJointsByName.end() )
+        {
+            return m_mapJointsByName[ name ];
+        }
+
+        std::cout << "WARNING> joint with name: "
+                  << name << " does not exist" << std::endl;
+
+        return NULL;
+    }
+
     std::vector< terrain::TITerrainGenerator* > TScenario::getTerrainGenerators()
     {
         return m_terrainGenerators;
@@ -172,6 +216,16 @@ namespace tysoc
     std::vector< sensor::TISensor* > TScenario::getSensors()
     {
         return m_sensors;
+    }
+
+    std::vector< sandbox::TIBody* > TScenario::getBodies()
+    {
+        return m_bodies;
+    }
+
+    std::vector< sandbox::TIJoint* > TScenario::getJoints()
+    {
+        return m_joints;
     }
 
     std::vector< agent::TIAgent* > TScenario::getAgentsByType( const std::string& type )
@@ -223,6 +277,16 @@ namespace tysoc
     bool TScenario::hasSensor( const std::string& sensorName )
     {
         return m_mapSensorsByName.find( sensorName ) != m_mapSensorsByName.end();
+    }
+
+    bool TScenario::hasBody( const std::string& bodyName )
+    {
+        return m_mapBodiesByName.find( bodyName ) != m_mapBodiesByName.end();
+    }
+
+    bool TScenario::hasJoint( const std::string& jointName )
+    {
+        return m_mapJointsByName.find( jointName ) != m_mapJointsByName.end();
     }
 
 
