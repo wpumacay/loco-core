@@ -393,6 +393,20 @@ namespace tysoc
                       buff[2], buff[6], buff[10] );
     }
 
+    TVec3 TMat4::getRotEuler() const
+    {
+        return TMat3::toEuler( TMat3( buff[0], buff[4], buff[8],
+                                      buff[1], buff[5], buff[9],
+                                      buff[2], buff[6], buff[10] ) );
+    }
+
+    TVec4 TMat4::getRotQuaternion() const
+    {
+        return TMat3::toQuaternion( TMat3( buff[0], buff[4], buff[8],
+                                           buff[1], buff[5], buff[9],
+                                           buff[2], buff[6], buff[10] ) );
+    }
+
     TMat4 TMat4::fromPositionAndRotation( const TVec3& pos, const TMat3& rot )
     {
         TMat4 _res;

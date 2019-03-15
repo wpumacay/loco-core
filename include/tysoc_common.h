@@ -139,6 +139,8 @@ namespace tysoc
 
         TVec3 getPosition() const;
         TMat3 getRotation() const;
+        TVec3 getRotEuler() const;
+        TVec4 getRotQuaternion() const;
 
         TMat4 operator* ( const TMat4& other )
         {
