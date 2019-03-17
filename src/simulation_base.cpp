@@ -28,6 +28,12 @@ namespace tysoc {
             delete m_terrainGenWrappers[q];
         }
         m_terrainGenWrappers.clear();
+
+        for ( size_t q = 0; q < m_bodyWrappers.size(); q++ )
+        {
+            delete m_bodyWrappers[q];
+        }
+        m_bodyWrappers.clear();
     }
 
     void* TISimulation::payload( const std::string& type )

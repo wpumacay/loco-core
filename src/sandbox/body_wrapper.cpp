@@ -1,0 +1,108 @@
+
+#include <sandbox/body_wrapper.h>
+
+namespace tysoc {
+
+    TBodyWrapper::TBodyWrapper( sandbox::TBody* bodyPtr,
+                                const std::string& workingDir )
+    {
+        m_bodyPtr = bodyPtr;
+        m_workingDir = workingDir;
+
+        if ( !m_bodyPtr )
+        {
+            std::cout << "ERROR> trying to wrapp NULL body ptr" << std::endl;
+        }
+        else
+        {
+            m_posStart = m_bodyPtr->worldTransform.getPosition();
+            m_rotStart = m_bodyPtr->worldTransform.getRotation();
+        }
+    }
+
+    TBodyWrapper::~TBodyWrapper()
+    {
+        // Just release the handle to the body resource. 
+        // The scenario is in charge of resource deletions
+        m_bodyPtr = NULL;
+    }
+
+    void TBodyWrapper::initialize()
+    {
+        _initializeInternal();
+    }
+
+    void TBodyWrapper::reset()
+    {
+        _resetInternal();
+    }
+
+    void TBodyWrapper::preStep()
+    {
+        _preStepInternal();
+    }
+
+    void TBodyWrapper::postStep()
+    {
+        _postStepInternal();
+    }
+
+    void TBodyWrapper::setPosition( const TVec3& position )
+    {
+        if ( !m_bodyPtr )
+            return;
+
+        m_bodyPtr->worldTransform.setPosition( position );
+        _changePositionInternal();
+    }
+
+    void TBodyWrapper::setRotMat( const TMat3& rotmat )
+    {
+        if ( !m_bodyPtr )
+            return;
+
+        m_bodyPtr->worldTransform.setRotation( rotmat );
+        _changeRotationInternal();
+    }
+
+    void TBodyWrapper::setRotEuler( const TVec3& euler )
+    {
+        if ( !m_bodyPtr )
+            return;
+
+        m_bodyPtr->worldTransform.setRotation( TMat3::fromEuler( euler ) );
+        _changeRotationInternal();
+    }
+
+    void TBodyWrapper::setRotQuat( const TVec4& quat )
+    {
+        if ( !m_bodyPtr )
+            return;
+
+        m_bodyPtr->worldTransform.setRotation( TMat3::fromQuaternion( quat ) );
+        _changeRotationInternal();
+    }
+
+    void TBodyWrapper::setSize( const TVec3& size )
+    {
+        if ( !m_bodyPtr )
+            return;
+
+        m_bodyPtr->size = size;
+        _changeSizeInternal();
+    }
+
+    std::string TBodyWrapper::name()
+    {
+        if ( !m_bodyPtr )
+            return "undefined";
+
+        return m_bodyPtr->name;
+    }
+
+    sandbox::TBody* TBodyWrapper::body()
+    {
+        return m_bodyPtr;
+    }
+
+}

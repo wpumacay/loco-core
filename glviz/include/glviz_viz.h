@@ -12,6 +12,8 @@
 // and some specific viz wrappers
 #include <glviz_kintree.h>
 #include <glviz_terrainGen.h>
+// and the sandbox visualizer wrapper
+#include <glviz_sandbox.h>
 // and the current UI functionality
 #include <glviz_ui.h>
 
@@ -32,6 +34,8 @@ namespace viz {
         // visualization wrappers
         std::vector< TCustomVizKinTree* >             m_vizKinTreeWrappers;
         std::vector< TCustomVizTerrainGenerator* >    m_vizTerrainGeneratorWrappers;
+        // sandbox visualization wrapper
+        TGLVizSandbox* m_vizSandboxWrapper;
         // the UI context
         TCustomContextUI*   m_uiContextPtr;
 

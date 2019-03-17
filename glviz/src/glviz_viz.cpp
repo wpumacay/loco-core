@@ -51,6 +51,15 @@ namespace viz {
             }
         }
 
+        // Create sandbox visualization wrapper
+        auto _bodies = m_scenarioPtr->getBodies();
+        auto _joints = m_scenarioPtr->getJoints();
+
+        m_vizSandboxWrapper = new TGLVizSandbox( _bodies, 
+                                                 _joints,
+                                                 m_glScenePtr,
+                                                 m_workingDir );
+
         //// and finally create the UI
         // first the ui context
         m_uiContextPtr = new TCustomContextUI();
@@ -79,6 +88,9 @@ namespace viz {
         {
             m_vizKinTreeWrappers[i]->update();
         }
+
+        // and also update the sandbox visualization wrapper
+        m_vizSandboxWrapper->update();
 
         // and the sensor readings (render them directly, seems like ...
         // wrapping them would be wasteful?)
@@ -196,7 +208,7 @@ namespace viz {
         // add these components to the scene
         _scene->addCamera( _camera );
         _scene->addLight( _light );
-        //_scene->addSkybox( _skybox );
+        _scene->addSkybox( _skybox );
     }
 
     void TCustomVisualizer::_collectKinTreeAgent( agent::TAgentKinTree* kinTreeAgentPtr )

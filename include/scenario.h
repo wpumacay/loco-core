@@ -34,11 +34,11 @@ namespace tysoc
         std::map< std::string, terrain::TITerrainGenerator* >                m_mapTerrainGeneratorsByName;
         std::map< std::string, std::vector< terrain::TITerrainGenerator* > > m_mapTerrainGeneratorsByType;
 
-        std::vector< sandbox::TIBody* >             m_bodies;
-        std::map< std::string, sandbox::TIBody* >   m_mapBodiesByName;
+        std::vector< sandbox::TBody* >             m_bodies;
+        std::map< std::string, sandbox::TBody* >   m_mapBodiesByName;
 
-        std::vector< sandbox::TIJoint* >            m_joints;
-        std::map< std::string, sandbox::TIJoint* >  m_mapJointsByName;
+        std::vector< sandbox::TJoint* >            m_joints;
+        std::map< std::string, sandbox::TJoint* >  m_mapJointsByName;
 
         public :
 
@@ -50,20 +50,20 @@ namespace tysoc
         void addAgent( agent::TIAgent* agent );
         void addSensor( sensor::TISensor* sensor );
         void addTerrainGenerator( terrain::TITerrainGenerator* terrainGenerator );
-        void addBody( sandbox::TIBody* body );
-        void addJoint( sandbox::TIJoint* joint );
+        void addBody( sandbox::TBody* body );
+        void addJoint( sandbox::TJoint* joint );
 
         std::vector< agent::TIAgent* >                  getAgents();
         std::vector< sensor::TISensor* >                getSensors();
         std::vector< terrain::TITerrainGenerator* >     getTerrainGenerators();
-        std::vector< sandbox::TIBody* >                 getBodies();
-        std::vector< sandbox::TIJoint* >                getJoints();
+        std::vector< sandbox::TBody* >                  getBodies();
+        std::vector< sandbox::TJoint* >                 getJoints();
 
         agent::TIAgent*                 getAgentByName( const std::string& name );
         sensor::TISensor*               getSensorByName( const std::string& name );
         terrain::TITerrainGenerator*    getTerrainGeneratorByName( const std::string& name );
-        sandbox::TIBody*                getBodyByName( const std::string& name );
-        sandbox::TIJoint*               getJointByName( const std::string& name );
+        sandbox::TBody*                 getBodyByName( const std::string& name );
+        sandbox::TJoint*                getJointByName( const std::string& name );
 
         std::vector< agent::TIAgent* >                  getAgentsByType( const std::string& type );
         std::vector< sensor::TISensor* >                getSensorsByType( const std::string& type );

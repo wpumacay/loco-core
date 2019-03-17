@@ -90,21 +90,21 @@ namespace tysoc
         }
     }
 
-    void TScenario::addBody( sandbox::TIBody* body )
+    void TScenario::addBody( sandbox::TBody* body )
     {
         if ( body )
         {
             m_bodies.push_back( body );
-            m_mapBodiesByName[ body->name() ] = body;
+            m_mapBodiesByName[ body->name ] = body;
         }
     }
 
-    void TScenario::addJoint( sandbox::TIJoint* joint )
+    void TScenario::addJoint( sandbox::TJoint* joint )
     {
         if ( joint )
         {
             m_joints.push_back( joint );
-            m_mapJointsByName[ joint->name() ] = joint;
+            m_mapJointsByName[ joint->name ] = joint;
         }
     }
 
@@ -177,7 +177,7 @@ namespace tysoc
         return NULL;
     }
 
-    sandbox::TIBody* TScenario::getBodyByName( const std::string& name )
+    sandbox::TBody* TScenario::getBodyByName( const std::string& name )
     {
         if ( m_mapBodiesByName.find( name ) != m_mapBodiesByName.end() )
         {
@@ -190,7 +190,7 @@ namespace tysoc
         return NULL;
     }
 
-    sandbox::TIJoint* TScenario::getJointByName( const std::string& name )
+    sandbox::TJoint* TScenario::getJointByName( const std::string& name )
     {
         if ( m_mapJointsByName.find( name ) != m_mapJointsByName.end() )
         {
@@ -218,12 +218,12 @@ namespace tysoc
         return m_sensors;
     }
 
-    std::vector< sandbox::TIBody* > TScenario::getBodies()
+    std::vector< sandbox::TBody* > TScenario::getBodies()
     {
         return m_bodies;
     }
 
-    std::vector< sandbox::TIJoint* > TScenario::getJoints()
+    std::vector< sandbox::TJoint* > TScenario::getJoints()
     {
         return m_joints;
     }

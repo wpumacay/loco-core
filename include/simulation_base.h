@@ -4,6 +4,7 @@
 #include <scenario.h>
 #include <agent_wrapper.h>
 #include <terrain_wrapper.h>
+#include <sandbox/body_wrapper.h>
 
 
 namespace tysoc {
@@ -56,6 +57,7 @@ namespace tysoc {
 
         std::vector< TKinTreeAgentWrapper* > m_agentWrappers;
         std::vector< TTerrainGenWrapper* > m_terrainGenWrappers;
+        std::vector< TBodyWrapper* > m_bodyWrappers;
 
         virtual bool _initializeInternal() = 0;
         virtual void _preStepInternal() = 0;
@@ -113,4 +115,6 @@ namespace tysoc {
     typedef TTerrainGenWrapper* FcnCreateTerrainGenFromParams( const std::string& name,
                                                                const TGenericParams& params,
                                                                const std::string& workingDir );
+
+    typedef sandbox::TBody* FcnCreateBody( sandbox::TBody* bodyPtr );
 }
