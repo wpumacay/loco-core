@@ -11,7 +11,6 @@
 // Default includes to be used for visualization
 #include <glviz_common.h>
 
-#define VIZSANDBOX_BODY_DEFAULT_COLOR { 0.25f, 1.0f, 0.25f }
 #define VIZSANDBOX_AXES_DEFAULT_SIZE 0.1f
 
 namespace tysoc {

@@ -48,9 +48,9 @@ namespace viz {
             // and create the appropriate renderable
             _vizBody.renderablePtr = _createRenderable( bodies[i]->type,
                                                         bodies[i]->size,
-                                                        VIZSANDBOX_BODY_DEFAULT_COLOR,
-                                                        VIZSANDBOX_BODY_DEFAULT_COLOR,
-                                                        VIZSANDBOX_BODY_DEFAULT_COLOR,
+                                                        bodies[i]->color,
+                                                        bodies[i]->color,
+                                                        bodies[i]->color,
                                                         bodies[i]->filename );
 
             // adn create the frame axes
@@ -99,6 +99,10 @@ namespace viz {
             auto _meshFilePath = m_workingDir + filename;
             _renderable = engine::LMeshBuilder::createModelFromFile( _meshFilePath,
                                                                      "" );
+        }
+        else if ( type == "plane" )
+        {
+            _renderable = engine::LMeshBuilder::createPlane( size.x, size.y );
         }
 
         if ( _renderable )
