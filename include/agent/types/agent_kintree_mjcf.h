@@ -17,6 +17,10 @@ namespace agent {
         struct { float x; float y; float z; }   scale;
     };
 
+    struct TMjcSettings
+    {
+        bool useLocalCoordinates;
+    };
 
     class TAgentKinTreeMjcf : public TAgentKinTree
     {
@@ -25,6 +29,8 @@ namespace agent {
 
         mjcf::GenericElement* m_modelElementPtr;
         std::map< std::string, TMjcfMeshAsset > m_mjcfMeshAssets;
+
+        TMjcSettings m_mjcfModelSettings;
 
         TKinTreeBody* _processBodyFromMjcf( mjcf::GenericElement* bodyElementPtr, TKinTreeBody* parentKinBodyPtr );
         TKinTreeJoint* _processJointFromMjcf( mjcf::GenericElement* jointElementPtr );
@@ -44,6 +50,12 @@ namespace agent {
                                    TVec3& targetSize,
                                    TVec3& posFromFromto,
                                    TMat3& rotFromFromto );
+
+        void _extractMjcfModelSettings();
+        void _convertGlobalToLocalCoordinates( TKinTreeBody* kinTreeBodyPtr, 
+                                               const TMat4& parentWorldTransform );
+        TMat4 _convertGlobalToLocalTransform( const TMat4& parentWorldTransform,
+                                              const TMat4& childWorldTransform );
 
         public :
 

@@ -132,6 +132,9 @@ namespace tysoc
 
         TMat4& operator= ( const TMat4& other );
 
+        void set( int row, int col, TScalar value );
+        TScalar get( int row, int col ) const;
+
         void setPosition( const TVec3& position );
         void setRotation( const TMat3& rotation );
         void setRotation( const TVec3& rotEuler );
@@ -142,30 +145,9 @@ namespace tysoc
         TVec3 getRotEuler() const;
         TVec4 getRotQuaternion() const;
 
-        TMat4 operator* ( const TMat4& other )
-        {
-            TMat4 _res;
+        TMat4 inverse() const;
 
-            for ( int i = 0; i < 4; i++ )
-            {
-                for ( int j = 0; j < 4; j++ )
-                {
-                    _res.buff[ j + i * 4 ] = 0;
-
-                    for ( int k = 0; k < 4; k++ )
-                    {
-                        // Matrices are stored in column major form, so ...
-                        // we use this indexing for the multiplication
-                        // k + 4 * (fixed) -> over column
-                        // (fixed) + 4 * k -> over row
-                        _res.buff[ j + i * 4 ] += this->buff[ j + k * 4 ] * 
-                                                  other.buff[ k + i * 4 ];
-                    }
-                }
-            }
-
-            return _res;
-        }
+        TMat4 operator* ( const TMat4& other ) const;
 
         static TMat4 fromPositionAndRotation( const TVec3& pos, const TMat3& rot );
 
