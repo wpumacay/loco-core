@@ -349,6 +349,16 @@ namespace tysoc
         return *this;
     }
 
+    void TMat4::set( int row, int col, TScalar value )
+    {
+        buff[row + col * 4] = value;
+    }
+
+    TScalar TMat4::get( int row, int col ) const
+    {
+        return buff[row + col * 4];
+    }
+
     void TMat4::setPosition( const TVec3& position )
     {
         buff[12] = position.x;
@@ -405,6 +415,91 @@ namespace tysoc
         return TMat3::toQuaternion( TMat3( buff[0], buff[4], buff[8],
                                            buff[1], buff[5], buff[9],
                                            buff[2], buff[6], buff[10] ) );
+    }
+
+    TMat4 TMat4::inverse() const
+    {
+        TMat4 _res;
+
+        TScalar _r11 = get( 0, 0 ); TScalar _r12 = get( 0, 1 );
+        TScalar _r21 = get( 1, 0 ); TScalar _r22 = get( 1, 1 );
+        TScalar _r31 = get( 2, 0 ); TScalar _r32 = get( 2, 1 );
+        TScalar _r41 = get( 3, 0 ); TScalar _r42 = get( 3, 1 );
+
+        TScalar _r13 = get( 0, 2 ); float _r14 = get( 0, 3 );
+        TScalar _r23 = get( 1, 2 ); float _r24 = get( 1, 3 );
+        TScalar _r33 = get( 2, 2 ); float _r34 = get( 2, 3 );
+        TScalar _r43 = get( 3, 2 ); float _r44 = get( 3, 3 );
+
+        // Calculate some intermediate values - "minors" of order 2
+        TScalar _m3434 = _r33 * _r44 - _r43 * _r34;
+        TScalar _m2434 = _r23 * _r44 - _r43 * _r24;
+        TScalar _m1434 = _r13 * _r44 - _r43 * _r14;
+        TScalar _m2334 = _r23 * _r34 - _r33 * _r24;
+        TScalar _m1334 = _r13 * _r34 - _r33 * _r14;
+        TScalar _m1234 = _r13 * _r24 - _r23 * _r14;
+
+        TScalar _m2312 = _r21 * _r32 - _r31 * _r22;
+        TScalar _m2412 = _r21 * _r42 - _r41 * _r22;
+        TScalar _m3412 = _r31 * _r42 - _r41 * _r32;
+        TScalar _m1312 = _r11 * _r32 - _r31 * _r12;
+        TScalar _m1412 = _r11 * _r42 - _r41 * _r12;
+        TScalar _m1212 = _r11 * _r22 - _r21 * _r12;        
+
+        TScalar _det = _r11 * ( _r22 * _m3434 - _r32 * _m2434 + _r42 * _m2334 ) -
+                       _r21 * ( _r12 * _m3434 - _r32 * _m1434 + _r42 * _m1334 ) +
+                       _r31 * ( _r12 * _m2434 - _r22 * _m1434 + _r42 * _m1234 ) - 
+                       _r41 * ( _r12 * _m2334 - _r22 * _m1334 + _r32 * _m1234 );
+
+        TScalar _invdet = 1 / _det;
+
+        // Generate transpose of "cofactors" matrix ( also divide by determinant ) in place
+        _res.set( 0, 0, ( _r22 * _m3434 - _r32 * _m2434 + _r42 * _m2334 ) *  _invdet );
+        _res.set( 0, 1, ( _r12 * _m3434 - _r32 * _m1434 + _r42 * _m1334 ) * -_invdet );
+        _res.set( 0, 2, ( _r12 * _m2434 - _r22 * _m1434 + _r42 * _m1234 ) *  _invdet );
+        _res.set( 0, 3, ( _r12 * _m2334 - _r22 * _m1334 + _r32 * _m1234 ) * -_invdet );
+
+        _res.set( 1, 0, ( _r21 * _m3434 - _r31 * _m2434 + _r41 * _m2334 ) * -_invdet );
+        _res.set( 1, 1, ( _r11 * _m3434 - _r31 * _m1434 + _r41 * _m1334 ) *  _invdet );
+        _res.set( 1, 2, ( _r11 * _m2434 - _r21 * _m1434 + _r41 * _m1234 ) * -_invdet );
+        _res.set( 1, 3, ( _r11 * _m2334 - _r21 * _m1334 + _r31 * _m1234 ) *  _invdet );
+
+        _res.set( 2, 0, ( _r44 * _m2312 - _r34 * _m2412 + _r24 * _m3412 ) *  _invdet );
+        _res.set( 2, 1, ( _r44 * _m1312 - _r34 * _m1412 + _r14 * _m3412 ) * -_invdet );
+        _res.set( 2, 2, ( _r44 * _m1212 - _r24 * _m1412 + _r14 * _m2412 ) *  _invdet );
+        _res.set( 2, 3, ( _r34 * _m1212 - _r24 * _m1312 + _r14 * _m2312 ) * -_invdet );
+
+        _res.set( 3, 0, ( _r43 * _m2312 - _r33 * _m2412 + _r23 * _m3412 ) * -_invdet );
+        _res.set( 3, 1, ( _r43 * _m1312 - _r33 * _m1412 + _r13 * _m3412 ) *  _invdet );
+        _res.set( 3, 2, ( _r43 * _m1212 - _r23 * _m1412 + _r13 * _m2412 ) * -_invdet );
+        _res.set( 3, 3, ( _r33 * _m1212 - _r23 * _m1312 + _r13 * _m2312 ) *  _invdet );
+
+        return _res;
+    }
+
+    TMat4 TMat4::operator* ( const TMat4& other ) const
+    {
+        TMat4 _res;
+
+        for ( int i = 0; i < 4; i++ )
+        {
+            for ( int j = 0; j < 4; j++ )
+            {
+                _res.buff[ j + i * 4 ] = 0;
+
+                for ( int k = 0; k < 4; k++ )
+                {
+                    // Matrices are stored in column major form, so ...
+                    // we use this indexing for the multiplication
+                    // k + 4 * (fixed) -> over column
+                    // (fixed) + 4 * k -> over row
+                    _res.buff[ j + i * 4 ] += this->buff[ j + k * 4 ] * 
+                                              other.buff[ k + i * 4 ];
+                }
+            }
+        }
+
+        return _res;
     }
 
     TMat4 TMat4::fromPositionAndRotation( const TVec3& pos, const TMat3& rot )

@@ -47,6 +47,7 @@ namespace agent {
         // and set the model template type as being created from a mjc file
         m_modelTemplateType = MODEL_TEMPLATE_TYPE_MJCF;
 
+        _extractMjcfModelSettings();
         _collectAssets();
         _initializeKinTree();
     }
@@ -102,6 +103,12 @@ namespace agent {
         //         _contactElm->setAttributeString( "body2", _body2name );
         //     }
         // }
+
+        if ( m_rootBodyPtr && !m_mjcfModelSettings.useLocalCoordinates )
+        {
+            std::cout << "INFO> converting to local coordinates: " << m_name << std::endl;
+            _convertGlobalToLocalCoordinates( m_rootBodyPtr, TMat4() );
+        }
     }
 
     void TAgentKinTreeMjcf::_collectAssets()
@@ -726,6 +733,75 @@ namespace agent {
         }
 
         return _usesFromto;
+    }
+
+    void TAgentKinTreeMjcf::_extractMjcfModelSettings()
+    {
+        auto _settingsElm = mjcf::findFirstChildByType( m_modelElementPtr, "compiler" );
+
+        if ( _settingsElm )
+        {
+            m_mjcfModelSettings.useLocalCoordinates = ( _settingsElm->getAttributeString( "coordinate", "local" ) == "local" );
+        }
+        else
+        {
+            m_mjcfModelSettings.useLocalCoordinates = true;
+        }
+    }
+
+    void TAgentKinTreeMjcf::_convertGlobalToLocalCoordinates( TKinTreeBody* kinTreeBodyPtr, 
+                                                              const TMat4& parentWorldTransform )
+    {
+        auto _bodyWorldTransform = kinTreeBodyPtr->relTransform;
+        kinTreeBodyPtr->relTransform = _convertGlobalToLocalTransform( parentWorldTransform,
+                                                                       _bodyWorldTransform );
+
+        auto _joints = kinTreeBodyPtr->childJoints;
+        for ( size_t q = 0; q < _joints.size(); q++ )
+        {
+            _joints[q]->relTransform = _convertGlobalToLocalTransform( _bodyWorldTransform,
+                                                                       _joints[q]->relTransform );
+        }
+
+        auto _visuals = kinTreeBodyPtr->childVisuals;
+        for ( size_t q = 0; q < _visuals.size(); q++ )
+        {
+            _visuals[q]->relTransform = _convertGlobalToLocalTransform( _bodyWorldTransform,
+                                                                        _visuals[q]->relTransform );
+        }
+
+        auto _collisions = kinTreeBodyPtr->childCollisions;
+        for ( size_t q = 0; q < _collisions.size(); q++ )
+        {
+            _collisions[q]->relTransform = _convertGlobalToLocalTransform( _bodyWorldTransform,
+                                                                           _collisions[q]->relTransform );
+        }
+
+        auto _bodies = kinTreeBodyPtr->childBodies;
+        for ( size_t q = 0; q < _bodies.size(); q++ )
+        {
+            _convertGlobalToLocalCoordinates( _bodies[q], _bodyWorldTransform );
+        }
+    }
+
+    TMat4 TAgentKinTreeMjcf::_convertGlobalToLocalTransform( const TMat4& parentWorldTransform,
+                                                             const TMat4& childWorldTransform )
+    {
+        // convert coordinates from body->relTransform to local coordinates
+        // Use the following relation:
+        //
+        //  b1 : parent
+        //  b2 : child
+        //
+        //     w       b1        w         b1       w -1     w   
+        //      T   *    T    =   T    ->   T   =    T    *   T  
+        //       b1       b2       b2        b2       b1       b2
+        
+        auto _b1ToWorld = parentWorldTransform;
+        auto _b2ToWorld = childWorldTransform;
+        auto _b2Tob1 = _b1ToWorld.inverse() * _b2ToWorld;
+
+        return _b2Tob1;
     }
 
     mjcf::GenericElement* TAgentKinTreeMjcf::getMjcfModelDataPtr()
