@@ -4,7 +4,11 @@
 #include <string>
 
 #ifndef TYSOC_BACKEND_GRAPHICS_GLVIZ
-    #define TYSOC_BACKEND_GRAPHICS_GLVIZ "../libs/libtysocRenderingGlviz.so"
+    #ifdef __APPLE__
+        #define TYSOC_BACKEND_GRAPHICS_GLVIZ "../libs/libtysocRenderingGlviz.dylib"
+    #else
+        #define TYSOC_BACKEND_GRAPHICS_GLVIZ "../libs/libtysocRenderingGlviz.so"
+    #endif
 #endif
 
 namespace tysoc {

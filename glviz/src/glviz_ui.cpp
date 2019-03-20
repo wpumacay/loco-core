@@ -39,8 +39,11 @@ namespace viz {
         ImGuiIO& _io = ImGui::GetIO(); (void) _io;
 
         ImGui_ImplGlfw_InitForOpenGL( m_glfwWindowPtr, false );
+    #ifdef __APPLE__
+        ImGui_ImplOpenGL3_Init( "#version 150" );
+    #else
         ImGui_ImplOpenGL3_Init( "#version 130" );
-
+    #endif
         ImGui::StyleColorsDark();
     }
 

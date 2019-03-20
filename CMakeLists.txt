@@ -21,14 +21,30 @@ add_definitions( -DTYSOC_PATH_WORKING_DIR="${CMAKE_CURRENT_SOURCE_DIR}/res/xml/"
 add_definitions( -DTYSOC_PATH_MJCF_TEMPLATES="${CMAKE_CURRENT_SOURCE_DIR}/res/templates/mjcf/" )
 add_definitions( -DTYSOC_PATH_URDF_TEMPLATES="${CMAKE_CURRENT_SOURCE_DIR}/res/templates/urdf/" )
 add_definitions( -DTYSOC_PATH_RLSIM_TEMPLATES="${CMAKE_CURRENT_SOURCE_DIR}/res/templates/rlsim/" )
-add_definitions( -DTYSOC_BACKEND_GRAPHICS_GLVIZ="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libtysocRenderingGlviz.so" )
+if ( WIN32 )
+    add_definitions( -DTYSOC_BACKEND_GRAPHICS_GLVIZ="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libtysocRenderingGlviz.dll" )
+elseif ( UNIX )
+    if ( APPLE )
+        add_definitions( -DTYSOC_BACKEND_GRAPHICS_GLVIZ="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libtysocRenderingGlviz.dylib" )
+    else ()
+        add_definitions( -DTYSOC_BACKEND_GRAPHICS_GLVIZ="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libtysocRenderingGlviz.so" )
+    endif ()
+endif()
 
 set_property( GLOBAL PROPERTY PROP_TYSOC_PATH_RESOURCES         "${CMAKE_CURRENT_SOURCE_DIR}/res/" )
 set_property( GLOBAL PROPERTY PROP_TYSOC_PATH_WORKING_DIR       "${CMAKE_CURRENT_SOURCE_DIR}/res/xml/" )
 set_property( GLOBAL PROPERTY PROP_TYSOC_PATH_MJCF_TEMPLATES    "${CMAKE_CURRENT_SOURCE_DIR}/res/templates/mjcf/" )
 set_property( GLOBAL PROPERTY PROP_TYSOC_PATH_URDF_TEMPLATES    "${CMAKE_CURRENT_SOURCE_DIR}/res/templates/urdf/" )
 set_property( GLOBAL PROPERTY PROP_TYSOC_PATH_RLSIM_TEMPLATES   "${CMAKE_CURRENT_SOURCE_DIR}/res/templates/rlsim/" )
-set_property( GLOBAL PROPERTY PROP_TYSOC_BACKEND_GRAPHICS_GLVIZ "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libtysocRenderingGlviz.so" )
+if ( WIN32 )
+    set_property( GLOBAL PROPERTY PROP_TYSOC_BACKEND_GRAPHICS_GLVIZ "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libtysocRenderingGlviz.dll" )
+elseif ( UNIX )
+    if ( APPLE )
+        set_property( GLOBAL PROPERTY PROP_TYSOC_BACKEND_GRAPHICS_GLVIZ "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libtysocRenderingGlviz.dylib" )
+    else ()
+        set_property( GLOBAL PROPERTY PROP_TYSOC_BACKEND_GRAPHICS_GLVIZ "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libtysocRenderingGlviz.so" )
+    endif ()
+endif()
 
 # test all properties --------------------------------------------------------------------------------------------------
 
@@ -64,7 +80,7 @@ include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/ext/tinyxml2" )
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/ext/json" )
 
 add_library( tysocCore SHARED
-			 ${TYSOC_SOURCES} )
+             ${TYSOC_SOURCES} )
 target_link_libraries( tysocCore
                        dl )
 
