@@ -53,10 +53,8 @@ namespace viz {
 
         // Create sandbox visualization wrapper
         auto _bodies = m_scenarioPtr->getBodies();
-        auto _joints = m_scenarioPtr->getJoints();
 
-        m_vizSandboxWrapper = new TGLVizSandbox( _bodies, 
-                                                 _joints,
+        m_vizSandboxWrapper = new TGLVizSandbox( _bodies,
                                                  m_glScenePtr,
                                                  m_workingDir );
 

@@ -258,6 +258,7 @@ namespace agent {
         TScalar             stiffness;      // (mujoco) Stiffness (spring like behaviour like)
         TScalar             armature;       // (mujoco) Armature (extra diag inertia)
         TScalar             damping;        // (mujoco) Damping applied to the joint
+        TScalar             ref;            // (mujoco) Ref. for the joint
 
         TKinTreeJoint()
         {
@@ -270,6 +271,7 @@ namespace agent {
             stiffness       = 0.0;
             armature        = 0.0;
             damping         = 0.0;
+            ref             = 0.0;
         }
     };
 

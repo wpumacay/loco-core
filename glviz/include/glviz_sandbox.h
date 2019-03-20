@@ -45,7 +45,6 @@ namespace viz {
         void _updateJoint( TGLVizSandboxJoint& joint );
 
         void _collectBodies( const std::vector< sandbox::TBody* >& bodies );
-        void _collectJoints( const std::vector< sandbox::TJoint* >& joints );
 
         engine::LIRenderable* _createRenderable( const std::string& type,
                                                  const TVec3& size,
@@ -62,7 +61,6 @@ namespace viz {
         public :
 
         TGLVizSandbox( const std::vector< sandbox::TBody* >& bodies,
-                       const std::vector< sandbox::TJoint* >& joints,
                        engine::LScene* scenePtr,
                        const std::string& workingDir );
 

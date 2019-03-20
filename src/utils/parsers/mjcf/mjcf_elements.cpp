@@ -399,7 +399,7 @@ namespace mjcf {
         if ( mass > 0.0f )
             _geometry->setAttributeFloat( "mass", mass );
         _geometry->setAttributeVec3( "pos", pos );
-        _geometry->setAttributeVec4( "quat", quat );
+        _geometry->setAttributeVec4( "quat", { quat.w, quat.x, quat.y, quat.z } );
 
         return _geometry;
     }

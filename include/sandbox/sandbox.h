@@ -23,6 +23,7 @@ namespace sandbox {
         TMat3   inertia;
         TVec3   friction;
 
+        TBody* parentBodyPtr;
         std::vector< TJoint* > joints;
 
         TBody()
@@ -36,6 +37,8 @@ namespace sandbox {
 
             mass = 0.0f;
             friction = { 1.0, 0.005, 0.0001 };
+
+            parentBodyPtr = NULL;
         }
     };
 
@@ -51,6 +54,16 @@ namespace sandbox {
         TVec2 limits;
 
         TBody* parentBodyPtr;
+
+        TJoint()
+        {
+            name = "undefined";
+            type = "hinge";
+
+            axis = { 1, 0, 0 };
+
+            parentBodyPtr = NULL;
+        }
     };
 
 

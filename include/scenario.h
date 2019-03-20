@@ -37,9 +37,6 @@ namespace tysoc
         std::vector< sandbox::TBody* >             m_bodies;
         std::map< std::string, sandbox::TBody* >   m_mapBodiesByName;
 
-        std::vector< sandbox::TJoint* >            m_joints;
-        std::map< std::string, sandbox::TJoint* >  m_mapJointsByName;
-
         public :
 
         TScenario();
@@ -51,19 +48,16 @@ namespace tysoc
         void addSensor( sensor::TISensor* sensor );
         void addTerrainGenerator( terrain::TITerrainGenerator* terrainGenerator );
         void addBody( sandbox::TBody* body );
-        void addJoint( sandbox::TJoint* joint );
 
         std::vector< agent::TIAgent* >                  getAgents();
         std::vector< sensor::TISensor* >                getSensors();
         std::vector< terrain::TITerrainGenerator* >     getTerrainGenerators();
         std::vector< sandbox::TBody* >                  getBodies();
-        std::vector< sandbox::TJoint* >                 getJoints();
 
         agent::TIAgent*                 getAgentByName( const std::string& name );
         sensor::TISensor*               getSensorByName( const std::string& name );
         terrain::TITerrainGenerator*    getTerrainGeneratorByName( const std::string& name );
         sandbox::TBody*                 getBodyByName( const std::string& name );
-        sandbox::TJoint*                getJointByName( const std::string& name );
 
         std::vector< agent::TIAgent* >                  getAgentsByType( const std::string& type );
         std::vector< sensor::TISensor* >                getSensorsByType( const std::string& type );
@@ -73,7 +67,6 @@ namespace tysoc
         bool hasTerrainGen( const std::string& terrainGenName );
         bool hasSensor( const std::string& sensorName );
         bool hasBody( const std::string& bodyName );
-        bool hasJoint( const std::string& jointName );
 
         virtual void initialize();
         virtual void update();

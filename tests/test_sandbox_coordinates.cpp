@@ -58,6 +58,15 @@ tysoc::sandbox::TBody* buildGlobalCapsule( const std::string& name,
     return _body;
 }
 
+void drawJointsAxis( const std::vector< tysoc::TVec3 >& jointspos,
+                     const std::vector< tysoc::TVec3 >& jointsaxis )
+{
+    for ( size_t q = 0; q < jointspos.size(); q++ )
+    {
+        
+    }
+}
+
 int main()
 {
     tysoc::TVec3 _pos;

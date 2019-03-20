@@ -280,6 +280,8 @@ namespace agent {
         _kinTreeJointPtr->armature = jointElementPtr->getAttributeFloat( "armature", 0.0 );
         // and the joint damping (@GENERIC)
         _kinTreeJointPtr->damping = jointElementPtr->getAttributeFloat( "damping", 0.0 );
+        // and the joint ref (@GENERIUC)
+        _kinTreeJointPtr->ref = jointElementPtr->getAttributeFloat( "ref", 0.0 );
         // child body should be set to NULL (used only for urdf?->seems not->@CHANGE)
         _kinTreeJointPtr->childBodyPtr = NULL;
         // and store it in the joints buffer

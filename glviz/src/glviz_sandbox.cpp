@@ -5,7 +5,6 @@ namespace tysoc {
 namespace viz {
 
     TGLVizSandbox::TGLVizSandbox( const std::vector< sandbox::TBody* >& bodies,
-                                  const std::vector< sandbox::TJoint* >& joints,
                                   engine::LScene* scenePtr,
                                   const std::string& workingDir )
     {
@@ -13,7 +12,6 @@ namespace viz {
         m_workingDir = workingDir;
 
         _collectBodies( bodies );
-        _collectJoints( joints );
     }
 
     TGLVizSandbox::~TGLVizSandbox()
@@ -53,18 +51,36 @@ namespace viz {
                                                         bodies[i]->color,
                                                         bodies[i]->filename );
 
-            // adn create the frame axes
+            // and create the frame axes
             _vizBody.axesPtr = engine::LMeshBuilder::createAxes( VIZSANDBOX_AXES_DEFAULT_SIZE );
             // and add the related axes to the scene
             m_scenePtr->addRenderable( _vizBody.axesPtr );
-            // and add it to the list of bodies viz wrappers
+            // and add it to the list of bodies viz-wrappers
             m_vizBodies.push_back( _vizBody );
-        }
-    }
 
-    void TGLVizSandbox::_collectJoints( const std::vector< sandbox::TJoint* >& joints )
-    {
-        // @WIP
+            // Collect the joints(dofs) that this body has
+            auto _joints = bodies[i]->joints;
+            for ( size_t j = 0; j < _joints.size(); j++ )
+            {
+                TGLVizSandboxJoint _vizJoint;
+                // wrap the joint object
+                _vizJoint.jointPtr = _joints[j];
+                // and create the appropriate renderable
+                _vizJoint.renderablePtr = _createRenderable( "cylinder",
+                                                             { 0.0125f, 0.025f, 0.0f },
+                                                             { 0.1f, 0.1f, 0.85f },
+                                                             { 0.1f, 0.1f, 0.85f },
+                                                             { 0.1f, 0.1f, 0.85f },
+                                                             "" );
+
+                // and create the frame axes
+                _vizJoint.axesPtr = engine::LMeshBuilder::createAxes( VIZSANDBOX_AXES_DEFAULT_SIZE );
+                // and add the related axes to the scene
+                m_scenePtr->addRenderable( _vizJoint.axesPtr );
+                // and add it to the list of joints viz-wrappers
+                m_vizJoints.push_back( _vizJoint );
+            }
+        }
     }
 
     engine::LIRenderable* TGLVizSandbox::_createRenderable( const std::string& type,
@@ -183,7 +199,23 @@ namespace viz {
 
     void TGLVizSandbox::_updateJoint( TGLVizSandboxJoint& joint )
     {
-        // @WIP
+        if ( !joint.jointPtr )
+            return;
+
+        if ( !joint.renderablePtr )
+            return;
+
+        if ( !joint.axesPtr )
+            return;
+
+        engine::LVec3 _pos = fromTVec3( joint.jointPtr->worldTransform.getPosition() );
+        engine::LMat4 _rot = fromTMat3( joint.jointPtr->worldTransform.getRotation() );
+
+        joint.renderablePtr->pos = _pos;
+        joint.renderablePtr->rotation = _rot;
+
+        joint.axesPtr->pos = _pos;
+        joint.axesPtr->rotation = _rot;
     }
 
 

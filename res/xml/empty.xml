@@ -4,7 +4,7 @@
   <!--@CHECK: inertia calculation set to auto-->
   <!--@CHECK: baxter fails with inertia calculation set to auto -->
   <compiler inertiafromgeom="true" coordinate="local" angle="degree"/>
-  <option timestep="0.005" iterations="50" tolerance="1e-10" solver="Newton" jacobian="dense" cone="pyramidal"/>
+  <option timestep="0.002" iterations="50" tolerance="1e-10" solver="Newton" jacobian="dense" cone="pyramidal" integrator="RK4"/>
   <!--<option timestep="0.01" integrator="RK4"/>-->
   <size njmax="8000" nconmax="4000"/>
 
