@@ -16,6 +16,7 @@ namespace sandbox {
         std::string filename;
 
         TVec3 size;
+        TMat4 relTransform;
         TMat4 worldTransform;
         TVec3 color;
 
@@ -25,21 +26,10 @@ namespace sandbox {
 
         TBody* parentBodyPtr;
         std::vector< TJoint* > joints;
+        std::vector< TBody* > bodies;
 
-        TBody()
-        {
-            name = "undefined";
-            type = "box";
-            filename = "";
-
-            size = { 0.1, 0.1, 0.1 };
-            color = { 0.25f, 1.0f, 0.25f };
-
-            mass = 0.0f;
-            friction = { 1.0, 0.005, 0.0001 };
-
-            parentBodyPtr = NULL;
-        }
+        TBody();
+        ~TBody();
     };
 
     struct TJoint
@@ -55,28 +45,13 @@ namespace sandbox {
 
         TBody* parentBodyPtr;
 
-        TJoint()
-        {
-            name = "undefined";
-            type = "hinge";
-
-            axis = { 1, 0, 0 };
-
-            parentBodyPtr = NULL;
-        }
+        TJoint();
+        ~TJoint();
     };
 
     struct TFreeBody : public TBody
     {
-        TFreeBody() : TBody()
-        {
-            auto _freejoint = new TJoint();
-            _freejoint->name = "free";
-            _freejoint->type = "free";
-            _freejoint->parentBodyPtr = this;
-
-            joints.push_back( _freejoint );
-        }
+        TFreeBody();
     };
 
 }}

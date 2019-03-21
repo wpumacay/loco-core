@@ -80,6 +80,10 @@ namespace viz {
                 // and add it to the list of joints viz-wrappers
                 m_vizJoints.push_back( _vizJoint );
             }
+
+            // Collect the child bodies that this body has
+            if ( bodies[i]->bodies.size() > 0 )
+                _collectBodies( bodies[i]->bodies );
         }
     }
 
