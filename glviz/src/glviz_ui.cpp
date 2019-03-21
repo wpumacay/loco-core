@@ -100,6 +100,21 @@ namespace viz {
             ImGui::EndCombo();
         }
 
+        ImGui::Spacing();
+        ImGui::Checkbox( "View Sandbox Menu", &m_uiContextPtr->isSandboxUiActive );
+
+        if ( m_uiContextPtr->isSandboxUiActive )
+        {
+            ImGui::Spacing();
+            ImGui::Checkbox( "showBodies", &m_uiContextPtr->vizSandboxPtr->drawState.showBodies );
+            ImGui::Spacing();
+            ImGui::Checkbox( "showJoints", &m_uiContextPtr->vizSandboxPtr->drawState.showJoints );
+            ImGui::Spacing();
+            ImGui::Checkbox( "wireframe", &m_uiContextPtr->vizSandboxPtr->drawState.wireframe );
+            ImGui::Spacing();
+            ImGui::Checkbox( "frameAxes", &m_uiContextPtr->vizSandboxPtr->drawState.frameAxes );
+        }
+
         ImGui::End();
 
         if ( m_basicCurrentKinTreeIndx != -1 )

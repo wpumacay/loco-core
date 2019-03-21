@@ -65,6 +65,8 @@ namespace tysoc
         TVec2();
         TVec2( TScalar px, TScalar py );
 
+        static TScalar length( const TVec2& v );
+
         static std::string toString( const TVec2& v );
     };
 

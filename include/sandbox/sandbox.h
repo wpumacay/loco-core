@@ -66,7 +66,17 @@ namespace sandbox {
         }
     };
 
+    struct TFreeBody : public TBody
+    {
+        TFreeBody() : TBody()
+        {
+            auto _freejoint = new TJoint();
+            _freejoint->name = "free";
+            _freejoint->type = "free";
+            _freejoint->parentBodyPtr = this;
 
-
+            joints.push_back( _freejoint );
+        }
+    };
 
 }}

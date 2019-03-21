@@ -17,6 +17,11 @@ namespace tysoc
         y = py;
     }
 
+    TScalar TVec2::length( const TVec2& v )
+    {
+        return std::sqrt( v.x * v.x + v.y * v.y );
+    }
+
     std::string TVec2::toString( const TVec2& v )
     {
         std::string _res;

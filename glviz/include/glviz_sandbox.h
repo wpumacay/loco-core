@@ -2,8 +2,9 @@
 #pragma once
 
 // Rendering functionality
-#include <LMeshBuilder.h>
 #include <LScene.h>
+#include <LMeshBuilder.h>
+#include <debug/LDebugSystem.h>
 
 // Definitions for elements to be rendered
 #include <sandbox/sandbox.h>
@@ -28,6 +29,22 @@ namespace viz {
         engine::LModel*         axesPtr;
         engine::LIRenderable*   renderablePtr;
         sandbox::TJoint*        jointPtr;
+    };
+
+    struct TGLVizSandboxDrawState
+    {
+        bool showBodies;
+        bool showJoints;
+        bool wireframe;
+        bool frameAxes;
+
+        TGLVizSandboxDrawState()
+        {
+            showBodies = true;
+            showJoints = false;
+            wireframe = false;
+            frameAxes = false;
+        }
     };
 
     class TGLVizSandbox
@@ -65,6 +82,8 @@ namespace viz {
                        const std::string& workingDir );
 
         ~TGLVizSandbox();
+
+        TGLVizSandboxDrawState drawState;
 
         void update();
 

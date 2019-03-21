@@ -166,14 +166,10 @@ namespace viz {
     void TGLVizSandbox::update()
     {
         for ( size_t i = 0; i < m_vizBodies.size(); i++ )
-        {
             _updateBody( m_vizBodies[i] );
-        }
 
         for ( size_t i = 0; i < m_vizJoints.size(); i++ )
-        {
             _updateJoint( m_vizJoints[i] );
-        }
     }
 
     void TGLVizSandbox::_updateBody( TGLVizSandboxBody& body )
@@ -186,6 +182,10 @@ namespace viz {
 
         if ( !body.axesPtr )
             return;
+
+        body.renderablePtr->setVisibility( drawState.showBodies );
+        body.renderablePtr->setWireframeMode( drawState.wireframe );
+        body.axesPtr->setVisibility( drawState.frameAxes && drawState.showBodies );
 
         engine::LVec3 _pos = fromTVec3( body.bodyPtr->worldTransform.getPosition() );
         engine::LMat4 _rot = fromTMat3( body.bodyPtr->worldTransform.getRotation() );
@@ -208,6 +208,9 @@ namespace viz {
         if ( !joint.axesPtr )
             return;
 
+        joint.renderablePtr->setVisibility( drawState.showJoints );
+        joint.axesPtr->setVisibility( drawState.frameAxes && drawState.showJoints );
+
         engine::LVec3 _pos = fromTVec3( joint.jointPtr->worldTransform.getPosition() );
         engine::LMat4 _rot = fromTMat3( joint.jointPtr->worldTransform.getRotation() );
 
@@ -216,6 +219,14 @@ namespace viz {
 
         joint.axesPtr->pos = _pos;
         joint.axesPtr->rotation = _rot;
+
+        auto _axisInWorld = joint.jointPtr->worldTransform.getRotation() * joint.jointPtr->axis;
+        auto _axw1 = joint.jointPtr->worldTransform.getPosition() - _axisInWorld * 0.1;
+        auto _axw2 = joint.jointPtr->worldTransform.getPosition() + _axisInWorld * 0.1;
+
+        engine::DebugSystem::drawArrow( { _axw1.x, _axw1.y, _axw1.z }, 
+                                        { _axw2.x, _axw2.y, _axw2.z }, 
+                                        { 0.5f, 0.7f, 0.9f } );
     }
 
 

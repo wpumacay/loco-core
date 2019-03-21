@@ -9,18 +9,23 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-// kintree visualization wrapper
+// visualization wrappers
 #include <glviz_kintree.h>
+#include <glviz_terrainGen.h>
+#include <glviz_sandbox.h>
 
 namespace tysoc {
 namespace viz {
 
     struct TCustomContextUI
     {
-        bool                                        isUiActive;
-        bool                                        isBasicUiActive;
-        GLFWwindow*                                 glfwWindowPtr;
-        std::vector< viz::TCustomVizKinTree* >      vizKinTreePtrs;
+        bool                                            isUiActive;
+        bool                                            isBasicUiActive;
+        bool                                            isSandboxUiActive;
+        GLFWwindow*                                     glfwWindowPtr;
+        viz::TGLVizSandbox*                             vizSandboxPtr;
+        std::vector< viz::TCustomVizKinTree* >          vizKinTreePtrs;
+        std::vector< viz::TCustomVizTerrainGenerator* > vizTerrainGenPtrs;
     };
 
     class TCustomUI : public TIVisualizerUI

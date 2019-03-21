@@ -63,8 +63,11 @@ namespace viz {
         m_uiContextPtr = new TCustomContextUI();
         m_uiContextPtr->isUiActive          = false;
         m_uiContextPtr->isBasicUiActive     = true;
+        m_uiContextPtr->isSandboxUiActive   = false;
         m_uiContextPtr->glfwWindowPtr       = m_glAppPtr->window()->getGLFWwindow();
+        m_uiContextPtr->vizSandboxPtr       = m_vizSandboxWrapper;
         m_uiContextPtr->vizKinTreePtrs      = m_vizKinTreeWrappers;
+        m_uiContextPtr->vizTerrainGenPtrs   = m_vizTerrainGeneratorWrappers;
         // and then the UI
         m_uiPtr = new TCustomUI( m_scenarioPtr,
                                  m_uiContextPtr );
