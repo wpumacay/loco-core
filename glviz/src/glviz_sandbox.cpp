@@ -199,6 +199,10 @@ namespace viz {
 
         body.axesPtr->pos = _pos;
         body.axesPtr->rotation = _rot;
+
+        body.trail.append( _pos );
+
+        engine::DebugSystem::drawTrailPoints( body.trail.points() );
     }
 
     void TGLVizSandbox::_updateJoint( TGLVizSandboxJoint& joint )

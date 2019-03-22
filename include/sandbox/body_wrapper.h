@@ -23,12 +23,17 @@ namespace tysoc {
 
         // Methods to override by backend-specific implementations
         virtual void _initializeInternal() = 0;
+        virtual void _initializeWorldTransformsInternal() = 0;
         virtual void _resetInternal() = 0;
         virtual void _preStepInternal() = 0;
         virtual void _postStepInternal() = 0;
         virtual void _changePositionInternal() = 0;
         virtual void _changeRotationInternal() = 0;
         virtual void _changeSizeInternal() = 0;
+
+        void _initializeWorldTransforms();
+        void _initializeBody( sandbox::TBody* bodyPtr );
+        void _initializeJoint( sandbox::TJoint* jointPtr, sandbox::TBody* parentBodyPtr );
 
         public :
 
