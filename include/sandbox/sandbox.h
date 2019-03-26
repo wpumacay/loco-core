@@ -30,6 +30,8 @@ namespace sandbox {
 
         int contype;
         int conaffinity;
+        
+        TVec3 vel;
 
         TBody();
         ~TBody();

@@ -82,6 +82,13 @@ namespace tysoc
         return std::sqrt( v.x * v.x + v.y * v.y + v.z * v.z );
     }
 
+    TVec3 TVec3::normalize( const TVec3& v )
+    {
+        auto _len = TVec3::length( v );
+
+        return TVec3( v.x / _len, v.y / _len, v.z / _len );
+    }
+
     std::string TVec3::toString( const TVec3& v )
     {
         std::string _res = "";

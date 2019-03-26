@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <deque>
 #include <cmath>
 #include <map>
 #include <set>
@@ -16,6 +17,7 @@ typedef float TScalar;
 #define TRANDOM( a, b ) ( a + ( b - a ) * ( rand() / ( float )RAND_MAX ) )
 
 #define BUFF_MAX_SIZE 10
+#define TRAIL_MAX_SIZE 50
 
 // Prefixes to be added to all format elements (urdf, mjcf, rlsim-json, etc.)
 #define TYSOC_PREFIX_BODY       "body_"     
@@ -86,6 +88,7 @@ namespace tysoc
         static TScalar dot( const TVec3& v1, const TVec3& v2 );
         static TVec3 cross( const TVec3& v1, const TVec3& v2 );
         static TScalar length( const TVec3& v );
+        static TVec3 normalize( const TVec3& v );
 
         static std::string toString( const TVec3& v );
     };
@@ -238,6 +241,52 @@ namespace tysoc
         TSizef getSizef( const std::string& name, const TSizef& def = { 0, { 0.0f } } ) const;
         std::string getString( const std::string& name, const std::string& def = "undefined" ) const;
 
+    };
+
+    template< class T >
+    class TTrail
+    {
+        private :
+
+        size_t m_maxSize;
+        std::deque< T > m_dqpoints;
+
+        public :
+
+        TTrail()
+        {
+            m_maxSize = TRAIL_MAX_SIZE;
+        }
+
+        ~TTrail()
+        {
+            m_dqpoints.clear();
+        }
+
+        void append( const T& point )
+        {
+            if ( m_dqpoints.size() < m_maxSize )
+            {
+                m_dqpoints.push_back( point );
+            }
+            else
+            {
+                m_dqpoints.pop_front();
+                m_dqpoints.push_back( point );
+            }
+        }
+
+        std::vector< T > points()
+        {
+            std::vector< T > _vecpoints;
+
+            for ( auto _it = m_dqpoints.begin(); _it != m_dqpoints.end(); _it++ )
+            {
+                _vecpoints.push_back( *_it );
+            }
+
+            return _vecpoints;
+        }
     };
 
 }

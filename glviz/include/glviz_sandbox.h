@@ -22,6 +22,7 @@ namespace viz {
         engine::LModel*         axesPtr;
         engine::LIRenderable*   renderablePtr;
         sandbox::TBody*         bodyPtr;
+        TTrail< engine::LVec3 > trail;
     };
 
     struct TGLVizSandboxJoint

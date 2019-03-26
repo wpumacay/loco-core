@@ -30,6 +30,7 @@ namespace tysoc {
     void TBodyWrapper::initialize()
     {
         _initializeInternal();
+        _initializeWorldTransforms();
     }
 
     void TBodyWrapper::reset()
@@ -104,5 +105,41 @@ namespace tysoc {
     {
         return m_bodyPtr;
     }
+
+    void TBodyWrapper::_initializeWorldTransforms()
+    {
+        if ( !m_bodyPtr )
+            return;
+
+        _initializeBody( m_bodyPtr );
+        _initializeWorldTransformsInternal();
+    }
+
+    void TBodyWrapper::_initializeBody( sandbox::TBody* bodyPtr )
+    {
+        if ( !bodyPtr )
+            return;
+
+        if ( bodyPtr->parentBodyPtr )
+        {
+            bodyPtr->worldTransform = bodyPtr->parentBodyPtr->worldTransform *
+                                      bodyPtr->relTransform;
+        }
+
+        for ( size_t q = 0; q < bodyPtr->joints.size(); q++ )
+            _initializeJoint( bodyPtr->joints[q], bodyPtr );
+
+        for ( size_t q = 0; q < bodyPtr->bodies.size(); q++ )
+            _initializeBody( bodyPtr->bodies[q] );
+    }
+
+    void TBodyWrapper::_initializeJoint( sandbox::TJoint* jointPtr, sandbox::TBody* parentBodyPtr )
+    {
+        if ( !jointPtr )
+            return;
+
+        jointPtr->worldTransform = parentBodyPtr->worldTransform * jointPtr->relTransform;
+    }
+
 
 }

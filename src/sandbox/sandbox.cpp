@@ -20,6 +20,8 @@ namespace sandbox {
 
         contype = -1;
         conaffinity = -1;
+
+        vel = { 0, 0, 0 };
     }
 
     TBody::~TBody()
