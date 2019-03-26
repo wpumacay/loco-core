@@ -345,6 +345,8 @@ namespace agent {
         std::map< std::string, TKinTreeSensor* >    m_mapKinTreeSensors;    // map of sensors (...)
         std::map< std::string, TKinTreeMeshAsset* > m_mapKinTreeMeshAssets; // map of assets (...)
 
+        std::vector< std::pair< std::string, std::string > > m_exclusionContacts;
+
         std::string m_modelTemplateType;
 
         void _updateAgentInternal( float dt ) override;
@@ -381,6 +383,8 @@ namespace agent {
         std::vector< TKinTreeActuator* >    getKinTreeActuators();
         std::vector< TKinTreeSensor* >      getKinTreeSensors();
         std::vector< TKinTreeMeshAsset* >   getKinTreeMeshAssets();
+
+        std::vector< std::pair< std::string, std::string > > exclusionContacts();
 
         TKinTreeBody* getRootBody();
         std::string getModelTemplateType();

@@ -45,7 +45,7 @@ namespace rlsim {
 
         RlsimBody()
         {
-            collGroup   = -1;
+            collGroup = -1;
             parentJointId = -1;
         }
 

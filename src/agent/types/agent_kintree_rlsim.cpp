@@ -91,8 +91,13 @@ namespace agent {
         auto _rlsimJoints = rlsimJointPtr->childJoints;
         for ( size_t q = 0; q < _rlsimJoints.size(); q++ )
         {
-            _kinTreeBodyPtr->childBodies.push_back( _processNode( _rlsimJoints[q],
-                                                                  _kinTreeBodyPtr ) );
+            auto _childKinTreeBodyPtr = _processNode( _rlsimJoints[q],
+                                                      _kinTreeBodyPtr );
+            _kinTreeBodyPtr->childBodies.push_back( _childKinTreeBodyPtr );
+
+            // exclude contact between this body and this child body
+            m_exclusionContacts.push_back( std::make_pair( _kinTreeBodyPtr->name,
+                                                           _childKinTreeBodyPtr->name ) );
         }
 
         return _kinTreeBodyPtr;
@@ -207,9 +212,9 @@ namespace agent {
         _kinTreeVisualPtr->material.specular    = { _rgba.x, _rgba.y, _rgba.z };
 
         // and the contype collision bitmask (@GENERIC)
-        _kinTreeVisualPtr->contype = 1;
+        _kinTreeVisualPtr->contype = -1;
         // and the conaffinity collision bitmask (@GENERIC)
-        _kinTreeVisualPtr->conaffinity = 0;
+        _kinTreeVisualPtr->conaffinity = -1;
         // and the condim contact dimensionality (@GENERIC)
         _kinTreeVisualPtr->condim = -1;
         // and the group the object belongs (for internal compiler calcs.) (@GENERIC)
@@ -270,7 +275,7 @@ namespace agent {
             _kinTreeActuatorPtr->clampCtrl = true;
             _kinTreeActuatorPtr->kp = 0.0f;
             _kinTreeActuatorPtr->kv = 0.0f;
-            _kinTreeActuatorPtr->gear = { 1, { 2.0f } };
+            _kinTreeActuatorPtr->gear = { 1, { 10.0f } };
 
             m_kinTreeActuators.push_back( _kinTreeActuatorPtr );
             m_mapKinTreeActuators[ _kinTreeActuatorPtr->name ] = _kinTreeActuatorPtr;

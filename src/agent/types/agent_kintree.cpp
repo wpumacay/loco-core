@@ -398,6 +398,11 @@ namespace agent {
         return m_kinTreeMeshAssets;
     }
 
+    std::vector< std::pair< std::string, std::string > > TAgentKinTree::exclusionContacts()
+    {
+        return m_exclusionContacts;
+    }
+
     TKinTreeBody* TAgentKinTree::getRootBody()
     {
         return m_rootBodyPtr;
