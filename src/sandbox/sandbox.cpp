@@ -17,6 +17,9 @@ namespace sandbox {
         friction = { 1.0, 0.005, 0.0001 };
 
         parentBodyPtr = NULL;
+
+        contype = -1;
+        conaffinity = -1;
     }
 
     TBody::~TBody()

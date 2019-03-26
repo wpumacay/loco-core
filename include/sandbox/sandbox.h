@@ -28,6 +28,9 @@ namespace sandbox {
         std::vector< TJoint* > joints;
         std::vector< TBody* > bodies;
 
+        int contype;
+        int conaffinity;
+
         TBody();
         ~TBody();
     };
