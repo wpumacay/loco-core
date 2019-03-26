@@ -28,6 +28,8 @@ namespace sandbox {
         std::vector< TJoint* > joints;
         std::vector< TBody* > bodies;
 
+        TVec3 vel;
+
         TBody();
         ~TBody();
     };

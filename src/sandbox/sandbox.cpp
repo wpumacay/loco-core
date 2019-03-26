@@ -17,6 +17,8 @@ namespace sandbox {
         friction = { 1.0, 0.005, 0.0001 };
 
         parentBodyPtr = NULL;
+
+        vel = { 0, 0, 0 };
     }
 
     TBody::~TBody()
