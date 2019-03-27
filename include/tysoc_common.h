@@ -37,6 +37,8 @@ typedef float TScalar;
 #define TYSOC_FLOAT_EPSILON 0.000001
 #define TYSOC_PI 3.141592653589793
 
+#define TYSOC_DEFAULT_DENSITY 1000.0
+
 #ifndef TYSOC_PATH_RESOURCES
     #define TYSOC_PATH_RESOURCES "../../res/"
 #endif
