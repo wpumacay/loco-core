@@ -297,17 +297,16 @@ namespace agent {
                   shapeType == "cylinder" )
         {
             // capsule and cylinder are given in the standard height, radius format
-            dstSize.x = srcSize.x;// radius
-            dstSize.y = srcSize.y;// height
-            // @CHECK: in case ellipsoid top-bot are needed
-            dstSize.z = srcSize.z;// radius again
+            dstSize.x = 0.5 * srcSize.x;// radius
+            dstSize.y = srcSize.z;// height
+            dstSize.z = 0.5 * srcSize.y;// radius again
         }
         else if ( shapeType == "sphere" )
         {
             // @CHECK: in case ellipsoids are needed
-            dstSize.x = srcSize.x;// radius
-            dstSize.y = srcSize.y;// radius again
-            dstSize.z = srcSize.z;// radius and again
+            dstSize.x = 0.5 * srcSize.x;// radius
+            dstSize.y = 0.5 * srcSize.y;// radius again
+            dstSize.z = 0.5 * srcSize.z;// radius and again
         }
         else
         {
