@@ -20,15 +20,25 @@ def initialize() :
 def createRuntime( physicsBackend = '', 
                    renderingBackend = '',
                    workingDir = PATHS.WORKING_DIR ) :
-    print( 'renderingBackend: ', renderingBackend )
-    print( 'physicsBackend', physicsBackend )
+    print( 'LOG> renderingBackend: ', renderingBackend )
+    print( 'LOG> physicsBackend', physicsBackend )
     ## ipdb.set_trace()
     return tysoc_bindings.PyRuntime( physicsBackend, renderingBackend, workingDir )
 
-def createAgent() :
-    pass
+def createAgent( agentName = 'agent_0', 
+                 modelName = 'humanoid', 
+                 modelFormat = 'mjcf',
+                 startpos = [0, 0, 2] ) :
+
+    return tysoc_bindings.PyCoreAgent( agentName, startpos, modelFormat, modelName )
+
+def createStaticTerrainGen( terrainGenName ) :
+    return tysoc_bindings.PyStaticTerrainGen( terrainGenName )
+
+def createSensorIntrinsics( sensorName, agent ) :
+    return tysoc_bindings.PySensorIntrinsics( sensorName, agent )
 
 def createScenario() :
-    pass
+    return tysoc_bindings.PyScenario()
 
 initialize()

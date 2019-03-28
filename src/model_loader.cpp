@@ -35,9 +35,9 @@ namespace tysoc
         m_pathTemplatesUrdf = pathTemplatesUrdf;
         m_pathTemplatesRlsim = pathTemplatesRlsim;
 
-        std::cout << "DEBUG> mjcf path: " << pathTemplatesMjcf << std::endl;
-        std::cout << "DEBUG> urdf path: " << pathTemplatesUrdf << std::endl;
-        std::cout << "DEBUG> rlsim path: " << pathTemplatesRlsim << std::endl;
+        // std::cout << "DEBUG> mjcf path: " << pathTemplatesMjcf << std::endl;
+        // std::cout << "DEBUG> urdf path: " << pathTemplatesUrdf << std::endl;
+        // std::cout << "DEBUG> rlsim path: " << pathTemplatesRlsim << std::endl;
 
         _precacheModels();
     }
@@ -172,7 +172,7 @@ namespace tysoc
 
     void TModelLoader::_precacheSingleMjcfModel( const std::string& templateFile )
     {
-        std::cout << "INFO> trying to load template: " << templateFile << std::endl;
+        // std::cout << "INFO> trying to load template: " << templateFile << std::endl;
         // Gran the model into a mjcf::GenericElement node
         auto _root = mjcf::loadGenericModel( m_pathTemplatesMjcf + templateFile );
 
@@ -183,12 +183,12 @@ namespace tysoc
         // cache the model
         m_cachedMjcfModels[ _modelName ] = _root;
 
-        std::cout << "INFO> Precached mjcf template model: " << _modelName << std::endl;
+        // std::cout << "INFO> Precached mjcf template model: " << _modelName << std::endl;
     }
 
     void TModelLoader::_precacheSingleUrdfModel( const std::string& templateFile )
     {
-        std::cout << "INFO> trying to load template: " << templateFile << std::endl;
+        // std::cout << "INFO> trying to load template: " << templateFile << std::endl;
         // Gran the model into a mjcf::GenericElement node
         auto _urdfModel = urdf::loadGenericModel( m_pathTemplatesUrdf + templateFile );
 
@@ -199,12 +199,12 @@ namespace tysoc
         // cache the model
         m_cachedUrdfModels[ _modelName ] = _urdfModel;
 
-        std::cout << "INFO> Precached urdf template model: " << _modelName << std::endl;
+        // std::cout << "INFO> Precached urdf template model: " << _modelName << std::endl;
     }
 
     void TModelLoader::_precacheSingleRlsimModel( const std::string& templateFile )
     {
-        std::cout << "INFO> trying to load template: " << templateFile << std::endl;
+        // std::cout << "INFO> trying to load template: " << templateFile << std::endl;
         // Gran the model into a mjcf::GenericElement node
         auto _rlsimModel = rlsim::loadGenericModel( m_pathTemplatesRlsim + templateFile );
 
@@ -215,7 +215,7 @@ namespace tysoc
         // cache the model
         m_cachedRlsimModels[ _modelName ] = _rlsimModel;
 
-        std::cout << "INFO> Precached rlsim template model: " << _modelName << std::endl;
+        // std::cout << "INFO> Precached rlsim template model: " << _modelName << std::endl;
     }
 
     mjcf::GenericElement* TModelLoader::getMjcfModel( const std::string& name )

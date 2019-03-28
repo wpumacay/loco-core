@@ -8,7 +8,7 @@ namespace pytysoc
     void initializeMjcfSchemaPath( const std::string& schemaPath )
     {
         tysoc::mjcf::MJCF_SCHEMA_PATH = schemaPath;
-        std::cout << "DEBUG> set schema path to: " << schemaPath << std::endl;
+        // std::cout << "DEBUG> set schema path to: " << schemaPath << std::endl;
     }
 
     void initializeLoader( const std::string& pathTemplatesMjcf,
