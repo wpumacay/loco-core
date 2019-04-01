@@ -6,8 +6,9 @@ namespace agent {
 
 
     TAgentKinTree::TAgentKinTree( const std::string& name,
-                                  const TVec3& position )
-        : TIAgent( name, position )
+                                  const TVec3& position,
+                                  const TVec3& rotation )
+        : TIAgent( name, position, rotation )
     {
         m_type  = AGENT_TYPE_KINTREE;
 
@@ -156,7 +157,8 @@ namespace agent {
         if ( m_rootBodyPtr )
         {
             // start from the root (set transform as the start position passed)
-            m_rootBodyPtr->worldTransform.setPosition( m_position );
+            m_rootBodyPtr->worldTransform.setPosition( m_startPosition );
+            m_rootBodyPtr->worldTransform.setRotation( TMat3::fromEuler( m_startRotation ) );
             // make an update in the tree (the default transforms ...
             // should give a results that makes sense, at least visually)
             _initializeBody( m_rootBodyPtr );
@@ -246,6 +248,7 @@ namespace agent {
 
         // update the global position of the kintree
         m_position = m_rootBodyPtr->worldTransform.getPosition();
+        m_rotation = m_rootBodyPtr->worldTransform.getRotEuler();
     }
 
     void TAgentKinTree::_resetAgentInternal()

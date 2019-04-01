@@ -37,9 +37,10 @@ namespace agent {
 
 
     TAgentKinTreeMjcf::TAgentKinTreeMjcf( const std::string& name,
+                                          mjcf::GenericElement* modelElementPtr,
                                           const TVec3& position,
-                                          mjcf::GenericElement* modelElementPtr )
-        : TAgentKinTree( name, position )
+                                          const TVec3& rotation )
+        : TAgentKinTree( name, position, rotation )
     {
         // save a copy of the elementPtr for later usage (if needed to inject resources)
         m_modelElementPtr = new mjcf::GenericElement();
@@ -812,10 +813,11 @@ namespace agent {
     }
 
     TAgentKinTree* createKinTreeAgent( const std::string& name,
+                                       mjcf::GenericElement* modelDataPtr,
                                        const TVec3& position,
-                                       mjcf::GenericElement* modelDataPtr )
+                                       const TVec3& rotation )
     {
-        auto _kinTreeAgent = new TAgentKinTreeMjcf( name, position, modelDataPtr );
+        auto _kinTreeAgent = new TAgentKinTreeMjcf( name, modelDataPtr, position, rotation );
         return _kinTreeAgent;
     }
 }}

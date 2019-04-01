@@ -40,8 +40,9 @@ namespace agent {
         public :
 
         TAgentKinTreeRlsim( const std::string& name,
+                            rlsim::RlsimModel* rlsimModelPtr,
                             const TVec3& position,
-                            rlsim::RlsimModel* rlsimModelPtr );
+                            const TVec3& rotation = TVec3() );
 
         ~TAgentKinTreeRlsim() override;
 
@@ -49,7 +50,8 @@ namespace agent {
     };
 
     TAgentKinTree* createKinTreeAgent( const std::string& name,
+                                       rlsim::RlsimModel* modelDataPtr,
                                        const TVec3& position,
-                                       rlsim::RlsimModel* modelDataPtr );
+                                       const TVec3& rotation = TVec3() );
 
 }}

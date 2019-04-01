@@ -369,7 +369,8 @@ namespace agent {
         public :
 
         TAgentKinTree( const std::string& name,
-                       const TVec3& position );
+                       const TVec3& position,
+                       const TVec3& rotation = TVec3() );
         ~TAgentKinTree() override;
 
         void setActions( const std::vector< TScalar >& actions );

@@ -7,9 +7,10 @@ namespace agent {
 
 
     TAgentKinTreeUrdf::TAgentKinTreeUrdf( const std::string& name,
+                                          urdf::UrdfModel* urdfModelPtr,
                                           const TVec3& position,
-                                          urdf::UrdfModel* urdfModelPtr )
-        : TAgentKinTree( name, position )
+                                          const TVec3& rotation )
+        : TAgentKinTree( name, position, rotation )
     {
         // save the reference to the urdfModelPtr for easier usage (should not modify it, read only)
         m_urdfModelPtr = new urdf::UrdfModel();
@@ -486,10 +487,11 @@ namespace agent {
     }
 
     TAgentKinTree* createKinTreeAgent( const std::string& name,
+                                       urdf::UrdfModel* modelDataPtr,
                                        const TVec3& position,
-                                       urdf::UrdfModel* modelDataPtr )
+                                       const TVec3& rotation )
     {
-        auto _kinTreeAgent = new TAgentKinTreeUrdf( name, position, modelDataPtr );
+        auto _kinTreeAgent = new TAgentKinTreeUrdf( name, modelDataPtr, position, rotation );
         return _kinTreeAgent;
     }
 

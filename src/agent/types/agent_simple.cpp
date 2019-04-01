@@ -3,12 +3,12 @@
 
 
 
-namespace tysoc{
-namespace agent{
+namespace tysoc {
+namespace agent {
 
     TAgentSimple::TAgentSimple( const std::string& name,
                                 const TGeometry& geometry )
-        : TIAgent( name, geometry.worldTransform.getPosition() )
+        : TIAgent( name, geometry.worldTransform.getPosition(), geometry.worldTransform.getRotEuler() )
     {
         m_type  = AGENT_TYPE_SIMPLE;
         m_speed = { 0.0, 0.0, 0.0 };

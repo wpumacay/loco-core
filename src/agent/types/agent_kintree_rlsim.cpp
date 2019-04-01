@@ -6,9 +6,10 @@ namespace tysoc {
 namespace agent {
 
     TAgentKinTreeRlsim::TAgentKinTreeRlsim( const std::string& name,
+                                            rlsim::RlsimModel* rlsimModelPtr,
                                             const TVec3& position,
-                                            rlsim::RlsimModel* rlsimModelPtr )
-        : TAgentKinTree( name, position )
+                                            const TVec3& rotation )
+        : TAgentKinTree( name, position, rotation )
     {
         // save the reference to the rlsimModelPtr for easier usage (should not modify it, read only)
         m_rlsimModelPtr = rlsimModelPtr;
@@ -320,10 +321,11 @@ namespace agent {
     }
 
     TAgentKinTree* createKinTreeAgent( const std::string& name,
+                                       rlsim::RlsimModel* modelDataPtr,
                                        const TVec3& position,
-                                       rlsim::RlsimModel* modelDataPtr )
+                                       const TVec3& rotation )
     {
-        auto _kinTreeAgent = new TAgentKinTreeRlsim( name, position, modelDataPtr );
+        auto _kinTreeAgent = new TAgentKinTreeRlsim( name, modelDataPtr, position, rotation );
         return _kinTreeAgent;
     }
 

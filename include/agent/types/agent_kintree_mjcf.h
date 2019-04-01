@@ -60,8 +60,9 @@ namespace agent {
         public :
 
         TAgentKinTreeMjcf( const std::string& name,
+                           mjcf::GenericElement* modelElementPtr,
                            const TVec3& position,
-                           mjcf::GenericElement* modelElementPtr );
+                           const TVec3& rotation = TVec3() );
 
         ~TAgentKinTreeMjcf() override;
 
@@ -69,6 +70,7 @@ namespace agent {
     };
 
     TAgentKinTree* createKinTreeAgent( const std::string& name,
+                                       mjcf::GenericElement* modelDataPtr,
                                        const TVec3& position,
-                                       mjcf::GenericElement* modelDataPtr );
+                                       const TVec3& rotation = TVec3() );
 }}

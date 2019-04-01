@@ -7,11 +7,14 @@ namespace tysoc{
 namespace agent{
 
     TIAgent::TIAgent( const std::string& name,
-                      const TVec3& position )
+                      const TVec3& position,
+                      const TVec3& rotation )
     {
         m_name = name;
         m_position = position;
+        m_rotation = rotation;
         m_startPosition = position;
+        m_startRotation = rotation;
         m_type = "undefined";
     }
 
@@ -30,6 +33,16 @@ namespace agent{
         m_startPosition = position;
     }
 
+    void TIAgent::setRotation( const TVec3& rotation )
+    {
+        m_rotation = rotation;
+    }
+
+    void TIAgent::setStartRotation( const TVec3& rotation )
+    {
+        m_startRotation = rotation;
+    }    
+
     TVec3 TIAgent::getPosition()
     {
         return m_position;
@@ -38,6 +51,16 @@ namespace agent{
     TVec3 TIAgent::getStartPosition()
     {
         return m_startPosition;
+    }
+
+    TVec3 TIAgent::getRotation()
+    {
+        return m_rotation;
+    }
+
+    TVec3 TIAgent::getStartRotation()
+    {
+        return m_startRotation;
     }
 
     void TIAgent::update( float dt )
