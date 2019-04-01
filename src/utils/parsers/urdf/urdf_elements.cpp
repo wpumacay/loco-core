@@ -200,6 +200,8 @@ namespace urdf {
         {
             auto _collision = new UrdfCollision();
             _collision->collectAttribs( _collisionElement );
+
+            this->collisions.push_back( _collision );
         }
     }
 
