@@ -5,9 +5,11 @@
 #include <agent_wrapper.h>
 #include <terrain_wrapper.h>
 #include <sandbox/body_wrapper.h>
-
+#include <viz/viz.h>
 
 namespace tysoc {
+
+    class TKinTreeAgentWrapper;
 
     /**
     *   Simulation Interface. This is the base class for all types of backend ...
@@ -59,6 +61,10 @@ namespace tysoc {
         std::vector< TTerrainGenWrapper* > m_terrainGenWrappers;
         std::vector< TBodyWrapper* > m_bodyWrappers;
 
+        viz::TIVisualizer* m_visualizerPtr;
+
+        bool m_isRunning;
+
         virtual bool _initializeInternal() = 0;
         virtual void _preStepInternal() = 0;
         virtual void _simStepInternal() = 0;
@@ -77,6 +83,11 @@ namespace tysoc {
         bool initialize();
         void step();
         void reset();
+
+        void togglePause();
+
+        void setVisualizer( viz::TIVisualizer* visualizerPtr );
+        viz::TIVisualizer* getVisualizer();
 
         void* payload( const std::string& type );
         TScenario* scenario();

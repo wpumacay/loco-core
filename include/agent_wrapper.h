@@ -6,7 +6,11 @@
 #include <agent/types/agent_kintree_urdf.h>
 #include <agent/types/agent_kintree_rlsim.h>
 
+#include <simulation_base.h>
+
 namespace tysoc { 
+
+    class TISimulation;
 
     /**
     *   Agent Wrapper Interface for the kintree agents. The objects ...
@@ -57,6 +61,9 @@ namespace tysoc {
         // directory where the assets are
         std::string m_workingDir;
 
+        // parent simulation
+        TISimulation* m_simulationPtr;
+
         virtual void _initializeInternal() = 0;
         virtual void _resetInternal() = 0;
 
@@ -80,6 +87,8 @@ namespace tysoc {
         *   the core structures to be reused by the user or other components).
         */
         virtual ~TKinTreeAgentWrapper();
+
+        void setParentSimulation( TISimulation* simulationPtr );
 
         std::string name();
         agent::TAgentKinTree* agent();

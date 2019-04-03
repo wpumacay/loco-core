@@ -63,6 +63,16 @@ namespace viz {
         return _isActiveInternal();
     }
 
+    void TIVisualizer::drawLine( const TVec3& start, const TVec3& end, const TVec3& color )
+    {
+        _drawLineInternal( start, end, color );
+    }
+
+    void TIVisualizer::drawAABB( const TVec3& aabbMin, const TVec3& aabbMax, const TMat4& aabbWorldTransform, const TVec3& color )
+    {
+        _drawAABBInternal( aabbMin, aabbMax, aabbWorldTransform, color );
+    }
+
     void TIVisualizer::addCamera( const std::string& name, 
                                   const std::string& type,
                                   const TVec3& pos,

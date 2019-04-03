@@ -4,6 +4,17 @@
 namespace tysoc{
 namespace viz{
 
+    engine::LMat4 fromTMat4( const TMat4& mat )
+    {
+        engine::LMat4 _res;
+
+        for ( size_t i = 0; i < 4; i++ )
+            for ( size_t j = 0; j < 4; j++ )
+                _res.buff[i + 4 * j] = mat.buff[i + 4 * j];
+
+        return _res;
+    }
+
     engine::LMat4 fromTMat3( const TMat3& mat )
     {
         engine::LMat4 _res;

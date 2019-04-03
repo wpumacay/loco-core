@@ -12,6 +12,8 @@ namespace tysoc {
         m_kinTreeAgentPtr = kinTreeAgentPtr;
         // and the path to the assets directory
         m_workingDir = workingDir;
+        // and set to NULL (default) the parent simulation
+        m_simulationPtr = NULL;
 
         if ( !kinTreeAgentPtr )
         {
@@ -50,10 +52,16 @@ namespace tysoc {
 
     TKinTreeAgentWrapper::~TKinTreeAgentWrapper()
     {
+        m_simulationPtr = NULL;
         m_kinTreeAgentPtr = NULL;
         m_mjcfModelTemplatePtr = NULL;
         m_urdfModelTemplatePtr = NULL;
         m_rlsimModelTemplatePtr = NULL;
+    }
+
+    void TKinTreeAgentWrapper::setParentSimulation( TISimulation* simulationPtr )
+    {
+        m_simulationPtr = simulationPtr;
     }
 
     std::string TKinTreeAgentWrapper::name()

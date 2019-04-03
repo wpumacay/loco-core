@@ -11,10 +11,14 @@ namespace tysoc {
         m_runtimeType = "none";
         m_scenarioPtr = scenarioPtr;
         m_workingDir  = workingDir;
+        m_visualizerPtr = NULL;
+
+        m_isRunning = false;
     }
 
     TISimulation::~TISimulation()
     {
+        m_visualizerPtr = NULL;
         m_scenarioPtr = NULL;
 
         for ( size_t q = 0; q < m_agentWrappers.size(); q++ )
@@ -51,13 +55,16 @@ namespace tysoc {
 
     bool TISimulation::initialize()
     {
+        m_isRunning = true;
+
         return _initializeInternal();
     }
 
     void TISimulation::step()
     {
         _preStepInternal();
-        _simStepInternal();
+        if ( m_isRunning )
+            _simStepInternal();
         _postStepInternal();
 
         if ( m_scenarioPtr )
@@ -67,6 +74,21 @@ namespace tysoc {
     void TISimulation::reset()
     {
         _resetInternal();
+    }
+
+    void TISimulation::togglePause()
+    {
+        m_isRunning = ( m_isRunning ) ? false : true;
+    }
+
+    void TISimulation::setVisualizer( viz::TIVisualizer* visualizerPtr )
+    {
+        m_visualizerPtr = visualizerPtr;
+    }
+
+    viz::TIVisualizer* TISimulation::getVisualizer()
+    {
+        return m_visualizerPtr;
     }
 
     TScenario* TISimulation::scenario()

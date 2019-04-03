@@ -69,6 +69,10 @@ namespace viz {
         virtual void _renderUIInternal() = 0;
         virtual bool _isActiveInternal() = 0;
 
+        // Debug drawing methods to be implemented
+        virtual void _drawLineInternal( const TVec3& start, const TVec3& end, const TVec3& color ) = 0;
+        virtual void _drawAABBInternal( const TVec3& aabbMin, const TVec3& aabbMax, const TMat4& aabbWorldTransform, const TVec3& color ) = 0;
+
         virtual int _remapKeyInternal( int keyCode ) = 0;
         virtual bool _isKeyDownInternal( int keyCode ) = 0;
         virtual bool _checkSingleKeyPressInternal( int keyCode ) = 0;
@@ -102,6 +106,10 @@ namespace viz {
         // void reset(); // @TODO: should add this functionality when links changing sizes
         void renderUI();
         bool isActive();
+
+        // Debug drawing helpers
+        void drawLine( const TVec3& start, const TVec3& end, const TVec3& color );
+        void drawAABB( const TVec3& aabbMin, const TVec3& aabbMax, const TMat4& aabbWorldTransform, const TVec3& color );
 
         bool isKeyDown( int keyCode );
         bool checkSingleKeyPress( int keyCode );

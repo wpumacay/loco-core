@@ -1,0 +1,21 @@
+<mujoco model="parts">
+
+<!--    <worldbody>-->
+<!--        <body name="tmjcroot" pos="0 0 1.4">-->
+<!--            <joint name="root" type="free" />-->
+<!--            <geom condim="1" material="matgeom" name="tmjcroot" type="capsule" fromto="0 -0.07 0 0 .07 0"  size="0.07"/>-->
+<!--            <geom condim="1" material="matgeom" name="head" type="sphere" pos="0 0 .19" size=".09"/>-->
+<!--            <geom condim="1" material="matgeom" name="uwaist" type="capsule" fromto="-0.01 -0.06 -0.12 -0.01 .06 -0.12" size="0.06"/>-->
+<!--        </body>-->
+<!--    </worldbody>-->
+
+    <worldbody>
+        <body name="right_foot" pos="1 0 1.4" >
+            <joint name="right_ankle_y" type="hinge" pos="0 0 0.08" axis="0 1 0"   range="-50 50" stiffness="4" armature="0.0008" limited="true" damping="1" />
+            <joint name="right_ankle_x" type="hinge" pos="0 0 0.04" axis="1 0 0.5" range="-50 50" stiffness="1"  armature="0.0006" limited="true" damping="1" />
+            <geom condim="1" material="matgeom" name="right_foot_cap1" type="capsule" fromto="-0.07 -0.02 0 0.14 -0.04 0"  size="0.027" />
+            <geom condim="1" material="matgeom" name="right_foot_cap2" type="capsule" fromto="-0.07 0 0 0.14  0.02 0"  size="0.027" />
+        </body>
+    </worldbody>
+
+</mujoco>

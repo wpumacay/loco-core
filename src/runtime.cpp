@@ -132,6 +132,9 @@ namespace tysoc {
         
         m_simulationPtr = m_fcnCreateSim( scenarioPtr, m_workingDir );
 
+        if ( m_visualizerPtr )
+            m_simulationPtr->setVisualizer( m_visualizerPtr );
+
         return m_simulationPtr;
     }
 
@@ -190,6 +193,9 @@ namespace tysoc {
             m_visualizerPtr->collectSimPayload( m_simulationPtr->payload( "mjvCamera" ), "mjvCamera" );
             m_visualizerPtr->collectSimPayload( m_simulationPtr->payload( "mjvOption" ), "mjvOption" );
         }
+
+        if ( m_simulationPtr )
+            m_simulationPtr->setVisualizer( m_visualizerPtr );
 
         return m_visualizerPtr;
     }

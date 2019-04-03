@@ -152,6 +152,16 @@ namespace viz {
         return m_glAppPtr->isActive();
     }
 
+    void TCustomVisualizer::_drawLineInternal( const TVec3& start, const TVec3& end, const TVec3& color )
+    {
+        engine::DebugSystem::drawLine( fromTVec3( start ), fromTVec3( end ), fromTVec3( color ) );
+    }
+
+    void TCustomVisualizer::_drawAABBInternal( const TVec3& aabbMin, const TVec3& aabbMax, const TMat4& aabbWorldTransform, const TVec3& color )
+    {
+        engine::DebugSystem::drawAABB( fromTVec3( aabbMin ), fromTVec3( aabbMax ), fromTMat4( aabbWorldTransform ), fromTVec3( color ) );
+    }
+
     TIVizCamera* TCustomVisualizer::_createCameraInternal( const std::string& name,
                                                            const std::string& type,
                                                            const TVec3& pos,
