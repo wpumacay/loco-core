@@ -1,0 +1,23 @@
+<!--
+Extracted from dm_control package: https://github.com/deepmind/dm_control
+file: https://github.com/deepmind/dm_control/blob/master/dm_control/suite/acrobot.xml
+-->
+
+<mujoco model="template_acrobot">
+
+  <worldbody>
+    <body name="upper_arm" pos="0 0 2">
+      <joint name="shoulder" type="hinge" axis="0 1 0" damping=".05"/>
+      <geom name="upper_arm_decoration" material="decoration" type="sphere" size="0.1" mass="0"/>
+      <geom name="upper_arm" type="capsule" mass="1" fromto="0 0 0 0 0 1" size="0.05" material="self"/>
+      <body name="lower_arm" pos="0 0 1">
+        <joint name="elbow" type="hinge" axis="0 1 0" damping=".05"/>
+        <geom name="lower_arm" type="capsule" mass="1" fromto="0 0 0 0 0 1" size="0.049" material="self"/>
+      </body>
+    </body>
+  </worldbody>
+
+<!--   <actuator>-->
+<!--    <motor name="elbow" joint="elbow" gear="2" ctrllimited="true" ctrlrange="-1 1"/>-->
+<!--  </actuator>-->
+</mujoco>
