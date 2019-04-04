@@ -10,6 +10,7 @@
 namespace tysoc {
 
     class TKinTreeAgentWrapper;
+    class TBodyWrapper;
 
     /**
     *   Simulation Interface. This is the base class for all types of backend ...

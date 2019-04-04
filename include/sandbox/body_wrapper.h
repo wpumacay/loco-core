@@ -3,8 +3,11 @@
 
 #include <sandbox/sandbox.h>
 
+#include <simulation_base.h>
+
 namespace tysoc {
 
+    class TISimulation;
 
     class TBodyWrapper
     {
@@ -20,6 +23,9 @@ namespace tysoc {
         // Starting position and rotation, in case reset is needed
         TVec3 m_posStart;
         TMat3 m_rotStart;
+
+        // Parent simulation
+        TISimulation* m_simulationPtr;
 
         // Methods to override by backend-specific implementations
         virtual void _initializeInternal() = 0;
@@ -46,6 +52,8 @@ namespace tysoc {
         void reset();
         void preStep();
         void postStep();
+
+        void setParentSimulation( TISimulation* simulationPtr );
 
         void setPosition( const TVec3& position );
         void setRotMat( const TMat3& rotmat );

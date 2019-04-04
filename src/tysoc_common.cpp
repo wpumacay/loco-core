@@ -771,5 +771,26 @@ namespace tysoc
         return def;
     }
 
+    void log( const std::string& msg )
+    {
+        std::cout << "LOG> " << msg << std::endl;
+    }
+
+    void info( const std::string& msg )
+    {
+        std::cout << "INFO> " << msg << std::endl;
+    }
+
+    void warn( const std::string& msg )
+    {
+        std::cout << "WARN> " << msg << std::endl;
+    }
+
+    void error( const std::string& msg )
+    {
+        std::cout << "ERROR> " << msg << std::endl;
+    }
+
+
 
 }

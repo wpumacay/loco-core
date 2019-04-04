@@ -18,6 +18,8 @@ namespace tysoc {
             m_posStart = m_bodyPtr->worldTransform.getPosition();
             m_rotStart = m_bodyPtr->worldTransform.getRotation();
         }
+
+        m_simulationPtr = NULL;
     }
 
     TBodyWrapper::~TBodyWrapper()
@@ -25,6 +27,7 @@ namespace tysoc {
         // Just release the handle to the body resource. 
         // The scenario is in charge of resource deletions
         m_bodyPtr = NULL;
+        m_simulationPtr = NULL;
     }
 
     void TBodyWrapper::initialize()
@@ -46,6 +49,11 @@ namespace tysoc {
     void TBodyWrapper::postStep()
     {
         _postStepInternal();
+    }
+
+    void TBodyWrapper::setParentSimulation( TISimulation* simulationPtr )
+    {
+        m_simulationPtr = simulationPtr;
     }
 
     void TBodyWrapper::setPosition( const TVec3& position )
