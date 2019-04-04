@@ -29,7 +29,6 @@ namespace tysoc {
 
         // Methods to override by backend-specific implementations
         virtual void _initializeInternal() = 0;
-        virtual void _initializeWorldTransformsInternal() = 0;
         virtual void _resetInternal() = 0;
         virtual void _preStepInternal() = 0;
         virtual void _postStepInternal() = 0;

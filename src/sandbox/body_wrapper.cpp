@@ -32,8 +32,8 @@ namespace tysoc {
 
     void TBodyWrapper::initialize()
     {
-        _initializeInternal();
         _initializeWorldTransforms();
+        _initializeInternal();
     }
 
     void TBodyWrapper::reset()
@@ -120,7 +120,6 @@ namespace tysoc {
             return;
 
         _initializeBody( m_bodyPtr );
-        _initializeWorldTransformsInternal();
     }
 
     void TBodyWrapper::_initializeBody( sandbox::TBody* bodyPtr )
