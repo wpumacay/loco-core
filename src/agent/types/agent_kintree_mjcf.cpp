@@ -275,6 +275,12 @@ namespace agent {
         _kinTreeJointPtr->upperLimit = _limits.y;
         // and the joint value clamping flag
         _kinTreeJointPtr->limited = ( jointElementPtr->getAttributeString( "limited", "false" ) == "true" );
+        // in case not limited, assume low > high
+        if ( !_kinTreeJointPtr->limited )
+        {
+            _kinTreeJointPtr->lowerLimit = 1.0f;
+            _kinTreeJointPtr->upperLimit = -1.0f;
+        }
         // and the joint stiffness (@GENERIC)
         _kinTreeJointPtr->stiffness = jointElementPtr->getAttributeFloat( "stiffness", 0.0 );
         // and the joint armature (@GENERIC)

@@ -1,0 +1,36 @@
+<mujoco model="template hopper">
+  
+  <worldbody>
+    <body name="torso" pos="0 0 1" childclass="hopper">
+      <joint name="torsofree" type="free"/>
+      <!--<joint name="rootx" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" stiffness="0"/>-->
+      <!--<joint name="rootz" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" stiffness="0"/>-->
+      <!--<joint name="rooty" type="hinge" axis="0 1 0" limited="false" damping="0" armature="0" stiffness="0"/>-->
+      <geom contype="1" conaffinity="0" type="capsule" material="self" name="torso" fromto="0 0 -.05 0 0 .2" size="0.0653"/>
+      <geom contype="1" conaffinity="0" type="capsule" material="self" name="nose" fromto=".08 0 .13 .15 0 .14" size="0.03"/>
+      <body name="pelvis" pos="0 0 -.05">
+        <joint type="hinge" axis="0 1 0" limited="true" damping=".05" armature=".2" name="waist" range="-30 30"/>
+        <geom contype="1" conaffinity="0" type="capsule" material="self" name="pelvis" fromto="0 0 0 0 0 -.15" size="0.065"/>
+        <body name="thigh" pos="0 0 -.2">
+          <joint type="hinge" axis="0 1 0" limited="true" damping=".05" armature=".2" name="hip" range="-170 10"/>
+          <geom contype="1" conaffinity="0" type="capsule" material="self" name="thigh" fromto="0 0 0 0 0 -.33" size="0.04"/>
+          <body name="calf" pos="0 0 -.33">
+            <joint type="hinge" axis="0 1 0" limited="true" damping=".05" armature=".2" name="knee" range="5 150"/>
+            <geom contype="1" conaffinity="0" type="capsule" material="self" name="calf" fromto="0 0 0 0 0 -.32" size="0.03"/>
+            <body name="foot" pos="0 0 -.32">
+              <joint type="hinge" axis="0 1 0" limited="true" damping=".05" armature=".2" name="ankle" range="-45 45"/>
+              <geom contype="1" conaffinity="0" type="capsule" material="self" name="foot" fromto="-.08 0 0 .17 0 0" size="0.04"/>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <motor ctrlrange="-1 1" ctrllimited="true" name="waist" joint="waist" gear="30"/>
+    <motor ctrlrange="-1 1" ctrllimited="true" name="hip" joint="hip" gear="40"/>
+    <motor ctrlrange="-1 1" ctrllimited="true" name="knee" joint="knee" gear="30"/>
+    <motor ctrlrange="-1 1" ctrllimited="true" name="ankle" joint="ankle" gear="10"/>
+  </actuator>
+</mujoco>
