@@ -336,6 +336,24 @@ namespace tysoc
         buff[3] = m30; buff[7] = m31; buff[11] = m32; buff[15] = m33;
     }
 
+    TMat4::TMat4( const TVec3& pos, const TMat3& rotMat )
+    {
+        setPosition( pos );
+        setRotation( rotMat );
+    }
+
+    TMat4::TMat4( const TVec3& pos, const TVec3& rotEuler )
+    {
+        setPosition( pos );
+        setRotation( rotEuler );
+    }
+
+    TMat4::TMat4( const TVec3& pos, const TVec4& rotQuat )
+    {
+        setPosition( pos );
+        setRotation( rotQuat );
+    }
+
     TMat4& TMat4::operator= ( const TMat4& other )
     {
         buff[0] = other.buff[0];
@@ -427,6 +445,14 @@ namespace tysoc
         return TMat3::toQuaternion( TMat3( buff[0], buff[4], buff[8],
                                            buff[1], buff[5], buff[9],
                                            buff[2], buff[6], buff[10] ) );
+    }
+
+    void TMat4::setIdentity()
+    {
+        buff[0] = 1; buff[4] = 0; buff[8]  = 0; buff[12] = 0;
+        buff[1] = 0; buff[5] = 1; buff[9]  = 0; buff[13] = 0;
+        buff[2] = 0; buff[6] = 0; buff[10] = 1; buff[14] = 0;
+        buff[3] = 0; buff[7] = 0; buff[11] = 0; buff[15] = 1;
     }
 
     TMat4 TMat4::inverse() const

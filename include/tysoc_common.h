@@ -137,6 +137,9 @@ namespace tysoc
                TScalar m10, TScalar m11, TScalar m12, TScalar m13,
                TScalar m20, TScalar m21, TScalar m22, TScalar m23,
                TScalar m30, TScalar m31, TScalar m32, TScalar m33 );
+        TMat4( const TVec3& pos, const TMat3& rotMat );
+        TMat4( const TVec3& pos, const TVec3& rotEuler );
+        TMat4( const TVec3& pos, const TVec4& rotQuat );
 
         TMat4& operator= ( const TMat4& other );
 
@@ -152,6 +155,8 @@ namespace tysoc
         TMat3 getRotation() const;
         TVec3 getRotEuler() const;
         TVec4 getRotQuaternion() const;
+
+        void setIdentity();
 
         TMat4 inverse() const;
 
