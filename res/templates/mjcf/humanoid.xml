@@ -1,3 +1,13 @@
+<!--
+THIS MODEL IS NOT MY OWN
+
+> Model adapted from Deepmind's controlsuite library:
+
+  * repo      : https://github.com/deepmind/dm_control
+  * model-url : https://github.com/deepmind/dm_control/blob/master/dm_control/suite/humanoid.xml
+  * credits   : the controlsuite authors
+-->
+
 <mujoco model="Humanoid">
 
     <worldbody>
