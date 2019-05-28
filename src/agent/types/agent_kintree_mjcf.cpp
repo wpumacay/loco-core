@@ -49,6 +49,7 @@ namespace agent {
         m_modelTemplateType = MODEL_TEMPLATE_TYPE_MJCF;
 
         _extractMjcfModelSettings();
+        _collectDefaults();
         _collectAssets();
         _initializeKinTree();
     }
@@ -77,9 +78,7 @@ namespace agent {
         if ( _actuatorsElmPtr )
         {
             for ( size_t i = 0; i < _actuatorsElmPtr->children.size(); i++ )
-            {
                 _processActuator( _actuatorsElmPtr->children[i] );
-            }
         }
 
         // // grab the contacts and update the names appropriately
@@ -109,6 +108,119 @@ namespace agent {
         {
             std::cout << "INFO> converting to local coordinates: " << m_name << std::endl;
             _convertGlobalToLocalCoordinates( m_rootBodyPtr, TMat4() );
+        }
+    }
+
+    void TAgentKinTreeMjcf::_collectDefaults()
+    {
+        auto _defaultsElmPtr = mjcf::findFirstChildByType( m_modelElementPtr, "default" );
+
+        if ( !_defaultsElmPtr )
+            return;
+
+        for ( size_t q = 0; q < _defaultsElmPtr->children.size(); q++ )
+        {
+            auto _child = _defaultsElmPtr->children[q];
+            if ( _child->etype == "default" )
+                _collectDefaultsFromClass( _child );
+            else
+                _collectDefaultsNoClass( _child );
+        }
+    }
+
+    void TAgentKinTreeMjcf::_collectDefaultsFromClass( mjcf::GenericElement* defClassElmPtr )
+    {
+        auto _classId = defClassElmPtr->getAttributeString( "class" );
+        if ( _classId == "" )
+            return;
+
+        if ( m_mjcfDefaultsPerClass.find( _classId ) == m_mjcfDefaultsPerClass.end() )
+            m_mjcfDefaultsPerClass[_classId] = std::map< std::string, TGenericParams >();
+
+        auto _children = defClassElmPtr->children;
+        for ( size_t q = 0; q < _children.size(); q++ )
+        {
+            auto _child = _children[q];
+            auto _etype = _child->etype;
+            auto _possibleAttribsDict = mjcf::MJCF_SCHEMA->getPossibleAttribs( _etype );
+
+            for ( auto _it = _possibleAttribsDict.begin();
+                       _it != _possibleAttribsDict.end();
+                       _it++ )
+            {
+                if ( _it->second == mjcf::TYPE_ARRAY_FLOAT &&
+                     _child->hasAttributeArrayFloat( _it->first ) )
+                {
+                    m_mjcfDefaultsPerClass[_classId][_etype].set( _it->first,
+                                                                  _child->getAttributeArrayFloat( _it->first ) );
+                }
+                else if ( _it->second == mjcf::TYPE_ARRAY_INT &&
+                          _child->hasAttributeArrayInt( _it->first ) )
+                {
+                    m_mjcfDefaultsPerClass[_classId][_etype].set( _it->first,
+                                                                  _child->getAttributeArrayInt( _it->first ) );
+                }
+                else if ( _it->second == mjcf::TYPE_FLOAT &&
+                          _child->hasAttributeFloat( _it->first ) )
+                {
+                    m_mjcfDefaultsPerClass[_classId][_etype].set( _it->first,
+                                                                  _child->getAttributeFloat( _it->first ) );
+                }
+                else if ( _it->second == mjcf::TYPE_INT &&
+                          _child->hasAttributeInt( _it->first ) )
+                {
+                    m_mjcfDefaultsPerClass[_classId][_etype].set( _it->first,
+                                                                  _child->getAttributeInt( _it->first ) );
+                }
+                else if ( _it->second == mjcf::TYPE_STRING &&
+                          _child->hasAttributeString( _it->first ) )
+                {
+                    m_mjcfDefaultsPerClass[_classId][_etype].set( _it->first,
+                                                                  _child->getAttributeString( _it->first ) );
+                }
+            }
+        }
+    }
+
+    void TAgentKinTreeMjcf::_collectDefaultsNoClass( mjcf::GenericElement* defElmPtr )
+    {
+        auto _tagId = defElmPtr->etype;
+        auto _possibleAttribsDict = mjcf::MJCF_SCHEMA->getPossibleAttribs( _tagId );
+
+        for ( auto _it = _possibleAttribsDict.begin();
+                   _it != _possibleAttribsDict.end();
+                   _it++ )
+        {
+            if ( _it->second == mjcf::TYPE_ARRAY_FLOAT &&
+                 defElmPtr->hasAttributeArrayFloat( _it->first ) )
+            {
+                m_mjcfDefaultsNoClass[_tagId].set( _it->first,
+                                                   defElmPtr->getAttributeArrayFloat( _it->first ) );
+            }
+            else if ( _it->second == mjcf::TYPE_ARRAY_INT &&
+                      defElmPtr->hasAttributeArrayInt( _it->first ) )
+            {
+                m_mjcfDefaultsNoClass[_tagId].set( _it->first,
+                                                   defElmPtr->getAttributeArrayInt( _it->first ) );
+            }
+            else if ( _it->second == mjcf::TYPE_FLOAT &&
+                      defElmPtr->hasAttributeFloat( _it->first ) )
+            {
+                m_mjcfDefaultsNoClass[_tagId].set( _it->first,
+                                                   defElmPtr->getAttributeFloat( _it->first ) );
+            }
+            else if ( _it->second == mjcf::TYPE_INT &&
+                      defElmPtr->hasAttributeInt( _it->first ) )
+            {
+                m_mjcfDefaultsNoClass[_tagId].set( _it->first,
+                                                   defElmPtr->getAttributeInt( _it->first ) );
+            }
+            else if ( _it->second == mjcf::TYPE_STRING &&
+                      defElmPtr->hasAttributeString( _it->first ) )
+            {
+                m_mjcfDefaultsNoClass[_tagId].set( _it->first,
+                                                   defElmPtr->getAttributeString( _it->first ) );
+            }
         }
     }
 
@@ -189,9 +301,6 @@ namespace agent {
         // grab body information
         auto _kinTreeBodyPtr = new TKinTreeBody();
         // grab the name
-        // _kinTreeBodyPtr->name = mjcf::computeMjcfName( "body",
-        //                                                bodyElementPtr->getAttributeString( "name" ),
-        //                                                m_name );
         _kinTreeBodyPtr->name = bodyElementPtr->getAttributeString( "name" );
         // and the relative transform to the parent body
         _extractTransform( bodyElementPtr, _kinTreeBodyPtr->relTransform );
@@ -202,10 +311,17 @@ namespace agent {
         // and to the bodies map
         m_mapKinTreeBodies[ _kinTreeBodyPtr->name ] = _kinTreeBodyPtr;
 
+        // grab the child-class (if given)
+        auto _childClass = bodyElementPtr->getAttributeString( "childclass", "" );
+
         // grab all geom elements and process them as visual and collisions
         auto _geomElementPtrs = mjcf::getChildrenByType( bodyElementPtr, "geom" );
         for ( size_t i = 0; i < _geomElementPtrs.size(); i++ )
         {
+            // set child-class if geom element does not have any
+            if ( _childClass != "" && !_geomElementPtrs[i]->hasAttributeString( "class" ) )
+                _geomElementPtrs[i]->setAttributeString( "class", _childClass );
+
             auto _kinTreeVisualPtr      = _processVisualFromMjcf( _geomElementPtrs[i] );
             auto _kinTreeCollisionPtr   = _processCollisionFromMjcf( _geomElementPtrs[i] );
 
@@ -220,6 +336,10 @@ namespace agent {
         auto _jointElementPtrs = mjcf::getChildrenByType( bodyElementPtr, "joint" );
         for ( size_t i = 0; i < _jointElementPtrs.size(); i++ )
         {
+            // set child-class if joint element does not have any
+            if ( _childClass != "" && !_jointElementPtrs[i]->hasAttributeString( "class" ) )
+                _jointElementPtrs[i]->setAttributeString( "class", _childClass );
+
             auto _kinTreeJointPtr =  _processJointFromMjcf( _jointElementPtrs[i] );
 
             _kinTreeJointPtr->parentBodyPtr = _kinTreeBodyPtr;
@@ -247,6 +367,10 @@ namespace agent {
         auto _childBodiesElementPtrs = mjcf::getChildrenByType( bodyElementPtr, "body" );
         for ( size_t i = 0; i < _childBodiesElementPtrs.size(); i++ )
         {
+            // set child-class if joint element does not have any
+            if ( _childClass != "" && !_childBodiesElementPtrs[i]->hasAttributeString( "childclass" ) )
+                _childBodiesElementPtrs[i]->setAttributeString( "childclass", _childClass );
+
             _kinTreeBodyPtr->childBodies.push_back( _processBodyFromMjcf( _childBodiesElementPtrs[i], 
                                                                           _kinTreeBodyPtr ) );
         }
@@ -265,30 +389,33 @@ namespace agent {
         // and the relative transform to the parent body
         _extractTransform( jointElementPtr, _kinTreeJointPtr->relTransform );
         // and the type of joint
-        _kinTreeJointPtr->type = jointElementPtr->getAttributeString( "type", "hinge" );
+        _kinTreeJointPtr->type = _grabString( jointElementPtr, "type", "hinge" );
         // and the joint axis
-        auto _axis = jointElementPtr->getAttributeVec3( "axis" );
+        auto _axis = _grabVec3( jointElementPtr, "axis", { 0., 1., 0. } );
         _kinTreeJointPtr->axis = { _axis.x, _axis.y, _axis.z };
-        // and the range limits
-        auto _limits = jointElementPtr->getAttributeVec2( "range" );
-        _kinTreeJointPtr->lowerLimit = _limits.x;
-        _kinTreeJointPtr->upperLimit = _limits.y;
         // and the joint value clamping flag
-        _kinTreeJointPtr->limited = ( jointElementPtr->getAttributeString( "limited", "false" ) == "true" );
+        _kinTreeJointPtr->limited = ( _grabString( jointElementPtr, "limited", "false" ) == "true" );
         // in case not limited, assume low > high
         if ( !_kinTreeJointPtr->limited )
         {
             _kinTreeJointPtr->lowerLimit = 1.0f;
             _kinTreeJointPtr->upperLimit = -1.0f;
         }
+        else
+        {
+            // and the range limits
+            auto _limits = _grabVec2( jointElementPtr, "range", { -TYSOC_PI, TYSOC_PI } );
+            _kinTreeJointPtr->lowerLimit = _limits.x;
+            _kinTreeJointPtr->upperLimit = _limits.y;
+        }
         // and the joint stiffness (@GENERIC)
-        _kinTreeJointPtr->stiffness = jointElementPtr->getAttributeFloat( "stiffness", 0.0 );
+        _kinTreeJointPtr->stiffness = _grabFloat( jointElementPtr, "stiffness", 0.0 );
         // and the joint armature (@GENERIC)
-        _kinTreeJointPtr->armature = jointElementPtr->getAttributeFloat( "armature", 0.0 );
+        _kinTreeJointPtr->armature = _grabFloat( jointElementPtr, "armature", 0.0 );
         // and the joint damping (@GENERIC)
-        _kinTreeJointPtr->damping = jointElementPtr->getAttributeFloat( "damping", 0.0 );
+        _kinTreeJointPtr->damping = _grabFloat( jointElementPtr, "damping", 0.0 );
         // and the joint ref (@GENERIUC)
-        _kinTreeJointPtr->ref = jointElementPtr->getAttributeFloat( "ref", 0.0 );
+        _kinTreeJointPtr->ref = _grabFloat( jointElementPtr, "ref", 0.0 );
         // child body should be set to NULL (used only for urdf?->seems not->@CHANGE)
         _kinTreeJointPtr->childBodyPtr = NULL;
         // and store it in the joints buffer
@@ -303,20 +430,17 @@ namespace agent {
     {
         auto _kinTreeVisualPtr = new TKinTreeVisual();
         // grab the name
-        // _kinTreeVisualPtr->name = mjcf::computeMjcfName( "geom", 
-        //                                                  geomElementPtr->getAttributeString( "name" ),
-        //                                                  m_name );
         _kinTreeVisualPtr->name = geomElementPtr->getAttributeString( "name" );
         // and the relative transform to the parent body
         _extractTransform( geomElementPtr, _kinTreeVisualPtr->relTransform );
         // and the type of visual/geom
-        _kinTreeVisualPtr->geometry.type = geomElementPtr->getAttributeString( "type" );
+        _kinTreeVisualPtr->geometry.type = _grabString( geomElementPtr, "type", "" );
         if ( _kinTreeVisualPtr->geometry.type == "" )
         {
             _kinTreeVisualPtr->geometry.type = "sphere";
         }
         // and the mesh filename in case there is any (this one is tricky)
-        auto _meshId = geomElementPtr->getAttributeString( "mesh" );
+        auto _meshId = _grabString( geomElementPtr, "mesh", "" );
         if ( m_mjcfMeshAssets.find( _meshId ) != m_mjcfMeshAssets.end() )
         {
             // if the mesh is is a "pure link" to a filename, then use the stored asset in map
@@ -343,30 +467,25 @@ namespace agent {
             _kinTreeVisualPtr->relTransform.setRotation( _rotFromFromto );
         }
 
-        if ( geomElementPtr->hasAttributeVec4( "rgba" ) )
-        {
-            auto _rgba = geomElementPtr->getAttributeVec4( "rgba", TYSOC_DEFAULT_RGBA_COLOR );
+        auto _rgba = _grabVec4( geomElementPtr, "rgba", TYSOC_DEFAULT_RGBA_COLOR );
 
-            _kinTreeVisualPtr->material.diffuse     = { _rgba.x, _rgba.y, _rgba.z };
-            _kinTreeVisualPtr->material.specular    = { _rgba.x, _rgba.y, _rgba.z };
-        }
+        _kinTreeVisualPtr->material.diffuse     = { _rgba.x, _rgba.y, _rgba.z };
+        _kinTreeVisualPtr->material.specular    = { _rgba.x, _rgba.y, _rgba.z };
 
         // and the contype collision bitmask (@GENERIC)
-        _kinTreeVisualPtr->contype = geomElementPtr->getAttributeInt( "contype", -1 );
+        _kinTreeVisualPtr->contype = _grabInt( geomElementPtr, "contype", -1 );
         // and the conaffinity collision bitmask (@GENERIC)
-        _kinTreeVisualPtr->conaffinity = geomElementPtr->getAttributeInt( "conaffinity", -1 );
+        _kinTreeVisualPtr->conaffinity = _grabInt( geomElementPtr, "conaffinity", -1 );
         // and the condim contact dimensionality (@GENERIC)
-        _kinTreeVisualPtr->condim = geomElementPtr->getAttributeInt( "condim", -1 );
+        _kinTreeVisualPtr->condim = _grabInt( geomElementPtr, "condim", -1 );
         // and the group the object belongs (for internal compiler calcs.) (@GENERIC)
-        _kinTreeVisualPtr->group = geomElementPtr->getAttributeInt( "group", -1 );
+        _kinTreeVisualPtr->group = _grabInt( geomElementPtr, "group", -1 );
         // and the material name (@GENERIC)
-        _kinTreeVisualPtr->materialName = geomElementPtr->getAttributeString( "material", "" );
+        _kinTreeVisualPtr->materialName = _grabString( geomElementPtr, "material", "" );
         // and the friction (@GENERIC)
-        if ( geomElementPtr->hasAttributeArrayFloat( "friction" ) )
-            _kinTreeVisualPtr->friction = geomElementPtr->getAttributeArrayFloat( "friction" );
+        _kinTreeVisualPtr->friction = _grabArrayFloat( geomElementPtr, "friction", { 3, { 1., 0.005, 0.0001 } } );
         // and the density (@GENERIC)
-        if ( geomElementPtr->hasAttributeFloat( "density" ) )
-            _kinTreeVisualPtr->density = geomElementPtr->getAttributeFloat( "density" );
+        _kinTreeVisualPtr->density = _grabFloat( geomElementPtr, "density", 1000. );
         // and store it in the visuals buffer
         m_kinTreeVisuals.push_back( _kinTreeVisualPtr );
         // and to the visuals map
@@ -379,20 +498,17 @@ namespace agent {
     {
         auto _kinTreeCollisionPtr = new TKinTreeCollision();
         // grab the name
-        // _kinTreeCollisionPtr->name = mjcf::computeMjcfName( "geom",
-        //                                                     geomElementPtr->getAttributeString( "name" ),
-        //                                                     m_name );
         _kinTreeCollisionPtr->name = geomElementPtr->getAttributeString( "name" );
         // and the relative transform to the parent body
         _extractTransform( geomElementPtr, _kinTreeCollisionPtr->relTransform );
         // and the collision/geom
-        _kinTreeCollisionPtr->geometry.type = geomElementPtr->getAttributeString( "type" );
+        _kinTreeCollisionPtr->geometry.type = _grabString( geomElementPtr, "type", "" );
         if ( _kinTreeCollisionPtr->geometry.type == "" )
         {
             _kinTreeCollisionPtr->geometry.type = "sphere";
         }
         // and the mesh filename in case there is any (this one is tricky)
-        auto _meshId = geomElementPtr->getAttributeString( "mesh" );
+        auto _meshId = _grabString( geomElementPtr, "mesh", "" );
         if ( m_mjcfMeshAssets.find( _meshId ) != m_mjcfMeshAssets.end() )
         {
             // if the mesh is is a "pure link" to a filename, then use the stored asset in map
@@ -419,13 +535,13 @@ namespace agent {
             _kinTreeCollisionPtr->relTransform.setRotation( _rotFromFromto );
         }
         // and the contype collision bitmask (@GENERIC)
-        _kinTreeCollisionPtr->contype = geomElementPtr->getAttributeInt( "contype", -1 );
+        _kinTreeCollisionPtr->contype = _grabInt( geomElementPtr, "contype", -1 );
         // and the conaffinity collision bitmask (@GENERIC)
-        _kinTreeCollisionPtr->conaffinity = geomElementPtr->getAttributeInt( "conaffinity", -1 );
+        _kinTreeCollisionPtr->conaffinity = _grabInt( geomElementPtr, "conaffinity", -1 );
         // and the condim contact dimensionality (@GENERIC)
-        _kinTreeCollisionPtr->condim = geomElementPtr->getAttributeInt( "condim", -1 );
+        _kinTreeCollisionPtr->condim = _grabInt( geomElementPtr, "condim", -1 );
         // and the group the object belongs (for internal compiler calcs.) (@GENERIC)
-        _kinTreeCollisionPtr->group = geomElementPtr->getAttributeInt( "group", -1 );
+        _kinTreeCollisionPtr->group = _grabInt( geomElementPtr, "group", -1 );
         // and store it in the collisions buffer
         m_kinTreeCollisions.push_back( _kinTreeCollisionPtr );
         // and to the collisions map
@@ -507,7 +623,7 @@ namespace agent {
             _kinTreeActuatorPtr->jointPtr = NULL;
         }
         // and the ctrl limits
-        auto _ctrlLimits = actuatorElementPtr->getAttributeVec2( "ctrlrange", { -1, 1 } );
+        auto _ctrlLimits = _grabVec2( actuatorElementPtr, "ctrlrange", { -1, 1 } );
         _kinTreeActuatorPtr->minCtrl = _ctrlLimits.x;
         _kinTreeActuatorPtr->maxCtrl = _ctrlLimits.y;
 
@@ -515,13 +631,13 @@ namespace agent {
         // each backend type used, as some would support more/less features
 
         // and the ctrl clamping flag (@GENERIC)
-        _kinTreeActuatorPtr->clampCtrl = ( actuatorElementPtr->getAttributeString( "ctrllimited", "true" ) == "true" );
+        _kinTreeActuatorPtr->clampCtrl = ( _grabString( actuatorElementPtr, "ctrllimited", "true" ) == "true" );
         // and the position feedback gain (@GENERIC)
-        _kinTreeActuatorPtr->kp = actuatorElementPtr->getAttributeFloat( "kp", 1.0 );
+        _kinTreeActuatorPtr->kp = _grabFloat( actuatorElementPtr, "kp", 1.0 );
         // and the velocity feedback gain (@GENERIC)
-        _kinTreeActuatorPtr->kv = actuatorElementPtr->getAttributeFloat( "kv", 1.0 );
+        _kinTreeActuatorPtr->kv = _grabFloat( actuatorElementPtr, "kv", 1.0 );
         // and the gear scaling (@GENERIC)
-        _kinTreeActuatorPtr->gear = actuatorElementPtr->getAttributeArrayFloat( "gear" );
+        _kinTreeActuatorPtr->gear = _grabArrayFloat( actuatorElementPtr, "gear", { 6, { 1., 0., 0., 0., 0., 0. } } );
 
         // @TODO|CHECK: for some special joints (ball and free) "joint" is not the field we are looking for
 
@@ -535,17 +651,18 @@ namespace agent {
                                                TMat4& targetTransform )
     {
         // grab local position from element
-        auto _relPosition   = elementPtr->getAttributeVec3( "pos", { 0.0, 0.0, 0.0 } );
+        auto _relPosition   = _grabVec3( elementPtr, "pos", { 0.0, 0.0, 0.0 } );
         // and make the vector to be used
         TVec3 _rPosition    = { _relPosition.x, _relPosition.y, _relPosition.z };
         // and set it to the target transform
         targetTransform.setPosition( _rPosition );
 
         // check if we have euler
-        if ( elementPtr->hasAttributeVec3( "euler" ) )
+        if ( elementPtr->hasAttributeVec3( "euler" ) ||
+             _hasDefaultAttrib( elementPtr, "euler" ) )
         {
             // extract rotation using euler
-            auto _relEuler = elementPtr->getAttributeVec3( "euler", { 0.0, 0.0, 0.0 } );
+            auto _relEuler = _grabVec3( elementPtr, "euler", { 0.0, 0.0, 0.0 } );
             // and convert it to our tvec3 format
             TVec3 _rEuler = { _relEuler.x * ((float)M_PI) / 180.0f, 
                               _relEuler.y * ((float)M_PI) / 180.0f, 
@@ -555,10 +672,11 @@ namespace agent {
             // and set it to the target transform
             targetTransform.setRotation( _rRotation );
         }
-        else if ( elementPtr->hasAttributeVec4( "quat" ) )
+        else if ( elementPtr->hasAttributeVec4( "quat" ) ||
+                  _hasDefaultAttrib( elementPtr, "quat" ) )
         {
             // extract rotation using quaternions
-            auto _relQuaternion = elementPtr->getAttributeVec4( "quat", { 1.0, 0.0, 0.0, 0.0 } );
+            auto _relQuaternion = _grabVec4( elementPtr, "quat", { 1.0, 0.0, 0.0, 0.0 } );
             // and extract rotation (quaternion convention in mjcf is "wxyz", our is "xyzw", so compensate for this)
             TVec4 _rQuaternion  = { _relQuaternion.y, _relQuaternion.z, _relQuaternion.w, _relQuaternion.x };
             // and convert to matrix type
@@ -566,11 +684,12 @@ namespace agent {
             // and set it to the target transform
             targetTransform.setRotation( _rRotation );
         }
-        else if ( elementPtr->hasAttributeVec3( "zaxis" ) )
+        else if ( elementPtr->hasAttributeVec3( "zaxis" ) ||
+                  _hasDefaultAttrib( elementPtr, "zaxis" ) )
         {
             // extract rotation using shortest quaternion to get to the given axis
             // grab the local zaxis
-            auto _zAxisLocal = elementPtr->getAttributeVec3( "zaxis", { 0.0, 0.0, 1.0 } );
+            auto _zAxisLocal = _grabVec3( elementPtr, "zaxis", { 0.0, 0.0, 1.0 } );
             // define target zaxis
             auto _zAxisWorld = TVec3( 0, 0, 1 );
             // compute minimum rotation quat
@@ -592,9 +711,9 @@ namespace agent {
                                                   TMat3& rotFromFromto )
     {
         auto _gname     = geomElm->getAttributeString( "name" );
-        auto _gtype     = geomElm->getAttributeString( "type" );
-        auto _gsize     = geomElm->getAttributeArrayFloat( "size" );
-        auto _gfromto   = geomElm->getAttributeArrayFloat( "fromto" );
+        auto _gtype     = _grabString( geomElm, "type", "sphere" );
+        auto _gsize     = _grabArrayFloat( geomElm, "size", { 1, { 0.01 } } );
+        auto _gfromto   = _grabArrayFloat( geomElm, "fromto", { 0, { 0. } } );
 
         bool _usesFromto = false;
 
@@ -811,6 +930,307 @@ namespace agent {
         auto _b2Tob1 = _b1ToWorld.inverse() * _b2ToWorld;
 
         return _b2Tob1;
+    }
+
+    std::string TAgentKinTreeMjcf::_grabString( mjcf::GenericElement* elementPtr,
+                                                const std::string& attribId,
+                                                const std::string& defString )
+    {
+        auto _elType = elementPtr->etype;
+
+        if ( elementPtr->hasAttributeString( attribId ) )
+            return elementPtr->getAttributeString( attribId );
+
+        if ( elementPtr->hasAttributeString( "class" ) )
+        {
+            auto _classId = elementPtr->getAttributeString( "class" );
+            if ( m_mjcfDefaultsPerClass.find( _classId ) !=
+                 m_mjcfDefaultsPerClass.end() )
+            {
+                if ( m_mjcfDefaultsPerClass[_classId].find( _elType ) !=
+                     m_mjcfDefaultsPerClass[_classId].end() )
+                {
+                    if ( m_mjcfDefaultsPerClass[_classId][_elType].hasParam( attribId ) )
+                        return m_mjcfDefaultsPerClass[_classId][_elType].getString( attribId, defString );
+                }
+            }
+        }
+
+        if ( m_mjcfDefaultsNoClass.find( _elType ) !=
+             m_mjcfDefaultsNoClass.end() )
+        {
+            if ( m_mjcfDefaultsNoClass[_elType].hasParam( attribId ) )
+                return m_mjcfDefaultsNoClass[_elType].getString( attribId, defString );
+        }
+
+        return defString;
+    }
+
+    float TAgentKinTreeMjcf::_grabFloat( mjcf::GenericElement* elementPtr,
+                                         const std::string& attribId,
+                                         const float& defFloat )
+    {
+        auto _elType = elementPtr->etype;
+
+        if ( elementPtr->hasAttributeFloat( attribId ) )
+            return elementPtr->getAttributeFloat( attribId );
+
+        if ( elementPtr->hasAttributeString( "class" ) )
+        {
+            auto _classId = elementPtr->getAttributeString( "class" );
+            if ( m_mjcfDefaultsPerClass.find( _classId ) !=
+                 m_mjcfDefaultsPerClass.end() )
+            {
+                if ( m_mjcfDefaultsPerClass[_classId].find( _elType ) !=
+                     m_mjcfDefaultsPerClass[_classId].end() )
+                {
+                    if ( m_mjcfDefaultsPerClass[_classId][_elType].hasParam( attribId ) )
+                        return m_mjcfDefaultsPerClass[_classId][_elType].getFloat( attribId, defFloat );
+                }
+            }
+        }
+
+        if ( m_mjcfDefaultsNoClass.find( _elType ) !=
+             m_mjcfDefaultsNoClass.end() )
+        {
+            if ( m_mjcfDefaultsNoClass[_elType].hasParam( attribId ) )
+                return m_mjcfDefaultsNoClass[_elType].getFloat( attribId, defFloat );
+        }
+
+        return defFloat;
+    }
+
+    int TAgentKinTreeMjcf::_grabInt( mjcf::GenericElement* elementPtr,
+                                     const std::string& attribId,
+                                     const int& defInt )
+    {
+        auto _elType = elementPtr->etype;
+
+        if ( elementPtr->hasAttributeInt( attribId ) )
+            return elementPtr->getAttributeInt( attribId );
+
+        if ( elementPtr->hasAttributeString( "class" ) )
+        {
+            auto _classId = elementPtr->getAttributeString( "class" );
+            if ( m_mjcfDefaultsPerClass.find( _classId ) !=
+                 m_mjcfDefaultsPerClass.end() )
+            {
+                if ( m_mjcfDefaultsPerClass[_classId].find( _elType ) !=
+                     m_mjcfDefaultsPerClass[_classId].end() )
+                {
+                    if ( m_mjcfDefaultsPerClass[_classId][_elType].hasParam( attribId ) )
+                        return m_mjcfDefaultsPerClass[_classId][_elType].getInt( attribId, defInt );
+                }
+            }
+        }
+
+        if ( m_mjcfDefaultsNoClass.find( _elType ) !=
+             m_mjcfDefaultsNoClass.end() )
+        {
+            if ( m_mjcfDefaultsNoClass[_elType].hasParam( attribId ) )
+                return m_mjcfDefaultsNoClass[_elType].getInt( attribId, defInt );
+        }
+
+        return defInt;
+    }
+
+
+    TVec2 TAgentKinTreeMjcf::_grabVec2( mjcf::GenericElement* elementPtr,
+                                        const std::string& attribId,
+                                        const TVec2& defVec2 )
+    {
+        auto _elType = elementPtr->etype;
+
+        if ( elementPtr->hasAttributeVec2( attribId ) )
+            return elementPtr->getAttributeVec2( attribId );
+
+        if ( elementPtr->hasAttributeString( "class" ) )
+        {
+            auto _classId = elementPtr->getAttributeString( "class" );
+            if ( m_mjcfDefaultsPerClass.find( _classId ) !=
+                 m_mjcfDefaultsPerClass.end() )
+            {
+                if ( m_mjcfDefaultsPerClass[_classId].find( _elType ) !=
+                     m_mjcfDefaultsPerClass[_classId].end() )
+                {
+                    if ( m_mjcfDefaultsPerClass[_classId][_elType].hasParam( attribId ) )
+                        return m_mjcfDefaultsPerClass[_classId][_elType].getVec2( attribId, defVec2 );
+                }
+            }
+        }
+
+        if ( m_mjcfDefaultsNoClass.find( _elType ) !=
+             m_mjcfDefaultsNoClass.end() )
+        {
+            if ( m_mjcfDefaultsNoClass[_elType].hasParam( attribId ) )
+                return m_mjcfDefaultsNoClass[_elType].getVec2( attribId, defVec2 );
+        }
+
+        return defVec2;
+    }
+
+    TVec3 TAgentKinTreeMjcf::_grabVec3( mjcf::GenericElement* elementPtr,
+                                        const std::string& attribId,
+                                        const TVec3& defVec3 )
+    {
+        auto _elType = elementPtr->etype;
+
+        if ( elementPtr->hasAttributeVec3( attribId ) )
+            return elementPtr->getAttributeVec3( attribId );
+
+        if ( elementPtr->hasAttributeString( "class" ) )
+        {
+            auto _classId = elementPtr->getAttributeString( "class" );
+            if ( m_mjcfDefaultsPerClass.find( _classId ) !=
+                 m_mjcfDefaultsPerClass.end() )
+            {
+                if ( m_mjcfDefaultsPerClass[_classId].find( _elType ) !=
+                     m_mjcfDefaultsPerClass[_classId].end() )
+                {
+                    if ( m_mjcfDefaultsPerClass[_classId][_elType].hasParam( attribId ) )
+                        return m_mjcfDefaultsPerClass[_classId][_elType].getVec3( attribId, defVec3 );
+                }
+            }
+        }
+        
+        if ( m_mjcfDefaultsNoClass.find( _elType ) !=
+             m_mjcfDefaultsNoClass.end() )
+        {
+            if ( m_mjcfDefaultsNoClass[_elType].hasParam( attribId ) )
+                return m_mjcfDefaultsNoClass[_elType].getVec3( attribId, defVec3 );
+        }
+
+        return defVec3;
+    }
+
+    TVec4 TAgentKinTreeMjcf::_grabVec4( mjcf::GenericElement* elementPtr,
+                                        const std::string& attribId,
+                                        const TVec4& defVec4 )
+    {
+        auto _elType = elementPtr->etype;
+
+        if ( elementPtr->hasAttributeVec4( attribId ) )
+            return elementPtr->getAttributeVec4( attribId );
+
+        if ( elementPtr->hasAttributeString( "class" ) )
+        {
+            auto _classId = elementPtr->getAttributeString( "class" );
+            if ( m_mjcfDefaultsPerClass.find( _classId ) !=
+                 m_mjcfDefaultsPerClass.end() )
+            {
+                if ( m_mjcfDefaultsPerClass[_classId].find( _elType ) !=
+                     m_mjcfDefaultsPerClass[_classId].end() )
+                {
+                    if ( m_mjcfDefaultsPerClass[_classId][_elType].hasParam( attribId ) )
+                        return m_mjcfDefaultsPerClass[_classId][_elType].getVec4( attribId, defVec4 );
+                }
+            }
+        }
+
+        if ( m_mjcfDefaultsNoClass.find( _elType ) !=
+             m_mjcfDefaultsNoClass.end() )
+        {
+            if ( m_mjcfDefaultsNoClass[_elType].hasParam( attribId ) )
+                return m_mjcfDefaultsNoClass[_elType].getVec4( attribId, defVec4 );
+        }
+
+        return defVec4;
+    }
+
+    TSizef TAgentKinTreeMjcf::_grabArrayFloat( mjcf::GenericElement* elementPtr,
+                                               const std::string& attribId,
+                                               const TSizef& defSizef )
+    {
+        auto _elType = elementPtr->etype;
+
+        if ( elementPtr->hasAttributeArrayFloat( attribId ) )
+            return elementPtr->getAttributeArrayFloat( attribId );
+
+        if ( elementPtr->hasAttributeString( "class" ) )
+        {
+            auto _classId = elementPtr->getAttributeString( "class" );
+            if ( m_mjcfDefaultsPerClass.find( _classId ) !=
+                 m_mjcfDefaultsPerClass.end() )
+            {
+                if ( m_mjcfDefaultsPerClass[_classId].find( _elType ) !=
+                     m_mjcfDefaultsPerClass[_classId].end() )
+                {
+                    if ( m_mjcfDefaultsPerClass[_classId][_elType].hasParam( attribId ) )
+                        return m_mjcfDefaultsPerClass[_classId][_elType].getSizef( attribId, defSizef );
+                }
+            }
+        }
+
+        if ( m_mjcfDefaultsNoClass.find( _elType ) !=
+             m_mjcfDefaultsNoClass.end() )
+        {
+            if ( m_mjcfDefaultsNoClass[_elType].hasParam( attribId ) )
+                return m_mjcfDefaultsNoClass[_elType].getSizef( attribId, defSizef );
+        }
+
+        return defSizef;
+    }
+
+    TSizei TAgentKinTreeMjcf::_grabArrayInt( mjcf::GenericElement* elementPtr,
+                                             const std::string& attribId,
+                                             const TSizei& defSizei )
+    {
+        auto _elType = elementPtr->etype;
+
+        if ( elementPtr->hasAttributeArrayInt( attribId ) )
+            return elementPtr->getAttributeArrayInt( attribId );
+
+        if ( elementPtr->hasAttributeString( "class" ) )
+        {
+            auto _classId = elementPtr->getAttributeString( "class" );
+            if ( m_mjcfDefaultsPerClass.find( _classId ) !=
+                 m_mjcfDefaultsPerClass.end() )
+            {
+                if ( m_mjcfDefaultsPerClass[_classId].find( _elType ) !=
+                     m_mjcfDefaultsPerClass[_classId].end() )
+                {
+                    if ( m_mjcfDefaultsPerClass[_classId][_elType].hasParam( attribId ) )
+                        return m_mjcfDefaultsPerClass[_classId][_elType].getSizei( attribId, defSizei );
+                }
+            }
+        }
+        
+        if ( m_mjcfDefaultsNoClass.find( _elType ) !=
+             m_mjcfDefaultsNoClass.end() )
+        {
+            if ( m_mjcfDefaultsNoClass[_elType].hasParam( attribId ) )
+                return m_mjcfDefaultsNoClass[_elType].getSizei( attribId, defSizei );
+        }
+
+        return defSizei;
+    }
+
+    bool TAgentKinTreeMjcf::_hasDefaultAttrib( mjcf::GenericElement* elementPtr,
+                                              const std::string& attribId )
+    {
+        bool _hasDefault = false;
+        auto _elmType = elementPtr->etype;
+
+        if ( elementPtr->hasAttributeString( "class" ) )
+        {
+            auto _classId = elementPtr->getAttributeString( "class" );
+            if ( m_mjcfDefaultsPerClass.find( _classId ) !=
+                 m_mjcfDefaultsPerClass.end() )
+            {
+                if ( m_mjcfDefaultsPerClass[_classId].find( _elmType ) !=
+                     m_mjcfDefaultsPerClass[_classId].end() )
+                {
+                    _hasDefault = m_mjcfDefaultsPerClass[_classId][_elmType].hasParam( attribId );
+                }
+            }
+        }
+        else if ( m_mjcfDefaultsNoClass.find( _elmType ) !=
+                  m_mjcfDefaultsNoClass.end() )
+        {
+            _hasDefault = m_mjcfDefaultsNoClass[_elmType].hasParam( attribId );
+        }
+
+        return _hasDefault;
     }
 
     mjcf::GenericElement* TAgentKinTreeMjcf::getMjcfModelDataPtr()

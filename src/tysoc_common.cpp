@@ -702,39 +702,57 @@ namespace tysoc
     void TGenericParams::set( const std::string& name, int val )
     {
         m_ints[ name ] = val;
+        m_keys.insert( name );
     }
 
     void TGenericParams::set( const std::string& name, float val )
     {
         m_floats[ name ] = val;
+        m_keys.insert( name );
+    }
+
+    void TGenericParams::set( const std::string& name, const TVec2& vec )
+    {
+        m_sizefs[ name ] = { 2, { vec.x, vec.y } };
+        m_keys.insert( name );
     }
 
     void TGenericParams::set( const std::string& name, const TVec3& vec )
     {
-        m_vec3s[ name ] = vec;
+        m_sizefs[ name ] = { 3, { vec.x, vec.y, vec.z } };
+        m_keys.insert( name );
     }
 
     void TGenericParams::set( const std::string& name, const TVec4& vec )
     {
-        m_vec4s[ name ] = vec;
+        m_sizefs[ name ] = { 4, { vec.x, vec.y, vec.z, vec.w } };
+        m_keys.insert( name );
     }
 
     void TGenericParams::set( const std::string& name, const TSizei& sizei )
     {
         m_sizeis[ name ] = sizei;
+        m_keys.insert( name );
     }
 
     void TGenericParams::set( const std::string& name, const TSizef& sizef )
     {
         m_sizefs[ name ] = sizef;
+        m_keys.insert( name );
     }
 
     void TGenericParams::set( const std::string& name, const std::string& str )
     {
         m_strings[ name ] = str;
+        m_keys.insert( name );
     }
 
-    int TGenericParams::getInt( const std::string& name, int def ) const
+    bool TGenericParams::hasParam( const std::string& name )
+    {
+        return ( m_keys.find( name ) != m_keys.end() );
+    }
+
+    int TGenericParams::getInt( const std::string& name, int def )
     {
         if ( m_ints.find( name ) != m_ints.end() )
         {
@@ -743,7 +761,7 @@ namespace tysoc
         return def;
     }
 
-    float TGenericParams::getFloat( const std::string& name, float def ) const
+    float TGenericParams::getFloat( const std::string& name, float def )
     {
         if ( m_floats.find( name ) != m_floats.end() )
         {
@@ -752,25 +770,55 @@ namespace tysoc
         return def;
     }
 
-    TVec3 TGenericParams::getVec3( const std::string& name, const TVec3& def ) const
+    TVec2 TGenericParams::getVec2( const std::string& name, const TVec2& def )
     {
-        if ( m_vec3s.find( name ) != m_vec3s.end() )
+        TVec2 _res = def;
+
+        if ( m_sizefs.find( name ) != m_sizefs.end() )
         {
-            return m_vec3s.at( name );
+            TSizef _vec2 = m_sizefs[ name ];
+
+            _res.x = _vec2.buff[0];
+            _res.y = _vec2.buff[1];
         }
-        return def;
+
+        return _res;
     }
 
-    TVec4 TGenericParams::getVec4( const std::string& name, const TVec4& def ) const
+    TVec3 TGenericParams::getVec3( const std::string& name, const TVec3& def )
     {
-        if ( m_vec4s.find( name ) != m_vec4s.end() )
+        TVec3 _res = def;
+
+        if ( m_sizefs.find( name ) != m_sizefs.end() )
         {
-            return m_vec4s.at( name );
+            TSizef _vec3 = m_sizefs[ name ];
+
+            _res.x = _vec3.buff[0];
+            _res.y = _vec3.buff[1];
+            _res.z = _vec3.buff[2];
         }
-        return def;
+
+        return _res;
     }
 
-    TSizei TGenericParams::getSizei( const std::string& name, const TSizei& def ) const
+    TVec4 TGenericParams::getVec4( const std::string& name, const TVec4& def )
+    {
+        TVec4 _res = def;
+
+        if ( m_sizefs.find( name ) != m_sizefs.end() )
+        {
+            TSizef _vec4 = m_sizefs[ name ];
+
+            _res.x = _vec4.buff[0];
+            _res.y = _vec4.buff[1];
+            _res.z = _vec4.buff[2];
+            _res.w = _vec4.buff[3];
+        }
+
+        return _res;
+    }
+
+    TSizei TGenericParams::getSizei( const std::string& name, const TSizei& def )
     {
         if ( m_sizeis.find( name ) != m_sizeis.end() )
         {
@@ -779,7 +827,7 @@ namespace tysoc
         return def;
     }
 
-    TSizef TGenericParams::getSizef( const std::string& name, const TSizef& def ) const
+    TSizef TGenericParams::getSizef( const std::string& name, const TSizef& def )
     {
         if ( m_sizefs.find( name ) != m_sizefs.end() )
         {
@@ -788,7 +836,7 @@ namespace tysoc
         return def;
     }
 
-    std::string TGenericParams::getString( const std::string& name, const std::string& def ) const
+    std::string TGenericParams::getString( const std::string& name, const std::string& def )
     {
         if ( m_strings.find( name ) != m_strings.end() )
         {

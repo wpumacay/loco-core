@@ -5,6 +5,7 @@ namespace tysoc {
 namespace mjcf {
 
     std::string MJCF_SCHEMA_PATH = std::string( TYSOC_PATH_RESOURCES ) + std::string( "xml/schema.xml" );
+    Schema* MJCF_SCHEMA = NULL;
     
     GenericElement* _parseGenericElement( Schema* schema, tinyxml2::XMLElement* xmlElement )
     {
@@ -205,13 +206,13 @@ namespace mjcf {
         {
             _res += elementName;
         }
-        else
-        {
-            std::cout << "WARNING> not supported mjc type: " 
-                      << type << " for mjcname generation" << std::endl;
-
-            _res += elementName;
-        }
+//         else
+//         {
+//             std::cout << "WARNING> not supported mjc type: " 
+//                       << type << " for mjcname generation" << std::endl;
+// 
+//             _res += elementName;
+//         }
 
         return _res;
     }

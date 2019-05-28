@@ -223,10 +223,9 @@ namespace tysoc
     {
         private :
 
+        std::set< std::string > m_keys; 
         std::map< std::string, int > m_ints;
         std::map< std::string, float > m_floats;
-        std::map< std::string, TVec3 > m_vec3s;
-        std::map< std::string, TVec4 > m_vec4s;
         std::map< std::string, TSizei > m_sizeis;
         std::map< std::string, TSizef > m_sizefs;
         std::map< std::string, std::string > m_strings;
@@ -235,19 +234,23 @@ namespace tysoc
 
         void set( const std::string& name, int val );
         void set( const std::string& name, float val );
+        void set( const std::string& name, const TVec2& vec );
         void set( const std::string& name, const TVec3& vec );
         void set( const std::string& name, const TVec4& vec );
         void set( const std::string& name, const TSizei& sizei );
         void set( const std::string& name, const TSizef& sizef );
         void set( const std::string& name, const std::string& str );
 
-        int getInt( const std::string& name, int def = 0 ) const;
-        float getFloat( const std::string& name, float def = 0.0f ) const;
-        TVec3 getVec3( const std::string& name, const TVec3& def = { 0.0f, 0.0f, 0.0f } ) const;
-        TVec4 getVec4( const std::string& name, const TVec4& def = { 0.0f, 0.0f, 0.0f, 1.0f } ) const;
-        TSizei getSizei( const std::string& name, const TSizei& def = { 0, { 0 } } ) const;
-        TSizef getSizef( const std::string& name, const TSizef& def = { 0, { 0.0f } } ) const;
-        std::string getString( const std::string& name, const std::string& def = "undefined" ) const;
+        bool hasParam( const std::string& name );
+
+        int getInt( const std::string& name, int def = 0 );
+        float getFloat( const std::string& name, float def = 0.0f );
+        TVec2 getVec2( const std::string& name, const TVec2& def = { 0.0f, 0.0f } );
+        TVec3 getVec3( const std::string& name, const TVec3& def = { 0.0f, 0.0f, 0.0f } );
+        TVec4 getVec4( const std::string& name, const TVec4& def = { 0.0f, 0.0f, 0.0f, 1.0f } );
+        TSizei getSizei( const std::string& name, const TSizei& def = { 0, { 0 } } );
+        TSizef getSizef( const std::string& name, const TSizef& def = { 0, { 0.0f } } );
+        std::string getString( const std::string& name, const std::string& def = "undefined" );
 
     };
 

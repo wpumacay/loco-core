@@ -9,7 +9,7 @@
 namespace tysoc {
 namespace mjcf {
 
-    static Schema* MJCF_SCHEMA = NULL;
+    extern Schema* MJCF_SCHEMA;
     extern std::string MJCF_SCHEMA_PATH;
 
     /**
