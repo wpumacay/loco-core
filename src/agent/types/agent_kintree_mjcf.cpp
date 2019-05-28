@@ -601,10 +601,10 @@ namespace agent {
     {
         auto _kinTreeActuatorPtr = new TKinTreeActuator();
         // grab the name
-        // _kinTreeActuatorPtr->name = mjcf::computeMjcfName( "actuator",
-        //                                                    actuatorElementPtr->getAttributeString( "name" ),
-        //                                                    m_name );
         _kinTreeActuatorPtr->name = actuatorElementPtr->getAttributeString( "name" );
+        // check in case the user forgot to set the name of the actuator
+        if ( _kinTreeActuatorPtr->name == "" )
+            _kinTreeActuatorPtr->name = actuatorElementPtr->getAttributeString( "joint" );
         // and the type of actuator
         _kinTreeActuatorPtr->type = actuatorElementPtr->etype;
         // and a reference to the joint it controls
