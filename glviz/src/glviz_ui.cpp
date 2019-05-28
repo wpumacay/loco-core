@@ -15,6 +15,12 @@ namespace viz {
 
         m_basicCurrentKinTreeName    = "";
         m_basicCurrentKinTreeIndx    = -1;
+
+        m_basicCurrentBodyIndx      = -1;
+        m_basicCurrentJointIndx     = -1;
+        m_basicCurrentCollisionIndx = -1;
+        m_basicCurrentVisualIndx    = -1;
+        m_lastElementPicked         = -1;
     }
 
     TCustomUI::~TCustomUI()
@@ -121,6 +127,7 @@ namespace viz {
         {
             size_t _indx = m_basicCurrentKinTreeIndx;
             _renderBasicKinTreeVisualsMenu( m_uiContextPtr->vizKinTreePtrs[_indx] );
+            _renderBasicKinTreeModelInfoMenu( ( agent::TAgentKinTree* ) _kinTreeAgents[_indx] );
             _renderBasicKinTreeActionsMenu( ( agent::TAgentKinTree* ) _kinTreeAgents[_indx] );
         }
     }
@@ -147,6 +154,228 @@ namespace viz {
 
         ImGui::End();
     }
+
+    void TCustomUI::_renderBasicKinTreeModelInfoMenu( agent::TAgentKinTree* agentKinTreePtr )
+    {
+        auto _bodies        = agentKinTreePtr->getKinTreeBodies();
+        auto _joints        = agentKinTreePtr->getKinTreeJoints();
+        auto _collisions    = agentKinTreePtr->getKinTreeCollisions();
+        auto _visuals       = agentKinTreePtr->getKinTreeVisuals();
+
+        std::string _currentBodyName = ( m_basicCurrentBodyIndx != -1 ) ? 
+                                            _bodies[m_basicCurrentBodyIndx]->name : "";
+
+        std::string _currentJointName = ( m_basicCurrentJointIndx != -1 ) ? 
+                                            _bodies[m_basicCurrentJointIndx]->name : "";
+
+        std::string _currentCollisionName = ( m_basicCurrentCollisionIndx != -1 ) ? 
+                                            _bodies[m_basicCurrentCollisionIndx]->name : "";
+
+        std::string _currentVisualName = ( m_basicCurrentVisualIndx != -1 ) ? 
+                                            _bodies[m_basicCurrentVisualIndx]->name : "";
+
+        ImGui::Begin( "Kinematic Tree model information" );
+
+        if ( ImGui::BeginCombo( "Bodies", _currentBodyName.c_str() ) )
+        {
+            for ( size_t i = 0; i < _bodies.size(); i++ )
+            {
+                bool _isSelected = ( _bodies[i]->name == _currentBodyName );
+
+                if ( ImGui::Selectable( _bodies[i]->name.c_str(), _isSelected ) )
+                {
+                    _currentBodyName = _bodies[i]->name;
+                    m_basicCurrentBodyIndx = i;
+
+                    m_lastElementPicked = LAST_PICKED_BODY;
+                }
+
+                if ( _isSelected )
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+
+        ImGui::Spacing();
+
+        if ( ImGui::BeginCombo( "Joint", _currentJointName.c_str() ) )
+        {
+            for ( size_t i = 0; i < _joints.size(); i++ )
+            {
+                bool _isSelected = ( _joints[i]->name == _currentJointName );
+
+                if ( ImGui::Selectable( _joints[i]->name.c_str(), _isSelected ) )
+                {
+                    _currentBodyName = _joints[i]->name;
+                    m_basicCurrentJointIndx = i;
+
+                    m_lastElementPicked = LAST_PICKED_JOINT;
+                }
+
+                if ( _isSelected )
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+
+        ImGui::Spacing();
+
+        if ( ImGui::BeginCombo( "Collision", _currentCollisionName.c_str() ) )
+        {
+            for ( size_t i = 0; i < _collisions.size(); i++ )
+            {
+                bool _isSelected = ( _collisions[i]->name == _currentCollisionName );
+
+                if ( ImGui::Selectable( _collisions[i]->name.c_str(), _isSelected ) )
+                {
+                    _currentBodyName = _collisions[i]->name;
+                    m_basicCurrentCollisionIndx = i;
+
+                    m_lastElementPicked = LAST_PICKED_COLLISION;
+                }
+
+                if ( _isSelected )
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+
+        ImGui::Spacing();
+
+        if ( ImGui::BeginCombo( "Visual", _currentVisualName.c_str() ) )
+        {
+            for ( size_t i = 0; i < _visuals.size(); i++ )
+            {
+                bool _isSelected = ( _visuals[i]->name == _currentVisualName );
+
+                if ( ImGui::Selectable( _visuals[i]->name.c_str(), _isSelected ) )
+                {
+                    _currentBodyName = _visuals[i]->name;
+                    m_basicCurrentVisualIndx = i;
+
+                    m_lastElementPicked = LAST_PICKED_VISUAL;
+                }
+
+                if ( _isSelected )
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+
+        if ( m_lastElementPicked == LAST_PICKED_BODY )
+            _showBodyInfo( _bodies[m_basicCurrentBodyIndx] );
+
+        if ( m_lastElementPicked == LAST_PICKED_JOINT )
+            _showJointInfo( _joints[m_basicCurrentJointIndx] );
+
+        if ( m_lastElementPicked == LAST_PICKED_COLLISION )
+            _showCollisionInfo( _collisions[m_basicCurrentCollisionIndx] );
+
+        if ( m_lastElementPicked == LAST_PICKED_VISUAL )
+            _showVisualInfo( _visuals[m_basicCurrentVisualIndx] );
+
+        ImGui::End();
+    }
+
+    void TCustomUI::_showBodyInfo( agent::TKinTreeBody* kinTreeBodyPtr  )
+    {
+        auto _relpos    = kinTreeBodyPtr->relTransform.getPosition();
+        auto _relquat   = kinTreeBodyPtr->relTransform.getRotQuaternion();
+
+        ImGui::Text( "body-name     : %s", kinTreeBodyPtr->name.c_str() );
+        ImGui::Text( "rel-pos       : (%.2f,%.2f,%.2f)", _relpos.x, _relpos.y, _relpos.z );
+        ImGui::Text( "rel-quat      : (%.2f,%.2f,%.2f,%.2f)", _relquat.x, _relquat.y, _relquat.z, _relquat.w );
+
+        if ( kinTreeBodyPtr->inertiaPtr )
+        {
+            auto _mass  = kinTreeBodyPtr->inertiaPtr->mass;
+            auto _ixx   = kinTreeBodyPtr->inertiaPtr->ixx;
+            auto _iyy   = kinTreeBodyPtr->inertiaPtr->iyy;
+            auto _izz   = kinTreeBodyPtr->inertiaPtr->izz;
+            auto _ixy   = kinTreeBodyPtr->inertiaPtr->ixy;
+            auto _ixz   = kinTreeBodyPtr->inertiaPtr->ixz;
+            auto _iyz   = kinTreeBodyPtr->inertiaPtr->iyz;
+
+            ImGui::Text( "mass          : %.3f", _mass );
+            ImGui::Text( "I(xx-yy-zz)   : %.3f, %.3f, %.3f", _ixx, _iyy, _izz );
+            ImGui::Text( "I(xy-xz-yz)   : %.3f, %.3f, %.3f", _ixy, _ixz, _iyz );
+        }
+    }
+
+    void TCustomUI::_showJointInfo( agent::TKinTreeJoint* kinTreeJointPtr )
+    {
+        auto _relpos        = kinTreeJointPtr->relTransform.getPosition();
+        auto _relquat       = kinTreeJointPtr->relTransform.getRotQuaternion();
+        auto _type          = kinTreeJointPtr->type;
+        auto _axis          = kinTreeJointPtr->axis;
+        auto _lowerLimit    = kinTreeJointPtr->lowerLimit;
+        auto _upperLimit    = kinTreeJointPtr->upperLimit;
+        auto _limited       = kinTreeJointPtr->limited;
+        auto _stiffness     = kinTreeJointPtr->stiffness;
+        auto _armature      = kinTreeJointPtr->armature;
+        auto _damping       = kinTreeJointPtr->damping;
+
+        ImGui::Text( "joint-name    : %s", kinTreeJointPtr->name.c_str() );
+        ImGui::Text( "rel-pos       : (%.2f,%.2f,%.2f)", _relpos.x, _relpos.y, _relpos.z );
+        ImGui::Text( "rel-quat      : (%.2f,%.2f,%.2f,%.2f)", _relquat.x, _relquat.y, _relquat.z, _relquat.w );
+        ImGui::Text( "type          : %s", _type.c_str() );
+        ImGui::Text( "axis          : (%.2f,%.2f,%.2f)", _axis.x, _axis.y, _axis.z );
+        ImGui::Text( "lower-limit   : %.3f", _lowerLimit );
+        ImGui::Text( "upper-limit   : %.3f", _upperLimit );
+        ImGui::Text( "limited       : %s", ( _limited ? "true" : "false" ) );
+        ImGui::Text( "stiffness     : %.2f", _stiffness );
+        ImGui::Text( "armature      : %.3f", _armature );
+        ImGui::Text( "damping       : %.3f", _damping );
+    }
+
+    void TCustomUI::_showCollisionInfo( agent::TKinTreeCollision* kinTreeCollisionPtr )
+    {
+        auto _relpos        = kinTreeCollisionPtr->relTransform.getPosition();
+        auto _relquat       = kinTreeCollisionPtr->relTransform.getRotQuaternion();
+        auto _type          = kinTreeCollisionPtr->geometry.type;
+        auto _size          = kinTreeCollisionPtr->geometry.size;
+        auto _conType       = kinTreeCollisionPtr->contype;
+        auto _conAffinity   = kinTreeCollisionPtr->conaffinity;
+        auto _conDim        = kinTreeCollisionPtr->condim;
+        auto _group         = kinTreeCollisionPtr->group;
+
+        ImGui::Text( "collision-name: %s", kinTreeCollisionPtr->name.c_str() );
+        ImGui::Text( "rel-pos       : (%.2f,%.2f,%.2f)", _relpos.x, _relpos.y, _relpos.z );
+        ImGui::Text( "rel-quat      : (%.2f,%.2f,%.2f,%.2f)", _relquat.x, _relquat.y, _relquat.z, _relquat.w );
+        ImGui::Text( "type          : %s", _type.c_str() );
+        ImGui::Text( "size          : (%.2f,%.2f,%.2f)", _size.x, _size.y, _size.z );
+        ImGui::Text( "contype       : %d", _conType );
+        ImGui::Text( "conaffinity   : %d", _conAffinity );
+        ImGui::Text( "condim        : %d", _conDim );
+        ImGui::Text( "group         : %d", _group );
+    }
+
+    void TCustomUI::_showVisualInfo( agent::TKinTreeVisual* kinTreeVisualPtr )
+    {
+        auto _relpos        = kinTreeVisualPtr->relTransform.getPosition();
+        auto _relquat       = kinTreeVisualPtr->relTransform.getRotQuaternion();
+        auto _type          = kinTreeVisualPtr->geometry.type;
+        auto _size          = kinTreeVisualPtr->geometry.size;
+        auto _conType       = kinTreeVisualPtr->contype;
+        auto _conAffinity   = kinTreeVisualPtr->conaffinity;
+        auto _conDim        = kinTreeVisualPtr->condim;
+        auto _group         = kinTreeVisualPtr->group;
+        auto _friction      = kinTreeVisualPtr->friction;
+        auto _density       = kinTreeVisualPtr->density;
+
+        ImGui::Text( "visual-name   : %s", kinTreeVisualPtr->name.c_str() );
+        ImGui::Text( "rel-pos       : (%.2f,%.2f,%.2f)", _relpos.x, _relpos.y, _relpos.z );
+        ImGui::Text( "rel-quat      : (%.2f,%.2f,%.2f,%.2f)", _relquat.x, _relquat.y, _relquat.z, _relquat.w );
+        ImGui::Text( "type          : %s", _type.c_str() );
+        ImGui::Text( "size          : (%.2f,%.2f,%.2f)", _size.x, _size.y, _size.z );
+        ImGui::Text( "contype       : %d", _conType );
+        ImGui::Text( "conaffinity   : %d", _conAffinity );
+        ImGui::Text( "condim        : %d", _conDim );
+        ImGui::Text( "group         : %d", _group );
+        ImGui::Text( "friction      : %.3f", _friction.buff[0] );
+        ImGui::Text( "density       : %.2f", _density );
+    }
+
 
     void TCustomUI::_renderBasicKinTreeActionsMenu( agent::TAgentKinTree* agentKinTreePtr )
     {
