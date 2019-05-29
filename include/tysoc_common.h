@@ -302,6 +302,9 @@ namespace tysoc
         }
     };
 
+    TScalar computeVolumeFromShape( const std::string& type,
+                                    const TVec3& size );
+
     void log( const std::string& msg );
     void info( const std::string& msg );
     void warn( const std::string& msg );

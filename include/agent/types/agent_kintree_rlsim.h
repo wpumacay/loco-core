@@ -18,6 +18,8 @@ namespace agent {
 
         rlsim::RlsimModel* m_rlsimModelPtr;
 
+        std::map< std::string, rlsim::RlsimJoint* > m_jointNameToJointNodeMap;
+
         TKinTreeBody* _processNode( rlsim::RlsimJoint* rlsimJointPtr, 
                                     TKinTreeBody* parentKinBodyPtr );
 

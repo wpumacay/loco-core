@@ -23,6 +23,8 @@ namespace agent {
     {
         // @CHECK: calling base virtual destructor?
         m_rlsimModelPtr = NULL;
+
+        m_jointNameToJointNodeMap.clear();
     }
 
     void TAgentKinTreeRlsim::_constructKinTree()
@@ -87,6 +89,17 @@ namespace agent {
 
         // // create the inertia also from the body info
         // _kinTreeBodyPtr->inertiaPtr = _processInertialFromRlsim( _rlsimBodyPtr );
+
+        // @HACK: Compute density required to give required mass instead
+        // of using the given mass and computing the inertia matrix ourselves
+        if ( _rlsimBodyPtr->mass > 0. )
+        {
+            // Compute required density
+            TScalar _targetMass = _rlsimBodyPtr->mass;
+            TScalar _volume = computeVolumeFromShape( _rlsimBodyPtr->shape,
+                                                      _rlsimBodyPtr->size );
+            _kinTreeCollisionPtr->density = _targetMass / _volume;
+        }
 
         // process the next nodes via the child joints
         auto _rlsimJoints = rlsimJointPtr->childJoints;
@@ -183,6 +196,9 @@ namespace agent {
         // and to the joints map
         m_mapKinTreeJoints[ _kinTreeJointPtr->name ] = _kinTreeJointPtr;
 
+        // save the rlsim node ptr for later usage (actuators)
+        m_jointNameToJointNodeMap[ _kinTreeJointPtr->name ] = rlsimJointPtr;
+
         return _kinTreeJointPtr;
     }
 
@@ -232,9 +248,9 @@ namespace agent {
         // grab the mass
         _kinTreeInertia->mass = rlSimBodyPtr->mass;
         // and set the inertia matrix to zeros
-        _kinTreeInertia->ixx = 0.0f;
-        _kinTreeInertia->iyy = 0.0f;
-        _kinTreeInertia->izz = 0.0f;
+        _kinTreeInertia->ixx = 0.1f;
+        _kinTreeInertia->iyy = 0.1f;
+        _kinTreeInertia->izz = 0.1f;
         _kinTreeInertia->ixy = 0.0f;
         _kinTreeInertia->ixz = 0.0f;
         _kinTreeInertia->iyz = 0.0f;
@@ -254,6 +270,9 @@ namespace agent {
                 continue;
             }
 
+            // grab the rlsim joint reference
+            auto _rlsimJointPtr = m_jointNameToJointNodeMap[m_kinTreeJoints[q]->name];
+
             auto _kinTreeActuatorPtr = new TKinTreeActuator();
             _kinTreeActuatorPtr->name = rlsim::computeName( "actuator",
                                                             m_kinTreeJoints[q]->name,
@@ -268,7 +287,17 @@ namespace agent {
             _kinTreeActuatorPtr->clampCtrl = true;
             _kinTreeActuatorPtr->kp = 0.0f;
             _kinTreeActuatorPtr->kv = 0.0f;
-            _kinTreeActuatorPtr->gear = { 1, { 10.0f } };
+
+            if ( _rlsimJointPtr->torqueLimit > 0. )
+            {
+                _kinTreeActuatorPtr->gear = { 1, { _rlsimJointPtr->torqueLimit } };
+            }
+            else
+            {
+                std::cout << "WARNING> joint: " << m_kinTreeJoints[q]->name
+                          << " has no torque limits" << std::endl;
+                _kinTreeActuatorPtr->gear = { 1, { 10. } };
+            }
 
             m_kinTreeActuators.push_back( _kinTreeActuatorPtr );
             m_mapKinTreeActuators[ _kinTreeActuatorPtr->name ] = _kinTreeActuatorPtr;

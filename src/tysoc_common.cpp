@@ -867,6 +867,45 @@ namespace tysoc
         return _vec3s;
     }
 
+    TScalar computeVolumeFromShape( const std::string& type,
+                                    const TVec3& size )
+    {
+        TScalar _volume;
+        TScalar _pi = 3.141592653589793;
+
+        if ( type == "box" )
+        {
+            _volume = ( size.x * size.y * size.z );
+        }
+        else if ( type == "sphere" )
+        {
+            _volume = _pi * ( size.x * size.x * size.x );
+        }
+        else if ( type == "cylinder" )
+        {
+            auto _cylinderRadius = size.x;
+            auto _cylinderHeight = size.y;
+
+            _volume = ( _pi * _cylinderRadius * _cylinderRadius ) * _cylinderHeight;
+        }
+        else if ( type == "capsule" )
+        {
+            auto _capsuleRadius = size.x;
+            auto _capsuleHeight = size.y;
+
+            _volume = ( _pi * _capsuleRadius * _capsuleRadius ) * _capsuleHeight +
+                      ( _pi * _capsuleRadius * _capsuleRadius * _capsuleRadius );
+        }
+        else
+        {
+            std::cout << "WARNING> unsupported type: " << type 
+                      << " for volume computation" << std::endl;
+            _volume = 0.1;
+        }
+
+        return _volume;
+    }
+
     void log( const std::string& msg )
     {
         std::cout << "LOG> " << msg << std::endl;
