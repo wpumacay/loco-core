@@ -167,13 +167,13 @@ namespace viz {
                                             _bodies[m_basicCurrentBodyIndx]->name : "";
 
         std::string _currentJointName = ( m_basicCurrentJointIndx != -1 ) ? 
-                                            _bodies[m_basicCurrentJointIndx]->name : "";
+                                            _joints[m_basicCurrentJointIndx]->name : "";
 
         std::string _currentCollisionName = ( m_basicCurrentCollisionIndx != -1 ) ? 
-                                            _bodies[m_basicCurrentCollisionIndx]->name : "";
+                                            _collisions[m_basicCurrentCollisionIndx]->name : "";
 
         std::string _currentVisualName = ( m_basicCurrentVisualIndx != -1 ) ? 
-                                            _bodies[m_basicCurrentVisualIndx]->name : "";
+                                            _visuals[m_basicCurrentVisualIndx]->name : "";
 
         ImGui::Begin( "Kinematic Tree model information" );
 

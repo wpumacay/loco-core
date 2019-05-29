@@ -395,6 +395,7 @@ namespace agent {
         _kinTreeJointPtr->axis = { _axis.x, _axis.y, _axis.z };
         // and the joint value clamping flag
         _kinTreeJointPtr->limited = ( _grabString( jointElementPtr, "limited", "false" ) == "true" );
+        _kinTreeJointPtr->limited |= jointElementPtr->hasAttributeVec2( "range" );
         // in case not limited, assume low > high
         if ( !_kinTreeJointPtr->limited )
         {
