@@ -3,8 +3,9 @@
   <worldbody>
     <body name="rootbody" pos="0 0 0" >
       <joint name="rootfree" type="free"/>
-      <!--<geom name="rootgeom" material="self" type="capsule" size="0.1 0.1" pos="0.25 0.25 0.25" quat="1 0.4 0.8 1.2"/>-->
-      <geom name="rootgeom" material="self" type="box" size="0.2 0.2 0.2" />
+      <geom name="rootgeom" material="self" type="sphere" size="0.1" />
+      <!--<geom name="rootgeom" material="self" type="capsule" size="0.1 0.1" />-->
+      <!--<geom name="rootgeom" material="self" type="box" size="0.2 0.2 0.2" />-->
     </body>
   </worldbody>
 

@@ -96,8 +96,8 @@ namespace agent {
         {
             // Compute required density
             TScalar _targetMass = _rlsimBodyPtr->mass;
-            TScalar _volume = computeVolumeFromShape( _rlsimBodyPtr->shape,
-                                                      _rlsimBodyPtr->size );
+            TScalar _volume = computeVolumeFromShape( _kinTreeCollisionPtr->geometry.type,
+                                                      _kinTreeCollisionPtr->geometry.size );
             _kinTreeCollisionPtr->density = _targetMass / _volume;
         }
 

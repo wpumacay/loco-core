@@ -879,7 +879,7 @@ namespace tysoc
         }
         else if ( type == "sphere" )
         {
-            _volume = _pi * ( size.x * size.x * size.x );
+            _volume = (4. / 3.) * _pi * ( size.x * size.x * size.x );
         }
         else if ( type == "cylinder" )
         {
