@@ -349,6 +349,8 @@ namespace agent {
 
         std::string m_modelTemplateType;
 
+        TGenericParams m_summaryInfo;
+
         void _updateAgentInternal( float dt ) override;
         void _resetAgentInternal() override;
 
@@ -392,6 +394,8 @@ namespace agent {
 
         std::string toString();
         std::string _strTraverse( TKinTreeBody* kinTreeBodyPtr, size_t depth );
+
+        TGenericParams& getSummary();
     };
 
 

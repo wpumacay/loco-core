@@ -845,6 +845,28 @@ namespace tysoc
         return def;
     }
 
+    std::map< std::string, float > TGenericParams::floats()
+    {
+        return m_floats;
+    }
+
+    std::map< std::string, TVec3 > TGenericParams::vec3s()
+    {
+        std::map< std::string, TVec3 > _vec3s;
+
+        for ( auto _it = m_sizefs.begin(); _it != m_sizefs.end(); _it++  )
+        {
+            if ( _it->second.ndim != 3 )
+                continue;
+
+            _vec3s[_it->first] = { _it->second.buff[0],
+                                   _it->second.buff[1],
+                                   _it->second.buff[2] };
+        }
+
+        return _vec3s;
+    }
+
     void log( const std::string& msg )
     {
         std::cout << "LOG> " << msg << std::endl;

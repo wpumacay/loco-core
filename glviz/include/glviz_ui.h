@@ -59,6 +59,7 @@ namespace viz {
         void _renderBasicKinTreeVisualsMenu( TCustomVizKinTree* vizKinTreePtr );
         void _renderBasicKinTreeModelInfoMenu( agent::TAgentKinTree* agentKinTreePtr );
         void _renderBasicKinTreeActionsMenu( agent::TAgentKinTree* agentKinTreePtr );
+        void _renderBasicKinTreeSummary( agent::TAgentKinTree* agentKinTreePtr );
 
         void _showBodyInfo( agent::TKinTreeBody* kinTreeBodyPtr  );
         void _showJointInfo( agent::TKinTreeJoint* kinTreeJointPtr );

@@ -129,6 +129,7 @@ namespace viz {
             _renderBasicKinTreeVisualsMenu( m_uiContextPtr->vizKinTreePtrs[_indx] );
             _renderBasicKinTreeModelInfoMenu( ( agent::TAgentKinTree* ) _kinTreeAgents[_indx] );
             _renderBasicKinTreeActionsMenu( ( agent::TAgentKinTree* ) _kinTreeAgents[_indx] );
+            _renderBasicKinTreeSummary( ( agent::TAgentKinTree* ) _kinTreeAgents[_indx] );
         }
     }
 
@@ -418,6 +419,36 @@ namespace viz {
                              _kinBodySensor->linAcceleration.y, 
                              _kinBodySensor->linAcceleration.z );
             }
+        }
+
+        ImGui::End();
+    }
+
+    void TCustomUI::_renderBasicKinTreeSummary( agent::TAgentKinTree* agentKinTreePtr )
+    {
+        ImGui::Begin( "Kinematic Tree Summary" );
+
+        TGenericParams& _summary = agentKinTreePtr->getSummary();
+
+        // show all floats first
+        auto _floats = _summary.floats();
+        
+        for ( auto _it = _floats.begin(); _it != _floats.end(); _it++ )
+        {
+            std::string _strField = _it->first + " : " + std::to_string( _it->second ) ;
+            ImGui::Text( _strField.c_str() );
+        }
+
+        // show all vec3s next
+        auto _vec3s = _summary.vec3s();
+
+        for ( auto _it = _vec3s.begin(); _it != _vec3s.end(); _it++ )
+        {
+            std::string _strField = _it->first + " : (" + 
+                                    std::to_string( _it->second.x ) + "," +
+                                    std::to_string( _it->second.y ) + "," +
+                                    std::to_string( _it->second.z ) + ")";
+            ImGui::Text( _strField.c_str() );
         }
 
         ImGui::End();

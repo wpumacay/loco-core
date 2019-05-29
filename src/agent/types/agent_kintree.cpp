@@ -793,4 +793,9 @@ namespace agent {
         return _res;
     }
 
+    TGenericParams& TAgentKinTree::getSummary()
+    {
+        return m_summaryInfo;
+    }
+
 }}

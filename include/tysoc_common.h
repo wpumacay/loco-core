@@ -252,6 +252,8 @@ namespace tysoc
         TSizef getSizef( const std::string& name, const TSizef& def = { 0, { 0.0f } } );
         std::string getString( const std::string& name, const std::string& def = "undefined" );
 
+        std::map< std::string, float > floats();
+        std::map< std::string, TVec3 > vec3s();
     };
 
     template< class T >
