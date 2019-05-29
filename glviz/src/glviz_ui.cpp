@@ -436,7 +436,7 @@ namespace viz {
         for ( auto _it = _floats.begin(); _it != _floats.end(); _it++ )
         {
             std::string _strField = _it->first + " : " + std::to_string( _it->second ) ;
-            ImGui::Text( _strField.c_str() );
+            ImGui::Text( "%s", _strField.c_str() );
         }
 
         // show all vec3s next
@@ -448,7 +448,7 @@ namespace viz {
                                     std::to_string( _it->second.x ) + "," +
                                     std::to_string( _it->second.y ) + "," +
                                     std::to_string( _it->second.z ) + ")";
-            ImGui::Text( _strField.c_str() );
+            ImGui::Text( "%s", _strField.c_str() );
         }
 
         ImGui::End();
