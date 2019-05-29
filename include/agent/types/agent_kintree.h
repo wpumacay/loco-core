@@ -125,8 +125,8 @@ namespace agent {
             conaffinity     = -1;   // -1 indicates not available
             condim          = -1;   // -1 indicates not available
             group           = -1;   // -1 indicates not available
-            friction.ndim   = 0;    // 0 indicates not available
-            density         = -1.0; // (-) indicates not available
+            friction        = { 3, { 1., 0.005, 0.0001 } };
+            density         = TYSOC_DEFAULT_DENSITY;
         }
     };
 

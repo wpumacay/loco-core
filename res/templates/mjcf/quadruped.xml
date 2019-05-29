@@ -132,7 +132,7 @@ THIS MODEL IS NOT MY OWN
       <site name="rf_33" class="rangefinder" fromto=".41  .01  .08 .4  0 .1"/>
       <site name="rf_34" class="rangefinder" fromto=".41  .02  .08 .4  0 .1"/>
 
-      <geom name="torso" type="ellipsoid" size=".3 .27 .2" density="1000"/>
+      <geom name="torso" type="sphere" size=".3 .27 .2" density="1000"/>
       <site name="torso_touch" type="box" size=".26 .26 .26" rgba="0 0 1 0"/>
       <site name="torso" size=".05" rgba="1 0 0 1" />
 
