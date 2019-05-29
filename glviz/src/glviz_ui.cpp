@@ -339,6 +339,8 @@ namespace viz {
         auto _conAffinity   = kinTreeCollisionPtr->conaffinity;
         auto _conDim        = kinTreeCollisionPtr->condim;
         auto _group         = kinTreeCollisionPtr->group;
+        auto _friction      = kinTreeCollisionPtr->friction;
+        auto _density       = kinTreeCollisionPtr->density;
 
         ImGui::Text( "collision-name: %s", kinTreeCollisionPtr->name.c_str() );
         ImGui::Text( "rel-pos       : (%.2f,%.2f,%.2f)", _relpos.x, _relpos.y, _relpos.z );
@@ -349,6 +351,8 @@ namespace viz {
         ImGui::Text( "conaffinity   : %d", _conAffinity );
         ImGui::Text( "condim        : %d", _conDim );
         ImGui::Text( "group         : %d", _group );
+        ImGui::Text( "friction      : %.3f", _friction.buff[0] );
+        ImGui::Text( "density       : %.2f", _density );
     }
 
     void TCustomUI::_showVisualInfo( agent::TKinTreeVisual* kinTreeVisualPtr )
@@ -357,24 +361,12 @@ namespace viz {
         auto _relquat       = kinTreeVisualPtr->relTransform.getRotQuaternion();
         auto _type          = kinTreeVisualPtr->geometry.type;
         auto _size          = kinTreeVisualPtr->geometry.size;
-        auto _conType       = kinTreeVisualPtr->contype;
-        auto _conAffinity   = kinTreeVisualPtr->conaffinity;
-        auto _conDim        = kinTreeVisualPtr->condim;
-        auto _group         = kinTreeVisualPtr->group;
-        auto _friction      = kinTreeVisualPtr->friction;
-        auto _density       = kinTreeVisualPtr->density;
 
         ImGui::Text( "visual-name   : %s", kinTreeVisualPtr->name.c_str() );
         ImGui::Text( "rel-pos       : (%.2f,%.2f,%.2f)", _relpos.x, _relpos.y, _relpos.z );
         ImGui::Text( "rel-quat      : (%.2f,%.2f,%.2f,%.2f)", _relquat.x, _relquat.y, _relquat.z, _relquat.w );
         ImGui::Text( "type          : %s", _type.c_str() );
         ImGui::Text( "size          : (%.2f,%.2f,%.2f)", _size.x, _size.y, _size.z );
-        ImGui::Text( "contype       : %d", _conType );
-        ImGui::Text( "conaffinity   : %d", _conAffinity );
-        ImGui::Text( "condim        : %d", _conDim );
-        ImGui::Text( "group         : %d", _group );
-        ImGui::Text( "friction      : %.3f", _friction.buff[0] );
-        ImGui::Text( "density       : %.2f", _density );
     }
 
 

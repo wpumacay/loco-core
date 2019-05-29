@@ -105,6 +105,7 @@ namespace agent {
     struct TKinTreeCollision
     {
         std::string     name;
+        TMaterial       material;
         TGeometry       geometry;       // Geometry information
         TKinTreeBody*   parentBodyPtr;  // Parent body
         TMat4           relTransform;   // Relative transform to parent body
@@ -113,15 +114,19 @@ namespace agent {
         int             conaffinity;    // (mujoco) Conaffinity bitmask for collision detection
         int             condim;         // (mujoco) Contact dimensionality
         int             group;          // (mujoco) Group this object belongs (for compiler calcs.)
+        TSizef          friction;       // (mujoco) Friction values shape
+        TScalar         density;        // (mujoco)  
 
         TKinTreeCollision()
         {
             parentBodyPtr   = NULL;
             // @CHECK|@WIP : Initialize variant here
-            contype         = -1; // -1 indicates not available
-            conaffinity     = -1; // -1 indicates not available
-            condim          = -1; // -1 indicates not available
-            group           = -1; // -1 indicates not available
+            contype         = -1;   // -1 indicates not available
+            conaffinity     = -1;   // -1 indicates not available
+            condim          = -1;   // -1 indicates not available
+            group           = -1;   // -1 indicates not available
+            friction.ndim   = 0;    // 0 indicates not available
+            density         = -1.0; // (-) indicates not available
         }
     };
 
@@ -133,25 +138,13 @@ namespace agent {
         TKinTreeBody*   parentBodyPtr;  // Parent body
         TMat4           relTransform;   // Relative transform to parent body
         // @CHECK|@WIP : Add a variant here, for special params given model data
-        int             contype;        // (mujoco) Contype bitmask for collision detection
-        int             conaffinity;    // (mujoco) Conaffinity bitmask for collision detection
-        int             condim;         // (mujoco) Contact dimensionality
-        int             group;          // (mujoco) Group this object belongs (for compiler calcs.)
         std::string     materialName;   // (mujoco) Name of the material from includes (materials.xml) (@CHECK: should use TMaterial)
-        TSizef          friction;       // (mujoco) Friction values shape
-        TScalar         density;        // (mujoco)  
 
         TKinTreeVisual()
         {
             parentBodyPtr   = NULL;
             // @CHECK|@WIP : Initialize variant here
-            contype         = -1; // -1 indicates not available
-            conaffinity     = -1; // -1 indicates not available
-            condim          = -1; // -1 indicates not available
-            group           = -1; // -1 indicates not available
             materialName    = "";
-            density         = -1.0; // (-) indicates not available
-            friction.ndim   = 0; // 0 indicates not available
         }
     };
 

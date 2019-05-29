@@ -472,20 +472,8 @@ namespace agent {
         _kinTreeVisualPtr->material.diffuse     = { _rgba.x, _rgba.y, _rgba.z };
         _kinTreeVisualPtr->material.specular    = { _rgba.x, _rgba.y, _rgba.z };
 
-        // and the contype collision bitmask (@GENERIC)
-        _kinTreeVisualPtr->contype = _grabInt( geomElementPtr, "contype", -1 );
-        // and the conaffinity collision bitmask (@GENERIC)
-        _kinTreeVisualPtr->conaffinity = _grabInt( geomElementPtr, "conaffinity", -1 );
-        // and the condim contact dimensionality (@GENERIC)
-        _kinTreeVisualPtr->condim = _grabInt( geomElementPtr, "condim", -1 );
-        // and the group the object belongs (for internal compiler calcs.) (@GENERIC)
-        _kinTreeVisualPtr->group = _grabInt( geomElementPtr, "group", -1 );
         // and the material name (@GENERIC)
         _kinTreeVisualPtr->materialName = _grabString( geomElementPtr, "material", "" );
-        // and the friction (@GENERIC)
-        _kinTreeVisualPtr->friction = _grabArrayFloat( geomElementPtr, "friction", { 3, { 1., 0.005, 0.0001 } } );
-        // and the density (@GENERIC)
-        _kinTreeVisualPtr->density = _grabFloat( geomElementPtr, "density", 1000. );
         // and store it in the visuals buffer
         m_kinTreeVisuals.push_back( _kinTreeVisualPtr );
         // and to the visuals map
@@ -534,6 +522,12 @@ namespace agent {
             _kinTreeCollisionPtr->relTransform.setPosition( _posFromFromto );
             _kinTreeCollisionPtr->relTransform.setRotation( _rotFromFromto );
         }
+
+        auto _rgba = _grabVec4( geomElementPtr, "rgba", TYSOC_DEFAULT_RGBA_COLOR );
+
+        _kinTreeCollisionPtr->material.diffuse     = { _rgba.x, _rgba.y, _rgba.z };
+        _kinTreeCollisionPtr->material.specular    = { _rgba.x, _rgba.y, _rgba.z };
+
         // and the contype collision bitmask (@GENERIC)
         _kinTreeCollisionPtr->contype = _grabInt( geomElementPtr, "contype", -1 );
         // and the conaffinity collision bitmask (@GENERIC)
@@ -542,6 +536,10 @@ namespace agent {
         _kinTreeCollisionPtr->condim = _grabInt( geomElementPtr, "condim", -1 );
         // and the group the object belongs (for internal compiler calcs.) (@GENERIC)
         _kinTreeCollisionPtr->group = _grabInt( geomElementPtr, "group", -1 );
+        // and the friction (@GENERIC)
+        _kinTreeCollisionPtr->friction = _grabArrayFloat( geomElementPtr, "friction", { 3, { 1., 0.005, 0.0001 } } );
+        // and the density (@GENERIC)
+        _kinTreeCollisionPtr->density = _grabFloat( geomElementPtr, "density", 1000. );
         // and store it in the collisions buffer
         m_kinTreeCollisions.push_back( _kinTreeCollisionPtr );
         // and to the collisions map

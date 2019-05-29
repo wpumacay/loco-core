@@ -314,14 +314,6 @@ namespace agent {
         _kinTreeVisualPtr->material.diffuse     = { _rgba.x, _rgba.y, _rgba.z };
         _kinTreeVisualPtr->material.specular    = { _rgba.x, _rgba.y, _rgba.z };
 
-        // and the contype collision bitmask (@GENERIC)
-        _kinTreeVisualPtr->contype = 1;
-        // and the conaffinity collision bitmask (@GENERIC)
-        _kinTreeVisualPtr->conaffinity = 0;
-        // and the condim contact dimensionality (@GENERIC)
-        _kinTreeVisualPtr->condim = -1;
-        // and the group the object belongs (for internal compiler calcs.) (@GENERIC)
-        _kinTreeVisualPtr->group = -1;
         // and the material name (@GENERIC)
         _kinTreeVisualPtr->materialName = "";
         // and store it in the visuals buffer
