@@ -144,6 +144,11 @@ namespace viz {
 
         m_uiContextPtr->vizKinTreePtrs  = m_vizKinTreeWrappers;
 
+        if ( m_uiContextPtr->isDebugDrawingActive )
+            m_simulationPtr->enableDebugDrawing();
+        else
+            m_simulationPtr->disableDebugDrawing();
+
         m_uiPtr->renderUI();
     }
 

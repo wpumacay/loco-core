@@ -31,6 +31,11 @@ namespace viz {
         m_scenarioPtr = scenarioPtr;
     }
 
+    void TIVisualizer::setSimulation( TISimulation* simulationPtr )
+    {
+        m_simulationPtr = simulationPtr;
+    }
+
     void TIVisualizer::collectSimPayload( void* payload, const std::string& type )
     {
         _collectSimPayloadInternal( payload, type );

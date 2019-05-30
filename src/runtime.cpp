@@ -195,7 +195,10 @@ namespace tysoc {
         }
 
         if ( m_simulationPtr )
+        {
             m_simulationPtr->setVisualizer( m_visualizerPtr );
+            m_visualizerPtr->setSimulation( m_simulationPtr );
+        }
 
         return m_visualizerPtr;
     }

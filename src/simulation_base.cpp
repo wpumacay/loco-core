@@ -81,6 +81,20 @@ namespace tysoc {
         m_isRunning = ( m_isRunning ) ? false : true;
     }
 
+    void TISimulation::enableDebugDrawing()
+    {
+        m_isDebugDrawingActive = true;
+    }
+    void TISimulation::disableDebugDrawing()
+    {
+        m_isDebugDrawingActive = false;
+    }
+
+    bool TISimulation::isDebugDrawingActive()
+    {
+        return m_isDebugDrawingActive;
+    }
+
     void TISimulation::setVisualizer( viz::TIVisualizer* visualizerPtr )
     {
         m_visualizerPtr = visualizerPtr;

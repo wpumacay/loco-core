@@ -107,6 +107,8 @@ namespace viz {
         }
 
         ImGui::Spacing();
+        ImGui::Checkbox( "Show debug draws", &m_uiContextPtr->isDebugDrawingActive );
+        ImGui::Spacing();
         ImGui::Checkbox( "View Sandbox Menu", &m_uiContextPtr->isSandboxUiActive );
 
         if ( m_uiContextPtr->isSandboxUiActive )

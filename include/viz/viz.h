@@ -6,6 +6,13 @@
 // UI functionality
 #include <viz/ui.h>
 #include <viz/keys.h>
+// simulation (to grab a reference)
+#include <simulation_base.h>
+
+namespace tysoc
+{
+    class TISimulation;
+}
 
 namespace tysoc {
 namespace viz {
@@ -51,6 +58,8 @@ namespace viz {
 
         // A reference to the scenario, to grab the agents, terraingens, etc.
         TScenario* m_scenarioPtr;
+        // A reference to the simulation, to handle some information
+        TISimulation* m_simulationPtr;
         // A reference to the UI handler
         TIVisualizerUI* m_uiPtr;
 
@@ -98,6 +107,7 @@ namespace viz {
                       const std::string& workingDir );
         ~TIVisualizer();
 
+        void setSimulation( TISimulation* simulationPtr );
         void setScenario( TScenario* scenarioPtr );
         void collectSimPayload( void* payload, const std::string& type );
 

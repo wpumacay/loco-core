@@ -21,6 +21,7 @@ namespace viz {
     {
         bool                                            isUiActive;
         bool                                            isBasicUiActive;
+        bool                                            isDebugDrawingActive;
         bool                                            isSandboxUiActive;
         GLFWwindow*                                     glfwWindowPtr;
         viz::TGLVizSandbox*                             vizSandboxPtr;

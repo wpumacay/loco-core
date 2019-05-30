@@ -9,6 +9,11 @@
 
 namespace tysoc {
 
+    namespace viz
+    {
+        class TIVisualizer;
+    }
+
     class TKinTreeAgentWrapper;
     class TBodyWrapper;
 
@@ -65,6 +70,7 @@ namespace tysoc {
         viz::TIVisualizer* m_visualizerPtr;
 
         bool m_isRunning;
+        bool m_isDebugDrawingActive;
 
         virtual bool _initializeInternal() = 0;
         virtual void _preStepInternal() = 0;
@@ -86,6 +92,10 @@ namespace tysoc {
         void reset();
 
         void togglePause();
+
+        void enableDebugDrawing();
+        void disableDebugDrawing();
+        bool isDebugDrawingActive();
 
         void setVisualizer( viz::TIVisualizer* visualizerPtr );
         viz::TIVisualizer* getVisualizer();
