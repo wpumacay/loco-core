@@ -83,9 +83,57 @@ namespace agent {
         _kinTreeBodyPtr->childCollisions.push_back( _kinTreeCollisionPtr );
 
         // create a single joint as dof using the current rlsimjoint (it encodes the local dof)
+        // @HACK: If there is a spherical joint, treat is as 3 separate revolute joints
+    #if HACK_SPLIT_SPHERICAL_JOINTS
+        if ( rlsimJointPtr->type == "spherical" )
+    #else
+        if ( false )
+    #endif
+        {
+            std::vector< rlsim::RlsimJoint* > _joints;
+            _joints.push_back( new rlsim::RlsimJoint() );
+            _joints.push_back( new rlsim::RlsimJoint() );
+            _joints.push_back( new rlsim::RlsimJoint() );
+
+            // configure each joint appropriately
+            for ( size_t q = 0; q < _joints.size(); q++ )
+            {
+                _joints[q]->name = rlsimJointPtr->name + "_" + std::to_string( (q + 1) );
+                _joints[q]->type = "revolute";
+                _joints[q]->localPos = rlsimJointPtr->localPos;
+                _joints[q]->localEuler = rlsimJointPtr->localEuler;
+                _joints[q]->parentJointId = rlsimJointPtr->parentJointId;
+                _joints[q]->torqueLimit = rlsimJointPtr->torqueLimit;
+                _joints[q]->limitsPerDof.push_back( rlsimJointPtr->limitsPerDof[q] );
+
+                if ( q == 0 )
+                    _joints[q]->axis = { 1., 0., 0. };
+                else if ( q == 1 )
+                    _joints[q]->axis = { 0., 1., 0. };
+                else
+                    _joints[q]->axis = { 0., 0., 1. };
+            }
+
+            // construct all joints for this spherical
+            for ( size_t q = 0; q < _joints.size(); q++ )
+            {
+                auto _kinTreeJointPtr = _processJointFromRlsim( _joints[q] );
+                _kinTreeJointPtr->parentBodyPtr = _kinTreeBodyPtr;
+                _kinTreeBodyPtr->childJoints.push_back( _kinTreeJointPtr );
+            }
+
+            // save these dummies for ourselves (later usage)
+            for ( size_t q = 0; q < _joints.size(); q++ )
+                m_hackSphericalJoints.push_back( _joints[q] );
+
+            _joints.clear();
+        }
+        else
+        {
         auto _kinTreeJointPtr = _processJointFromRlsim( rlsimJointPtr );
         _kinTreeJointPtr->parentBodyPtr = _kinTreeBodyPtr;
         _kinTreeBodyPtr->childJoints.push_back( _kinTreeJointPtr );
+        }
 
         // // create the inertia also from the body info
         // _kinTreeBodyPtr->inertiaPtr = _processInertialFromRlsim( _rlsimBodyPtr );
@@ -171,8 +219,7 @@ namespace agent {
         else
             _kinTreeJointPtr->type = rlsimJointPtr->type;
 
-        // the joint axis is "z", as the joint frame is aligned to the body frame
-        _kinTreeJointPtr->axis = TVec3( 1.0f, 0.0f, 0.0f );
+        _kinTreeJointPtr->axis = rlsimJointPtr->axis;
 
         // grab the joint limits (@TODO: for ball joints should have per-dof ...
         // limits, for now just pick first one)

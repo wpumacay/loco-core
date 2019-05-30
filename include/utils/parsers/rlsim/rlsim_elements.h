@@ -56,6 +56,7 @@ namespace rlsim {
     {
         std::string                 name;
         std::string                 type;
+        TVec3                       axis;
         int                         parentJointId;
         TVec3                       localPos;
         TVec3                       localEuler;
@@ -68,6 +69,8 @@ namespace rlsim {
         RlsimJoint()
         {
             parentJointId = -1;
+            // the joint axis is "z", as the joint frame is aligned to the body frame
+            axis = TVec3( 1.0f, 0.0f, 0.0f );
         }
 
         void collectAttribs( const nlohmann::json& jsonElement, const std::string& worldUp );

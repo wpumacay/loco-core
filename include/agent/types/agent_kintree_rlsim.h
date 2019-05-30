@@ -6,6 +6,7 @@
 // include kintree to extend
 #include <agent/types/agent_kintree.h>
 
+// #define HACK_SPLIT_SPHERICAL_JOINTS
 
 namespace tysoc {
 namespace agent {
@@ -17,6 +18,10 @@ namespace agent {
         protected :
 
         rlsim::RlsimModel* m_rlsimModelPtr;
+
+        // Storage for joints created using the hack for spherical ...
+        // joints, consisting of creating 3 revolute per 1 spherical
+        std::vector< rlsim::RlsimJoint* > m_hackSphericalJoints;
 
         std::map< std::string, rlsim::RlsimJoint* > m_jointNameToJointNodeMap;
 
