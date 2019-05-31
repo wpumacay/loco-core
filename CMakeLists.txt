@@ -14,6 +14,14 @@ endif()
 
 message( "TYSOCCORE> LIBRARY_OUT_DIR: ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}" )
 
+set( TYSOCCORE_IS_MASTER_PROJECT OFF )
+if( CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR )
+    message( "TYSOCCORE> Configuring as MASTER project" )
+    set( TYSOCCORE_IS_MASTER_PROJECT ON )
+else()
+    message( "TYSOCCORE> Configuring as CHILD project" )
+endif()
+
 # Definitions used for development. Python bindings do not use these definitions, but ...
 # instead we load the paths dynamically according to the user configuration/installation.
 add_definitions( -DTYSOC_PATH_RESOURCES="${CMAKE_CURRENT_SOURCE_DIR}/res/" )
@@ -64,7 +72,11 @@ message( "PROP_TYSOC_BACKEND_GRAPHICS_GLVIZ:    ${VAR_TYSOC_BACKEND_GRAPHICS_GLV
 
 # ----------------------------------------------------------------------------------------------------------------------
 
-add_subdirectory( ext )
+if ( TYSOCCORE_IS_MASTER_PROJECT )
+    # Add dependencies from our own submodules
+    add_subdirectory( ext )
+    add_subdirectory( pybind11 )
+endif()
 
 # Main Sources
 file( GLOB_RECURSE TYSOC_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" )
@@ -86,8 +98,6 @@ target_link_libraries( tysocCore
 
 # Configure glviz
 add_subdirectory( glviz )
-# Configure pybind11
-add_subdirectory( pybind11 )
 # Configure python bindings
 add_subdirectory( pytysoc )
 # Configure tests
