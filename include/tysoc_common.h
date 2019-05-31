@@ -198,6 +198,8 @@ namespace tysoc
     typedef TSize< float >    TSizef;
     typedef TSize< int >      TSizei;
 
+    TSizef vec3ToSizef( const TVec3& vec );
+
     /**
     * Extracted from bullet btQuaternion implementation (where they use the gameprogramminggems (v1?) 2.10 impl.)
     */

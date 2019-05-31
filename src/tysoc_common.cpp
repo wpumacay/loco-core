@@ -567,6 +567,11 @@ namespace tysoc
         return _res;
     }
 
+    TSizef vec3ToSizef( const TVec3& vec )
+    {
+        return { 3, { vec.x, vec.y, vec.z } };
+    }
+
     TVec4 shortestArcQuat( TVec3 v, TVec3 vTarget )
     {
         TVec4 _res;
