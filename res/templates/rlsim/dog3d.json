@@ -7,7 +7,7 @@
         [
             {
                 "Name": "root",
-                "Type": "none",
+                "Type": "planar",
                 "Parent": -1,
                 "AttachX": 0,
                 "AttachY": 0,

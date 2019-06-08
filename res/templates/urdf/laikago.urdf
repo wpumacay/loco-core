@@ -1,5 +1,7 @@
 <?xml version="1.0" ?>
 <robot name="laikago">
+    <settings worldUp="z" zeroRot="1.57 0 0" zeroPos="0 0 0"/>
+
     <link name="chassis">
         <contact>
             <lateral_friction value="1"/>
@@ -478,6 +480,64 @@
         <limit effort="100" velocity="100"/>
         <dynamics damping=".0" friction=".0"/>
     </joint>
+
+    <exclude link1="chassis" link2="FR_upper_leg" />
+    <exclude link1="chassis" link2="FL_upper_leg" />
+    <exclude link1="chassis" link2="RR_upper_leg" />
+    <exclude link1="chassis" link2="RL_upper_leg" />
+
+    <!-- <exclude link1="chassis" link2="FR_lower_leg" /> -->
+    <!-- <exclude link1="chassis" link2="FL_lower_leg" /> -->
+    <!-- <exclude link1="chassis" link2="RR_lower_leg" /> -->
+    <!-- <exclude link1="chassis" link2="RL_lower_leg" /> -->
     
+
+
+<!--     <exclude link1="FR_hip_motor" link2="FR_upper_leg" /> -->
+<!--     <exclude link1="FR_hip_motor" link2="FL_upper_leg" /> -->
+<!--     <exclude link1="FR_hip_motor" link2="RR_upper_leg" /> -->
+<!--     <exclude link1="FR_hip_motor" link2="RL_upper_leg" /> -->
+<!--  -->
+<!--     <exclude link1="FR_hip_motor" link2="FR_lower_leg" /> -->
+<!--     <exclude link1="FR_hip_motor" link2="FL_lower_leg" /> -->
+<!--     <exclude link1="FR_hip_motor" link2="RR_lower_leg" /> -->
+<!--     <exclude link1="FR_hip_motor" link2="RL_lower_leg" /> -->
+<!--  -->
+<!--  -->
+<!--  -->
+<!--     <exclude link1="FL_hip_motor" link2="FR_upper_leg" /> -->
+<!--     <exclude link1="FL_hip_motor" link2="FL_upper_leg" /> -->
+<!--     <exclude link1="FL_hip_motor" link2="RR_upper_leg" /> -->
+<!--     <exclude link1="FL_hip_motor" link2="RL_upper_leg" /> -->
+<!--  -->
+<!--     <exclude link1="FL_hip_motor" link2="FR_lower_leg" /> -->
+<!--     <exclude link1="FL_hip_motor" link2="FL_lower_leg" /> -->
+<!--     <exclude link1="FL_hip_motor" link2="RR_lower_leg" /> -->
+<!--     <exclude link1="FL_hip_motor" link2="RL_lower_leg" /> -->
+<!--  -->
+<!--  -->
+<!--  -->
+<!--     <exclude link1="RR_hip_motor" link2="FR_upper_leg" /> -->
+<!--     <exclude link1="RR_hip_motor" link2="FL_upper_leg" /> -->
+<!--     <exclude link1="RR_hip_motor" link2="RR_upper_leg" /> -->
+<!--     <exclude link1="RR_hip_motor" link2="RL_upper_leg" /> -->
+<!--  -->
+<!--     <exclude link1="RR_hip_motor" link2="FR_lower_leg" /> -->
+<!--     <exclude link1="RR_hip_motor" link2="FL_lower_leg" /> -->
+<!--     <exclude link1="RR_hip_motor" link2="RR_lower_leg" /> -->
+<!--     <exclude link1="RR_hip_motor" link2="RL_lower_leg" /> -->
+<!--  -->
+<!--  -->
+<!--  -->
+<!--     <exclude link1="RL_hip_motor" link2="FR_upper_leg" /> -->
+<!--     <exclude link1="RL_hip_motor" link2="FL_upper_leg" /> -->
+<!--     <exclude link1="RL_hip_motor" link2="RR_upper_leg" /> -->
+<!--     <exclude link1="RL_hip_motor" link2="RL_upper_leg" /> -->
+<!--  -->
+<!--     <exclude link1="RL_hip_motor" link2="FR_lower_leg" /> -->
+<!--     <exclude link1="RL_hip_motor" link2="FL_lower_leg" /> -->
+<!--     <exclude link1="RL_hip_motor" link2="RR_lower_leg" /> -->
+<!--     <exclude link1="RL_hip_motor" link2="RL_lower_leg" /> -->
+
 </robot>
 
