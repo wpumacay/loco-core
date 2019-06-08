@@ -31,7 +31,8 @@ namespace sensor {
         public :
 
         TISensor( const std::string& name );
-        ~TISensor();
+        
+        virtual ~TISensor();
 
         std::string name();
         std::string type();

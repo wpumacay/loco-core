@@ -82,7 +82,7 @@ namespace viz {
     {
         ImGui::Begin( "Main Menu" );
 
-        auto _kinTreeAgents = m_scenarioPtr->getAgentsByType( agent::AGENT_TYPE_KINTREE );
+        auto _kinTreeAgents = m_scenarioPtr->getAgents();
 
         if ( ImGui::BeginCombo( "Kinematic trees", m_basicCurrentKinTreeName.c_str() ) )
         {
@@ -129,9 +129,9 @@ namespace viz {
         {
             size_t _indx = m_basicCurrentKinTreeIndx;
             _renderBasicKinTreeVisualsMenu( m_uiContextPtr->vizKinTreePtrs[_indx] );
-            _renderBasicKinTreeModelInfoMenu( ( agent::TAgentKinTree* ) _kinTreeAgents[_indx] );
-            _renderBasicKinTreeActionsMenu( ( agent::TAgentKinTree* ) _kinTreeAgents[_indx] );
-            _renderBasicKinTreeSummary( ( agent::TAgentKinTree* ) _kinTreeAgents[_indx] );
+            _renderBasicKinTreeModelInfoMenu( _kinTreeAgents[_indx] );
+            _renderBasicKinTreeActionsMenu( _kinTreeAgents[_indx] );
+            _renderBasicKinTreeSummary( _kinTreeAgents[_indx] );
         }
     }
 
@@ -158,12 +158,12 @@ namespace viz {
         ImGui::End();
     }
 
-    void TCustomUI::_renderBasicKinTreeModelInfoMenu( agent::TAgentKinTree* agentKinTreePtr )
+    void TCustomUI::_renderBasicKinTreeModelInfoMenu( agent::TAgent* agentPtr )
     {
-        auto _bodies        = agentKinTreePtr->getKinTreeBodies();
-        auto _joints        = agentKinTreePtr->getKinTreeJoints();
-        auto _collisions    = agentKinTreePtr->getKinTreeCollisions();
-        auto _visuals       = agentKinTreePtr->getKinTreeVisuals();
+        auto _bodies        = agentPtr->bodies;
+        auto _joints        = agentPtr->joints;
+        auto _collisions    = agentPtr->collisions;
+        auto _visuals       = agentPtr->visuals;
 
         std::string _currentBodyName = ( m_basicCurrentBodyIndx != -1 ) ? 
                                             _bodies[m_basicCurrentBodyIndx]->name : "";
@@ -340,7 +340,6 @@ namespace viz {
         auto _conType       = kinTreeCollisionPtr->contype;
         auto _conAffinity   = kinTreeCollisionPtr->conaffinity;
         auto _conDim        = kinTreeCollisionPtr->condim;
-        auto _group         = kinTreeCollisionPtr->group;
         auto _friction      = kinTreeCollisionPtr->friction;
         auto _density       = kinTreeCollisionPtr->density;
 
@@ -352,7 +351,6 @@ namespace viz {
         ImGui::Text( "contype       : %d", _conType );
         ImGui::Text( "conaffinity   : %d", _conAffinity );
         ImGui::Text( "condim        : %d", _conDim );
-        ImGui::Text( "group         : %d", _group );
         ImGui::Text( "friction      : %.3f", _friction.buff[0] );
         ImGui::Text( "density       : %.2f", _density );
     }
@@ -372,11 +370,11 @@ namespace viz {
     }
 
 
-    void TCustomUI::_renderBasicKinTreeActionsMenu( agent::TAgentKinTree* agentKinTreePtr )
+    void TCustomUI::_renderBasicKinTreeActionsMenu( agent::TAgent* agentPtr )
     {
         ImGui::Begin( "Kinematic Tree actuator options" );
 
-        auto _actuators = agentKinTreePtr->getKinTreeActuators();
+        auto _actuators = agentPtr->actuators;
         std::vector< TScalar > _actions;
 
         for ( size_t i = 0; i < _actuators.size(); i++ )
@@ -389,9 +387,9 @@ namespace viz {
             _actions.push_back( _val );
         }
 
-        agentKinTreePtr->setActions( _actions );
+        agentPtr->setActions( _actions );
 
-        auto _sensors = agentKinTreePtr->getKinTreeSensors();
+        auto _sensors = agentPtr->sensors;
 
         for ( size_t i = 0; i < _sensors.size(); i++ )
         {
@@ -418,11 +416,11 @@ namespace viz {
         ImGui::End();
     }
 
-    void TCustomUI::_renderBasicKinTreeSummary( agent::TAgentKinTree* agentKinTreePtr )
+    void TCustomUI::_renderBasicKinTreeSummary( agent::TAgent* agentPtr )
     {
         ImGui::Begin( "Kinematic Tree Summary" );
 
-        TGenericParams& _summary = agentKinTreePtr->getSummary();
+        TGenericParams& _summary = agentPtr->summary();
 
         // show all floats first
         auto _floats = _summary.floats();

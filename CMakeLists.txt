@@ -5,6 +5,11 @@ project( tysoc )
 set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_CXX_FLAGS "-g ${CMAKE_CXX_FLAGS}" )
 
+# Add the cmake folder so the FindSphinx module is found
+set( CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} )
+
+set( TYSOCCORE_BUILD_DOCS OFF )
+
 if ( NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY )
     message( "TYSOCCORE> Sending generated libs to OWN build directory" )
     set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/libs" )
@@ -104,3 +109,14 @@ add_subdirectory( pytysoc )
 add_subdirectory( tests )
 # Configure unittests
 add_subdirectory( unittest )
+
+if( TYSOCCORE_IS_MASTER_PROJECT )
+    # Configure examples
+    add_subdirectory( examples )
+    
+    # Check for docs
+    if ( TYSOCCORE_BUILD_DOCS )
+        # Configure documentation
+        add_subdirectory( docs )
+    endif()
+endif()

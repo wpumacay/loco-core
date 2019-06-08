@@ -40,7 +40,7 @@ namespace viz {
         TCustomContextUI*   m_uiContextPtr;
 
         void _setupGlRenderingEngine();
-        void _collectKinTreeAgent( agent::TAgentKinTree* kinTreeAgentPtr );
+        void _collectKinTreeAgent( agent::TAgent* agentPtr );
         void _collectTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr );
         void _renderSensorReading( sensor::TISensor* sensorPtr );
 

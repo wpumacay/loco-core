@@ -95,12 +95,12 @@ namespace tysoc {
         TISimulation* createSimulation( TScenario* scenarioPtr = NULL );
         void destroySimulation();
 
-        TKinTreeAgentWrapper* createAgent( agent::TAgentKinTree* kinTreeAgentPtr );
-        TKinTreeAgentWrapper* createAgent( const std::string& name,
-                                           const std::string& filename );
-        TKinTreeAgentWrapper* createAgent( const std::string& name,
-                                           const std::string& format,
-                                           const std::string& id );
+        TAgentWrapper* createAgent( agent::TAgent* agentPtr );
+        TAgentWrapper* createAgent( const std::string& name,
+                                    const std::string& filename );
+        TAgentWrapper* createAgent( const std::string& name,
+                                    const std::string& format,
+                                    const std::string& id );
         
         TTerrainGenWrapper* createTerrainGen( terrain::TITerrainGenerator* terrainGenPtr );
         TTerrainGenWrapper* createTerrainGen( const std::string& name,

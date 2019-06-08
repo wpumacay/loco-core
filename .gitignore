@@ -11,3 +11,7 @@ __pycache__/
 *.out
 *.exe
 *.s
+_build/
+_static/
+_templates/
+*.ini

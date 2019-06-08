@@ -38,15 +38,16 @@ namespace urdf {
         }
     }
 
-    void UrdfInertia::collectAttribs( tinyxml2::XMLElement* xmlElement )
+    void UrdfInertia::collectAttribs( tinyxml2::XMLElement* xmlElement,
+                                      const std::string& worldUp )
     {
         // Grab the local transform
         auto _originElement = xmlElement->FirstChildElement( "origin" );
         if ( _originElement )
         {
             // grab origin(xyz) and euler(rpy)
-            auto _xyz = xml::safeParseVec3( _originElement, "xyz" );
-            auto _rpy = xml::safeParseVec3( _originElement, "rpy" );
+            auto _xyz = rearrange( xml::safeParseVec3( _originElement, "xyz" ), worldUp );
+            auto _rpy = rearrange( xml::safeParseVec3( _originElement, "rpy" ), worldUp );
 
             // create the transform
             this->localTransform.setPosition( _xyz );
@@ -62,16 +63,42 @@ namespace urdf {
         auto _inertiaElement = xmlElement->FirstChildElement( "inertia" );
         if ( _inertiaElement )
         {
-            this->ixx = xml::safeParseFloat( _inertiaElement, "ixx" );
-            this->ixy = xml::safeParseFloat( _inertiaElement, "ixy" );
-            this->ixz = xml::safeParseFloat( _inertiaElement, "ixz" );
-            this->iyy = xml::safeParseFloat( _inertiaElement, "iyy" );
-            this->iyz = xml::safeParseFloat( _inertiaElement, "iyz" );
-            this->izz = xml::safeParseFloat( _inertiaElement, "izz" );
+            if ( worldUp == "x" )
+            {
+                this->ixx = xml::safeParseFloat( _inertiaElement, "iyy" );
+                this->iyy = xml::safeParseFloat( _inertiaElement, "izz" );
+                this->izz = xml::safeParseFloat( _inertiaElement, "ixx" );
+
+                this->ixy = xml::safeParseFloat( _inertiaElement, "iyz" );
+                this->ixz = xml::safeParseFloat( _inertiaElement, "ixy" );
+                this->iyz = xml::safeParseFloat( _inertiaElement, "ixz" );
+            }
+            else if ( worldUp == "y" )
+            {
+                this->ixx = xml::safeParseFloat( _inertiaElement, "izz" );
+                this->iyy = xml::safeParseFloat( _inertiaElement, "ixx" );
+                this->izz = xml::safeParseFloat( _inertiaElement, "iyy" );
+
+                this->ixy = xml::safeParseFloat( _inertiaElement, "ixz" );
+                this->ixz = xml::safeParseFloat( _inertiaElement, "iyz" );
+                this->iyz = xml::safeParseFloat( _inertiaElement, "ixy" );
+            }
+            else // Assumming z
+            {
+                this->ixx = xml::safeParseFloat( _inertiaElement, "ixx" );
+                this->iyy = xml::safeParseFloat( _inertiaElement, "iyy" );
+                this->izz = xml::safeParseFloat( _inertiaElement, "izz" );
+
+                this->ixy = xml::safeParseFloat( _inertiaElement, "ixy" );
+                this->ixz = xml::safeParseFloat( _inertiaElement, "ixz" );
+                this->iyz = xml::safeParseFloat( _inertiaElement, "iyz" );
+            }
+            
         }
     }
 
-    void UrdfGeometry::collectAttribs( tinyxml2::XMLElement* xmlElement )
+    void UrdfGeometry::collectAttribs( tinyxml2::XMLElement* xmlElement,
+                                       const std::string& worldUp )
     {
         auto _shapeElement = xmlElement->FirstChildElement();
 
@@ -90,7 +117,7 @@ namespace urdf {
         else if ( _typeName == "box" )
         {
             this->type  = "box";
-            this->size  = xml::safeParseVec3( _shapeElement, "size" );
+            this->size  = rearrange( xml::safeParseVec3( _shapeElement, "size" ), worldUp );
         }
         else if ( _typeName == "cylinder" )
         {
@@ -127,15 +154,16 @@ namespace urdf {
         }
     }
 
-    void UrdfShape::collectAttribs( tinyxml2::XMLElement* xmlElement )
+    void UrdfShape::collectAttribs( tinyxml2::XMLElement* xmlElement,
+                                    const std::string& worldUp )
     {
         // Grab the local transform
         auto _originElement = xmlElement->FirstChildElement( "origin" );
         if ( _originElement )
         {
             // grab origin(xyz) and euler(rpy)
-            auto _xyz = xml::safeParseVec3( _originElement, "xyz" );
-            auto _rpy = xml::safeParseVec3( _originElement, "rpy" );
+            auto _xyz = rearrange( xml::safeParseVec3( _originElement, "xyz" ), worldUp );
+            auto _rpy = rearrange( xml::safeParseVec3( _originElement, "rpy" ), worldUp );
 
             // create transform
             this->localTransform.setPosition( _xyz );
@@ -145,12 +173,13 @@ namespace urdf {
         // Grab the geometry info
         auto _geometryElement = xmlElement->FirstChildElement( "geometry" );
         if ( _geometryElement )
-            this->geometry->collectAttribs( _geometryElement );
+            this->geometry->collectAttribs( _geometryElement, worldUp );
     }
 
-    void UrdfVisual::collectAttribs( tinyxml2::XMLElement* xmlElement )
+    void UrdfVisual::collectAttribs( tinyxml2::XMLElement* xmlElement,
+                                     const std::string& worldUp )
     {
-        UrdfShape::collectAttribs( xmlElement );
+        UrdfShape::collectAttribs( xmlElement, worldUp );
 
         // Grab the name (optional)
         this->name = xml::safeParseString( xmlElement, "name" );
@@ -161,15 +190,17 @@ namespace urdf {
             this->material->collectAttribs( _materialElement );
     }
 
-    void UrdfCollision::collectAttribs( tinyxml2::XMLElement* xmlElement )
+    void UrdfCollision::collectAttribs( tinyxml2::XMLElement* xmlElement,
+                                        const std::string& worldUp )
     {
-        UrdfShape::collectAttribs( xmlElement );
+        UrdfShape::collectAttribs( xmlElement, worldUp );
 
         // Grab the name (optional)
         this->name = xml::safeParseString( xmlElement, "name" );
     }
 
-    void UrdfLink::collectAttribs( tinyxml2::XMLElement* xmlElement )
+    void UrdfLink::collectAttribs( tinyxml2::XMLElement* xmlElement,
+                                   const std::string& worldUp )
     {
         // Grab the name
         this->name = xml::safeParseString( xmlElement, "name" );
@@ -179,7 +210,7 @@ namespace urdf {
         if ( _inertialElement )
         {
             this->inertia = new UrdfInertia();
-            this->inertia->collectAttribs( _inertialElement );
+            this->inertia->collectAttribs( _inertialElement, worldUp );
         }
 
         // Multiple Visuals (optional)
@@ -188,7 +219,7 @@ namespace urdf {
                    _visualElement = _visualElement->NextSiblingElement( "visual" ) )
         {
             auto _visual = new UrdfVisual();
-            _visual->collectAttribs( _visualElement );
+            _visual->collectAttribs( _visualElement, worldUp );
             
             this->visuals.push_back( _visual );
         }
@@ -199,13 +230,14 @@ namespace urdf {
                    _collisionElement = _collisionElement->NextSiblingElement( "collision" ) )
         {
             auto _collision = new UrdfCollision();
-            _collision->collectAttribs( _collisionElement );
+            _collision->collectAttribs( _collisionElement, worldUp );
 
             this->collisions.push_back( _collision );
         }
     }
 
-    void UrdfJoint::collectAttribs( tinyxml2::XMLElement* xmlElement )
+    void UrdfJoint::collectAttribs( tinyxml2::XMLElement* xmlElement,
+                                    const std::string& worldUp )
     {
         // Grab Joint Name and type
         this->name = xml::safeParseString( xmlElement, "name" );
@@ -216,8 +248,8 @@ namespace urdf {
         if ( _originElement )
         {
             // grab origin(xyz) and euler(rpy)
-            auto _xyz = xml::safeParseVec3( _originElement, "xyz" );
-            auto _rpy = xml::safeParseVec3( _originElement, "rpy" );
+            auto _xyz = rearrange( xml::safeParseVec3( _originElement, "xyz" ), worldUp );
+            auto _rpy = rearrange( xml::safeParseVec3( _originElement, "rpy" ), worldUp );
 
             // create transform
             this->parentLinkToJointTransform.setPosition( _xyz );
@@ -239,15 +271,15 @@ namespace urdf {
         {
             auto _axisElement = xmlElement->FirstChildElement( "axis" );
             if ( _axisElement )
-                this->localJointAxis = xml::safeParseVec3( _axisElement, "xyz", { 1, 0, 0 } );
+                this->localJointAxis = rearrange( xml::safeParseVec3( _axisElement, "xyz", { 1, 0, 0 } ), worldUp );
         }
 
         // Get limit
         auto _limitElement = xmlElement->FirstChildElement( "limit" );
         if ( _limitElement )
         {
-            this->lowerLimit    = xml::safeParseFloat( _limitElement, "lower" );
-            this->upperLimit    = xml::safeParseFloat( _limitElement, "upper" );
+            this->lowerLimit    = xml::safeParseFloat( _limitElement, "lower", -45. );
+            this->upperLimit    = xml::safeParseFloat( _limitElement, "upper", 45. );
             this->effortLimit   = xml::safeParseFloat( _limitElement, "effort" );
             this->velocityLimit = xml::safeParseFloat( _limitElement, "velocityLimit" );
         }

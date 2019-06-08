@@ -42,14 +42,8 @@ namespace viz {
 
         // Create visualization wrappers for the agents
         auto _agents = m_scenarioPtr->getAgents();
-
         for ( size_t i = 0; i < _agents.size(); i++ )
-        {
-            if ( _agents[i]->type() == "kintree" )
-            {
-                _collectKinTreeAgent( ( agent::TAgentKinTree* ) _agents[i] );
-            }
-        }
+            _collectKinTreeAgent( _agents[i] );
 
         // Create sandbox visualization wrapper
         auto _bodies = m_scenarioPtr->getBodies();
@@ -72,6 +66,9 @@ namespace viz {
         m_uiPtr = new TCustomUI( m_scenarioPtr,
                                  m_uiContextPtr );
         m_uiPtr->initUI();
+
+        // UI enabled at startup
+        m_uiContextPtr->isUiActive = true;
 
         return true;
     }
@@ -144,10 +141,13 @@ namespace viz {
 
         m_uiContextPtr->vizKinTreePtrs  = m_vizKinTreeWrappers;
 
-        if ( m_uiContextPtr->isDebugDrawingActive )
-            m_simulationPtr->enableDebugDrawing();
-        else
-            m_simulationPtr->disableDebugDrawing();
+        if ( m_simulationPtr )
+        {
+            if ( m_uiContextPtr->isDebugDrawingActive )
+                m_simulationPtr->enableDebugDrawing();
+            else
+                m_simulationPtr->disableDebugDrawing();
+        }
 
         m_uiPtr->renderUI();
     }
@@ -225,12 +225,16 @@ namespace viz {
         _scene->addCamera( _camera );
         _scene->addLight( _light );
         _scene->addSkybox( _skybox );
+
+        // Make fps camera inactive at startup
+        m_glScenePtr->getCurrentCamera()->setActiveMode( false );
+        m_glAppPtr->window()->enableCursor();
     }
 
-    void TCustomVisualizer::_collectKinTreeAgent( agent::TAgentKinTree* kinTreeAgentPtr )
+    void TCustomVisualizer::_collectKinTreeAgent( agent::TAgent* agentPtr )
     {
         // create the kintree viz wrapper
-        auto _vizKinTreeWrapper = new TCustomVizKinTree( kinTreeAgentPtr,
+        auto _vizKinTreeWrapper = new TCustomVizKinTree( agentPtr,
                                                          m_glScenePtr,
                                                          m_workingDir );
         // and add it to the buffer of kintree vizs

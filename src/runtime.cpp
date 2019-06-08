@@ -146,18 +146,18 @@ namespace tysoc {
         m_simulationPtr = NULL;
     }
 
-    TKinTreeAgentWrapper* TRuntime::createAgent( agent::TAgentKinTree* kinTreeAgentPtr )
+    TAgentWrapper* TRuntime::createAgent( agent::TAgent* agentPtr )
     {
-        return m_fcnCreateAgentFromAbstract( kinTreeAgentPtr, m_workingDir );
+        return m_fcnCreateAgentFromAbstract( agentPtr, m_workingDir );
     }
 
-    TKinTreeAgentWrapper* TRuntime::createAgent( const std::string& name,
+    TAgentWrapper* TRuntime::createAgent( const std::string& name,
                                                  const std::string& filename )
     {
         return m_fcnCreateAgentFromFile( name, filename, m_workingDir );
     }
 
-    TKinTreeAgentWrapper* TRuntime::createAgent( const std::string& name,
+    TAgentWrapper* TRuntime::createAgent( const std::string& name,
                                                  const std::string& format,
                                                  const std::string& id )
     {

@@ -911,26 +911,42 @@ namespace tysoc
         return _volume;
     }
 
-    void log( const std::string& msg )
+    TVec3 rearrange( const TVec3& vec, const std::string& worldUp )
+    {
+        if ( worldUp == "y" )
+            return TVec3( vec.z, vec.x, vec.y );
+        else if ( worldUp == "x" )
+            return TVec3( vec.y, vec.z, vec.x );
+
+        return vec;
+    }
+
+}
+
+#if TYSOC_LOG_LEVEL > 3
+    void TYSOC_LOG( const std::string& msg )
     {
         std::cout << "LOG> " << msg << std::endl;
     }
+#endif
 
+#if TYSOC_LOG_LEVEL > 2
     void info( const std::string& msg )
     {
         std::cout << "INFO> " << msg << std::endl;
     }
+#endif
 
+#if TYSOC_LOG_LEVEL > 1
     void warn( const std::string& msg )
     {
         std::cout << "WARN> " << msg << std::endl;
     }
+#endif
 
+#if TYSOC_LOG_LEVEL > 0
     void error( const std::string& msg )
     {
         std::cout << "ERROR> " << msg << std::endl;
     }
-
-
-
-}
+#endif

@@ -14,7 +14,7 @@ namespace tysoc {
         class TIVisualizer;
     }
 
-    class TKinTreeAgentWrapper;
+    class TAgentWrapper;
     class TBodyWrapper;
 
     /**
@@ -63,7 +63,7 @@ namespace tysoc {
         TScenario*  m_scenarioPtr;
         std::string m_workingDir;
 
-        std::vector< TKinTreeAgentWrapper* > m_agentWrappers;
+        std::vector< TAgentWrapper* > m_agentWrappers;
         std::vector< TTerrainGenWrapper* > m_terrainGenWrappers;
         std::vector< TBodyWrapper* > m_bodyWrappers;
 
@@ -122,12 +122,12 @@ namespace tysoc {
 
     typedef TISimulation* FcnCreateSim( TScenario* scenarioPtr, const std::string& workingDir );
 
-    typedef TKinTreeAgentWrapper* FcnCreateAgentFromAbstract( agent::TAgentKinTree* kinTreeAgentPtr,
+    typedef TAgentWrapper* FcnCreateAgentFromAbstract( agent::TAgent* agentPtr,
                                                               const std::string& workingDir );
-    typedef TKinTreeAgentWrapper* FcnCreateAgentFromFile( const std::string& name,
+    typedef TAgentWrapper* FcnCreateAgentFromFile( const std::string& name,
                                                           const std::string& filename,
                                                           const std::string& workingDir );
-    typedef TKinTreeAgentWrapper* FcnCreateAgentFromId( const std::string& name,
+    typedef TAgentWrapper* FcnCreateAgentFromId( const std::string& name,
                                                         const std::string& format,
                                                         const std::string& id,
                                                         const std::string& workingDir );

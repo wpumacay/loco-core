@@ -8,21 +8,21 @@ namespace viz{
     // @TODO: Change some of the visuals for actuators, sensors, etc. ...
     //        for special gizmos that give better feedback than primitives
 
-    TCustomVizKinTree::TCustomVizKinTree( agent::TAgentKinTree* agentKinTreePtr,
+    TCustomVizKinTree::TCustomVizKinTree( agent::TAgent* agentPtr,
                                           engine::LScene* scenePtr,
                                           const std::string& workingDir )
     {
-        m_scenePtr          = scenePtr;
-        m_agentKinTreePtr   = agentKinTreePtr;
-        m_workingDir        = workingDir;
+        m_scenePtr      = scenePtr;
+        m_agentPtr      = agentPtr;
+        m_workingDir    = workingDir;
 
         _collectFromKinTree();
     }
 
     TCustomVizKinTree::~TCustomVizKinTree()
     {
-        m_scenePtr          = NULL;
-        m_agentKinTreePtr   = NULL;
+        m_scenePtr = NULL;
+        m_agentPtr = NULL;
 
         for ( size_t i = 0; i < m_vizBodies.size(); i++ )
         {
@@ -69,7 +69,7 @@ namespace viz{
 
     void TCustomVizKinTree::_collectFromKinTree()
     {
-        if ( !m_agentKinTreePtr )
+        if ( !m_agentPtr )
         {
             std::cout << "WARNING> There is no kintree to extract info from" << std::endl;
             return;
@@ -89,7 +89,7 @@ namespace viz{
 
     void TCustomVizKinTree::_collectKinBodies()
     {
-        auto _bodies = m_agentKinTreePtr->getKinTreeBodies();
+        auto _bodies = m_agentPtr->bodies;
 
         for ( size_t i = 0; i < _bodies.size(); i++ )
         {
@@ -115,7 +115,7 @@ namespace viz{
 
     void TCustomVizKinTree::_collectKinJoints()
     {
-        auto _joints = m_agentKinTreePtr->getKinTreeJoints();
+        auto _joints = m_agentPtr->joints;
 
         for ( size_t i = 0; i < _joints.size(); i++ )
         {
@@ -141,7 +141,7 @@ namespace viz{
 
     void TCustomVizKinTree::_collectKinActuators()
     {
-        auto _actuators = m_agentKinTreePtr->getKinTreeActuators();
+        auto _actuators = m_agentPtr->actuators;
 
         for ( size_t i = 0; i < _actuators.size(); i++ )
         {
@@ -167,7 +167,7 @@ namespace viz{
 
     void TCustomVizKinTree::_collectKinSensors()
     {
-        auto _sensors = m_agentKinTreePtr->getKinTreeSensors();
+        auto _sensors = m_agentPtr->sensors;
 
         for ( size_t i = 0; i < _sensors.size(); i++ )
         {
@@ -193,7 +193,7 @@ namespace viz{
 
     void TCustomVizKinTree::_collectKinVisuals()
     {
-        auto _visuals = m_agentKinTreePtr->getKinTreeVisuals();
+        auto _visuals = m_agentPtr->visuals;
 
         for ( size_t i = 0; i < _visuals.size(); i++ )
         {
@@ -222,7 +222,7 @@ namespace viz{
 
     void TCustomVizKinTree::_collectKinCollisions()
     {
-        auto _collisions = m_agentKinTreePtr->getKinTreeCollisions();
+        auto _collisions = m_agentPtr->collisions;
 
         for ( size_t i = 0; i < _collisions.size(); i++ )
         {
@@ -540,9 +540,9 @@ namespace viz{
         kinCollision.axesPtr->rotation   = _rotation;
     }
 
-    agent::TAgentKinTree* TCustomVizKinTree::getKinTreePtr()
+    agent::TAgent* TCustomVizKinTree::getKinTreePtr()
     {
-        return m_agentKinTreePtr;
+        return m_agentPtr;
     }
 
 }}

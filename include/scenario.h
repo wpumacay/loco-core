@@ -8,7 +8,14 @@
 
 namespace tysoc
 {
-
+    /**
+    *   States the scenario can be in:
+    *    - IDLE     : scenario is active, but not currently being ...
+    *                 simulated by the physics backend.
+    *    - RUNNING  : scenario is active and being simulated by ...
+    *                 a physics backend.
+    *    - FINISHED : scenario is inactive and awaiting to be reused|destroyed.
+    */
     enum ScenarioState
     {
         IDLE,
@@ -16,15 +23,20 @@ namespace tysoc
         FINISHED
     };
 
+    /**
+    *   A holder containing all elements to be simulated|visualized, like
+    *   agents, terrain generators and sensors. It's the access point presented
+    *   to the user to interact with these components of the simulation.
+    */
     class TScenario
     {
         protected :
 
         ScenarioState m_state;
 
-        std::vector< agent::TIAgent* >                              m_agents;
-        std::map< std::string, agent::TIAgent* >                    m_mapAgentsByName;
-        std::map< std::string, std::vector< agent::TIAgent* > >     m_mapAgentsByType;
+        std::vector< agent::TAgent* >                              m_agents;
+        std::map< std::string, agent::TAgent* >                    m_mapAgentsByName;
+        std::map< std::string, std::vector< agent::TAgent* > >     m_mapAgentsByType;
 
         std::vector< sensor::TISensor* >                             m_sensors;
         std::map< std::string, sensor::TISensor* >                   m_mapSensorsByName;
@@ -39,27 +51,33 @@ namespace tysoc
 
         public :
 
+        /**
+        *   Creates an empty scenario (no agents, no terrain-generators, no sensors).
+        */
         TScenario();
         ~TScenario();
 
+        /**
+        *   Returns the state of this scenario
+        */
         ScenarioState state();
 
-        void addAgent( agent::TIAgent* agent );
+        void addAgent( agent::TAgent* agent );
         void addSensor( sensor::TISensor* sensor );
         void addTerrainGenerator( terrain::TITerrainGenerator* terrainGenerator );
         void addBody( sandbox::TBody* body );
 
-        std::vector< agent::TIAgent* >                  getAgents();
-        std::vector< sensor::TISensor* >                getSensors();
-        std::vector< terrain::TITerrainGenerator* >     getTerrainGenerators();
-        std::vector< sandbox::TBody* >                  getBodies();
+        std::vector< agent::TAgent* >               getAgents();
+        std::vector< sensor::TISensor* >            getSensors();
+        std::vector< terrain::TITerrainGenerator* > getTerrainGenerators();
+        std::vector< sandbox::TBody* >              getBodies();
 
-        agent::TIAgent*                 getAgentByName( const std::string& name );
+        agent::TAgent*                  getAgentByName( const std::string& name );
         sensor::TISensor*               getSensorByName( const std::string& name );
         terrain::TITerrainGenerator*    getTerrainGeneratorByName( const std::string& name );
         sandbox::TBody*                 getBodyByName( const std::string& name );
 
-        std::vector< agent::TIAgent* >                  getAgentsByType( const std::string& type );
+        std::vector< agent::TAgent* >                   getAgentsByType( const std::string& type );
         std::vector< sensor::TISensor* >                getSensorsByType( const std::string& type );
         std::vector< terrain::TITerrainGenerator* >     getTerrainGeneratorsByType( const std::string& type );
 

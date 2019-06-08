@@ -8,7 +8,7 @@
 #include <LMeshBuilder.h>
 #include <LScene.h>
 
-#include <agent/types/agent_kintree.h>
+#include <agent/agent.h>
 
 #include <glviz_common.h>
 
@@ -115,9 +115,9 @@ namespace viz {
 
         private :
 
-        engine::LScene*         m_scenePtr;
-        agent::TAgentKinTree*   m_agentKinTreePtr;
-        std::string             m_workingDir;
+        engine::LScene* m_scenePtr;
+        agent::TAgent*  m_agentPtr;
+        std::string     m_workingDir;
 
         std::vector< TCustomVizKinBody >         m_vizBodies;
         std::vector< TCustomVizKinJoint >        m_vizJoints;
@@ -155,7 +155,7 @@ namespace viz {
 
         public :
 
-        TCustomVizKinTree( agent::TAgentKinTree* agentKinTreePtr,
+        TCustomVizKinTree( agent::TAgent* agentPtr,
                            engine::LScene* scenePtr,
                            const std::string& workingDir );
         ~TCustomVizKinTree();
@@ -163,7 +163,7 @@ namespace viz {
         TCustomVizDrawState drawState;
 
         void update();
-        agent::TAgentKinTree* getKinTreePtr();
+        agent::TAgent* getKinTreePtr();
     };
 
 

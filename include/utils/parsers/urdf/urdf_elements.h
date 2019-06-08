@@ -56,7 +56,8 @@ namespace urdf {
             iyz     = 0.0f;
         }
 
-        void collectAttribs( tinyxml2::XMLElement* xmlElement );
+        void collectAttribs( tinyxml2::XMLElement* xmlElement,
+                             const std::string& worldUp );
     };
 
     /*************************************************************
@@ -76,7 +77,8 @@ namespace urdf {
             size        = TVec3( 0, 0, 0 );
         }
 
-        void collectAttribs( tinyxml2::XMLElement* xmlElement );
+        void collectAttribs( tinyxml2::XMLElement* xmlElement, 
+                             const std::string& worldUp );
     };
 
     struct UrdfShape
@@ -89,7 +91,8 @@ namespace urdf {
             geometry = new UrdfGeometry();
         }
 
-        virtual void collectAttribs( tinyxml2::XMLElement* xmlElement );
+        virtual void collectAttribs( tinyxml2::XMLElement* xmlElement, 
+                                     const std::string& worldUp );
     };
 
     struct UrdfVisual : UrdfShape
@@ -103,7 +106,8 @@ namespace urdf {
             material    = new UrdfMaterial();
         }
 
-        void collectAttribs( tinyxml2::XMLElement* xmlElement ) override;
+        void collectAttribs( tinyxml2::XMLElement* xmlElement, 
+                             const std::string& worldUp ) override;
     };
 
     struct UrdfCollision : UrdfShape
@@ -115,7 +119,8 @@ namespace urdf {
             name = "undefined";
         }
 
-        void collectAttribs( tinyxml2::XMLElement* xmlElement ) override;
+        void collectAttribs( tinyxml2::XMLElement* xmlElement,
+                             const std::string& worldUp ) override;
     };
 
     /**********************************************************************
@@ -142,7 +147,8 @@ namespace urdf {
             parentJoint     = NULL;
         }
 
-        void collectAttribs( tinyxml2::XMLElement* xmlElement );
+        void collectAttribs( tinyxml2::XMLElement* xmlElement, 
+                             const std::string& worldUp );
     };
 
     struct UrdfJoint
@@ -162,15 +168,16 @@ namespace urdf {
 
         UrdfJoint()
         {
-            lowerLimit    = 0;
-            upperLimit    = 0;
+            lowerLimit    = 1.0;
+            upperLimit    = -1.0;
             effortLimit   = 0;
             velocityLimit = 0;
             jointDamping  = 0;
             jointFriction = 0;
         }
 
-        void collectAttribs( tinyxml2::XMLElement* xmlElement );
+        void collectAttribs( tinyxml2::XMLElement* xmlElement,
+                             const std::string& worldUp );
     };
 
 
@@ -185,6 +192,10 @@ namespace urdf {
         std::map< std::string, UrdfLink*>       links;
         std::map< std::string, UrdfJoint*>      joints;
         std::vector< UrdfLink* >                rootLinks;
+
+        TMat4 zeroCompensation;
+
+        std::vector< std::pair< std::string, std::string > > exclusionPairs;
 
         UrdfModel(){}
         ~UrdfModel(){}// @TODO: Check what to release

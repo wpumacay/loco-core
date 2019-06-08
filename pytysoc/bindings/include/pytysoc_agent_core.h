@@ -3,10 +3,7 @@
 
 #include <pytysoc_common.h>
 #include <model_loader.h>
-#include <agent/types/agent_kintree.h>
-#include <agent/types/agent_kintree_mjcf.h>
-#include <agent/types/agent_kintree_urdf.h>
-#include <agent/types/agent_kintree_rlsim.h>
+#include <agent/agent.h>
 
 namespace py = pybind11;
 
@@ -18,7 +15,7 @@ namespace pytysoc
 
         private :
 
-        tysoc::agent::TAgentKinTree* m_agentKinTreePtr;
+        tysoc::agent::TAgent* m_agentPtr;
 
         public :
 
@@ -44,10 +41,10 @@ namespace pytysoc
         *   whole task and allocates the kintree agent for us. We just have to ...
         *   wrap the agent then.
         *
-        *   @param kinTreeAgentPtr  Abstract kintree agent to wrap
+        *   @param agentPtr         Abstract kintree agent to wrap
         *   @notexposed             Not exposed through python API.
         */
-        PyCoreAgent( tysoc::agent::TAgentKinTree* kinTreeAgentPtr );
+        PyCoreAgent( tysoc::agent::TAgent* agentPtr );
 
         /**
         *   Destructor for this wrapper. It only NULLs the references wrapped.
@@ -90,7 +87,7 @@ namespace pytysoc
         *
         *   @notexposed     Not exposed through python API
         */
-        tysoc::agent::TAgentKinTree* ptr();
+        tysoc::agent::TAgent* ptr();
 
     };
 

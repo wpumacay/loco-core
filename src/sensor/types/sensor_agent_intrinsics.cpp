@@ -6,7 +6,7 @@ namespace tysoc {
 namespace sensor {
 
         TAgentIntrinsicsSensor::TAgentIntrinsicsSensor( const std::string& name,
-                                                        agent::TIAgent* agentPtr )
+                                                        agent::TAgent* agentPtr )
             : TISensor( name )
         {
             m_type                      = SENSOR_TYPE_INTRINSICS;
@@ -20,6 +20,8 @@ namespace sensor {
 
         TAgentIntrinsicsSensor::~TAgentIntrinsicsSensor()
         {
+            TYSOC_LOG( "Destroying(AgentIntrinsics) sensor: " + m_name );
+
             m_agentPtr = NULL;
 
             if ( m_sensorMeasurement )
@@ -34,12 +36,6 @@ namespace sensor {
             if ( !m_agentPtr )
             {
                 std::cout << "ERROR> no agentPtr given to this sensor" << std::endl;
-                return;
-            }
-
-            if ( m_agentPtr->type() != agent::AGENT_TYPE_KINTREE )
-            {
-                std::cout << "ERROR> agentPtr should be of type AGENT_TYPE_KINTREE" << std::endl;
                 return;
             }
 
@@ -60,7 +56,7 @@ namespace sensor {
             m_sensorMeasurement->rootPosition.z = _agentRootPosition.z;
 
             // Compute the relative positions and velocities of the bodies/geometries to the root body
-            auto _kinBodies = reinterpret_cast< agent::TAgentKinTree* >( m_agentPtr )->getKinTreeBodies();
+            auto _kinBodies = m_agentPtr->bodies;
             for ( size_t i = 0; i < _kinBodies.size(); i++ )
             {
                 auto _bodyPosition = _kinBodies[i]->worldTransform.getPosition();
@@ -81,7 +77,7 @@ namespace sensor {
             // Check the "_constructDefaultSensors" method in the agent_kintree.cpp file.
 
             // get sensor readings and wrap them into the measurement
-            auto _kinSensors = reinterpret_cast< agent::TAgentKinTree* >( m_agentPtr )->getKinTreeSensors();
+            auto _kinSensors = m_agentPtr->sensors;
             for ( size_t i = 0; i < _kinSensors.size(); i++ )
             {
                 if ( _kinSensors[i]->type == "joint" )

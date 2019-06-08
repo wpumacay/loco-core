@@ -61,14 +61,14 @@ namespace sensor {
         //   format 2 : heights with base the position of the agent
         bool m_useComplement;
 
-        agent::TIAgent*                          m_agentPtr;
+        agent::TAgent*                          m_agentPtr;
         terrain::TSectionsTerrainGenerator*     m_terrainGenPtr;
 
         public :
 
         TSectionsTerrainSensor( const std::string& name,
                                 terrain::TSectionsTerrainGenerator* terrainGenPtr,
-                                agent::TIAgent* agentPtr,
+                                agent::TAgent* agentPtr,
                                 bool useComplement = false );
         ~TSectionsTerrainSensor();
 

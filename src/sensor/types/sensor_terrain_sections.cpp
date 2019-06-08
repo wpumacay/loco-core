@@ -7,7 +7,7 @@ namespace sensor {
 
     TSectionsTerrainSensor::TSectionsTerrainSensor( const std::string& name,
                                                     terrain::TSectionsTerrainGenerator* terrainGenPtr,
-                                                    agent::TIAgent* agentPtr,
+                                                    agent::TAgent* agentPtr,
                                                     bool useComplement )
         : TISensor( name )
     {
@@ -26,6 +26,8 @@ namespace sensor {
 
     TSectionsTerrainSensor::~TSectionsTerrainSensor()
     {
+        TYSOC_LOG( "Destroying(SectionsTerrain) sensor: " + m_name );
+
         m_terrainGenPtr = NULL;
         m_agentPtr = NULL;
 

@@ -4,16 +4,6 @@
 namespace tysoc {
 namespace rlsim {
 
-    TVec3 rearrange( const TVec3& vec, const std::string& worldUp )
-    {
-        if ( worldUp == "y" )
-            return TVec3( vec.z, vec.x, vec.y );
-        else if ( worldUp == "x" )
-            return TVec3( vec.y, vec.z, vec.x );
-
-        return vec;
-    }
-
     void RlsimVisual::collectAttribs( const nlohmann::json& jsonElement, const std::string& worldUp )
     {
         this->name  = tysoc::json::safeParseString( jsonElement, "Name", "undefined" );

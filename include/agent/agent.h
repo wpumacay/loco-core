@@ -1,11 +1,10 @@
 
 #pragma once
 
-#include <agent/types/agent_simple.h>
-#include <agent/types/agent_kintree.h> // @TODO|@CHECK: this one should be user editable
-#include <agent/types/agent_kintree_mjcf.h>
-// #include <agent/types/agent_kintree_urdf.h>
-// #include <agent/types/agent_kintree_terrainRlSim.h>
+#include <agent/agent_base.h>
+#include <agent/formats/kintree_format_mjcf.h>
+#include <agent/formats/kintree_format_urdf.h>
+#include <agent/formats/kintree_format_rlsim.h>
 
 namespace tysoc {
 namespace agent {
@@ -14,7 +13,4 @@ namespace agent {
     // added here as needed. So far nothing comes to my mind, but ...
     // will check again later (perhaps simple factory methods, etc.)
     
-
-    
-
 }}

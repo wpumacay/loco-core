@@ -59,6 +59,38 @@ typedef float TScalar;
     #define TYSOC_PATH_WORKING_DIR "../../res/xml/"
 #endif
 
+// Log levels consist of the following:
+//  * level 0: nothing at all
+//  * level 1: only errors
+//  * level 2: errors and warns
+//  * level 3: errors, warns and infos
+//  * level 4: everything
+#define TYSOC_LOG_LEVEL 4
+
+#if TYSOC_LOG_LEVEL > 3
+    void TYSOC_LOG( const std::string& msg );
+#else
+    #define TYSOC_LOG( msg ) {}
+#endif
+
+#if TYSOC_LOG_LEVEL > 2
+    void TYSOC_INFO( const std::string& msg );
+#else
+    #define TYSOC_INFO( msg ) {}
+#endif
+
+#if TYSOC_LOG_LEVEL > 1
+    void TYSOC_WARN( const std::string& msg );
+#else
+    #define TYSOC_WARN( msg ) {}
+#endif
+
+#if TYSOC_LOG_LEVEL > 0
+    void TYSOC_ERROR( const std::string& msg );
+#else
+    #define TYSOC_ERROR( msg ) {}
+#endif
+
 namespace tysoc
 {
 
@@ -307,9 +339,9 @@ namespace tysoc
     TScalar computeVolumeFromShape( const std::string& type,
                                     const TVec3& size );
 
-    void log( const std::string& msg );
-    void info( const std::string& msg );
-    void warn( const std::string& msg );
-    void error( const std::string& msg );
-
+    /**
+    *   Rearranges the elements of a TVec3 from a format where the z vector ...
+    *   is given by "worldUp", into the standard format where the world z is Up.
+    */
+    TVec3 rearrange( const TVec3& vec, const std::string& worldUp );
 }

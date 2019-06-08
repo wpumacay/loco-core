@@ -11,8 +11,7 @@ namespace tysoc
         m_state = IDLE;
 
         // initialize some mappings
-        m_mapAgentsByType[ agent::AGENT_TYPE_SIMPLE ]  = std::vector< agent::TIAgent* >();
-        m_mapAgentsByType[ agent::AGENT_TYPE_KINTREE ] = std::vector< agent::TIAgent* >();
+        m_mapAgentsByType[ agent::AGENT_TYPE_BASE ]  = std::vector< agent::TAgent* >();
 
         m_mapSensorsByType[ sensor::SENSOR_TYPE_INTRINSICS ]            = std::vector< sensor::TISensor* >();
         m_mapSensorsByType[ sensor::SENSOR_TYPE_EXTRINSICS_TERRAIN ]    = std::vector< sensor::TISensor* >();
@@ -25,6 +24,8 @@ namespace tysoc
     
     TScenario::~TScenario()
     {
+        TYSOC_LOG( "Destroying scenario" );
+
         m_state = FINISHED;
 
         // Clean the stored references as ...
@@ -60,7 +61,7 @@ namespace tysoc
         return m_state;
     }
 
-    void TScenario::addAgent( agent::TIAgent* agent )
+    void TScenario::addAgent( agent::TAgent* agent )
     {
         if ( agent )
         {
@@ -129,7 +130,7 @@ namespace tysoc
         }
     }
 
-    agent::TIAgent* TScenario::getAgentByName( const std::string& name )
+    agent::TAgent* TScenario::getAgentByName( const std::string& name )
     {
         if ( m_mapAgentsByName.find( name ) != m_mapAgentsByName.end() )
         {
@@ -186,7 +187,7 @@ namespace tysoc
         return m_terrainGenerators;
     }
 
-    std::vector< agent::TIAgent* > TScenario::getAgents()
+    std::vector< agent::TAgent* > TScenario::getAgents()
     {
         return m_agents;
     }
@@ -201,7 +202,7 @@ namespace tysoc
         return m_bodies;
     }
 
-    std::vector< agent::TIAgent* > TScenario::getAgentsByType( const std::string& type )
+    std::vector< agent::TAgent* > TScenario::getAgentsByType( const std::string& type )
     {
         if ( m_mapAgentsByType.find( type ) != m_mapAgentsByType.end() )
         {
@@ -210,7 +211,7 @@ namespace tysoc
 
         std::cout << "WARNING> tried to get agents of non existent type: " << type << std::endl;
 
-        return std::vector< agent::TIAgent* >();
+        return std::vector< agent::TAgent* >();
     }
 
     std::vector< sensor::TISensor* > TScenario::getSensorsByType( const std::string& type )

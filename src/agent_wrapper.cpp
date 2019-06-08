@@ -5,17 +5,17 @@
 namespace tysoc {
 
 
-    TKinTreeAgentWrapper::TKinTreeAgentWrapper( agent::TAgentKinTree* kinTreeAgentPtr,
+    TAgentWrapper::TAgentWrapper( agent::TAgent* agentPtr,
                                                 const std::string& workingDir )
     {
         // save a reference to the abstract kintree agent for later usage
-        m_kinTreeAgentPtr = kinTreeAgentPtr;
+        m_agentPtr = agentPtr;
         // and the path to the assets directory
         m_workingDir = workingDir;
         // and set to NULL (default) the parent simulation
         m_simulationPtr = NULL;
 
-        if ( !kinTreeAgentPtr )
+        if ( !agentPtr )
         {
             std::cout << "ERROR> passed null reference to kintreeagent" << std::endl;
             m_mjcfModelTemplatePtr = NULL;
@@ -25,74 +25,71 @@ namespace tysoc {
         else
         {
             // and grab the model data for usage in specific backends (if needed)
-            auto _modelTemplateType = kinTreeAgentPtr->getModelTemplateType();
-            if ( _modelTemplateType == agent::MODEL_TEMPLATE_TYPE_MJCF )
+            auto _modelTemplateType = agentPtr->getModelFormat();
+            if ( _modelTemplateType == agent::MODEL_FORMAT_MJCF )
             {
-                m_mjcfModelTemplatePtr = reinterpret_cast< agent::TAgentKinTreeMjcf* >
-                                            ( m_kinTreeAgentPtr )->getMjcfModelDataPtr();
+                m_mjcfModelTemplatePtr = m_agentPtr->getModelDataMjcf();
                 m_urdfModelTemplatePtr = NULL;
                 m_rlsimModelTemplatePtr = NULL;
             }
-            else if ( _modelTemplateType == agent::MODEL_TEMPLATE_TYPE_URDF )
+            else if ( _modelTemplateType == agent::MODEL_FORMAT_URDF )
             {
-                m_urdfModelTemplatePtr = reinterpret_cast< agent::TAgentKinTreeUrdf* >
-                                            ( m_kinTreeAgentPtr )->getUrdfModelDataPtr();
+                m_urdfModelTemplatePtr = m_agentPtr->getModelDataUrdf();
                 m_mjcfModelTemplatePtr = NULL;
                 m_rlsimModelTemplatePtr = NULL;
             }
-            else if ( _modelTemplateType == agent::MODEL_TEMPLATE_TYPE_RLSIM )
+            else if ( _modelTemplateType == agent::MODEL_FORMAT_RLSIM )
             {
-                m_rlsimModelTemplatePtr = reinterpret_cast< agent::TAgentKinTreeRlsim* >
-                                            ( m_kinTreeAgentPtr )->getRlsimModelDataPtr();
+                m_rlsimModelTemplatePtr = m_agentPtr->getModelDataRlsim();
                 m_urdfModelTemplatePtr = NULL;
                 m_mjcfModelTemplatePtr = NULL;
             }
         }
     }
 
-    TKinTreeAgentWrapper::~TKinTreeAgentWrapper()
+    TAgentWrapper::~TAgentWrapper()
     {
         m_simulationPtr = NULL;
-        m_kinTreeAgentPtr = NULL;
+        m_agentPtr = NULL;
         m_mjcfModelTemplatePtr = NULL;
         m_urdfModelTemplatePtr = NULL;
         m_rlsimModelTemplatePtr = NULL;
     }
 
-    void TKinTreeAgentWrapper::setParentSimulation( TISimulation* simulationPtr )
+    void TAgentWrapper::setParentSimulation( TISimulation* simulationPtr )
     {
         m_simulationPtr = simulationPtr;
     }
 
-    std::string TKinTreeAgentWrapper::name()
+    std::string TAgentWrapper::name()
     {
-        if ( m_kinTreeAgentPtr )
-            return m_kinTreeAgentPtr->name();
+        if ( m_agentPtr )
+            return m_agentPtr->name();
 
         return "undefined";
     }
 
-    agent::TAgentKinTree* TKinTreeAgentWrapper::agent()
+    agent::TAgent* TAgentWrapper::agent()
     {
-        return m_kinTreeAgentPtr;
+        return m_agentPtr;
     }
 
-    void TKinTreeAgentWrapper::initialize()
+    void TAgentWrapper::initialize()
     {
         _initializeInternal();
     }
 
-    void TKinTreeAgentWrapper::reset()
+    void TAgentWrapper::reset()
     {
         _resetInternal();
     }
 
-    void TKinTreeAgentWrapper::preStep()
+    void TAgentWrapper::preStep()
     {
         _preStepInternal();
     }
 
-    void TKinTreeAgentWrapper::postStep()
+    void TAgentWrapper::postStep()
     {
         _postStepInternal();
     }

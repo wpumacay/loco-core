@@ -31,12 +31,12 @@ namespace sensor {
 
         TAgentIntrinsicsSensorMeasurement* m_sensorMeasurement;
 
-        agent::TIAgent* m_agentPtr;
+        agent::TAgent* m_agentPtr;
 
         public :
 
         TAgentIntrinsicsSensor( const std::string& name,
-                                agent::TIAgent* agentPtr );
+                                agent::TAgent* agentPtr );
         ~TAgentIntrinsicsSensor();
 
         void update() override;

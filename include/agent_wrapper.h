@@ -1,10 +1,7 @@
 
 #pragma once
 
-#include <agent/types/agent_kintree.h>
-#include <agent/types/agent_kintree_mjcf.h>
-#include <agent/types/agent_kintree_urdf.h>
-#include <agent/types/agent_kintree_rlsim.h>
+#include <agent/agent.h>
 
 #include <simulation_base.h>
 
@@ -13,7 +10,7 @@ namespace tysoc {
     class TISimulation;
 
     /**
-    *   Agent Wrapper Interface for the kintree agents. The objects ...
+    *   Agent Wrapper Interface for all kintree agents. The objects ...
     *   from this class are in charge of wrapping the core agent data  ...
     *   structures and instantiate the required data structures in the ...
     *   specific backend.
@@ -43,7 +40,7 @@ namespace tysoc {
     *                all components of the framework.
     *   
     */
-    class TKinTreeAgentWrapper
+    class TAgentWrapper
     {
 
         protected :
@@ -55,8 +52,8 @@ namespace tysoc {
         // rlsim resource: a copy of the rlsim model passed for construction
         rlsim::RlsimModel* m_rlsimModelTemplatePtr;
 
-        // underlying kinematic tree
-        agent::TAgentKinTree*   m_kinTreeAgentPtr;
+        // underlying wrapped agent
+        agent::TAgent* m_agentPtr;
 
         // directory where the assets are
         std::string m_workingDir;
@@ -73,25 +70,25 @@ namespace tysoc {
         public :
 
         /**
-        *   Creates a kintree wrapper for a given kintree agent
+        *   Creates a agent wrapper for a given agent
         *
-        *   @param kinTreeAgentPtr  kintree agent to wrap
-        *   @param workingDir       directory where the assets(meshes,etc) are located
+        *   @param agentPtr     agent to be wrapped
+        *   @param workingDir   directory where the assets(meshes,etc) are located
         */
-        TKinTreeAgentWrapper( agent::TAgentKinTree* kinTreeAgentPtr,
-                              const std::string& workingDir );
+        TAgentWrapper( agent::TAgent* agentPtr,
+                       const std::string& workingDir );
 
         /**
         *   Destroy wrapping functionality by removing all wrapping data, ...
         *   except the core object (just releases the reference and leave ...
         *   the core structures to be reused by the user or other components).
         */
-        virtual ~TKinTreeAgentWrapper();
+        virtual ~TAgentWrapper();
 
         void setParentSimulation( TISimulation* simulationPtr );
 
         std::string name();
-        agent::TAgentKinTree* agent();
+        agent::TAgent* agent();
 
         void initialize();
         void reset();

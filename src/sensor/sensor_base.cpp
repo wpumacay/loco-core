@@ -13,7 +13,7 @@ namespace sensor {
 
     TISensor::~TISensor()
     {
-        
+        TYSOC_LOG( "Base-destroying sensor: " + m_name );
     }
 
     std::string TISensor::name()

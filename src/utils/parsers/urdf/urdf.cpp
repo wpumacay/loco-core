@@ -15,7 +15,7 @@ namespace urdf {
         if ( _doc.Error() )
         {
             parsing::logError( _doc.ErrorStr() );
-            _doc.ClearError();
+            _doc.Clear();
 
             return NULL;
         }
@@ -27,7 +27,23 @@ namespace urdf {
             return NULL;
         }
 
+        // Define some general settings to fix model discrepancies
+        auto _worldUp = std::string( "z" );
+        auto _zeroPos = TVec3( 0, 0, 0 );
+        auto _zeroRot = TVec3( 0, 0, 0 );
+        auto _settingsElement = _robotElement->FirstChildElement( "settings" );
+        
+        if ( _settingsElement )
+        {
+            _worldUp = xml::safeParseString( _settingsElement, "worldUp", "z" );
+            _zeroPos = xml::safeParseVec3( _settingsElement, "zeroPos", { 0.0f, 0.0f, 0.0f } );
+            _zeroRot = xml::safeParseVec3( _settingsElement, "zeroRot", { 0.0f, 0.0f, 0.0f } );
+        }
+
         auto _urdfModel = new UrdfModel();
+        // set first the zero-configuration compensation
+        _urdfModel->zeroCompensation = TMat4::fromPositionAndRotation( _zeroPos,
+                                                                       TMat3::fromEuler( _zeroRot ) );
 
         // Clear materials cache for new materials
         UrdfMaterial::MATERIALS.clear();
@@ -41,7 +57,7 @@ namespace urdf {
         {
             // create a link
             auto _urdfLink = new UrdfLink();
-            _urdfLink->collectAttribs( _linkElement );
+            _urdfLink->collectAttribs( _linkElement, _worldUp );
 
             // cache this link for later initialization
             if ( _urdfModel->links.find( _urdfLink->name ) !=
@@ -67,7 +83,7 @@ namespace urdf {
         {
             // create a joint
             auto _urdfJoint = new UrdfJoint();
-            _urdfJoint->collectAttribs( _jointElement );
+            _urdfJoint->collectAttribs( _jointElement, _worldUp );
 
             // cache this joint for later initialization
             if ( _urdfModel->joints.find( _urdfJoint->name ) !=
@@ -84,6 +100,21 @@ namespace urdf {
             {
                 _urdfModel->joints[ _urdfJoint->name ] = _urdfJoint;
             }
+        }
+
+        // Get all exclusion elements
+        for ( auto _exclusionElement = _robotElement->FirstChildElement( "exclude" );
+                   _exclusionElement != NULL;
+                   _exclusionElement = _exclusionElement->NextSiblingElement( "exclude" ) )
+        {
+            // Grab the names of the pair of bodies to exclude
+            auto _link1Name = xml::safeParseString( _exclusionElement, "link1", "" );
+            auto _link2Name = xml::safeParseString( _exclusionElement, "link2", "" );
+
+            if ( _link1Name == "" || _link2Name == "" )
+                continue;
+
+            _urdfModel->exclusionPairs.push_back( std::make_pair( _link1Name, _link2Name ) );
         }
 
         if ( !_initTreeAndRoot( _urdfModel ) )
@@ -239,6 +270,18 @@ namespace urdf {
 
             // and store it into the target's joints dictionary
             target->joints[ _targetJoint->name ] = _targetJoint;
+        }
+
+        // Change the exclusion contact pairs names appropriately
+        for ( size_t q = 0; q < source->exclusionPairs.size(); q++ )
+        {
+            auto _name1 = source->exclusionPairs[q].first;
+            auto _name2 = source->exclusionPairs[q].second;
+
+            auto _newName1 = computeUrdfName( "link", _name1, agentName );
+            auto _newName2 = computeUrdfName( "link", _name2, agentName );
+
+            target->exclusionPairs.push_back( std::make_pair( _newName1, _newName2 ) );
         }
 
         // Assemble the links and joints

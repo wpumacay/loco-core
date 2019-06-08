@@ -30,7 +30,7 @@ namespace pytysoc
                 _modelTemplatePtr = tysoc::mjcf::loadGenericModel( modelName );
             
             // create kintree agent from mjcf data ptr //@TODO: Perhaps use different names and no overloading
-            m_agentKinTreePtr = tysoc::agent::createKinTreeAgent( name, _modelTemplatePtr, _positionVec3 );
+            m_agentPtr = tysoc::agent::createAgentFromModel( _modelTemplatePtr, name, _positionVec3, { 0., 0., 0. } );
         }
         else if ( modelFormat == "urdf" )
         {
@@ -41,7 +41,7 @@ namespace pytysoc
                 _modelTemplatePtr = tysoc::urdf::loadGenericModel( modelName );
             
             // create kintree agent from urdf data ptr
-            m_agentKinTreePtr = tysoc::agent::createKinTreeAgent( name, _modelTemplatePtr, _positionVec3 );
+            m_agentPtr = tysoc::agent::createAgentFromModel( _modelTemplatePtr, name, _positionVec3, { 0., 0., 0. } );
         }
         else if ( modelFormat == "rlsim" )
         {
@@ -52,7 +52,7 @@ namespace pytysoc
                 _modelTemplatePtr = tysoc::rlsim::loadGenericModel( modelName );
 
             // create kintree agent from rlsim data ptr
-            m_agentKinTreePtr = tysoc::agent::createKinTreeAgent( name, _modelTemplatePtr, _positionVec3 );
+            m_agentPtr = tysoc::agent::createAgentFromModel( _modelTemplatePtr, name, _positionVec3, { 0., 0., 0. } );
         }
         else
         {
@@ -60,54 +60,54 @@ namespace pytysoc
                       << modelName <<"' with not supported format: " 
                       << modelFormat << std::endl;
 
-            m_agentKinTreePtr = NULL;
+            m_agentPtr = NULL;
         }
     }
 
-    PyCoreAgent::PyCoreAgent( tysoc::agent::TAgentKinTree* kinTreeAgentPtr )
+    PyCoreAgent::PyCoreAgent( tysoc::agent::TAgent* agentPtr )
     {
-        m_agentKinTreePtr = kinTreeAgentPtr;
+        m_agentPtr = agentPtr;
     }
 
     PyCoreAgent::~PyCoreAgent()
     {
-        m_agentKinTreePtr = NULL;
+        m_agentPtr = NULL;
     }
 
     void PyCoreAgent::setActions( py::array_t<TScalar>& actions )
     {
         auto _vecArrayActions = numpyToVecArray( actions );
-        if ( m_agentKinTreePtr )
-            m_agentKinTreePtr->setActions( _vecArrayActions );
+        if ( m_agentPtr )
+            m_agentPtr->setActions( _vecArrayActions );
     }
 
     int PyCoreAgent::getActionDim()
     {
-        if ( m_agentKinTreePtr )
-            return m_agentKinTreePtr->getActionDim();
+        if ( m_agentPtr )
+            return m_agentPtr->getActionDim();
 
         return -1;
     }
 
     py::array_t<TScalar> PyCoreAgent::getPosition()
     {
-        if ( m_agentKinTreePtr )
-            return vec3ToNumpy( m_agentKinTreePtr->getPosition() );
+        if ( m_agentPtr )
+            return vec3ToNumpy( m_agentPtr->getPosition() );
 
         return vec3ToNumpy( tysoc::TVec3( 0.0f, 0.0f, 0.0f ) );
     }
 
     std::string PyCoreAgent::name()
     {
-        if ( m_agentKinTreePtr )
-            return m_agentKinTreePtr->name();
+        if ( m_agentPtr )
+            return m_agentPtr->name();
 
         return "undefined";
     }
 
-    tysoc::agent::TAgentKinTree* PyCoreAgent::ptr()
+    tysoc::agent::TAgent* PyCoreAgent::ptr()
     {
-        return m_agentKinTreePtr;
+        return m_agentPtr;
     }
 
 }

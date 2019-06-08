@@ -22,6 +22,7 @@ namespace config {
     namespace physics
     {
         // Add available physics backend in this namespace
+        const std::string NONE = "";
     }
 
 }}

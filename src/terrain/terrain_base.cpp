@@ -15,6 +15,8 @@ namespace terrain {
 
     TITerrainGenerator::~TITerrainGenerator()
     {
+        TYSOC_LOG( "Base-Destroying terrain-generator: " + m_name + "" );
+        
         while ( !m_pool.empty() )
         {
             m_pool.pop();

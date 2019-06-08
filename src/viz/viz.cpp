@@ -13,6 +13,7 @@ namespace viz {
         m_scenarioPtr   = scenarioPtr;
         m_type          = "undefined";
         m_workingDir    = workingDir;
+        m_simulationPtr = NULL;
     }
 
     TIVisualizer::~TIVisualizer()

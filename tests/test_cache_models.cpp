@@ -10,7 +10,7 @@ int main()
                                                 TYSOC_PATH_URDF_TEMPLATES,
                                                 TYSOC_PATH_RLSIM_TEMPLATES );
     
-    auto _mjcfModel = _loader->getMjcfModel( "humanoid" );
+    auto _mjcfModel = _loader->getMjcfModel( "walker" );
     auto _urdfModel = _loader->getUrdfModel( "laikago" );
     auto _rlsimModel = _loader->getRlsimModel( "dog3d" );
 
