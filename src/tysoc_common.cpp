@@ -336,19 +336,19 @@ namespace tysoc
         buff[3] = m30; buff[7] = m31; buff[11] = m32; buff[15] = m33;
     }
 
-    TMat4::TMat4( const TVec3& pos, const TMat3& rotMat )
+    TMat4::TMat4( const TVec3& pos, const TMat3& rotMat ) : TMat4()
     {
         setPosition( pos );
         setRotation( rotMat );
     }
 
-    TMat4::TMat4( const TVec3& pos, const TVec3& rotEuler )
+    TMat4::TMat4( const TVec3& pos, const TVec3& rotEuler ) : TMat4()
     {
         setPosition( pos );
         setRotation( rotEuler );
     }
 
-    TMat4::TMat4( const TVec3& pos, const TVec4& rotQuat )
+    TMat4::TMat4( const TVec3& pos, const TVec4& rotQuat ) : TMat4()
     {
         setPosition( pos );
         setRotation( rotQuat );
