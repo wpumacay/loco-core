@@ -1,30 +1,17 @@
 <!-- <mujoco>
    <worldbody>
       <light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1"/>    
-      <geom type="plane" size="1 1 0.1" rgba=".9 0 0 1"/>
-      <body pos="0 0 10">
+      <geom name="gplane" type="plane" size="1 1 0.1" rgba=".9 0 0 1"/>
+      <body pos="0 0 10" name="bbox">
          <joint type="free"/>
-         <geom type="box" size=".1 .1 .1" rgba="0 .9 0 1"/>
+         <geom name="gbox" type="box" size=".1 .1 .1" rgba="0 .9 0 1"/>
       </body>
    </worldbody>
 </mujoco> -->
 
-<!--
-THIS MODEL IS NOT MY OWN
-
-> Model adapted from OpenAI's Roboschool library:
-
-  * repo      : https://github.com/openai/roboschool
-  * model-url : https://github.com/openai/roboschool/blob/master/roboschool/mujoco_assets/ant.xml
-  * credits   : the roboschool authors
--->
-
 <mujoco model="ant">
   <compiler angle="degree" coordinate="local" inertiafromgeom="true"/>
   <option integrator="RK4" timestep="0.01"/>
-<!--  <custom>-->
-<!--    <numeric data="0.0 0.0 0.55 1.0 0.0 0.0 0.0 0.0 1.0 0.0 -1.0 0.0 -1.0 0.0 1.0" name="init_qpos"/>-->
-<!--  </custom>-->
   <default>
     <joint armature="1" damping="1" limited="true"/>
     <geom conaffinity="0" condim="3" density="5.0" friction="1.5 0.1 0.1" margin="0.01" rgba="0.8 0.6 0.4 1"/>
@@ -34,7 +21,6 @@ THIS MODEL IS NOT MY OWN
     <body name="torso" pos="0 0 3">
       <freejoint name="jtorso_free"/>
       <geom name="torso_geom" pos="0 0 0" size="0.25" type="sphere"/>
-      <!--joint armature="0" damping="0" limited="false" margin="0.01" name="root" pos="0 0 0" type="free"/-->
       <body name="front_left_leg" pos="0 0 0">
         <geom fromto="0.0 0.0 0.0 0.2 0.2 0.0" name="aux_1_geom" size="0.08" type="capsule" rgba=".8 .5 .3 1"/>
         <body name="aux_1" pos="0.2 0.2 0">
