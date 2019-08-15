@@ -80,7 +80,6 @@ message( "PROP_TYSOC_BACKEND_GRAPHICS_GLVIZ:    ${VAR_TYSOC_BACKEND_GRAPHICS_GLV
 if ( TYSOCCORE_IS_MASTER_PROJECT )
     # Add dependencies from our own submodules
     add_subdirectory( ext )
-    add_subdirectory( pybind11 )
 endif()
 
 # Main Sources

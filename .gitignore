@@ -1,8 +1,4 @@
-build/
-dist/
-__pycache__/
-.vscode/
-*.egg-info/
+# file-exclusions
 *.a
 *.o
 *.so
@@ -11,7 +7,19 @@ __pycache__/
 *.out
 *.exe
 *.s
+*.ini
+
+# folder-exclusions
+build/
+dist/
+__pycache__/
+.vscode/
+*.egg-info/
 _build/
 _static/
 _templates/
-*.ini
+
+# dependencies exclusions
+ext/cat1
+ext/imgui
+ext/pybind11
