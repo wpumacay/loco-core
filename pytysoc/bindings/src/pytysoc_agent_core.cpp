@@ -30,7 +30,7 @@ namespace pytysoc
                 _modelTemplatePtr = tysoc::mjcf::loadGenericModel( modelName );
             
             // create kintree agent from mjcf data ptr //@TODO: Perhaps use different names and no overloading
-            m_agentPtr = tysoc::agent::createAgentFromModel( _modelTemplatePtr, name, _positionVec3, { 0., 0., 0. } );
+            m_agentPtr = new tysoc::agent::TAgent( _modelTemplatePtr, name, _positionVec3, { 0., 0., 0. } );
         }
         else if ( modelFormat == "urdf" )
         {
@@ -41,7 +41,7 @@ namespace pytysoc
                 _modelTemplatePtr = tysoc::urdf::loadGenericModel( modelName );
             
             // create kintree agent from urdf data ptr
-            m_agentPtr = tysoc::agent::createAgentFromModel( _modelTemplatePtr, name, _positionVec3, { 0., 0., 0. } );
+            m_agentPtr = new tysoc::agent::TAgent( _modelTemplatePtr, name, _positionVec3, { 0., 0., 0. } );
         }
         else if ( modelFormat == "rlsim" )
         {
@@ -52,7 +52,7 @@ namespace pytysoc
                 _modelTemplatePtr = tysoc::rlsim::loadGenericModel( modelName );
 
             // create kintree agent from rlsim data ptr
-            m_agentPtr = tysoc::agent::createAgentFromModel( _modelTemplatePtr, name, _positionVec3, { 0., 0., 0. } );
+            m_agentPtr = new tysoc::agent::TAgent( _modelTemplatePtr, name, _positionVec3, { 0., 0., 0. } );
         }
         else
         {

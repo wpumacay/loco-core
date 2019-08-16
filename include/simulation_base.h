@@ -4,7 +4,6 @@
 #include <scenario.h>
 #include <agent_wrapper.h>
 #include <terrain_wrapper.h>
-#include <sandbox/body_wrapper.h>
 #include <viz/viz.h>
 
 namespace tysoc {
@@ -15,7 +14,6 @@ namespace tysoc {
     }
 
     class TAgentWrapper;
-    class TBodyWrapper;
 
     /**
     *   Simulation Interface. This is the base class for all types of backend ...
@@ -59,61 +57,81 @@ namespace tysoc {
 
         protected :
 
+        /* Identifier of the backend being used (mujoco|bullet|raisim|dart|...) */
         std::string m_runtimeType;
-        TScenario*  m_scenarioPtr;
+
+        /* A reference to the scenario being instantiated */
+        TScenario* m_scenarioPtr;
+
+        /* Directory where the resources are being read|written */
         std::string m_workingDir;
 
+        /* Agent wrappers instantiated for the high-level agents in the  scenario */
         std::vector< TAgentWrapper* > m_agentWrappers;
-        std::vector< TTerrainGenWrapper* > m_terrainGenWrappers;
-        std::vector< TBodyWrapper* > m_bodyWrappers;
 
+        /* Terrain-generator wrappers instantiated for the high-level terrain-generators in the scenario */
+        std::vector< TTerrainGenWrapper* > m_terrainGenWrappers;
+
+        /* A reference to the visualizer (to grab frame-data, debug-draws, etc. */
         viz::TIVisualizer* m_visualizerPtr;
+
+        /* Executes functionality used before taking a simulation step in the backend */
+        void _preStep();
+
+        /* Executes functionality used after taking a simulation step in the backend */
+        void _postStep();
+
+        /* Initialize some backend-specific resources */
+        virtual bool _initializeInternal() = 0;
+
+        /* Execute extra functionality used before taking a simulation step in the backend */
+        virtual void _preStepInternal() = 0;
+
+        /* Execute functionality for a simulation step in a backend */
+        virtual void _simStepInternal() = 0;
+
+        /* Execute functionality after a sim-step was taken in the backend */
+        virtual void _postStepInternal() = 0;
+
+        /* Reset some backend-specific resources */
+        virtual void _resetInternal() = 0;
 
         bool m_isRunning;
         bool m_isDebugDrawingActive;
 
-        virtual bool _initializeInternal() = 0;
-        virtual void _preStepInternal() = 0;
-        virtual void _simStepInternal() = 0;
-        virtual void _postStepInternal() = 0;
-        virtual void _resetInternal() = 0;
-        virtual std::map< std::string, std::vector<TScalar> > _getVectorizedInfoInternal() = 0;
-
-        virtual void* _constructPayloadInternal( const std::string& type );
-
         public :
 
+        /* Creates a simulation that instantiates the given scenario in a specific backend*/
         TISimulation( TScenario* scenarioPtr,
                       const std::string& workingDir );
+
+        /* Releases low-level backend resources and wrappers created to instantiate the given ascenario */
         virtual ~TISimulation();
 
+        /* Initializes all low-level resources used to instantiate the scenario in the backend */
         bool initialize();
+
+        /* Calls functionality used for taking a simulation step */
         void step();
+
+        /*  */
         void reset();
 
         void togglePause();
 
-        void enableDebugDrawing();
-        void disableDebugDrawing();
-        bool isDebugDrawingActive();
+        void toggleDebugDraws();
 
-        void setVisualizer( viz::TIVisualizer* visualizerPtr );
-        viz::TIVisualizer* getVisualizer();
+        bool isRunning() { return m_isRunning; }
 
-        void* payload( const std::string& type );
-        TScenario* scenario();
-        std::string type();
+        bool isDebugDrawingActive() { return m_isDebugDrawingActive; }
 
-        /*
-        *   Returns a dictionary with vectorized information of the simulation.
-        *   This can be used to feed directly to a neural network, like some ...
-        *   packages do (mujoco-py retrieves the whole qpos[2:], qvel[:], and ...
-        *   external forces into an observation consisting of a single np array)
-        *
-        *
-        *   
-        */
-        std::map< std::string, std::vector<TScalar> > getVectorizedInfo();
+        void setVisualizer( viz::TIVisualizer* visualizerPtr ) { m_visualizerPtr = visualizerPtr; }
+
+        viz::TIVisualizer* visualizer() { return m_visualizerPtr; }
+
+        TScenario* scenario() { return m_scenarioPtr; }
+
+        std::string type() { return m_runtimeType; }
 
     };
 
@@ -137,6 +155,4 @@ namespace tysoc {
     typedef TTerrainGenWrapper* FcnCreateTerrainGenFromParams( const std::string& name,
                                                                const TGenericParams& params,
                                                                const std::string& workingDir );
-
-    typedef sandbox::TBody* FcnCreateBody( sandbox::TBody* bodyPtr );
 }

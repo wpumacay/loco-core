@@ -185,15 +185,6 @@ namespace tysoc {
 
         m_visualizerPtr = m_fcnCreateViz( scenarioPtr, m_workingDir );
 
-        if ( m_visualizerPtr->type() == "mujoco" && m_simulationPtr != NULL )
-        {
-            m_visualizerPtr->collectSimPayload( m_simulationPtr->payload( "mjModel" ), "mjModel" );
-            m_visualizerPtr->collectSimPayload( m_simulationPtr->payload( "mjData" ), "mjData" );
-            m_visualizerPtr->collectSimPayload( m_simulationPtr->payload( "mjvScene" ), "mjvScene" );
-            m_visualizerPtr->collectSimPayload( m_simulationPtr->payload( "mjvCamera" ), "mjvCamera" );
-            m_visualizerPtr->collectSimPayload( m_simulationPtr->payload( "mjvOption" ), "mjvOption" );
-        }
-
         if ( m_simulationPtr )
         {
             m_simulationPtr->setVisualizer( m_visualizerPtr );

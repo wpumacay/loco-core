@@ -61,7 +61,7 @@ setup(
     author                  = 'Wilbert Santos Pumacay Huallpa',
     license                 = 'MIT License',
     author_email            = 'wpumacay@gmail.com',
-    url                     = 'https://github.com/wpumacay/tysocCore',
+    url                     = 'https://github.com/wpumacay/tysoc',
     keywords                = 'locomotion control simulation',
     packages                = find_packages(),
     zip_safe                = False,

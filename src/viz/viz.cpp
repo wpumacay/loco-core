@@ -35,18 +35,9 @@ namespace viz {
     void TIVisualizer::setSimulation( TISimulation* simulationPtr )
     {
         m_simulationPtr = simulationPtr;
-    }
 
-    void TIVisualizer::collectSimPayload( void* payload, const std::string& type )
-    {
-        _collectSimPayloadInternal( payload, type );
-    }
-
-    void TIVisualizer::_collectSimPayloadInternal( void* payload, const std::string& type )
-    {
-        // Do nothing. Just implement if needs to pass very, very, very specific ...
-        // data from the simulation, e.g. mujoco case needs to pass mjModel, mjData ...
-        // and some other data structures for the viz to work
+        if ( m_uiPtr )
+            m_uiPtr->setSimulation( simulationPtr );
     }
 
     bool TIVisualizer::initialize()

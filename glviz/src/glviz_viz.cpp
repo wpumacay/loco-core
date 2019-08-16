@@ -45,21 +45,12 @@ namespace viz {
         for ( size_t i = 0; i < _agents.size(); i++ )
             _collectKinTreeAgent( _agents[i] );
 
-        // Create sandbox visualization wrapper
-        auto _bodies = m_scenarioPtr->getBodies();
-
-        m_vizSandboxWrapper = new TGLVizSandbox( _bodies,
-                                                 m_glScenePtr,
-                                                 m_workingDir );
-
         //// and finally create the UI
         // first the ui context
         m_uiContextPtr = new TCustomContextUI();
         m_uiContextPtr->isUiActive          = false;
         m_uiContextPtr->isBasicUiActive     = true;
-        m_uiContextPtr->isSandboxUiActive   = false;
         m_uiContextPtr->glfwWindowPtr       = m_glAppPtr->window()->getGLFWwindow();
-        m_uiContextPtr->vizSandboxPtr       = m_vizSandboxWrapper;
         m_uiContextPtr->vizKinTreePtrs      = m_vizKinTreeWrappers;
         m_uiContextPtr->vizTerrainGenPtrs   = m_vizTerrainGeneratorWrappers;
         // and then the UI
@@ -77,18 +68,11 @@ namespace viz {
     {
         // Update terrain visualization wrappers
         for ( size_t i = 0; i < m_vizTerrainGeneratorWrappers.size(); i++ )
-        {
             m_vizTerrainGeneratorWrappers[i]->update();
-        }
 
         // and also the agent visualization wrappers
         for ( size_t i = 0; i < m_vizKinTreeWrappers.size(); i++ )
-        {
             m_vizKinTreeWrappers[i]->update();
-        }
-
-        // and also update the sandbox visualization wrapper
-        m_vizSandboxWrapper->update();
 
         // and the sensor readings (render them directly, seems like ...
         // wrapping them would be wasteful?)
@@ -140,14 +124,6 @@ namespace viz {
         }
 
         m_uiContextPtr->vizKinTreePtrs  = m_vizKinTreeWrappers;
-
-        if ( m_simulationPtr )
-        {
-            if ( m_uiContextPtr->isDebugDrawingActive )
-                m_simulationPtr->enableDebugDrawing();
-            else
-                m_simulationPtr->disableDebugDrawing();
-        }
 
         m_uiPtr->renderUI();
     }

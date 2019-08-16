@@ -12,7 +12,6 @@
 // visualization wrappers
 #include <glviz_kintree.h>
 #include <glviz_terrainGen.h>
-#include <glviz_sandbox.h>
 
 namespace tysoc {
 namespace viz {
@@ -21,10 +20,7 @@ namespace viz {
     {
         bool                                            isUiActive;
         bool                                            isBasicUiActive;
-        bool                                            isDebugDrawingActive;
-        bool                                            isSandboxUiActive;
         GLFWwindow*                                     glfwWindowPtr;
-        viz::TGLVizSandbox*                             vizSandboxPtr;
         std::vector< viz::TCustomVizKinTree* >          vizKinTreePtrs;
         std::vector< viz::TCustomVizTerrainGenerator* > vizTerrainGenPtrs;
     };

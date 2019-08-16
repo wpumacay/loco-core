@@ -27,6 +27,42 @@ namespace agent {
         m_rootBodyPtr = NULL;
     }
 
+    TAgent::TAgent( mjcf::GenericElement* modelDataPtr,
+                    const std::string& name,
+                    const TVec3& position,
+                    const TVec3& rotation  ) : TAgent( name, position, rotation )
+    {
+        // use mjcf-format helpers to construct the kintree for this agent
+        constructAgentFromModel( this, modelDataPtr );
+
+        m_modelFormat = MODEL_FORMAT_MJCF;
+        m_modelDataMjcfPtr = modelDataPtr;
+    }
+
+    TAgent::TAgent( urdf::UrdfModel* modelDataPtr,
+                    const std::string& name,
+                    const TVec3& position,
+                    const TVec3& rotation  ) : TAgent( name, position, rotation )
+    {
+        // use urdf-format helpers to construct the kintree for this agent
+        constructAgentFromModel( this, modelDataPtr );
+
+        m_modelFormat = MODEL_FORMAT_URDF;
+        m_modelDataUrdfPtr = modelDataPtr;
+    }
+
+    TAgent::TAgent( rlsim::RlsimModel* modelDataPtr,
+                    const std::string& name,
+                    const TVec3& position,
+                    const TVec3& rotation  ) : TAgent( name, position, rotation )
+    {
+        // use rlsim-format helpers to construct the kintree for this agent
+        constructAgentFromModel( this, modelDataPtr );
+
+        m_modelFormat = MODEL_FORMAT_RLSIM;
+        m_modelDataRlsimPtr = modelDataPtr;
+    }
+
     TAgent::~TAgent()
     {
         TYSOC_LOG( "Destroying agent: " + m_name );
@@ -94,7 +130,7 @@ namespace agent {
         _initializeAgentInternal();
     }
 
-    void TAgent::update( float dt )
+    void TAgent::update()
     {
         if ( !m_rootBodyPtr )
         {
@@ -102,12 +138,11 @@ namespace agent {
             return;
         }
 
-        // Update internal data from the kintree. The bodies are ... 
-        // updated by the internal backend. We should update the ... 
-        // joints, visuals and collisions world transforms, for ...
-        // later usage by other modules.
-        for ( size_t i = 0; i < bodies.size(); i++ )
-            _updateBodyComponents( bodies[i] );
+    #ifndef UPDATE_TREE_RECURSIVE_DH
+        _update_v1();
+    #else 
+        _update_v2();
+    #endif
 
         // Then, update the sensors and actuators, as they are placed ...
         // in the objects updated before (joints, visuals, collisions, bodies)
@@ -122,7 +157,22 @@ namespace agent {
         m_rotation = m_rootBodyPtr->worldTransform.getRotEuler();
 
         // make the specific updates required by the derived agents
-        _updateAgentInternal( dt );
+        _updateAgentInternal();
+    }
+
+    void TAgent::_update_v1()
+    {
+        // Update internal data from the kintree. The bodies are ... 
+        // updated by the internal backend. We should update the ... 
+        // joints, visuals and collisions world transforms, for ...
+        // later usage by other modules.
+        for ( size_t i = 0; i < bodies.size(); i++ )
+            _updateBodyComponents( bodies[i] );
+    }
+
+    void TAgent::_update_v2()
+    {
+        
     }
 
     void TAgent::reset()

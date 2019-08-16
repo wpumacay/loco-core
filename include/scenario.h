@@ -4,7 +4,6 @@
 #include <agent/agent.h>
 #include <terrain/terrain.h>
 #include <sensor/sensor.h>
-#include <sandbox/sandbox.h>
 
 namespace tysoc
 {
@@ -46,9 +45,6 @@ namespace tysoc
         std::map< std::string, terrain::TITerrainGenerator* >                m_mapTerrainGeneratorsByName;
         std::map< std::string, std::vector< terrain::TITerrainGenerator* > > m_mapTerrainGeneratorsByType;
 
-        std::vector< sandbox::TBody* >             m_bodies;
-        std::map< std::string, sandbox::TBody* >   m_mapBodiesByName;
-
         public :
 
         /**
@@ -65,17 +61,14 @@ namespace tysoc
         void addAgent( agent::TAgent* agent );
         void addSensor( sensor::TISensor* sensor );
         void addTerrainGenerator( terrain::TITerrainGenerator* terrainGenerator );
-        void addBody( sandbox::TBody* body );
 
         std::vector< agent::TAgent* >               getAgents();
         std::vector< sensor::TISensor* >            getSensors();
         std::vector< terrain::TITerrainGenerator* > getTerrainGenerators();
-        std::vector< sandbox::TBody* >              getBodies();
 
         agent::TAgent*                  getAgentByName( const std::string& name );
         sensor::TISensor*               getSensorByName( const std::string& name );
         terrain::TITerrainGenerator*    getTerrainGeneratorByName( const std::string& name );
-        sandbox::TBody*                 getBodyByName( const std::string& name );
 
         std::vector< agent::TAgent* >                   getAgentsByType( const std::string& type );
         std::vector< sensor::TISensor* >                getSensorsByType( const std::string& type );

@@ -4,26 +4,21 @@
 namespace tysoc {
 namespace agent {
 
-    TAgent* createAgentFromModel( mjcf::GenericElement* modelDataPtr,
-                                  const std::string& name,
-                                  const TVec3& position,
-                                  const TVec3& rotation )
+    void constructAgentFromModel( TAgent* agentPtr,
+                                  mjcf::GenericElement* modelDataPtr )
     {
         // Create and initialize the context
         TMjcfParsingContext _context;
-        _context.agentPtr = new TAgent( name, position, rotation );
+        _context.agentPtr = agentPtr;
         _context.modelDataPtr = new mjcf::GenericElement();
 
         // create a copy of the model data with the names modified appropriately
-        mjcf::deepCopy( _context.modelDataPtr, modelDataPtr, NULL, name );
+        mjcf::deepCopy( _context.modelDataPtr, modelDataPtr, NULL, agentPtr->name() );
 
         // grab some required info before start constructing the kintree
         _extractMjcfModelSettings( _context );
         _collectDefaults( _context );
         _collectAssets( _context );
-
-        // set the model format we are about to parse
-        _context.agentPtr->setModelFormat( MODEL_FORMAT_MJCF );
 
         /**********************************************************************/
         /*                       KINTREE CONSTRUCTION                         */
@@ -35,8 +30,7 @@ namespace agent {
         if ( !_worldBodyElmPtr )
         {
             std::cout << "ERROR> something went wrong while parsing agent: "
-                      << name << ". Model data doesn't have [worldbody]" << std::endl;
-            return NULL;
+                      << agentPtr->name() << ". Model data doesn't have [worldbody]" << std::endl;
         }
 
         auto _rootBodyElmPtr = mjcf::findFirstChildByType( _worldBodyElmPtr, 
@@ -45,8 +39,7 @@ namespace agent {
         if ( !_rootBodyElmPtr )
         {
             std::cout << "ERROR> something went wrong while parsing agent: "
-                      << name << ". Model data doesn't have a root [body]" << std::endl;
-            return NULL;
+                      << agentPtr->name() << ". Model data doesn't have a root [body]" << std::endl;
         }
 
         // start recursive processing of all kintree components, starting at root
@@ -55,14 +48,11 @@ namespace agent {
         if ( !_rootBodyPtr )
         {
             std::cout << "ERROR> something went wrong while parsing agent: "
-                      << name << ". Processed root body is NULL" << std::endl;
-            return NULL;
+                      << agentPtr->name() << ". Processed root body is NULL" << std::endl;
         }
 
         // make sure we set the root for this agent we are constructing
         _context.agentPtr->setRootBody( _rootBodyPtr );
-        // store a reference to the model data
-        _context.agentPtr->setModelDataMjcf( _context.modelDataPtr );
 
         // grab the actuators. Sensors are just copied, ...
         // and the joint sensors are created as needed
@@ -84,8 +74,6 @@ namespace agent {
         _context.agentPtr->initialize();
 
         /**********************************************************************/
-
-        return _context.agentPtr;
     }
 
     void _collectDefaults( TMjcfParsingContext& context )

@@ -98,30 +98,15 @@ namespace viz {
                 }
 
                 if ( _isSelected )
-                {
                     ImGui::SetItemDefaultFocus();
-                }
             }
 
             ImGui::EndCombo();
         }
 
         ImGui::Spacing();
-        ImGui::Checkbox( "Show debug draws", &m_uiContextPtr->isDebugDrawingActive );
-        ImGui::Spacing();
-        ImGui::Checkbox( "View Sandbox Menu", &m_uiContextPtr->isSandboxUiActive );
-
-        if ( m_uiContextPtr->isSandboxUiActive )
-        {
-            ImGui::Spacing();
-            ImGui::Checkbox( "showBodies", &m_uiContextPtr->vizSandboxPtr->drawState.showBodies );
-            ImGui::Spacing();
-            ImGui::Checkbox( "showJoints", &m_uiContextPtr->vizSandboxPtr->drawState.showJoints );
-            ImGui::Spacing();
-            ImGui::Checkbox( "wireframe", &m_uiContextPtr->vizSandboxPtr->drawState.wireframe );
-            ImGui::Spacing();
-            ImGui::Checkbox( "frameAxes", &m_uiContextPtr->vizSandboxPtr->drawState.frameAxes );
-        }
+        if ( ImGui::Button( "Show debug draws" ) )
+            m_simulationPtr->toggleDebugDraws();
 
         ImGui::End();
 

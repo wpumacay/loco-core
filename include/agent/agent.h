@@ -8,9 +8,5 @@
 
 namespace tysoc {
 namespace agent {
-
-    // Here there be dragons: Some extra functionality could be ...
-    // added here as needed. So far nothing comes to my mind, but ...
-    // will check again later (perhaps simple factory methods, etc.)
     
 }}

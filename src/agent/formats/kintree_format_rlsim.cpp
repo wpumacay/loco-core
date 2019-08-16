@@ -4,17 +4,12 @@
 namespace tysoc {
 namespace agent {
 
-    TAgent* createAgentFromModel( rlsim::RlsimModel* modelDataPtr,
-                                  const std::string& name,
-                                  const TVec3& position,
-                                  const TVec3& rotation )
+    void constructAgentFromModel( TAgent* agentPtr,
+                                  rlsim::RlsimModel* modelDataPtr )
     {
         TRlsimParsingContext _context;
-        _context.agentPtr = new TAgent( name, position, rotation );
+        _context.agentPtr = agentPtr;
         _context.modelDataPtr = modelDataPtr; // @TODO: Fix issue with deepcopy
-
-        // set the model format we are about to parse
-        _context.agentPtr->setModelFormat( MODEL_FORMAT_RLSIM );
 
         /**********************************************************************/
         /*                       KINTREE CONSTRUCTION                         */
@@ -24,8 +19,7 @@ namespace agent {
         if ( !_context.modelDataPtr->rootJoint )
         {
             std::cout << "ERROR> no root link found in rlsim model "
-                      << "for agent with name: " << name << std::endl;
-            return NULL;
+                      << "for agent with name: " << agentPtr->name() << std::endl;
         }
 
         // Start recursive processing
@@ -34,14 +28,11 @@ namespace agent {
         if ( !_rootBodyPtr )
         {
             std::cout << "ERROR> something went wrong while parsing agent: "
-                      << name << ". Processed root body is NULL" << std::endl;
-            return NULL;
+                      << agentPtr->name() << ". Processed root body is NULL" << std::endl;
         }
 
         // make sure we set the root for this agent we are constructing
         _context.agentPtr->setRootBody( _rootBodyPtr );
-        // store a reference to the model data
-        _context.agentPtr->setModelDataRlsim( _context.modelDataPtr );
 
         _constructDefaultActuators( _context );
 
@@ -49,8 +40,6 @@ namespace agent {
         _context.agentPtr->initialize();
 
         /**********************************************************************/
-
-        return _context.agentPtr;
     }
 
     TKinTreeBody* _processNode( TRlsimParsingContext& context, 

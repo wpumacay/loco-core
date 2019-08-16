@@ -9,6 +9,8 @@
 namespace tysoc {
 namespace agent {
 
+    class TAgent;
+
     /* Storage used while parsing the urdf data into a kinematic tree */
     struct TUrdfParsingContext
     {
@@ -19,10 +21,8 @@ namespace agent {
     };
 
     /* Creates an agent from the given urdf model */
-    TAgent* createAgentFromModel( urdf::UrdfModel* modelDataPtr,
-                                  const std::string& name,
-                                  const TVec3& position,
-                                  const TVec3& rotation );
+    void constructAgentFromModel( TAgent* agentPtr,
+                                  urdf::UrdfModel* modelDataPtr );
 
     /*************************************************************
     *   Helpers used to construct the components of the kintree  *

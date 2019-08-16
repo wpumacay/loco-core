@@ -51,6 +51,8 @@ namespace viz {
         }
     };
 
+    class TIVisualizerUI;
+
     class TIVisualizer
     {
 
@@ -99,8 +101,6 @@ namespace viz {
                                                   const std::string& type,
                                                   const TVec3& pos ) = 0;
 
-        virtual void _collectSimPayloadInternal( void* payload, const std::string& type );
-
         public :
 
         TIVisualizer( TScenario* scenarioPtr,
@@ -109,7 +109,6 @@ namespace viz {
 
         void setSimulation( TISimulation* simulationPtr );
         void setScenario( TScenario* scenarioPtr );
-        void collectSimPayload( void* payload, const std::string& type );
 
         bool initialize();
         void update();

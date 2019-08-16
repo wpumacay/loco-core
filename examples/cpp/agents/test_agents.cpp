@@ -21,19 +21,19 @@ tysoc::agent::TAgent* createAgent( const std::string& format,
     {
         auto _modelData = _modelLoader->getUrdfModel( modelName );
 
-        return tysoc::agent::createAgentFromModel( _modelData, agentName, position, rotation );
+        return new tysoc::agent::TAgent( _modelData, agentName, position, rotation );
     }
     else if ( format == "rlsim" )
     {
         auto _modelData = _modelLoader->getRlsimModel( modelName );
         
-        return tysoc::agent::createAgentFromModel( _modelData, agentName, position, rotation );
+        return new tysoc::agent::TAgent( _modelData, agentName, position, rotation );
     }
     else if ( format == "mjcf" )
     {
         auto _modelData = _modelLoader->getMjcfModel( modelName );
         
-        return tysoc::agent::createAgentFromModel( _modelData, agentName, position, rotation );
+        return new tysoc::agent::TAgent( _modelData, agentName, position, rotation );
     }
 
     std::cout << "ERROR> format: " << format << " not supported" << std::endl;

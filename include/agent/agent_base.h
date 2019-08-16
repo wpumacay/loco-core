@@ -6,6 +6,12 @@
 #include <utils/parsers/urdf/urdf.h>
 #include <utils/parsers/rlsim/rlsim.h>
 
+#include <agent/formats/kintree_format_mjcf.h>
+#include <agent/formats/kintree_format_urdf.h>
+#include <agent/formats/kintree_format_rlsim.h>
+
+// #define UPDATE_TREE_RECURSIVE_DH
+
 namespace tysoc {
 namespace agent {
 
@@ -80,7 +86,7 @@ namespace agent {
         /* Initializes extra internal of more specific (derived) agents */
         virtual void _initializeAgentInternal() {}
         /* Updates extra internals of more specific (derived) agents */
-        virtual void _updateAgentInternal( float dt ) {}
+        virtual void _updateAgentInternal() {}
         /* Resets extra internals of more specific (derived) agents */
         virtual void _resetAgentInternal() {}
 
@@ -103,6 +109,10 @@ namespace agent {
         void _initializeWorldTransforms();
         /* Initializes a given body, and continues recursively with its children */
         void _initializeBody( TKinTreeBody* kinTreeBodyPtr );
+
+        void _update_v1();
+
+        void _update_v2();
 
         /**
         *   Recursively traverse nodes in the tree to construct ...
@@ -133,15 +143,38 @@ namespace agent {
         /* Storage for contacts pairs to be excluded */
         std::vector< std::pair< std::string, std::string > > exclusionContacts;
 
+        /* Constructs a high-level bare-bones agent, which can be constructed programatically */
         TAgent( const std::string& name,
                 const TVec3& position,
                 const TVec3& rotation );
+
+        /* Constructs a high-level agent from the given mjcf model*/
+        TAgent( mjcf::GenericElement* modelDataPtr,
+                const std::string& name,
+                const TVec3& position,
+                const TVec3& rotation  );
+
+        /* Constructs a high-level agent from the given urdf model */
+        TAgent( urdf::UrdfModel* modelDataPtr,
+                const std::string& name,
+                const TVec3& position,
+                const TVec3& rotation  );
+
+        /* Constructs a high-level agent from the given rlsim model */
+        TAgent( rlsim::RlsimModel* modelDataPtr,
+                const std::string& name,
+                const TVec3& position,
+                const TVec3& rotation  );
+
+        /* Releases the resources of this agent (it owns bodies, joints, ...) */
         ~TAgent();
 
         /* Initializes the agent to a starting configuration */
         void initialize();
+
         /* Updates the state of the internal components of the agent */
-        void update( float dt );
+        void update();
+
         /* Resets this agent to its starting configuration */
         void reset();
 
@@ -156,18 +189,6 @@ namespace agent {
 
         /* Returns the number of dimensions of the action vector */
         int getActionDim() { return actuators.size(); }
-
-        /* Sets the model format */
-        void setModelFormat( const std::string& format ) { m_modelFormat = format; }
-
-        /* Sets the reference to the mjcf model data used for this agent */
-        void setModelDataMjcf( mjcf::GenericElement* modelDataPtr ) { m_modelDataMjcfPtr = modelDataPtr; }
-
-        /* Sets the reference to the mjcf model data used for this agent */
-        void setModelDataUrdf( urdf::UrdfModel* modelDataPtr ) { m_modelDataUrdfPtr = modelDataPtr; }
-
-        /* Sets the reference to the mjcf model data used for this agent */
-        void setModelDataRlsim( rlsim::RlsimModel* modelDataPtr ) { m_modelDataRlsimPtr = modelDataPtr; }
 
         /* Sets the root pointer (recall, external parsers assemble the agent) */
         void setRootBody( TKinTreeBody* rootPtr ) { m_rootBodyPtr = rootPtr; }

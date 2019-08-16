@@ -3,6 +3,13 @@
 
 #include <tysoc_common.h>
 
+/* Number for generalized coordinates nq for each type of joint */
+#define MAX_NQ 7             // maximum number of generalized coordinates possible (free-joint case)
+#define NQ_JOINT_PRISMATIC 1 // prismatic|slide joints provide only 1q and 1dof
+#define NQ_JOINT_REVOLUTE  1 // revolute|hinge joints provide only 1q-and 1dof
+#define NQ_JOINT_SPHERICAL 4 // spherical|ball joints provide 4q (quaternion) and 3dof
+#define NQ_JOINT_FREE      7 // free(none) joints provide 7q (pos-xyz + rot-quat-xyzw) and 6dof
+
 namespace tysoc {
 namespace agent {
 
@@ -206,6 +213,8 @@ namespace agent {
         TScalar             armature;       // Armature (extra diag inertia)
         TScalar             damping;        // Damping applied to the joint
         TScalar             ref;            // Ref. for the joint
+        int                 nq;             // Number of degrees of freedom provided by this joint
+        TScalar             qpos[MAX_NQ];   // Q-values buffer
 
         TKinTreeJoint();
     };

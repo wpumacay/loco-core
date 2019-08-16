@@ -1,8 +1,13 @@
 
 #pragma once
 
-// scenario functionality
 #include <scenario.h>
+#include <simulation_base.h>
+
+namespace tysoc 
+{
+    class TISimulation;
+}
 
 namespace tysoc {
 namespace viz {
@@ -33,6 +38,7 @@ namespace viz {
         protected :
 
         TScenario* m_scenarioPtr;
+        TISimulation* m_simulationPtr;
 
         virtual void _initUIInternal() = 0;
         virtual void _renderUIInternal() = 0;
@@ -44,6 +50,7 @@ namespace viz {
 
         void initUI();
         void renderUI();
+        void setSimulation( TISimulation* simulationPtr );
 
         // @TODO: add functionality to allow the user create ...
         // its own UI using this as a wrapper, and the python ...

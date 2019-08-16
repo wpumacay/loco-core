@@ -9,6 +9,8 @@
 namespace tysoc {
 namespace agent {
 
+    class TAgent;
+
     /* Storage used while parsing the mjcf data into a kinematic tree */
     struct TMjcfParsingContext
     {
@@ -25,10 +27,8 @@ namespace agent {
     };
 
     /* Creates an agent from the given mjcf model */
-    TAgent* createAgentFromModel( mjcf::GenericElement* modelDataPtr,
-                                  const std::string& name,
-                                  const TVec3& position,
-                                  const TVec3& rotation );
+    void constructAgentFromModel( TAgent* agentPtr,
+                                  mjcf::GenericElement* modelDataPtr );
 
     /*************************************************************
     *   Helpers used to construct the components of the kintree  *
