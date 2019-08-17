@@ -35,11 +35,6 @@ import pytysoc
 ##                                   renderingBackend = 'custom',
 ##                                   renderingMode = 'interactive' )
 
-## @AVAILABLE
-## _runtime = pytysoc.createRuntime( physicsBackend = 'mujoco', 
-##                                   renderingBackend = 'mujocoviz',
-##                                   renderingMode = 'interactive' )
-
 ## @WIP
 ## _runtime = pytysoc.createRuntime( physicsBackend = 'mujoco', 
 ##                                   renderingBackend = 'custom',

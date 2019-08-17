@@ -3,13 +3,6 @@
 
 #include <tysoc_common.h>
 
-/* Number for generalized coordinates nq for each type of joint */
-#define MAX_NQ 7             // maximum number of generalized coordinates possible (free-joint case)
-#define NQ_JOINT_PRISMATIC 1 // prismatic|slide joints provide only 1q and 1dof
-#define NQ_JOINT_REVOLUTE  1 // revolute|hinge joints provide only 1q-and 1dof
-#define NQ_JOINT_SPHERICAL 4 // spherical|ball joints provide 4q (quaternion) and 3dof
-#define NQ_JOINT_FREE      7 // free(none) joints provide 7q (pos-xyz + rot-quat-xyzw) and 6dof
-
 namespace tysoc {
 namespace agent {
 
@@ -200,21 +193,23 @@ namespace agent {
     */
     struct TKinTreeJoint
     {
-        std::string         name;           // Unique name of this joint
-        std::string         type;           // Type of this joint (revolute,prismatic,etc.)
-        TVec3               axis;           // Axis of this joint
-        TMat4               worldTransform; // Reference frame in world-space
-        TMat4               relTransform;   // Relative transform to parent body
-        TKinTreeBody*       parentBodyPtr;  // Parent body
-        TScalar             lowerLimit;     // Lower range limit
-        TScalar             upperLimit;     // Upper range limit
-        bool                limited;        // Flag for joint value clamping
-        TScalar             stiffness;      // Stiffness (spring like behaviour)
-        TScalar             armature;       // Armature (extra diag inertia)
-        TScalar             damping;        // Damping applied to the joint
-        TScalar             ref;            // Ref. for the joint
-        int                 nq;             // Number of degrees of freedom provided by this joint
-        TScalar             qpos[MAX_NQ];   // Q-values buffer
+        std::string                               name;           // Unique name of this joint
+        std::string                               type;           // Type of this joint (revolute,prismatic,etc.)
+        TVec3                                     axis;           // Axis of this joint
+        TMat4                                     worldTransform; // Reference frame in world-space
+        TMat4                                     relTransform;   // Relative transform to parent body
+        TKinTreeBody*                             parentBodyPtr;  // Parent body
+        TScalar                                   lowerLimit;     // Lower range limit
+        TScalar                                   upperLimit;     // Upper range limit
+        bool                                      limited;        // Flag for joint value clamping
+        TScalar                                   stiffness;      // Stiffness (spring like behaviour)
+        TScalar                                   armature;       // Armature (extra diag inertia)
+        TScalar                                   damping;        // Damping applied to the joint
+        TScalar                                   ref;            // Ref. for the joint
+        int                                       nqpos;          // Number of generalized coordinates
+        int                                       nqvel;          // Number of degrees of freedom
+        std::array< TScalar, TYSOC_MAX_NUM_QPOS > qpos;           // Values of the generalized coordinates
+        std::array< TScalar, TYSOC_MAX_NUM_QVEL > qvel;           // Generalized speeds of the degrees of freedom
 
         TKinTreeJoint();
     };

@@ -92,6 +92,10 @@ namespace agent {
         armature        = 0.0;
         damping         = 0.0;
         ref             = 0.0;
+        nqpos           = 0;
+        nqvel           = 0;
+        qpos            = { 0., 0., 0., 0., 0., 0., 0. };
+        qvel            = { 0., 0., 0., 0., 0., 0. };
     }
 
     //------------------------TKinTreeActuator--------------------------------//

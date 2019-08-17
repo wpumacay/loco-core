@@ -56,6 +56,7 @@ namespace viz {
         // and then the UI
         m_uiPtr = new TCustomUI( m_scenarioPtr,
                                  m_uiContextPtr );
+        m_uiPtr->setSimulation( m_simulationPtr );
         m_uiPtr->initUI();
 
         // UI enabled at startup

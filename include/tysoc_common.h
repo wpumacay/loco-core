@@ -34,6 +34,14 @@ typedef float TScalar;
 #define TYSOC_DEFAULT_SPECULAR_COLOR    { 0.7f, 0.5f, 0.3f }
 #define TYSOC_DEFAULT_RGBA_COLOR        { 0.7f, 0.5f, 0.3f, 1.0f }
 
+/* Number for generalized coordinates nq for each type of joint */
+#define TYSOC_MAX_NUM_QPOS 7              // maximum number of generalized coordinates possible (free-joint case)
+#define TYSOC_MAX_NUM_QVEL 6              // maximum number of degrees of freedom possible (free joint case)
+#define TYSOC_NUM_QPOS_JOINT_PRISMATIC 1  // prismatic|slide joints provide only 1q and 1dof
+#define TYSOC_NUM_QPOS_JOINT_REVOLUTE  1  // revolute|hinge joints provide only 1q-and 1dof
+#define TYSOC_NUM_QPOS_JOINT_SPHERICAL 4  // spherical|ball joints provide 4q (quaternion) and 3dof
+#define TYSOC_NUM_QPOS_JOINT_FREE      7  // free(none) joints provide 7q (pos-xyz + rot-quat-xyzw) and 6dof
+
 #define TYSOC_FLOAT_EPSILON 0.000001
 #define TYSOC_PI 3.141592653589793
 
