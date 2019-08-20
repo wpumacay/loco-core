@@ -209,7 +209,9 @@ namespace agent {
         int                                       nqpos;          // Number of generalized coordinates
         int                                       nqvel;          // Number of degrees of freedom
         std::array< TScalar, TYSOC_MAX_NUM_QPOS > qpos;           // Values of the generalized coordinates
-        std::array< TScalar, TYSOC_MAX_NUM_QVEL > qvel;           // Generalized speeds of the degrees of freedom
+        std::array< TScalar, TYSOC_MAX_NUM_QVEL > qvel;           // Generalized speeds or the "degrees of freedom"
+        std::array< TScalar, TYSOC_MAX_NUM_QPOS > qpos0;          // Initial value for the generalized coordinates
+        std::array< TScalar, TYSOC_MAX_NUM_QVEL > qvel0;          // Initial value for the generalized speeds or the "degrees of freedom"
 
         TKinTreeJoint();
     };

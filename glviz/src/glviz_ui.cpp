@@ -116,6 +116,7 @@ namespace viz {
             _renderBasicKinTreeVisualsMenu( m_uiContextPtr->vizKinTreePtrs[_indx] );
             _renderBasicKinTreeModelInfoMenu( _kinTreeAgents[_indx] );
             _renderBasicKinTreeActionsMenu( _kinTreeAgents[_indx] );
+            _renderBasicKinTreeQvalues( _kinTreeAgents[_indx] );
             _renderBasicKinTreeSummary( _kinTreeAgents[_indx] );
         }
     }
@@ -396,6 +397,32 @@ namespace viz {
                              _kinBodySensor->linAcceleration.y, 
                              _kinBodySensor->linAcceleration.z );
             }
+        }
+
+        ImGui::End();
+    }
+
+    void TCustomUI::_renderBasicKinTreeQvalues( agent::TAgent* agentPtr )
+    {
+        ImGui::Begin( "Kinematic Tree qpos" );
+
+        for ( size_t i = 0; i < agentPtr->joints.size(); i++ )
+        {
+            auto _joint = agentPtr->joints[i];
+            if ( _joint->type != "revolute" && _joint->type != "hinge" )
+                continue;
+
+            auto _jointMin = _joint->lowerLimit * TYSOC_PI / 180.0f - 0.3f;
+            auto _jointMax = _joint->upperLimit * TYSOC_PI / 180.0f + 0.3f;
+            auto _jointVal = _joint->qpos[0];
+
+            if ( ( _jointMax > _jointMin ) && ( _jointVal < _jointMin || _jointVal > _jointMax ) )
+                std::cout << "WARNING> joint (" << _joint->name << ") is out of range" << std::endl;
+
+            ImGui::SliderFloat( _joint->name.c_str(),
+                                &_jointVal,
+                                _jointMin,
+                                _jointMax );
         }
 
         ImGui::End();
