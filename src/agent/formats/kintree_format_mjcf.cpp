@@ -340,9 +340,9 @@ namespace agent {
         else
         {
             // and the range limits
-            auto _limits = _grabVec2( context, jointElementPtr, "range", { -TYSOC_PI, TYSOC_PI } );
-            _kinTreeJointPtr->lowerLimit = _limits.x;
-            _kinTreeJointPtr->upperLimit = _limits.y;
+            auto _limits = _grabVec2( context, jointElementPtr, "range", { -180., 180. } );
+            _kinTreeJointPtr->lowerLimit = degrees2rad( _limits.x );
+            _kinTreeJointPtr->upperLimit = degrees2rad( _limits.y );
         }
         // and the joint stiffness
         _kinTreeJointPtr->stiffness = _grabFloat( context, jointElementPtr, "stiffness", 0.0 );
@@ -807,9 +807,15 @@ namespace agent {
         auto _settingsElm = mjcf::findFirstChildByType( context.modelDataPtr, "compiler" );
 
         if ( _settingsElm )
+        {
             context.useLocalCoordinates = ( _settingsElm->getAttributeString( "coordinate", "local" ) == "local" );
+            context.useDegrees = ( _settingsElm->getAttributeString( "angle", "degree" ) == "degree" );
+        }
         else
+        {
             context.useLocalCoordinates = true;
+            context.useDegrees = true;
+        }
     }
 
     void _convertGlobalToLocalCoordinates( TKinTreeBody* kinTreeBodyPtr, 

@@ -24,6 +24,8 @@ namespace agent {
         std::map< std::string, std::map< std::string, TGenericParams > > defaultsPerClass;
         // Flag to indicate whether or not we are using local coordinates
         bool useLocalCoordinates;
+        // Flag to indicate whether or not use degrees or radings for angles
+        bool useDegrees;
     };
 
     /* Creates an agent from the given mjcf model */

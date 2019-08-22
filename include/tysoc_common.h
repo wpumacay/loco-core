@@ -256,6 +256,7 @@ namespace tysoc
     };
 
     TScalar rad2degrees( const TScalar& rads );
+    TScalar degrees2rad( const TScalar& degrees );
 
     std::vector< TScalar > generateRandomArray( int size, TScalar min, TScalar max );
 
