@@ -214,6 +214,9 @@ namespace agent {
         std::array< TScalar, TYSOC_MAX_NUM_QVEL > qvel0;          // Initial value for the generalized speeds or the "degrees of freedom"
 
         TKinTreeJoint();
+
+        /* configures this joint in some type-specific way */
+        void configure();
     };
 
     /**

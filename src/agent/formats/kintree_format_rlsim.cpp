@@ -269,6 +269,9 @@ namespace agent {
         // save the rlsim node ptr for later usage (actuators)
         context.jointNameToJointNodeMap[ _kinTreeJointPtr->name ] = rlsimJointPtr;
 
+        // let the joint configure its internal props
+        _kinTreeJointPtr->configure();
+
         return _kinTreeJointPtr;
     }
 

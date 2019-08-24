@@ -196,6 +196,9 @@ namespace agent {
         // and to the joints map
         context.agentPtr->jointsMap[ _kinTreeJointPtr->name ] = _kinTreeJointPtr;
 
+        // let the joint configure its internal props
+        _kinTreeJointPtr->configure();
+
         return _kinTreeJointPtr;
     }
 

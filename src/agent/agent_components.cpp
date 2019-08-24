@@ -100,6 +100,63 @@ namespace agent {
         qvel0           = { 0., 0., 0., 0., 0., 0. };
     }
 
+    void TKinTreeJoint::configure()
+    {
+        /* Configure internals in a type-specific way */
+
+        if ( type == "hinge" || type == "revolute" || type == "continuous" )
+        {
+            // revolute joints have just 1dof, and 1qpos for this dof
+            nqpos = 1;
+            nqvel = 1;
+            // qpos and qvel set to zero by default
+            qpos0[0] = 0.0f;
+            qvel0[0] = 0.0f;
+        }
+        else if ( type == "prismatic" || type == "slide" || type == "slider" )
+        {
+            // prismatic joints have just 1dof, and 1qpos for this dof
+            nqpos = 1;
+            nqvel = 1;
+            // qpos and qvel set to zero by default
+            qpos0[0] = 0.0f;
+            qvel0[0] = 0.0f;
+        }
+        else if ( type == "ball" || type == "spherical" || type == "spheric" )
+        {
+            // spherical joints have 3dofs, and 4qpos (quaternion) representing it
+            nqpos = 4;
+            nqvel = 3;
+            // qpos and qvel set to "zero" by default
+            //       qx  qy  qz  qw   --unused--
+            qpos0 = { 0., 0., 0., 1., 0., 0., 0. }; // zero-quaternion
+            //       ex  ey  ez  ---unused---
+            qvel0 = { 0., 0., 0., 0., 0., 0. }; // zero velocity
+        }
+        else if ( type == "free" )
+        {
+            // free joints have 6dofs, and 7qpos (quat + xyz) representing it
+            nqpos = 7;
+            nqvel = 6;
+            // qpos and qvel set to "zero" by default
+            //        x   y   z  qx  qy  qz  qw
+            qpos0 = { 0., 0., 0., 0., 0., 0., 1. }; // zero-xyz + zero-quat
+            //        x   y   z   ex  ey  ez
+            qvel0 = { 0., 0., 0., 0., 0., 0. }; // zero-xyz + zero-euler? velocity
+        }
+        else if ( type == "fixed" )
+        {
+            // fixed joints have 0dofs, as expected
+            nqpos = 0;
+            nqvel = 0;
+        }
+        else
+        {
+            std::cout << "ERROR> Joint with name: " << name << " has not supported type: " 
+                      << type << std::endl;
+        }
+    }
+
     //------------------------TKinTreeActuator--------------------------------//
     TKinTreeActuator::TKinTreeActuator()
     {
