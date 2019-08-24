@@ -73,15 +73,19 @@ namespace rlsim {
 
     struct RlsimModel
     {
-        std::string                             name;
-        std::vector< RlsimVisual* >             visuals;
-        std::vector< RlsimJoint* >              joints;
-        std::vector< RlsimBody* >               bodies;
-        RlsimJoint*                             rootJoint;
+        std::string                     name;
+        std::vector< RlsimVisual* >     visuals;
+        std::vector< RlsimJoint* >      joints;
+        std::vector< RlsimBody* >       bodies;
+        RlsimJoint*                     rootJoint;
+        std::string                     worldUp;
+        TScalar                         worldScale;
 
         RlsimModel() 
         {
             rootJoint = NULL;
+            worldUp = "y";
+            worldScale = 1.0;
         }
 
         ~RlsimModel() {} // @TODO: Check what to release

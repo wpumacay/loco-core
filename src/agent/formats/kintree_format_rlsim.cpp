@@ -248,8 +248,8 @@ namespace agent {
 
         // grab the joint limits (@TODO: for ball joints should have per-dof ...
         // limits, for now just pick first one)
-        _kinTreeJointPtr->lowerLimit = rad2degrees( rlsimJointPtr->limitsPerDof[0].x );
-        _kinTreeJointPtr->upperLimit = rad2degrees( rlsimJointPtr->limitsPerDof[0].y );
+        _kinTreeJointPtr->lowerLimit = rlsimJointPtr->limitsPerDof[0].x;
+        _kinTreeJointPtr->upperLimit = rlsimJointPtr->limitsPerDof[0].y;
 
         // all models in this format have limited constraints
         auto _lowerLimit = _kinTreeJointPtr->lowerLimit;

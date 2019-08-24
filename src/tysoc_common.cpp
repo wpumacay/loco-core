@@ -904,7 +904,7 @@ namespace tysoc
             auto _capsuleHeight = size.y;
 
             _volume = ( _pi * _capsuleRadius * _capsuleRadius ) * _capsuleHeight +
-                      ( _pi * _capsuleRadius * _capsuleRadius * _capsuleRadius );
+                      (4. / 3.) * ( _pi * _capsuleRadius * _capsuleRadius * _capsuleRadius );
         }
         else
         {

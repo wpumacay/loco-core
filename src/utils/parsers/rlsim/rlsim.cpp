@@ -51,9 +51,12 @@ namespace rlsim {
         }
 
         // Grab the up direction (an extension to normalize into our format where z is Up)
-        auto _worldUp = ( _modelJson.count( "WorldUp" ) > 0 ) ? _modelJson["WorldUp"] : "y";
+        auto _worldUp = tysoc::json::safeParseString( _modelJson, "WorldUp", "y" );
+        auto _worldScale = tysoc::json::safeParseFloat( _modelJson, "WorldScale", 1.0 );
 
         RlsimModel* _simModel = new RlsimModel();
+        _simModel->worldUp = _worldUp;
+        _simModel->worldScale = _worldScale;
 
         auto _jointsJson    = _modelJson[JSON_KEY_SKELETON][JSON_KEY_JOINTS];
         for ( size_t q = 0; q < _jointsJson.size(); q++ )
