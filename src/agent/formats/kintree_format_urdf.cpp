@@ -176,7 +176,7 @@ namespace agent {
         _kinTreeJointPtr->type = urdfJointPtr->type;
         // and the joint axis
         _kinTreeJointPtr->axis = urdfJointPtr->localJointAxis;
-        // and the range limits
+        // and the range limits (already in radians, as urdf spec says so)
         _kinTreeJointPtr->lowerLimit = urdfJointPtr->lowerLimit;
         _kinTreeJointPtr->upperLimit = urdfJointPtr->upperLimit;
         // and the joint value clamping flag

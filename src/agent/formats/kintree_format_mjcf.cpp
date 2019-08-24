@@ -340,9 +340,18 @@ namespace agent {
         else
         {
             // and the range limits
-            auto _limits = _grabVec2( context, jointElementPtr, "range", { -180., 180. } );
-            _kinTreeJointPtr->lowerLimit = degrees2rad( _limits.x );
-            _kinTreeJointPtr->upperLimit = degrees2rad( _limits.y );
+            if ( context.useDegrees )
+            {
+                auto _limits = _grabVec2( context, jointElementPtr, "range", { -180., 180. } );
+                _kinTreeJointPtr->lowerLimit = degrees2rad( _limits.x );
+                _kinTreeJointPtr->upperLimit = degrees2rad( _limits.y );
+            }
+            else
+            {
+                auto _limits = _grabVec2( context, jointElementPtr, "range", { -TYSOC_PI, TYSOC_PI } );
+                _kinTreeJointPtr->lowerLimit = _limits.x;
+                _kinTreeJointPtr->upperLimit = _limits.y;
+            }
         }
         // and the joint stiffness
         _kinTreeJointPtr->stiffness = _grabFloat( context, jointElementPtr, "stiffness", 0.0 );
@@ -604,12 +613,17 @@ namespace agent {
         {
             // extract rotation using euler
             auto _relEuler = _grabVec3( context, elementPtr, "euler", { 0.0, 0.0, 0.0 } );
-            // and convert it to our tvec3 format
-            TVec3 _rEuler = { _relEuler.x * ((float)M_PI) / 180.0f, 
-                              _relEuler.y * ((float)M_PI) / 180.0f, 
-                              _relEuler.z * ((float)M_PI) / 180.0f };
+
+            // and convert it to radiangs in case using degrees
+            if ( context.useDegrees )
+            {
+                _relEuler.x = degrees2rad( _relEuler.x );
+                _relEuler.y = degrees2rad( _relEuler.y );
+                _relEuler.z = degrees2rad( _relEuler.z );
+            }
+
             // and convert to matrix type
-            TMat3 _rRotation    = TMat3::fromEuler( _rEuler );
+            TMat3 _rRotation = TMat3::fromEuler( _relEuler );
             // and set it to the target transform
             targetTransform.setRotation( _rRotation );
         }
