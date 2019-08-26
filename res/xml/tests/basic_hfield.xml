@@ -1,0 +1,18 @@
+ <mujoco>
+
+    <asset>
+        <hfield name="terrain_hfield" nrow="20" ncol="20" size="1 1 1 1" />
+    </asset>
+
+    <worldbody>
+        <body name="bsphere">
+            <joint name="sphere_free" type="free"/>
+            <geom name="gsphere" pos="0 0 2" type="sphere" size="0.1" rgba="0.7 0.5 0.3 1" />
+        </body>
+    </worldbody>
+
+    <worldbody>
+        <geom name="geom_hfield1" pos="0 0 1" type="hfield" rgba="0 .9 0 1" hfield="terrain_hfield"/>
+    </worldbody>
+
+</mujoco>
