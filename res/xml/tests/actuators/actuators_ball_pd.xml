@@ -1,0 +1,25 @@
+<mujoco model="ball_pendulum">
+
+  <worldbody>
+    <body name="pole" pos="0 0 .6">
+      <joint name="ball" type="ball" damping="0.1"/>
+      <geom name="base" type="sphere" size="0.021" mass="0"/>
+      <geom name="pole" type="capsule" fromto="0 0 0 0 0 0.5" size="0.02" mass="0"/>
+      <geom name="mass" type="sphere" pos="0 0 0.5" size="0.05" mass="1"/>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <position name="posx" joint="ball" gear="1 0 0" ctrlrange="-1.571 1.571" ctrllimited="true" kp="10"/>
+    <position name="posy" joint="ball" gear="0 1 0" ctrlrange="-1.571 1.571" ctrllimited="true" kp="10"/>
+    <position name="posz" joint="ball" gear="0 0 1" ctrlrange="-1.571 1.571" ctrllimited="true" kp="10"/>
+
+    <velocity name="velx" joint="ball" gear="1 0 0" ctrlrange="-1 1" ctrllimited="true" kv="2.0"/>
+    <velocity name="vely" joint="ball" gear="0 1 0" ctrlrange="-1 1" ctrllimited="true" kv="2.0"/>
+    <velocity name="velz" joint="ball" gear="0 0 1" ctrlrange="-1 1" ctrllimited="true" kv="0.2"/>
+
+    <!--<motor name="tx" joint="ball" gear="1 0 0" ctrlrange="-1 1" ctrllimited="true"/>-->
+    <!--<motor name="ty" joint="ball" gear="0 1 0" ctrlrange="-1 1" ctrllimited="true"/>-->
+    <!--<motor name="tz" joint="ball" gear="0 0 1" ctrlrange="-1 1" ctrllimited="true"/>-->
+  </actuator>
+</mujoco>
