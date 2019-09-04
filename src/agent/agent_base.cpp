@@ -476,6 +476,8 @@ namespace agent {
 
         _res += "-----------------------------\n\r";
         _res += "******************************************************\n\r";
+
+        return _res;
     }
 
     std::string TAgent::_strTraverse( TKinTreeBody* kinTreeBodyPtr, size_t depth )

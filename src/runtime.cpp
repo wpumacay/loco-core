@@ -118,7 +118,8 @@ namespace tysoc {
             /*
             *   Grab from the visualization library the symbols for the visualizer creation
             */
-            m_fcnCreateViz = _loadFcnFromLibraryViz< FcnCreateViz* >( "visualizer_create" );
+            m_fcnCreateViz          = _loadFcnFromLibraryViz< FcnCreateViz* >( "visualizer_create" );
+            m_fcnCreateVizDrawable  = _loadFcnFromLibraryViz< FcnCreateVizDrawable*>( "viz_createDrawable" );
         }
     }
 

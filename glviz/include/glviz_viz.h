@@ -15,7 +15,7 @@
 // and the current UI functionality
 #include <glviz_ui.h>
 
-
+#include <components/bodies.h>
 
 namespace tysoc {
 namespace viz {
@@ -74,6 +74,9 @@ namespace viz {
         TCustomVisualizer( TScenario* scenarioPtr,
                            const std::string& workingDir );
         ~TCustomVisualizer(); // @CHECK: check for virtual destructors
+
+        void addBody( TBody* bodyPtr );
+        void addAgent( agent::TAgent* agentPtr );
 
     };
 

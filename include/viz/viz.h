@@ -6,6 +6,8 @@
 // UI functionality
 #include <viz/ui.h>
 #include <viz/keys.h>
+// drawable functionality
+#include <viz/drawable.h>
 // simulation (to grab a reference)
 #include <simulation_base.h>
 

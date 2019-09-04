@@ -8,6 +8,7 @@
 #include <utility>
 #include <vector>
 #include <deque>
+#include <queue>
 #include <cmath>
 #include <map>
 #include <set>
@@ -99,6 +100,8 @@ typedef float TScalar;
 #else
     #define TYSOC_ERROR( msg ) {}
 #endif
+
+#define BIT(x) (1 << x)
 
 namespace tysoc
 {

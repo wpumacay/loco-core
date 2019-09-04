@@ -7,8 +7,6 @@
 
 namespace tysoc {
 
-    using namespace viz;
-
     class TRuntime
     {
 
@@ -19,7 +17,8 @@ namespace tysoc {
         */
 
         FcnCreateSim* m_fcnCreateSim;
-        FcnCreateViz* m_fcnCreateViz;
+        viz::FcnCreateViz* m_fcnCreateViz;
+        viz::FcnCreateVizDrawable* m_fcnCreateVizDrawable;
 
         FcnCreateAgentFromAbstract* m_fcnCreateAgentFromAbstract;
         FcnCreateAgentFromFile*     m_fcnCreateAgentFromFile;
@@ -71,7 +70,7 @@ namespace tysoc {
             return _fcnPtr;
         }
 
-        TIVisualizer* m_visualizerPtr;
+        viz::TIVisualizer* m_visualizerPtr;
         TISimulation* m_simulationPtr;
 
         std::string m_workingDir;
@@ -106,7 +105,7 @@ namespace tysoc {
         TTerrainGenWrapper* createTerrainGen( const std::string& name,
                                               const TGenericParams& params );
 
-        TIVisualizer* createVisualizer( TScenario* scenarioPtr = NULL );
+        viz::TIVisualizer* createVisualizer( TScenario* scenarioPtr = NULL );
         void destroyVisualizer();
 
         std::string workingDir();
