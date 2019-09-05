@@ -9,6 +9,7 @@
 #include <vector>
 #include <deque>
 #include <queue>
+#include <cassert>
 #include <cmath>
 #include <map>
 #include <set>
