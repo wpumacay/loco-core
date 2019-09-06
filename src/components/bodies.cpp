@@ -5,11 +5,22 @@
 namespace tysoc {
 
     TBody::TBody( const std::string& name,
-                  const TBodyData& data )
+                  const TBodyData& data,
+                  const TVec3& position,
+                  const TMat3& rotation )
     {
         m_name = name;
         m_data = data;
         m_bodyImpl = NULL;
+
+        m_pos = m_pos0 = position;
+        m_rot = m_rot0 = rotation;
+
+        m_tf.setPosition( m_pos );
+        m_tf.setRotation( m_rot );
+
+        m_tf0.setPosition( m_pos0 );
+        m_tf0.setRotation( m_rot0 );
 
         // Create collisions and visuals from the given data
         auto _collisionsData = m_data.collisions;

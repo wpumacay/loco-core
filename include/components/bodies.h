@@ -20,7 +20,9 @@ namespace tysoc {
     public :
         
         TBody( const std::string& name,
-               const TBodyData& data );
+               const TBodyData& data,
+               const TVec3& position,
+               const TMat3& rotation );
 
         virtual ~TBody();
 
