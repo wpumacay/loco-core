@@ -36,49 +36,49 @@
 
 namespace tysoc {
 
-    struct TCustomVizKinCollision
+    struct TGLVizKinCollision
     {
         engine::LModel*             axesPtr;
         engine::LIRenderable*       meshPtr;
         agent::TKinTreeCollision*   collisionPtr;
     };
 
-    struct TCustomVizKinVisual
+    struct TGLVizKinVisual
     {
         engine::LModel*         axesPtr;
         engine::LIRenderable*   meshPtr;
         agent::TKinTreeVisual*  visualPtr;
     };
 
-    struct TCustomVizKinSensor
+    struct TGLVizKinSensor
     {
         engine::LModel*         axesPtr;
         engine::LIRenderable*   meshPtr;
         agent::TKinTreeSensor*  sensorPtr;
     };
 
-    struct TCustomVizKinActuator
+    struct TGLVizKinActuator
     {
         engine::LModel*             axesPtr;
         engine::LIRenderable*       meshPtr;
         agent::TKinTreeActuator*    actuatorPtr;
     };
 
-    struct TCustomVizKinJoint
+    struct TGLVizKinJoint
     {
         engine::LModel*         axesPtr;
         engine::LIRenderable*   meshPtr;
         agent::TKinTreeJoint*   jointPtr;
     };
 
-    struct TCustomVizKinBody
+    struct TGLVizKinBody
     {
         engine::LModel*         axesPtr;
         engine::LIRenderable*   meshPtr;
         agent::TKinTreeBody*    bodyPtr;
     };
 
-    struct TCustomVizDrawState
+    struct TGLVizDrawState
     {
         bool drawAsWireframe;
         bool drawFrameAxes;
@@ -89,7 +89,7 @@ namespace tysoc {
         bool showSensors;
         bool showActuators;
 
-        TCustomVizDrawState()
+        TGLVizDrawState()
         {
             drawAsWireframe     = false;
             drawFrameAxes       = false;
@@ -109,7 +109,7 @@ namespace tysoc {
     * properties using the wrapped kintree (which should be ...
     * updated by the underlying physics backend.)
     */
-    class TCustomVizKinTree
+    class TGLVizKinTree
     {
 
         private :
@@ -118,19 +118,19 @@ namespace tysoc {
         agent::TAgent*  m_agentPtr;
         std::string     m_workingDir;
 
-        std::vector< TCustomVizKinBody >         m_vizBodies;
-        std::vector< TCustomVizKinJoint >        m_vizJoints;
-        std::vector< TCustomVizKinSensor >       m_vizSensors;
-        std::vector< TCustomVizKinVisual >       m_vizVisuals;
-        std::vector< TCustomVizKinActuator >     m_vizActuators;
-        std::vector< TCustomVizKinCollision >    m_vizCollisions;
+        std::vector< TGLVizKinBody >         m_vizBodies;
+        std::vector< TGLVizKinJoint >        m_vizJoints;
+        std::vector< TGLVizKinSensor >       m_vizSensors;
+        std::vector< TGLVizKinVisual >       m_vizVisuals;
+        std::vector< TGLVizKinActuator >     m_vizActuators;
+        std::vector< TGLVizKinCollision >    m_vizCollisions;
 
-        void _updateBody( TCustomVizKinBody& kinBody );
-        void _updateJoint( TCustomVizKinJoint& kinJoint );
-        void _updateSensor( TCustomVizKinSensor& kinSensor );
-        void _updateVisual( TCustomVizKinVisual& kinVisual );
-        void _updateActuator( TCustomVizKinActuator& kinActuator );
-        void _updateCollision( TCustomVizKinCollision& kinCollision );
+        void _updateBody( TGLVizKinBody& kinBody );
+        void _updateJoint( TGLVizKinJoint& kinJoint );
+        void _updateSensor( TGLVizKinSensor& kinSensor );
+        void _updateVisual( TGLVizKinVisual& kinVisual );
+        void _updateActuator( TGLVizKinActuator& kinActuator );
+        void _updateCollision( TGLVizKinCollision& kinCollision );
 
         void _collectFromKinTree();
         void _collectKinBodies();
@@ -154,12 +154,12 @@ namespace tysoc {
 
         public :
 
-        TCustomVizKinTree( agent::TAgent* agentPtr,
+        TGLVizKinTree( agent::TAgent* agentPtr,
                            engine::LScene* scenePtr,
                            const std::string& workingDir );
-        ~TCustomVizKinTree();
+        ~TGLVizKinTree();
 
-        TCustomVizDrawState drawState;
+        TGLVizDrawState drawState;
 
         void update();
         agent::TAgent* getKinTreePtr();

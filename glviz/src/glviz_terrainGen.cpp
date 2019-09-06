@@ -3,7 +3,7 @@
 
 namespace tysoc {
 
-    TCustomVizTerrainGenerator::TCustomVizTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr,
+    TGLVizTerrainGenerator::TGLVizTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr,
                                                             engine::LScene* scenePtr,
                                                             const std::string& workingDir )
     {
@@ -14,7 +14,7 @@ namespace tysoc {
         _collectTerrainPrimitives();
     }
 
-    TCustomVizTerrainGenerator::~TCustomVizTerrainGenerator()
+    TGLVizTerrainGenerator::~TGLVizTerrainGenerator()
     {
         m_scenePtr              = NULL;
         m_terrainGeneratorPtr   = NULL;
@@ -28,7 +28,7 @@ namespace tysoc {
         m_vizTerrainPrimitives.clear();
     }
 
-    void TCustomVizTerrainGenerator::update()
+    void TGLVizTerrainGenerator::update()
     {
         for ( size_t i = 0; i < m_vizTerrainPrimitives.size(); i++ )
         {
@@ -36,17 +36,17 @@ namespace tysoc {
         }
     }
 
-    terrain::TITerrainGenerator* TCustomVizTerrainGenerator::getTerrainGeneratorPtr()
+    terrain::TITerrainGenerator* TGLVizTerrainGenerator::getTerrainGeneratorPtr()
     {
         return m_terrainGeneratorPtr;
     }
 
-    void TCustomVizTerrainGenerator::_collectTerrainPrimitives()
+    void TGLVizTerrainGenerator::_collectTerrainPrimitives()
     {
         auto _terrainPrimitives = m_terrainGeneratorPtr->getPrimitives();
         for ( size_t i = 0; i < _terrainPrimitives.size(); i++ )
         {
-            TCustomVizTerrainPrimitive _vizTerrainPrimitive;
+            TGLVizTerrainPrimitive _vizTerrainPrimitive;
 
             // get the underlying primitive
             terrain::TTerrainPrimitive* _terrainPrimitivePtr = _terrainPrimitives[i];
@@ -71,7 +71,7 @@ namespace tysoc {
         }
     }
 
-    engine::LIRenderable* TCustomVizTerrainGenerator::_createMeshPrimitive( terrain::TTerrainPrimitive* terrainPrimitivePtr )
+    engine::LIRenderable* TGLVizTerrainGenerator::_createMeshPrimitive( terrain::TTerrainPrimitive* terrainPrimitivePtr )
     {
         engine::LIRenderable* _renderablePtr = NULL;
         auto _size = TVec3( terrainPrimitivePtr->size.x,
@@ -143,14 +143,14 @@ namespace tysoc {
         return _renderablePtr;
     }
 
-    engine::LIRenderable* TCustomVizTerrainGenerator::_createMeshFromData( terrain::TTerrainPrimitive* terrainPrimitivePtr )
+    engine::LIRenderable* TGLVizTerrainGenerator::_createMeshFromData( terrain::TTerrainPrimitive* terrainPrimitivePtr )
     {
         // @WIP
         std::cout << "WARNING> WIP-terrainFromData. Working to add support for this feature" << std::endl;
         return NULL;
     }
 
-    void TCustomVizTerrainGenerator::_resizeMesh( engine::LIRenderable* renderablePtr, terrain::TTerrainPrimitive* terrainPrimitivePtr )
+    void TGLVizTerrainGenerator::_resizeMesh( engine::LIRenderable* renderablePtr, terrain::TTerrainPrimitive* terrainPrimitivePtr )
     {
         if ( terrainPrimitivePtr->geomType == "plane" )
         {
@@ -181,7 +181,7 @@ namespace tysoc {
         }
     }
 
-    void TCustomVizTerrainGenerator::_updateVizTerrainPrimitive( TCustomVizTerrainPrimitive& vizTerrainPrimitive )
+    void TGLVizTerrainGenerator::_updateVizTerrainPrimitive( TGLVizTerrainPrimitive& vizTerrainPrimitive )
     {
         auto _axesPtr               = vizTerrainPrimitive.axesPtr;
         auto _renderablePtr         = vizTerrainPrimitive.meshPtr;

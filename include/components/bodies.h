@@ -50,6 +50,8 @@ namespace tysoc {
 
         TVec4 quat() { return m_tf.getRotQuaternion(); }
 
+        TVec3 euler() { return m_tf.getRotEuler(); }
+
         TMat4 tf() { return m_tf; }
 
         TVec3 pos0() { return m_pos0; }
@@ -57,6 +59,8 @@ namespace tysoc {
         TMat3 rot0() { return m_rot0; }
 
         TVec4 quat0() { return m_tf0.getRotQuaternion(); }
+
+        TVec3 euler0() { return m_tf0.getRotEuler(); }
 
         TMat4 tf0() { return m_tf0; }
 

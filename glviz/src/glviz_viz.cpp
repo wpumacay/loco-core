@@ -4,7 +4,7 @@
 
 namespace tysoc {
 
-    TCustomVisualizer::TCustomVisualizer( TScenario* scenarioPtr,
+    TGLVisualizer::TGLVisualizer( TScenario* scenarioPtr,
                                           const std::string& workingDir )
         : TIVisualizer( scenarioPtr, workingDir )
     {
@@ -14,12 +14,12 @@ namespace tysoc {
         m_type          = "cat1";
     }
 
-    TCustomVisualizer::~TCustomVisualizer()
+    TGLVisualizer::~TGLVisualizer()
     {
         // @TODO: Check if should delete meshes in scene or here
     }
 
-    bool TCustomVisualizer::_initializeInternal()
+    bool TGLVisualizer::_initializeInternal()
     {
         if ( !m_scenarioPtr )
         {
@@ -47,14 +47,14 @@ namespace tysoc {
 
         //// and finally create the UI
         // first the ui context
-        m_uiContextPtr = new TCustomContextUI();
+        m_uiContextPtr = new TGLUiContext();
         m_uiContextPtr->isUiActive          = false;
         m_uiContextPtr->isBasicUiActive     = true;
         m_uiContextPtr->glfwWindowPtr       = m_glAppPtr->window()->getGLFWwindow();
         m_uiContextPtr->vizKinTreePtrs      = m_vizKinTreeWrappers;
         m_uiContextPtr->vizTerrainGenPtrs   = m_vizTerrainGeneratorWrappers;
         // and then the UI
-        m_uiPtr = new TCustomUI( m_scenarioPtr,
+        m_uiPtr = new TGLUi( m_scenarioPtr,
                                  m_uiContextPtr );
         m_uiPtr->setSimulation( m_simulationPtr );
         m_uiPtr->initUI();
@@ -65,7 +65,7 @@ namespace tysoc {
         return true;
     }
 
-    void TCustomVisualizer::_updateInternal()
+    void TGLVisualizer::_updateInternal()
     {
         // Update terrain visualization wrappers
         for ( size_t i = 0; i < m_vizTerrainGeneratorWrappers.size(); i++ )
@@ -102,7 +102,7 @@ namespace tysoc {
         // *************************************************************
     }
 
-    void TCustomVisualizer::_renderUIInternal()
+    void TGLVisualizer::_renderUIInternal()
     {
         // @DIRTY: Change-Refactor this part
 
@@ -129,22 +129,22 @@ namespace tysoc {
         m_uiPtr->renderUI();
     }
 
-    bool TCustomVisualizer::_isActiveInternal()
+    bool TGLVisualizer::_isActiveInternal()
     {
         return m_glAppPtr->isActive();
     }
 
-    void TCustomVisualizer::_drawLineInternal( const TVec3& start, const TVec3& end, const TVec3& color )
+    void TGLVisualizer::_drawLineInternal( const TVec3& start, const TVec3& end, const TVec3& color )
     {
         engine::DebugSystem::drawLine( fromTVec3( start ), fromTVec3( end ), fromTVec3( color ) );
     }
 
-    void TCustomVisualizer::_drawAABBInternal( const TVec3& aabbMin, const TVec3& aabbMax, const TMat4& aabbWorldTransform, const TVec3& color )
+    void TGLVisualizer::_drawAABBInternal( const TVec3& aabbMin, const TVec3& aabbMax, const TMat4& aabbWorldTransform, const TVec3& color )
     {
         engine::DebugSystem::drawAABB( fromTVec3( aabbMin ), fromTVec3( aabbMax ), fromTMat4( aabbWorldTransform ), fromTVec3( color ) );
     }
 
-    TIVizCamera* TCustomVisualizer::_createCameraInternal( const std::string& name,
+    TIVizCamera* TGLVisualizer::_createCameraInternal( const std::string& name,
                                                            const std::string& type,
                                                            const TVec3& pos,
                                                            const TMat3& rot )
@@ -153,19 +153,19 @@ namespace tysoc {
         return NULL;
     }
 
-    void TCustomVisualizer::_changeToCameraInternal( TIVizCamera* cameraPtr )
+    void TGLVisualizer::_changeToCameraInternal( TIVizCamera* cameraPtr )
     {
         // @TODO|@WIP
     }
 
-    void TCustomVisualizer::_grabCameraFrameInternal( TIVizCamera* cameraPtr,
+    void TGLVisualizer::_grabCameraFrameInternal( TIVizCamera* cameraPtr,
                                                       TIVizTexture& rgbTexture,
                                                       TIVizTexture& depthTexture )
     {
         // @TODO|@WIP
     }
 
-    TIVizLight* TCustomVisualizer::_createLightInternal( const std::string& name,
+    TIVizLight* TGLVisualizer::_createLightInternal( const std::string& name,
                                                          const std::string& type,
                                                          const TVec3& pos )
     {
@@ -173,7 +173,7 @@ namespace tysoc {
         return NULL;
     }
 
-    void TCustomVisualizer::_setupGlRenderingEngine()
+    void TGLVisualizer::_setupGlRenderingEngine()
     {
         auto _app = m_glAppPtr = engine::LApp::GetInstance();
         auto _scene = m_glScenePtr = _app->scene();
@@ -208,17 +208,17 @@ namespace tysoc {
         m_glAppPtr->window()->enableCursor();
     }
 
-    void TCustomVisualizer::_collectKinTreeAgent( agent::TAgent* agentPtr )
+    void TGLVisualizer::_collectKinTreeAgent( agent::TAgent* agentPtr )
     {
         // create the kintree viz wrapper
-        auto _vizKinTreeWrapper = new TCustomVizKinTree( agentPtr,
+        auto _vizKinTreeWrapper = new TGLVizKinTree( agentPtr,
                                                          m_glScenePtr,
                                                          m_workingDir );
         // and add it to the buffer of kintree vizs
         m_vizKinTreeWrappers.push_back( _vizKinTreeWrapper );
     }
 
-    void TCustomVisualizer::_collectSingleBodies( TBody* bodyPtr )
+    void TGLVisualizer::_collectSingleBodies( TBody* bodyPtr )
     {
         if ( !bodyPtr )
             return;
@@ -264,17 +264,17 @@ namespace tysoc {
 
     }
 
-    void TCustomVisualizer::_collectTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr )
+    void TGLVisualizer::_collectTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr )
     {
         // create the terrainGenrator viz wrapper
-        auto _vizTerrainGeneratorWrapper = new TCustomVizTerrainGenerator( terrainGeneratorPtr,
+        auto _vizTerrainGeneratorWrapper = new TGLVizTerrainGenerator( terrainGeneratorPtr,
                                                                            m_glScenePtr,
                                                                            m_workingDir );
         // and add it to the buffer of terrainGenerator vizs
         m_vizTerrainGeneratorWrappers.push_back( _vizTerrainGeneratorWrapper );
     }
 
-    void TCustomVisualizer::_renderSensorReading( sensor::TISensor* sensorPtr )
+    void TGLVisualizer::_renderSensorReading( sensor::TISensor* sensorPtr )
     {
         auto _measurement = sensorPtr->getSensorMeasurement();
 
@@ -346,7 +346,7 @@ namespace tysoc {
         }
     }
 
-    int TCustomVisualizer::_remapKeyInternal( int keyCode )
+    int TGLVisualizer::_remapKeyInternal( int keyCode )
     {
         /*
         *   This rendering backend uses glfw, so map 
@@ -396,12 +396,12 @@ namespace tysoc {
         return keyCode;
     }
 
-    bool TCustomVisualizer::_isKeyDownInternal( int keyCode )
+    bool TGLVisualizer::_isKeyDownInternal( int keyCode )
     {
         return engine::InputSystem::isKeyDown( keyCode );
     }
 
-    bool TCustomVisualizer::_checkSingleKeyPressInternal( int keyCode )
+    bool TGLVisualizer::_checkSingleKeyPressInternal( int keyCode )
     {
         return engine::InputSystem::checkSingleKeyPress( keyCode );
     }
@@ -409,7 +409,7 @@ namespace tysoc {
     extern "C" TIVisualizer* visualizer_createVisualizer( TScenario* scenarioPtr,
                                                           const std::string& workingDir )
     {
-        return new TCustomVisualizer( scenarioPtr, workingDir );
+        return new TGLVisualizer( scenarioPtr, workingDir );
     }
 
 }

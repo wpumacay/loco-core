@@ -13,26 +13,54 @@
 #include <glviz_kintree.h>
 #include <glviz_terrainGen.h>
 
+// separate ui panels
+#include <ui/glviz_ui_bodies.h>
+
 namespace tysoc {
 
-    struct TCustomContextUI
+    class TGLUiBodies;
+
+    struct TGLUiContext
     {
-        bool                                        isUiActive;
-        bool                                        isBasicUiActive;
-        GLFWwindow*                                 glfwWindowPtr;
-        std::vector< TCustomVizKinTree* >           vizKinTreePtrs;
-        std::vector< TCustomVizTerrainGenerator* >  vizTerrainGenPtrs;
+        bool                                    isUiActive;
+        bool                                    isBasicUiActive;
+        GLFWwindow*                             glfwWindowPtr;
+        std::vector< TGLVizKinTree* >           vizKinTreePtrs;
+        std::vector< TGLVizTerrainGenerator* >  vizTerrainGenPtrs;
     };
 
-    class TCustomUI : public TIVisualizerUI
+    class TGLUi : public TIVisualizerUI
     {
 
-        private :
+    public :
 
-        GLFWwindow*         m_glfwWindowPtr;
-        TCustomContextUI*   m_uiContextPtr;
+        TGLUi( TScenario* scenarioPtr,
+               TGLUiContext* uiContextPtr );
 
-        // basic functionality ******************************************
+        ~TGLUi();
+
+    protected :
+
+        void _initUIInternal() override;
+        void _renderUIInternal() override;
+
+    private :
+
+        void _renderBasicMainMenu();
+        void _renderBasicKinTreeVisualsMenu( TGLVizKinTree* vizKinTreePtr );
+        void _renderBasicKinTreeModelInfoMenu( agent::TAgent* agentPtr );
+        void _renderBasicKinTreeActionsMenu( agent::TAgent* agentPtr );
+        void _renderBasicKinTreeQvalues( agent::TAgent* agentPtr );
+        void _renderBasicKinTreeSummary( agent::TAgent* agentPtr );
+
+        void _showBodyInfo( agent::TKinTreeBody* kinTreeBodyPtr  );
+        void _showJointInfo( agent::TKinTreeJoint* kinTreeJointPtr );
+        void _showCollisionInfo( agent::TKinTreeCollision* kinTreeCollisionPtr );
+        void _showVisualInfo( agent::TKinTreeVisual* kinTreeVisualPtr );
+
+        GLFWwindow*     m_glfwWindowPtr;
+        TGLUiContext*   m_uiContextPtr;
+
         int             m_basicCurrentKinTreeIndx;
         std::string     m_basicCurrentKinTreeName;
 
@@ -40,6 +68,9 @@ namespace tysoc {
         int m_basicCurrentJointIndx;
         int m_basicCurrentCollisionIndx;
         int m_basicCurrentVisualIndx;
+
+        // separate ui panels to be used
+        TGLUiBodies* m_uiPanelBodies;
 
         enum
         {
@@ -51,29 +82,6 @@ namespace tysoc {
 
         int m_lastElementPicked;
 
-        void _renderBasicMainMenu();
-        void _renderBasicKinTreeVisualsMenu( TCustomVizKinTree* vizKinTreePtr );
-        void _renderBasicKinTreeModelInfoMenu( agent::TAgent* agentPtr );
-        void _renderBasicKinTreeActionsMenu( agent::TAgent* agentPtr );
-        void _renderBasicKinTreeQvalues( agent::TAgent* agentPtr );
-        void _renderBasicKinTreeSummary( agent::TAgent* agentPtr );
-
-        void _showBodyInfo( agent::TKinTreeBody* kinTreeBodyPtr  );
-        void _showJointInfo( agent::TKinTreeJoint* kinTreeJointPtr );
-        void _showCollisionInfo( agent::TKinTreeCollision* kinTreeCollisionPtr );
-        void _showVisualInfo( agent::TKinTreeVisual* kinTreeVisualPtr );
-        // **************************************************************
-
-        protected :
-
-        void _initUIInternal() override;
-        void _renderUIInternal() override;
-
-        public :
-
-        TCustomUI( TScenario* scenarioPtr,
-                   TCustomContextUI* uiContextPtr );
-        ~TCustomUI();
     };
 
 }

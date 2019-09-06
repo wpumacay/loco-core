@@ -17,20 +17,20 @@
 
 namespace tysoc {
 
-    struct TCustomVizTerrainPrimitive
+    struct TGLVizTerrainPrimitive
     {
         engine::LModel*                 axesPtr;
         engine::LIRenderable*           meshPtr;
         terrain::TTerrainPrimitive*     terrainPrimitivePtr;
     };
 
-    struct TCustomVizTerrainDrawState
+    struct TGLVizTerrainDrawState
     {
         bool drawAsWireframe;
         bool showFrameAxes;
         bool showPrimitives;
 
-        TCustomVizTerrainDrawState()
+        TGLVizTerrainDrawState()
         {
             drawAsWireframe     = false;
             showFrameAxes       = false;
@@ -38,7 +38,7 @@ namespace tysoc {
         }
     };
 
-    class TCustomVizTerrainGenerator
+    class TGLVizTerrainGenerator
     {
 
         private :
@@ -47,7 +47,7 @@ namespace tysoc {
         terrain::TITerrainGenerator*    m_terrainGeneratorPtr;
         std::string                     m_workingDir;
 
-        std::vector< TCustomVizTerrainPrimitive > m_vizTerrainPrimitives;
+        std::vector< TGLVizTerrainPrimitive > m_vizTerrainPrimitives;
 
         void _collectTerrainPrimitives();
 
@@ -55,16 +55,16 @@ namespace tysoc {
         engine::LIRenderable* _createMeshFromData( terrain::TTerrainPrimitive* terrainPrimitivePtr );
 
         void _resizeMesh( engine::LIRenderable* renderablePtr, terrain::TTerrainPrimitive* terrainPrimitivePtr );
-        void _updateVizTerrainPrimitive( TCustomVizTerrainPrimitive& vizTerrainPrimitivePtr );
+        void _updateVizTerrainPrimitive( TGLVizTerrainPrimitive& vizTerrainPrimitivePtr );
 
         public :
 
-        TCustomVizTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr,
+        TGLVizTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr,
                                     engine::LScene* scenePtr,
                                     const std::string& workingDir );
-        ~TCustomVizTerrainGenerator();
+        ~TGLVizTerrainGenerator();
 
-        TCustomVizTerrainDrawState drawState;
+        TGLVizTerrainDrawState drawState;
 
         void update();
         terrain::TITerrainGenerator* getTerrainGeneratorPtr();

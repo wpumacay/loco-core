@@ -65,9 +65,6 @@ tysoc::TBody* createSimpleBody( const std::string& name, const std::string& type
     _bodyData.collisions.push_back( _collisionData );
     _bodyData.visuals.push_back( _visualData );
 
-    // create the abstract body
-    auto _bodyPtr = new tysoc::TBody( name, _bodyData );
-
     // choose a random position
     tysoc::TVec3 _position;
     _position.x = g_randomUniformDistribution( g_randomGenerator );
@@ -80,8 +77,11 @@ tysoc::TBody* createSimpleBody( const std::string& name, const std::string& type
     _rotation.y = TYSOC_PI * g_randomUniformDistribution( g_randomGenerator ) / 4.;
     _rotation.z = TYSOC_PI * g_randomUniformDistribution( g_randomGenerator ) / 4.;
 
-    _bodyPtr->setPosition( _position );
-    _bodyPtr->setRotation( tysoc::TMat3::fromEuler( _rotation ) );
+    // create the abstract body
+    auto _bodyPtr = new tysoc::TBody( name, 
+                                      _bodyData, 
+                                      _position, 
+                                      tysoc::TMat3::fromEuler( _rotation ) );
 
     return _bodyPtr;
 }

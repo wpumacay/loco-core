@@ -7,7 +7,7 @@ namespace tysoc {
     // @TODO: Change some of the visuals for actuators, sensors, etc. ...
     //        for special gizmos that give better feedback than primitives
 
-    TCustomVizKinTree::TCustomVizKinTree( agent::TAgent* agentPtr,
+    TGLVizKinTree::TGLVizKinTree( agent::TAgent* agentPtr,
                                           engine::LScene* scenePtr,
                                           const std::string& workingDir )
     {
@@ -18,7 +18,7 @@ namespace tysoc {
         _collectFromKinTree();
     }
 
-    TCustomVizKinTree::~TCustomVizKinTree()
+    TGLVizKinTree::~TGLVizKinTree()
     {
         m_scenePtr = NULL;
         m_agentPtr = NULL;
@@ -66,7 +66,7 @@ namespace tysoc {
         m_vizCollisions.clear();
     }
 
-    void TCustomVizKinTree::_collectFromKinTree()
+    void TGLVizKinTree::_collectFromKinTree()
     {
         if ( !m_agentPtr )
         {
@@ -86,13 +86,13 @@ namespace tysoc {
     }
 
 
-    void TCustomVizKinTree::_collectKinBodies()
+    void TGLVizKinTree::_collectKinBodies()
     {
         auto _bodies = m_agentPtr->bodies;
 
         for ( size_t i = 0; i < _bodies.size(); i++ )
         {
-            TCustomVizKinBody _vizBody;
+            TGLVizKinBody _vizBody;
             // wrap the kinBody object
             _vizBody.bodyPtr = _bodies[i];
             // and create the appropiate mesh
@@ -112,13 +112,13 @@ namespace tysoc {
         }
     }
 
-    void TCustomVizKinTree::_collectKinJoints()
+    void TGLVizKinTree::_collectKinJoints()
     {
         auto _joints = m_agentPtr->joints;
 
         for ( size_t i = 0; i < _joints.size(); i++ )
         {
-            TCustomVizKinJoint _vizJoint;
+            TGLVizKinJoint _vizJoint;
             // wrap the kinJoint object
             _vizJoint.jointPtr = _joints[i];
             // and create the appropiate mesh
@@ -138,13 +138,13 @@ namespace tysoc {
         }
     }
 
-    void TCustomVizKinTree::_collectKinActuators()
+    void TGLVizKinTree::_collectKinActuators()
     {
         auto _actuators = m_agentPtr->actuators;
 
         for ( size_t i = 0; i < _actuators.size(); i++ )
         {
-            TCustomVizKinActuator _vizActuator;
+            TGLVizKinActuator _vizActuator;
             // wrap the kinActuator object
             _vizActuator.actuatorPtr = _actuators[i];
             // and create the appropiate mesh
@@ -164,13 +164,13 @@ namespace tysoc {
         }
     }
 
-    void TCustomVizKinTree::_collectKinSensors()
+    void TGLVizKinTree::_collectKinSensors()
     {
         auto _sensors = m_agentPtr->sensors;
 
         for ( size_t i = 0; i < _sensors.size(); i++ )
         {
-            TCustomVizKinSensor _vizSensor;
+            TGLVizKinSensor _vizSensor;
             // wrap the kinSensor object
             _vizSensor.sensorPtr = _sensors[i];
             // and create the appropiate mesh
@@ -190,13 +190,13 @@ namespace tysoc {
         }
     }
 
-    void TCustomVizKinTree::_collectKinVisuals()
+    void TGLVizKinTree::_collectKinVisuals()
     {
         auto _visuals = m_agentPtr->visuals;
 
         for ( size_t i = 0; i < _visuals.size(); i++ )
         {
-            TCustomVizKinVisual _vizVisual;
+            TGLVizKinVisual _vizVisual;
             // wrap the kinVisual object
             _vizVisual.visualPtr = _visuals[i];
             // and create the appropiate mesh
@@ -219,13 +219,13 @@ namespace tysoc {
         }
     }
 
-    void TCustomVizKinTree::_collectKinCollisions()
+    void TGLVizKinTree::_collectKinCollisions()
     {
         auto _collisions = m_agentPtr->collisions;
 
         for ( size_t i = 0; i < _collisions.size(); i++ )
         {
-            TCustomVizKinCollision _vizCollision;
+            TGLVizKinCollision _vizCollision;
             // wrap the kinCollision object
             _vizCollision.collisionPtr = _collisions[i];
             // and create the appropiate mesh
@@ -251,7 +251,7 @@ namespace tysoc {
     }
 
 
-    engine::LIRenderable* TCustomVizKinTree::_createMesh( const std::string& type,
+    engine::LIRenderable* TGLVizKinTree::_createMesh( const std::string& type,
                                                           const TVec3& size,
                                                           const TVec3& cAmbient,
                                                           const TVec3& cDiffuse,
@@ -304,7 +304,7 @@ namespace tysoc {
         return _renderable;
     }
 
-    void TCustomVizKinTree::_setRenderableColor( engine::LIRenderable* renderablePtr,
+    void TGLVizKinTree::_setRenderableColor( engine::LIRenderable* renderablePtr,
                                                  const TVec3& cAmbient,
                                                  const TVec3& cDiffuse,
                                                  const TVec3& cSpecular )
@@ -328,7 +328,7 @@ namespace tysoc {
         }
     }
 
-    void TCustomVizKinTree::update()
+    void TGLVizKinTree::update()
     {
         // update draw state
         for ( size_t i = 0; i < m_vizVisuals.size(); i++ )
@@ -391,7 +391,7 @@ namespace tysoc {
         }
     }
 
-    void TCustomVizKinTree::_updateBody( TCustomVizKinBody& kinBody )
+    void TGLVizKinTree::_updateBody( TGLVizKinBody& kinBody )
     {
         // extract body world transform
         TMat4 _worldTransform = kinBody.bodyPtr->worldTransform;
@@ -410,7 +410,7 @@ namespace tysoc {
         kinBody.axesPtr->rotation   = _rotation;
     }
 
-    void TCustomVizKinTree::_updateJoint( TCustomVizKinJoint& kinJoint )
+    void TGLVizKinTree::_updateJoint( TGLVizKinJoint& kinJoint )
     {
         // extract joint world transform
         TMat4 _worldTransform = kinJoint.jointPtr->worldTransform;
@@ -429,7 +429,7 @@ namespace tysoc {
         kinJoint.axesPtr->rotation   = _rotation;
     }
 
-    void TCustomVizKinTree::_updateSensor( TCustomVizKinSensor& kinSensor )
+    void TGLVizKinTree::_updateSensor( TGLVizKinSensor& kinSensor )
     {
         // extract sensor world transform
         TMat4 _worldTransform = kinSensor.sensorPtr->worldTransform;
@@ -448,7 +448,7 @@ namespace tysoc {
         kinSensor.axesPtr->rotation   = _rotation;
     }
 
-    void TCustomVizKinTree::_updateVisual( TCustomVizKinVisual& kinVisual )
+    void TGLVizKinTree::_updateVisual( TGLVizKinVisual& kinVisual )
     {
         // extract visual world transform
         TMat4 _worldTransform = kinVisual.visualPtr->geometry.worldTransform;
@@ -501,7 +501,7 @@ namespace tysoc {
 //         }
     }
 
-    void TCustomVizKinTree::_updateActuator( TCustomVizKinActuator& kinActuator )
+    void TGLVizKinTree::_updateActuator( TGLVizKinActuator& kinActuator )
     {
         // extract actuator world transform
         TMat4 _worldTransform = kinActuator.actuatorPtr->worldTransform;
@@ -520,7 +520,7 @@ namespace tysoc {
         kinActuator.axesPtr->rotation   = _rotation;
     }
 
-    void TCustomVizKinTree::_updateCollision( TCustomVizKinCollision& kinCollision )
+    void TGLVizKinTree::_updateCollision( TGLVizKinCollision& kinCollision )
     {
         // extract collision world transform
         TMat4 _worldTransform = kinCollision.collisionPtr->geometry.worldTransform;
@@ -539,7 +539,7 @@ namespace tysoc {
         kinCollision.axesPtr->rotation   = _rotation;
     }
 
-    agent::TAgent* TCustomVizKinTree::getKinTreePtr()
+    agent::TAgent* TGLVizKinTree::getKinTreePtr()
     {
         return m_agentPtr;
     }

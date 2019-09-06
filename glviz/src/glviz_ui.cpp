@@ -3,8 +3,8 @@
 
 namespace tysoc {
 
-    TCustomUI::TCustomUI( TScenario* scenarioPtr,
-                          TCustomContextUI* uiContextPtr )
+    TGLUi::TGLUi( TScenario* scenarioPtr,
+                          TGLUiContext* uiContextPtr )
         : TIVisualizerUI( scenarioPtr )
     {
         m_uiContextPtr          = uiContextPtr;
@@ -18,9 +18,11 @@ namespace tysoc {
         m_basicCurrentCollisionIndx = -1;
         m_basicCurrentVisualIndx    = -1;
         m_lastElementPicked         = -1;
+
+        m_uiPanelBodies = NULL;
     }
 
-    TCustomUI::~TCustomUI()
+    TGLUi::~TGLUi()
     {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
@@ -33,24 +35,35 @@ namespace tysoc {
             delete m_uiContextPtr;
             m_uiContextPtr = NULL;
         }
+
+        if ( m_uiPanelBodies )
+        {
+            delete m_uiPanelBodies;
+            m_uiPanelBodies = NULL;
+        }
     }
 
-    void TCustomUI::_initUIInternal()
+    void TGLUi::_initUIInternal()
     {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO& _io = ImGui::GetIO(); (void) _io;
+        _io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
-        ImGui_ImplGlfw_InitForOpenGL( m_glfwWindowPtr, false );
+        ImGui_ImplGlfw_InitForOpenGL( m_glfwWindowPtr, true );
     #ifdef __APPLE__
         ImGui_ImplOpenGL3_Init( "#version 150" );
     #else
         ImGui_ImplOpenGL3_Init( "#version 130" );
     #endif
         ImGui::StyleColorsDark();
+
+        // create panel for bodies
+        m_uiPanelBodies = new TGLUiBodies( this,
+                                           m_scenarioPtr );
     }
 
-    void TCustomUI::_renderUIInternal()
+    void TGLUi::_renderUIInternal()
     {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -58,12 +71,11 @@ namespace tysoc {
 
         if ( m_uiContextPtr->isUiActive )
         {
-            // @TODO|@CHECK|@WIP: Should abstract away the ...
-            // widgets and render them like if it was tree
-
-            // Demo functionality
             if ( m_uiContextPtr->isBasicUiActive )
                 _renderBasicMainMenu();
+
+            if ( m_uiPanelBodies )
+                m_uiPanelBodies->render();
         }
 
         ImGui::Render();
@@ -75,7 +87,7 @@ namespace tysoc {
 
     // Basic UI functionality (for testing purposes) *********************************
 
-    void TCustomUI::_renderBasicMainMenu()
+    void TGLUi::_renderBasicMainMenu()
     {
         ImGui::Begin( "Main Menu" );
 
@@ -118,7 +130,7 @@ namespace tysoc {
         }
     }
 
-    void TCustomUI::_renderBasicKinTreeVisualsMenu( TCustomVizKinTree* vizKinTreePtr )
+    void TGLUi::_renderBasicKinTreeVisualsMenu( TGLVizKinTree* vizKinTreePtr )
     {
         ImGui::Begin( "Kinematic Tree visual options" );
 
@@ -141,7 +153,7 @@ namespace tysoc {
         ImGui::End();
     }
 
-    void TCustomUI::_renderBasicKinTreeModelInfoMenu( agent::TAgent* agentPtr )
+    void TGLUi::_renderBasicKinTreeModelInfoMenu( agent::TAgent* agentPtr )
     {
         auto _bodies        = agentPtr->bodies;
         auto _joints        = agentPtr->joints;
@@ -263,7 +275,7 @@ namespace tysoc {
         ImGui::End();
     }
 
-    void TCustomUI::_showBodyInfo( agent::TKinTreeBody* kinTreeBodyPtr  )
+    void TGLUi::_showBodyInfo( agent::TKinTreeBody* kinTreeBodyPtr  )
     {
         auto _relpos    = kinTreeBodyPtr->relTransform.getPosition();
         auto _relquat   = kinTreeBodyPtr->relTransform.getRotQuaternion();
@@ -288,7 +300,7 @@ namespace tysoc {
         }
     }
 
-    void TCustomUI::_showJointInfo( agent::TKinTreeJoint* kinTreeJointPtr )
+    void TGLUi::_showJointInfo( agent::TKinTreeJoint* kinTreeJointPtr )
     {
         auto _relpos        = kinTreeJointPtr->relTransform.getPosition();
         auto _relquat       = kinTreeJointPtr->relTransform.getRotQuaternion();
@@ -314,7 +326,7 @@ namespace tysoc {
         ImGui::Text( "damping       : %.3f", _damping );
     }
 
-    void TCustomUI::_showCollisionInfo( agent::TKinTreeCollision* kinTreeCollisionPtr )
+    void TGLUi::_showCollisionInfo( agent::TKinTreeCollision* kinTreeCollisionPtr )
     {
         auto _relpos        = kinTreeCollisionPtr->relTransform.getPosition();
         auto _relquat       = kinTreeCollisionPtr->relTransform.getRotQuaternion();
@@ -338,7 +350,7 @@ namespace tysoc {
         ImGui::Text( "density       : %.2f", _density );
     }
 
-    void TCustomUI::_showVisualInfo( agent::TKinTreeVisual* kinTreeVisualPtr )
+    void TGLUi::_showVisualInfo( agent::TKinTreeVisual* kinTreeVisualPtr )
     {
         auto _relpos        = kinTreeVisualPtr->relTransform.getPosition();
         auto _relquat       = kinTreeVisualPtr->relTransform.getRotQuaternion();
@@ -353,7 +365,7 @@ namespace tysoc {
     }
 
 
-    void TCustomUI::_renderBasicKinTreeActionsMenu( agent::TAgent* agentPtr )
+    void TGLUi::_renderBasicKinTreeActionsMenu( agent::TAgent* agentPtr )
     {
         ImGui::Begin( "Kinematic Tree actuator options" );
 
@@ -399,7 +411,7 @@ namespace tysoc {
         ImGui::End();
     }
 
-    void TCustomUI::_renderBasicKinTreeQvalues( agent::TAgent* agentPtr )
+    void TGLUi::_renderBasicKinTreeQvalues( agent::TAgent* agentPtr )
     {
         ImGui::Begin( "Kinematic Tree qpos" );
 
@@ -425,7 +437,7 @@ namespace tysoc {
         ImGui::End();
     }
 
-    void TCustomUI::_renderBasicKinTreeSummary( agent::TAgent* agentPtr )
+    void TGLUi::_renderBasicKinTreeSummary( agent::TAgent* agentPtr )
     {
         ImGui::Begin( "Kinematic Tree Summary" );
 

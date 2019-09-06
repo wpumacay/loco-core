@@ -20,7 +20,7 @@
 
 namespace tysoc {
 
-    class TCustomVisualizer : public TIVisualizer
+    class TGLVisualizer : public TIVisualizer
     {
 
         private :
@@ -30,11 +30,11 @@ namespace tysoc {
         engine::LScene*     m_glScenePtr;
         
         // visualization wrappers
-        std::vector< TCustomVizKinTree* >             m_vizKinTreeWrappers;
-        std::vector< TCustomVizTerrainGenerator* >    m_vizTerrainGeneratorWrappers;
+        std::vector< TGLVizKinTree* >             m_vizKinTreeWrappers;
+        std::vector< TGLVizTerrainGenerator* >    m_vizTerrainGeneratorWrappers;
 
         // the UI context
-        TCustomContextUI*   m_uiContextPtr;
+        TGLUiContext*   m_uiContextPtr;
 
         void _setupGlRenderingEngine();
         void _collectSingleBodies( TBody* bodyPtr );
@@ -71,9 +71,9 @@ namespace tysoc {
 
         public :
 
-        TCustomVisualizer( TScenario* scenarioPtr,
+        TGLVisualizer( TScenario* scenarioPtr,
                            const std::string& workingDir );
-        ~TCustomVisualizer(); // @CHECK: check for virtual destructors
+        ~TGLVisualizer(); // @CHECK: check for virtual destructors
 
         void addBody( TBody* bodyPtr );
         void addAgent( agent::TAgent* agentPtr );
