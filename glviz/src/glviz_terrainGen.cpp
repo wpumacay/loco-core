@@ -2,7 +2,6 @@
 #include <glviz_terrainGen.h>
 
 namespace tysoc {
-namespace viz {
 
     TCustomVizTerrainGenerator::TCustomVizTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr,
                                                             engine::LScene* scenePtr,
@@ -230,4 +229,4 @@ namespace viz {
         _renderablePtr->rotation.set( 2, 2, _terrainPrimitivePtr->rotmat[8] );
     }
 
-}}
+}

@@ -2,15 +2,17 @@
 #include <scenario.h>
 
 
-namespace tysoc
-{
+namespace tysoc {
 
-    
     TScenario::TScenario()
     {
         m_state = IDLE;
 
         // initialize some mappings
+        m_mapBodiesByType[ eDynamicsType::DYNAMIC ]     = std::vector< TBody* >();
+        m_mapBodiesByType[ eDynamicsType::STATIC ]      = std::vector< TBody* >();
+        m_mapBodiesByType[ eDynamicsType::KINEMATIC ]   = std::vector< TBody* >();
+
         m_mapAgentsByType[ agent::AGENT_TYPE_BASE ]  = std::vector< agent::TAgent* >();
 
         m_mapSensorsByType[ sensor::SENSOR_TYPE_INTRINSICS ]            = std::vector< sensor::TISensor* >();
@@ -31,6 +33,14 @@ namespace tysoc
         // Clean the stored references as ...
         // the runtime is in charge to hold ...
         // all data of the simulation
+        for ( size_t i = 0; i < m_bodies.size(); i++ )
+        {
+            delete m_bodies[i];
+        }
+        m_bodies.clear();
+        m_mapBodiesByName.clear();
+        m_mapBodiesByType.clear();
+
         for ( size_t i = 0; i < m_agents.size(); i++ )
         {
             delete m_agents[i];
@@ -59,6 +69,16 @@ namespace tysoc
     ScenarioState TScenario::state()
     {
         return m_state;
+    }
+
+    void TScenario::addBody( TBody* bodyPtr )
+    {
+        if ( !bodyPtr )
+            return;
+
+        m_bodies.push_back( bodyPtr );
+        m_mapBodiesByName[ bodyPtr->name() ] = bodyPtr;
+        m_mapBodiesByType[ bodyPtr->dyntype() ].push_back( bodyPtr );
     }
 
     void TScenario::addAgent( agent::TAgent* agent )
@@ -102,14 +122,28 @@ namespace tysoc
 
     void TScenario::update()
     {
+        for ( size_t i = 0; i < m_bodies.size(); i++ )
+            m_bodies[i]->update();
+
         for ( size_t i = 0; i < m_terrainGenerators.size(); i++ )
-            m_terrainGenerators[ i ]->update();
+            m_terrainGenerators[i]->update();
 
         for ( size_t i = 0; i < m_sensors.size(); i++ )
-            m_sensors[ i ]->update();
+            m_sensors[i]->update();
 
         for ( size_t i = 0; i < m_agents.size(); i++ )
-            m_agents[ i ]->update();
+            m_agents[i]->update();
+    }
+
+    TBody* TScenario::getBodyByName( const std::string& name )
+    {
+        if ( m_mapBodiesByName.find( name ) != m_mapBodiesByName.end() )
+            return m_mapBodiesByName[ name ];
+
+        std::cout << "WARNING> body with name: " << name 
+                  << " does not exist. Returning NULL instead." << std::endl;
+
+        return NULL;
     }
 
     agent::TAgent* TScenario::getAgentByName( const std::string& name )
@@ -156,6 +190,11 @@ namespace tysoc
         return m_terrainGenerators;
     }
 
+    std::vector< TBody* > TScenario::getBodies()
+    {
+        return m_bodies;
+    }
+
     std::vector< agent::TAgent* > TScenario::getAgents()
     {
         return m_agents;
@@ -164,6 +203,16 @@ namespace tysoc
     std::vector< sensor::TISensor* > TScenario::getSensors()
     {
         return m_sensors;
+    }
+
+    std::vector< TBody* > TScenario::getBodiesByType( const eDynamicsType& type )
+    {
+        if ( m_mapBodiesByType.find( type ) != m_mapBodiesByType.end() )
+            return m_mapBodiesByType[ type ];
+
+        std::cout << "WARNING> tried to get bodies of non existent type: " << tysoc::toString( type ) << std::endl;
+
+        return std::vector< TBody* >();
     }
 
     std::vector< agent::TAgent* > TScenario::getAgentsByType( const std::string& type )
@@ -200,6 +249,11 @@ namespace tysoc
         std::cout << "WARNING> tried to get terrain generators of non existent type: " << type << std::endl;
 
         return std::vector< terrain::TITerrainGenerator* >();
+    }
+
+    bool TScenario::hasBody( const std::string& bodyName )
+    {
+        return m_mapBodiesByName.find( bodyName ) != m_mapBodiesByName.end();
     }
 
     bool TScenario::hasAgent( const std::string& agentName )

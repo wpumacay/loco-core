@@ -2,7 +2,6 @@
 #include <glviz_drawable.h>
 
 namespace tysoc {
-namespace viz {
 
     /***************************************************************************
     *                                                                          *
@@ -179,7 +178,7 @@ namespace viz {
         changeSize( data.size );
     }
 
-    extern "C" TIDrawable* viz_createDrawable( const TShapeData& data )
+    TGLDrawable* TGLDrawable::CreateDrawable( const TShapeData& data )
     {
         if ( TGLDrawable::m_shapesPool[data.type].size() > 0 )
         {
@@ -199,4 +198,9 @@ namespace viz {
                                 data );
     }
 
-}}
+    extern "C" TIDrawable* visualizer_createDrawable( const TShapeData& data )
+    {
+        return TGLDrawable::CreateDrawable( data );
+    }
+
+}

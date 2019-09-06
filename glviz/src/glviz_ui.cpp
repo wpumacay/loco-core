@@ -1,10 +1,7 @@
 
 #include <glviz_ui.h>
 
-
-
 namespace tysoc {
-namespace viz {
 
     TCustomUI::TCustomUI( TScenario* scenarioPtr,
                           TCustomContextUI* uiContextPtr )
@@ -460,4 +457,4 @@ namespace viz {
 
     // *******************************************************************************
 
-}}
+}

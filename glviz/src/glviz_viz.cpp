@@ -3,8 +3,6 @@
 
 
 namespace tysoc {
-namespace viz {
-
 
     TCustomVisualizer::TCustomVisualizer( TScenario* scenarioPtr,
                                           const std::string& workingDir )
@@ -32,13 +30,15 @@ namespace viz {
         // set up rendering engine stuff
         _setupGlRenderingEngine();
 
+        // Create drawable adapters for single bodies
+        auto _bodies = m_scenarioPtr->getBodies();
+        for ( size_t i = 0; i < _bodies.size(); i++ )
+            _collectSingleBodies( _bodies[i] );
+
         // Create visualization wrappers for the terrain generator
         auto _terrainGenerators = m_scenarioPtr->getTerrainGenerators();
-
         for ( size_t i = 0; i < _terrainGenerators.size(); i++ )
-        {
             _collectTerrainGenerator( _terrainGenerators[i] );
-        }
 
         // Create visualization wrappers for the agents
         auto _agents = m_scenarioPtr->getAgents();
@@ -218,6 +218,52 @@ namespace viz {
         m_vizKinTreeWrappers.push_back( _vizKinTreeWrapper );
     }
 
+    void TCustomVisualizer::_collectSingleBodies( TBody* bodyPtr )
+    {
+        if ( !bodyPtr )
+            return;
+
+        auto _collisions = bodyPtr->collisions();
+        for ( size_t i = 0; i < _collisions.size(); i++ )
+        {
+            if ( !_collisions[i] )
+                continue;
+
+            auto _collisionDrawable = TGLDrawable::CreateDrawable( _collisions[i]->data() );
+
+            if ( !_collisionDrawable )
+                continue;
+
+            _collisionDrawable->show( false );
+
+            _collisions[i]->setDrawable( _collisionDrawable );
+            m_glScenePtr->addRenderable( _collisionDrawable->renderable() );
+            m_vizDrawables.push_back( _collisionDrawable );
+        }
+
+        auto _visuals = bodyPtr->visuals();
+        for ( size_t i = 0; i < _visuals.size(); i++ )
+        {
+            if ( !_visuals[i] )
+                continue;
+
+            auto _visualDrawable = TGLDrawable::CreateDrawable( _visuals[i]->data() );
+
+            if ( !_visualDrawable )
+                continue;
+
+            _visualDrawable->setAmbientColor( _visuals[i]->data().ambient );
+            _visualDrawable->setDiffuseColor( _visuals[i]->data().diffuse );
+            _visualDrawable->setSpecularColor( _visuals[i]->data().specular );
+            _visualDrawable->setShininess( _visuals[i]->data().shininess );
+
+            _visuals[i]->setDrawable( _visualDrawable );
+            m_glScenePtr->addRenderable( _visualDrawable->renderable() );
+            m_vizDrawables.push_back( _visualDrawable );
+        }
+
+    }
+
     void TCustomVisualizer::_collectTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr )
     {
         // create the terrainGenrator viz wrapper
@@ -360,10 +406,10 @@ namespace viz {
         return engine::InputSystem::checkSingleKeyPress( keyCode );
     }
 
-    extern "C" TIVisualizer* visualizer_create( TScenario* scenarioPtr,
-                                                const std::string& workingDir )
+    extern "C" TIVisualizer* visualizer_createVisualizer( TScenario* scenarioPtr,
+                                                          const std::string& workingDir )
     {
         return new TCustomVisualizer( scenarioPtr, workingDir );
     }
 
-}}
+}

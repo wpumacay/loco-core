@@ -5,6 +5,8 @@
 #include <terrain/terrain.h>
 #include <sensor/sensor.h>
 
+#include <components/bodies.h>
+
 namespace tysoc
 {
     /**
@@ -33,6 +35,10 @@ namespace tysoc
 
         ScenarioState m_state;
 
+        std::vector< TBody* >                               m_bodies;
+        std::map< std::string, TBody* >                     m_mapBodiesByName;
+        std::map< eDynamicsType, std::vector< TBody* > >    m_mapBodiesByType;
+
         std::vector< agent::TAgent* >                              m_agents;
         std::map< std::string, agent::TAgent* >                    m_mapAgentsByName;
         std::map< std::string, std::vector< agent::TAgent* > >     m_mapAgentsByType;
@@ -58,26 +64,30 @@ namespace tysoc
         */
         ScenarioState state();
 
+        void addBody( TBody* bodyPtr );
         void addAgent( agent::TAgent* agent );
         void addSensor( sensor::TISensor* sensor );
         void addTerrainGenerator( terrain::TITerrainGenerator* terrainGenerator );
 
+        std::vector< TBody* >                       getBodies();
         std::vector< agent::TAgent* >               getAgents();
         std::vector< sensor::TISensor* >            getSensors();
         std::vector< terrain::TITerrainGenerator* > getTerrainGenerators();
 
+        TBody*                          getBodyByName( const std::string& name );
         agent::TAgent*                  getAgentByName( const std::string& name );
         sensor::TISensor*               getSensorByName( const std::string& name );
         terrain::TITerrainGenerator*    getTerrainGeneratorByName( const std::string& name );
 
+        std::vector< TBody* >                           getBodiesByType( const eDynamicsType& type );
         std::vector< agent::TAgent* >                   getAgentsByType( const std::string& type );
         std::vector< sensor::TISensor* >                getSensorsByType( const std::string& type );
         std::vector< terrain::TITerrainGenerator* >     getTerrainGeneratorsByType( const std::string& type );
 
+        bool hasBody( const std::string& bodyName );
         bool hasAgent( const std::string& agentName );
         bool hasTerrainGen( const std::string& terrainGenName );
         bool hasSensor( const std::string& sensorName );
-        bool hasBody( const std::string& bodyName );
 
         virtual void initialize();
         virtual void update();

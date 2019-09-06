@@ -79,4 +79,7 @@ namespace tysoc {
         terrain::TITerrainGenerator* terrainGenerator();
     };
 
+    typedef TTerrainGenWrapper* FcnCreateTerrainGen( terrain::TITerrainGenerator* terrainGenPtr,
+                                                     const std::string& workingDir );
+
 }

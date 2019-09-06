@@ -15,7 +15,7 @@ namespace pytysoc
 
         private :
 
-        tysoc::viz::TIVisualizer* m_visualizerPtr;
+        tysoc::TIVisualizer* m_visualizerPtr;
 
         public :
 
@@ -27,7 +27,7 @@ namespace pytysoc
         *   @param pyScenarioPtr    The scenario we want to visualize
         *   @notexposed             Not exposed through python API
         */
-        PyVisualizer( tysoc::viz::TIVisualizer* visualizerPtr );
+        PyVisualizer( tysoc::TIVisualizer* visualizerPtr );
 
         /**
         *   Destructor for this wrapper. It just cleans some references, as the ...

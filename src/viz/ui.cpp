@@ -3,8 +3,6 @@
 
 
 namespace tysoc {
-namespace viz {
-
 
     TIVisualizerUI::TIVisualizerUI( TScenario* scenarioPtr )
     {
@@ -33,4 +31,4 @@ namespace viz {
         m_simulationPtr = simulationPtr;
     }
 
-}}
+}

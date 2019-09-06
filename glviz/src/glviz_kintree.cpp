@@ -1,8 +1,7 @@
 
 #include <glviz_kintree.h>
 
-namespace tysoc{
-namespace viz{
+namespace tysoc {
 
 
     // @TODO: Change some of the visuals for actuators, sensors, etc. ...
@@ -545,4 +544,4 @@ namespace viz{
         return m_agentPtr;
     }
 
-}}
+}

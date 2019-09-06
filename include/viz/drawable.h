@@ -4,7 +4,6 @@
 #include <components/data.h>
 
 namespace tysoc {
-namespace viz {
 
     class TCollision;
     class TVisual;
@@ -30,7 +29,7 @@ namespace viz {
 
         virtual void setShininess( const TScalar& shininess ) = 0;
 
-        virtual void changeSize( const tysoc::TVec3& newSize ) = 0;
+        virtual void changeSize( const TVec3& newSize ) = 0;
 
         virtual void show( bool visible ) = 0;
 
@@ -55,4 +54,4 @@ namespace viz {
     /* dl-function to be loaded from the renderer support */
     typedef TIDrawable* FcnCreateVizDrawable( const TShapeData& data );
 
-}}
+}

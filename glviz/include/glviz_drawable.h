@@ -8,7 +8,6 @@
 #include <LScene.h>
 
 namespace tysoc {
-namespace viz {
 
     engine::LIRenderable* createRenderable( const TShapeData& data );
 
@@ -42,6 +41,10 @@ namespace viz {
 
         void reuse( const TShapeData& data );
 
+        engine::LIRenderable* renderable() { return m_renderablePtr; }
+
+        static TGLDrawable* CreateDrawable( const TShapeData& data );
+
         static std::map< eShapeType, std::queue< TGLDrawable* > > m_shapesPool;
         static std::map< eShapeType, int > m_numShapes;
 
@@ -51,6 +54,6 @@ namespace viz {
 
     };
 
-    extern "C" TIDrawable* viz_createDrawable( const TShapeData& data );
+    extern "C" TIDrawable* visualizer_createDrawable( const TShapeData& data );
 
-}}
+}

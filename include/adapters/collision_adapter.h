@@ -3,7 +3,6 @@
 #include <components/collisions.h>
 
 namespace tysoc {
-namespace adapters {
 
     class TCollision;
 
@@ -13,7 +12,7 @@ namespace adapters {
 
         TICollisionAdapter( TCollision* collisionPtr ) { m_collisionPtr = collisionPtr; }
 
-        virtual ~TICollisionAdapter();
+        virtual ~TICollisionAdapter() {}
 
         virtual void build() = 0;
 
@@ -29,11 +28,14 @@ namespace adapters {
 
         virtual void changeSize( const TVec3& newSize ) = 0;
 
+        TCollision* collision() { return m_collisionPtr; }
+
         protected :
 
         TCollision* m_collisionPtr;
     };
 
+    /* dl-function to be loaded from the backend support */
+    typedef TICollisionAdapter* FcnCreateCollisionAdapter( TCollision* collisionPtr );
 
-
-}}
+}

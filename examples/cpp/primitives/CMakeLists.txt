@@ -1,9 +1,9 @@
 
-message( "Configuring tysocCore::examples::agents" )
+message( "Configuring tysocCore::examples::primitives" )
 
-FILE( GLOB AgentsCoreExampleSources *.cpp )
+FILE( GLOB PrimitivesCoreExampleSources *.cpp )
 
-foreach( exampleFile ${AgentsCoreExampleSources} )
+foreach( exampleFile ${PrimitivesCoreExampleSources} )
     
     string( REPLACE ".cpp" "" executableLongName ${exampleFile} )
     get_filename_component( execName ${executableLongName} NAME )

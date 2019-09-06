@@ -49,6 +49,20 @@ namespace tysoc {
         return "undefined";
     }
 
+    std::string toString( const eDynamicsType& type )
+    {
+        if ( type == eDynamicsType::DYNAMIC )
+            return "dynamic";
+
+        if ( type == eDynamicsType::STATIC )
+            return "static";
+
+        if ( type == eDynamicsType::KINEMATIC )
+            return "kinematic";
+
+        return "undefined";
+    }
+
     std::string toString( const TShapeData& shapeData )
     {
         std::string _res;

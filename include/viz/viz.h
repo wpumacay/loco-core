@@ -11,13 +11,9 @@
 // simulation (to grab a reference)
 #include <simulation_base.h>
 
-namespace tysoc
-{
-    class TISimulation;
-}
-
 namespace tysoc {
-namespace viz {
+
+    class TISimulation;
 
     struct TIVizCamera
     {
@@ -66,6 +62,9 @@ namespace viz {
         TISimulation* m_simulationPtr;
         // A reference to the UI handler
         TIVisualizerUI* m_uiPtr;
+
+        // drawables adapters
+        std::vector< TIDrawable* > m_vizDrawables;
 
         // abstract camera pointers
         std::map< std::string, TIVizCamera* > m_cameras;
@@ -147,4 +146,4 @@ namespace viz {
     typedef TIVisualizer* FcnCreateViz( TScenario* scenarioPtr,
                                         const std::string& workingDir );
 
-}}
+}

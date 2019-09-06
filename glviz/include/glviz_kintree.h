@@ -35,7 +35,6 @@
 #define VIZKINTREE_COLLISION_DEFAULT_COLOR { 0.25f, 1.0f, 0.25f }
 
 namespace tysoc {
-namespace viz {
 
     struct TCustomVizKinCollision
     {
@@ -167,4 +166,4 @@ namespace viz {
     };
 
 
-}}
+}

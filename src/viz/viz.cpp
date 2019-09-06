@@ -3,7 +3,6 @@
 
 
 namespace tysoc {
-namespace viz {
 
 
     TIVisualizer::TIVisualizer( TScenario* scenarioPtr,
@@ -162,4 +161,4 @@ namespace viz {
         return m_type;
     }
 
-}}
+}

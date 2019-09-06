@@ -25,8 +25,16 @@ namespace tysoc {
         FIXED
     };
 
+    enum class eDynamicsType
+    {
+        DYNAMIC = 0,
+        STATIC = 1,
+        KINEMATIC = 2
+    };
+
     std::string toString( const eShapeType& type );
     std::string toString( const eJointType& type );
+    std::string toString( const eDynamicsType& type );
 
     struct TShapeData
     {
@@ -52,8 +60,8 @@ namespace tysoc {
     {
         int     collisionGroup;
         int     collisionMask;
+        TVec3   friction;
         TScalar density;
-        TScalar friction;
     };
 
     struct TVisualData : public TShapeData
@@ -66,6 +74,7 @@ namespace tysoc {
 
     struct TBodyData
     {
+        eDynamicsType                   dyntype;        // dynamics type used to instantiate either static, kinematic or dynamic bodies
         bool                            hasInertia;     // true: use own mass and inertia, false: compute from shapes
         TScalar                         mass;           // mass to be used when creating inertial properties
         TScalar                         inertia[6];     // inertia matrix to be used when creating inertial properties

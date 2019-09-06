@@ -3,7 +3,6 @@
 #include <components/bodies.h>
 
 namespace tysoc {
-namespace adapters {
 
     class TBody;
 
@@ -14,7 +13,7 @@ namespace adapters {
 
         TIBodyAdapter( TBody* bodyPtr ) { m_bodyPtr = bodyPtr; }
 
-        virtual ~TIBodyAdapter();
+        virtual ~TIBodyAdapter() {}
 
         virtual void build() = 0;
 
@@ -34,11 +33,14 @@ namespace adapters {
 
         virtual void getTransform( TMat4& dstTransform ) = 0;
 
+        TBody* body() { return m_bodyPtr; }
+
     protected :
 
         TBody* m_bodyPtr;
     };
 
+    /* dl-function to be loaded from the backend support */
+    typedef TIBodyAdapter* FcnCreateBodyAdapter( TBody* bodyPtr );
 
-
-}}
+}

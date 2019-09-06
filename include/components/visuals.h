@@ -23,7 +23,7 @@ namespace tysoc {
 
         void setParentBody( TBody* parentBodyPtr );
 
-        void setDrawable( viz::TIDrawable* drawablePtr );
+        void setDrawable( TIDrawable* drawablePtr );
 
         void show( bool visible );
 
@@ -89,7 +89,7 @@ namespace tysoc {
         TVisualData m_data;
 
         /* reference to the drawable resource used for visualization */
-        viz::TIDrawable* m_drawableImplPtr;
+        TIDrawable* m_drawableImplPtr;
     };
 
 }

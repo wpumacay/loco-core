@@ -16,7 +16,6 @@
 #define VIZTERRAIN_AXES_DEFAULT_SIZE 0.1f
 
 namespace tysoc {
-namespace viz {
 
     struct TCustomVizTerrainPrimitive
     {
@@ -73,4 +72,4 @@ namespace viz {
     };
 
 
-}}
+}

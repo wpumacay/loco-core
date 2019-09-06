@@ -98,6 +98,7 @@ namespace tysoc {
 
     };
 
-
+    typedef TAgentWrapper* FcnCreateAgent( agent::TAgent* agentPtr,
+                                           const std::string& workingDir );
 
 }

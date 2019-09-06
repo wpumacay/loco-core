@@ -8,11 +8,7 @@
 
 namespace tysoc {
 
-    namespace viz
-    {
-        class TIVisualizer;
-    }
-
+    class TIVisualizer;
     class TAgentWrapper;
 
     /**
@@ -73,7 +69,13 @@ namespace tysoc {
         std::vector< TTerrainGenWrapper* > m_terrainGenWrappers;
 
         /* A reference to the visualizer (to grab frame-data, debug-draws, etc. */
-        viz::TIVisualizer* m_visualizerPtr;
+        TIVisualizer* m_visualizerPtr;
+
+        /* Collision adapters instantiated as part of the high-level bodies in the scenario */
+        std::vector< TICollisionAdapter* > m_collisionAdapters;
+
+        /* Body adapters instantiated for the high-level bodies in the scenario */
+        std::vector< TIBodyAdapter* > m_bodyAdapters;
 
         /* Executes functionality used before taking a simulation step in the backend */
         void _preStep();
@@ -114,7 +116,6 @@ namespace tysoc {
         /* Calls functionality used for taking a simulation step */
         void step();
 
-        /*  */
         void reset();
 
         void togglePause();
@@ -125,9 +126,9 @@ namespace tysoc {
 
         bool isDebugDrawingActive() { return m_isDebugDrawingActive; }
 
-        void setVisualizer( viz::TIVisualizer* visualizerPtr ) { m_visualizerPtr = visualizerPtr; }
+        void setVisualizer( TIVisualizer* visualizerPtr ) { m_visualizerPtr = visualizerPtr; }
 
-        viz::TIVisualizer* visualizer() { return m_visualizerPtr; }
+        TIVisualizer* visualizer() { return m_visualizerPtr; }
 
         TScenario* scenario() { return m_scenarioPtr; }
 
@@ -135,24 +136,9 @@ namespace tysoc {
 
     };
 
-
     // Function pointers definitions for loading backend-specific functionality
 
-    typedef TISimulation* FcnCreateSim( TScenario* scenarioPtr, const std::string& workingDir );
+    typedef TISimulation* FcnCreateSim( TScenario* scenarioPtr, 
+                                        const std::string& workingDir );
 
-    typedef TAgentWrapper* FcnCreateAgentFromAbstract( agent::TAgent* agentPtr,
-                                                              const std::string& workingDir );
-    typedef TAgentWrapper* FcnCreateAgentFromFile( const std::string& name,
-                                                          const std::string& filename,
-                                                          const std::string& workingDir );
-    typedef TAgentWrapper* FcnCreateAgentFromId( const std::string& name,
-                                                        const std::string& format,
-                                                        const std::string& id,
-                                                        const std::string& workingDir );
-
-    typedef TTerrainGenWrapper* FcnCreateTerrainGenFromAbstract( terrain::TITerrainGenerator* terrainGenPtr,
-                                                                 const std::string& workingDir );
-    typedef TTerrainGenWrapper* FcnCreateTerrainGenFromParams( const std::string& name,
-                                                               const TGenericParams& params,
-                                                               const std::string& workingDir );
 }

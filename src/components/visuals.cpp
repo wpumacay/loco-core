@@ -26,7 +26,7 @@ namespace tysoc {
         m_parentBodyPtr = parentBodyPtr;
     }
 
-    void TVisual::setDrawable( viz::TIDrawable* drawablePtr )
+    void TVisual::setDrawable( TIDrawable* drawablePtr )
     {
         // be nice and tell the drawable that it can be recycled for later usage (if applicable)
         if ( m_drawableImplPtr )

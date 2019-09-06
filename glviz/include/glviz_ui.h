@@ -14,15 +14,14 @@
 #include <glviz_terrainGen.h>
 
 namespace tysoc {
-namespace viz {
 
     struct TCustomContextUI
     {
-        bool                                            isUiActive;
-        bool                                            isBasicUiActive;
-        GLFWwindow*                                     glfwWindowPtr;
-        std::vector< viz::TCustomVizKinTree* >          vizKinTreePtrs;
-        std::vector< viz::TCustomVizTerrainGenerator* > vizTerrainGenPtrs;
+        bool                                        isUiActive;
+        bool                                        isBasicUiActive;
+        GLFWwindow*                                 glfwWindowPtr;
+        std::vector< TCustomVizKinTree* >           vizKinTreePtrs;
+        std::vector< TCustomVizTerrainGenerator* >  vizTerrainGenPtrs;
     };
 
     class TCustomUI : public TIVisualizerUI
@@ -77,7 +76,4 @@ namespace viz {
         ~TCustomUI();
     };
 
-
-
-
-}}
+}

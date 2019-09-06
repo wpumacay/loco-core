@@ -4,7 +4,6 @@
 
 namespace tysoc {
 
-
     TTerrainGenWrapper::TTerrainGenWrapper( terrain::TITerrainGenerator* terrainGenPtr,
                                             const std::string& workingDir )
     {

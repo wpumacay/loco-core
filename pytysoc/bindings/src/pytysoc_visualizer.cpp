@@ -7,7 +7,7 @@ namespace pytysoc
 {
 
 
-    PyVisualizer::PyVisualizer( tysoc::viz::TIVisualizer* visualizerPtr )
+    PyVisualizer::PyVisualizer( tysoc::TIVisualizer* visualizerPtr )
     {
         m_visualizerPtr = visualizerPtr;
     }

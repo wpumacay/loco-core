@@ -11,6 +11,7 @@
 namespace tysoc {
 
     class TBody;
+    class TICollisionAdapter;
 
     class TCollision
     {
@@ -24,9 +25,9 @@ namespace tysoc {
 
         void setParentBody( TBody* parentBodyPtr );
 
-        void setAdapter( adapters::TICollisionAdapter* collisionImplPtr );
+        void setAdapter( TICollisionAdapter* collisionImplPtr );
 
-        void setDrawable( viz::TIDrawable* drawableImplPtr );
+        void setDrawable( TIDrawable* drawableImplPtr );
 
         void show( bool visible );
 
@@ -48,7 +49,17 @@ namespace tysoc {
 
         TMat3 rot() { return m_rot; }
 
+        TVec4 quat() { return m_tf.getRotQuaternion(); }
+
         TMat4 tf() { return m_tf; }
+
+        TVec3 localPos() { return m_localPos; }
+
+        TMat3 localRot() { return m_localRot; }
+
+        TMat4 localTf() { return m_localTf; }
+
+        TVec4 localQuat() { return m_localTf.getRotQuaternion(); }
 
         eShapeType shape() { return m_data.type; }
 
@@ -57,6 +68,8 @@ namespace tysoc {
         TCollisionData data() { return m_data; }
 
         TBody* parent() { return m_parentBodyPtr; }
+
+        TICollisionAdapter* adapter() { return m_collisionImplPtr; }
 
     protected :
 
@@ -84,10 +97,10 @@ namespace tysoc {
         TCollisionData m_data;
 
         /* reference to the drawable resource used for visualization */
-        viz::TIDrawable* m_drawableImplPtr;
+        TIDrawable* m_drawableImplPtr;
 
         /* Adapter object that gives access to the low-level API for a specific backend */
-        adapters::TICollisionAdapter* m_collisionImplPtr;
+        TICollisionAdapter* m_collisionImplPtr;
     };
 
 }

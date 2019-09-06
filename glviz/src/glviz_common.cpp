@@ -1,8 +1,7 @@
 
 #include <glviz_common.h>
 
-namespace tysoc{
-namespace viz{
+namespace tysoc {
 
     engine::LMat4 fromTMat4( const TMat4& mat )
     {
@@ -45,5 +44,4 @@ namespace viz{
         return _res;
     }
 
-
-}}
+}

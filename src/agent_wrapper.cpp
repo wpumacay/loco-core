@@ -4,9 +4,8 @@
 
 namespace tysoc {
 
-
     TAgentWrapper::TAgentWrapper( agent::TAgent* agentPtr,
-                                                const std::string& workingDir )
+                                  const std::string& workingDir )
     {
         // save a reference to the abstract kintree agent for later usage
         m_agentPtr = agentPtr;

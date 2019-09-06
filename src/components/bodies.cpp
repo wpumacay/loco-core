@@ -10,6 +10,23 @@ namespace tysoc {
         m_name = name;
         m_data = data;
         m_bodyImpl = NULL;
+
+        // Create collisions and visuals from the given data
+        auto _collisionsData = m_data.collisions;
+        for ( size_t i = 0; i < _collisionsData.size(); i++ )
+        {
+            auto _collisionName = m_name + "_col_" + std::to_string( i );
+            auto _collisionPtr = new TCollision( _collisionName, _collisionsData[i] );
+            addCollision( _collisionPtr );
+        }
+
+        auto _visualsData = m_data.visuals;
+        for ( size_t i = 0; i < _visualsData.size(); i++ )
+        {
+            auto _visualName = m_name + "_viz_" + std::to_string( i );
+            auto _visualPtr = new TVisual( _visualName, _visualsData[i] );
+            addVisual( _visualPtr );
+        }
     }
 
     TBody::~TBody()
@@ -30,7 +47,7 @@ namespace tysoc {
         m_visualsMap.clear();
     }
 
-    void TBody::setAdapter( adapters::TIBodyAdapter* bodyImpl )
+    void TBody::setAdapter( TIBodyAdapter* bodyImpl )
     {
         // in case there's a danling adapter from before, release its resources
         if ( m_bodyImpl )
@@ -42,18 +59,26 @@ namespace tysoc {
 
     void TBody::addCollision( TCollision* collisionPtr )
     {
+        if ( !collisionPtr )
+            return;
+
         m_collisions.push_back( collisionPtr );
         m_collisionsMap[ collisionPtr->name() ] = collisionPtr;
 
         m_data.collisions.push_back( collisionPtr->data() );
+        collisionPtr->setParentBody( this );
     }
 
     void TBody::addVisual( TVisual* visualPtr )
     {
+        if ( !visualPtr )
+            return;
+
         m_visuals.push_back( visualPtr );
         m_visualsMap[ visualPtr->name() ] = visualPtr;
 
         m_data.visuals.push_back( visualPtr->data() );
+        visualPtr->setParentBody( this );
     }
 
     void TBody::update()
@@ -90,34 +115,62 @@ namespace tysoc {
         }
 
         for ( size_t i = 0; i < m_collisions.size(); i++ )
+        {
             m_collisions[i]->reset();
+            m_collisions[i]->update();
+        }
 
         for ( size_t i = 0; i < m_visuals.size(); i++ )
+        {
             m_visuals[i]->reset();
+            m_visuals[i]->update();
+        }
     }
 
     void TBody::setPosition( const TVec3& position )
     {
         m_pos = position;
+        m_tf.setPosition( m_pos );
 
         if ( m_bodyImpl )
             m_bodyImpl->setPosition( m_pos );
+
+        for ( size_t i = 0; i < m_collisions.size(); i++ )
+            m_collisions[i]->update();
+
+        for ( size_t i = 0; i < m_visuals.size(); i++ )
+            m_visuals[i]->update();
     }
 
     void TBody::setRotation( const TMat3& rotation )
     {
         m_rot = rotation;
+        m_tf.setRotation( m_rot );
 
         if ( m_bodyImpl )
             m_bodyImpl->setRotation( m_rot );
+
+        for ( size_t i = 0; i < m_collisions.size(); i++ )
+            m_collisions[i]->update();
+
+        for ( size_t i = 0; i < m_visuals.size(); i++ )
+            m_visuals[i]->update();
     }
 
     void TBody::setTransform( const TMat4& transform )
     {
         m_tf = transform;
+        m_pos = m_tf.getPosition();
+        m_rot = m_tf.getRotation();
 
         if ( m_bodyImpl )
             m_bodyImpl->setTransform( m_tf );
+
+        for ( size_t i = 0; i < m_collisions.size(); i++ )
+            m_collisions[i]->update();
+
+        for ( size_t i = 0; i < m_visuals.size(); i++ )
+            m_visuals[i]->update();
     }
 
 }

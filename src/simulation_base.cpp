@@ -1,9 +1,7 @@
 
 #include <simulation_base.h>
 
-
 namespace tysoc {
-
 
     TISimulation::TISimulation( TScenario* scenarioPtr,
                                 const std::string& workingDir )
@@ -25,16 +23,31 @@ namespace tysoc {
         for ( size_t q = 0; q < m_agentWrappers.size(); q++ )
             delete m_agentWrappers[q];
 
-        m_agentWrappers.clear();
-
         for ( size_t q = 0; q < m_terrainGenWrappers.size(); q++ )
             delete m_terrainGenWrappers[q];
 
+        for ( size_t q = 0; q < m_collisionAdapters.size(); q++ )
+            delete m_collisionAdapters[q];
+
+        for ( size_t q = 0; q < m_bodyAdapters.size(); q++ )
+            delete m_bodyAdapters[q];
+
+        m_agentWrappers.clear();
         m_terrainGenWrappers.clear();
+        m_collisionAdapters.clear();
+        m_bodyAdapters.clear();
     }
 
     bool TISimulation::initialize()
     {
+        // build all resources required before assembling them in the init-internal stage
+        for ( size_t i = 0; i < m_collisionAdapters.size(); i++ )
+            m_collisionAdapters[i]->build();
+        
+        for ( size_t i = 0; i < m_bodyAdapters.size(); i++ )
+            m_bodyAdapters[i]->build();
+
+        // initialize the simulation in a backend-specific way, by assembling and creating extra low-level resources
         m_isRunning = _initializeInternal();
 
         return m_isRunning;
@@ -67,6 +80,14 @@ namespace tysoc {
         for ( size_t i = 0; i < m_terrainGenWrappers.size(); i++ )
             m_terrainGenWrappers[i]->preStep();
 
+        // @TODO: Change API names to pre-step and post-step (check if required)
+        for ( size_t i = 0; i < m_collisionAdapters.size(); i++ )
+            m_collisionAdapters[i]->update();
+
+        // @TODO: Change API names to pre-step and post-step (check if required)
+        for ( size_t i = 0; i < m_bodyAdapters.size(); i++ )
+            m_bodyAdapters[i]->update();
+
         // delegate any extra backend-specifics (set any low-level info, etc.)
         _preStepInternal();
     }
@@ -94,6 +115,14 @@ namespace tysoc {
         // you too terrain-gen, reset the resources to some initial position from a initial distirbution
         for ( size_t i = 0; i < m_terrainGenWrappers.size(); i++ )
             m_terrainGenWrappers[i]->reset();
+
+        // reset the collision adapters as well
+        for ( size_t q = 0; q < m_collisionAdapters.size(); q++ )
+            m_collisionAdapters[q]->reset();
+
+        // and don't forget the body adapters
+        for ( size_t q = 0; q < m_bodyAdapters.size(); q++ )
+            m_bodyAdapters[q]->reset();
 
         // and in case something was missing, reset any other resources that might need specific resets
         _resetInternal();

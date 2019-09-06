@@ -12,14 +12,13 @@
 // and some specific viz wrappers
 #include <glviz_kintree.h>
 #include <glviz_terrainGen.h>
+#include <glviz_drawable.h>
 // and the current UI functionality
 #include <glviz_ui.h>
 
 #include <components/bodies.h>
 
 namespace tysoc {
-namespace viz {
-
 
     class TCustomVisualizer : public TIVisualizer
     {
@@ -38,6 +37,7 @@ namespace viz {
         TCustomContextUI*   m_uiContextPtr;
 
         void _setupGlRenderingEngine();
+        void _collectSingleBodies( TBody* bodyPtr );
         void _collectKinTreeAgent( agent::TAgent* agentPtr );
         void _collectTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr );
         void _renderSensorReading( sensor::TISensor* sensorPtr );
@@ -80,7 +80,7 @@ namespace viz {
 
     };
 
-    extern "C" TIVisualizer* visualizer_create( TScenario* scenarioPtr,
-                                                const std::string& workingDir );
+    extern "C" TIVisualizer* visualizer_createVisualizer( TScenario* scenarioPtr,
+                                                          const std::string& workingDir );
 
-}}
+}

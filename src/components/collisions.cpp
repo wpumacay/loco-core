@@ -31,7 +31,7 @@ namespace tysoc {
         m_parentBodyPtr = parentBodyPtr;
     }
 
-    void TCollision::setAdapter( adapters::TICollisionAdapter* collisionImplPtr )
+    void TCollision::setAdapter( TICollisionAdapter* collisionImplPtr )
     {
         // if a previous adapter is present, release its resources
         if ( m_collisionImplPtr )
@@ -40,7 +40,7 @@ namespace tysoc {
         m_collisionImplPtr = collisionImplPtr;
     }
 
-    void TCollision::setDrawable( viz::TIDrawable* drawablePtr )
+    void TCollision::setDrawable( TIDrawable* drawablePtr )
     {
         // be nice and tell the drawable that it can be recycled for later usage (if applicable)
         if ( m_drawableImplPtr )
@@ -109,13 +109,14 @@ namespace tysoc {
 
     void TCollision::changeSize( const TVec3& newSize )
     {
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->changeSize( newSize );
-
         // change the collision-data size property
         m_data.size = newSize;
 
-        // set the new size of the drawable resource
+        // tell the backend resource to change the size internally
+        if ( m_collisionImplPtr )
+            m_collisionImplPtr->changeSize( newSize );
+
+        // tell the rendering resource to change the size internally
         if ( m_drawableImplPtr )
             m_drawableImplPtr->changeSize( newSize );
     }

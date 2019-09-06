@@ -24,7 +24,7 @@ namespace tysoc {
 
         virtual ~TBody();
 
-        void setAdapter( adapters::TIBodyAdapter* bodyImpl );
+        void setAdapter( TIBodyAdapter* bodyImpl );
 
         void addCollision( TCollision* collision );
 
@@ -50,11 +50,23 @@ namespace tysoc {
 
         TMat4 tf() { return m_tf; }
 
+        TVec3 pos0() { return m_pos0; }
+
+        TMat3 rot0() { return m_rot0; }
+
+        TVec4 quat0() { return m_tf0.getRotQuaternion(); }
+
+        TMat4 tf0() { return m_tf0; }
+
         std::vector< TVisual* > visuals() { return m_visuals; }
 
         std::vector< TCollision* > collisions() { return m_collisions; }
 
+        eDynamicsType dyntype() { return m_data.dyntype; }
+
         TBodyData data() { return m_data; }
+
+        TIBodyAdapter* adapter() { return m_bodyImpl; }
 
     protected :
 
@@ -68,11 +80,18 @@ namespace tysoc {
         /* transform in world space */
         TMat4 m_tf;
 
+        /* starting position of the body in world-space */
+        TVec3 m_pos0;
+        /* starting orientation of the body in world-space */
+        TMat3 m_rot0;
+        /* starting transform of the body in world-space */
+        TMat4 m_tf0;
+
         /* data of this body object */
         TBodyData m_data;
 
         /* Adapter-object that gives access to the low-level API for a specific backend */
-        adapters::TIBodyAdapter* m_bodyImpl;
+        TIBodyAdapter* m_bodyImpl;
 
         /* Vector-containers to store visuals and collisions owned by this body */
         std::vector< TVisual* >     m_visuals;
@@ -82,7 +101,5 @@ namespace tysoc {
         std::map< std::string, TVisual* >       m_visualsMap;
         std::map< std::string, TCollision* >    m_collisionsMap;
     };
-
-
 
 }
