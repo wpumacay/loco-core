@@ -31,6 +31,9 @@ PYBIND11_MODULE( tysoc_bindings, m )
     PYTYSOC_COMMON_BINDINGS( m )
     // Tests bindings
     PYTYSOC_TESTS_BINDINGS( m )
+    // Enums and Data bindings
+    PYTYSOC_ENUM_BINDINGS( m )
+    PYTYSOC_DATA_BINDINGS( m )
     // Core agent bindings
     PYTYSOC_CORE_AGENT_BINDINGS( m )
     // Core terrainGen bindings

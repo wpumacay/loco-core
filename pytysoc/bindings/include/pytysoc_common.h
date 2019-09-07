@@ -13,7 +13,6 @@ typedef std::map< std::string, py::array_t<TScalar> > MeasurementDict;
 namespace pytysoc
 {
 
-
     tysoc::TVec2 numpyToVec2( py::array_t<TScalar>& nparray );
     tysoc::TVec3 numpyToVec3( py::array_t<TScalar>& nparray );
     tysoc::TVec4 numpyToVec4( py::array_t<TScalar>& nparray );
