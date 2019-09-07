@@ -1,7 +1,7 @@
 <mujoco>
     <include file="materials.xml"/>
     <compiler angle="degree" coordinate="local" inertiafromgeom="true"/>
-    <size nconmax="4000" njmax="8000"/>
+    <size nconmax="4000" njmax="10000"/>
     <statistic extent="2.000000" center="0.000000 0.000000 1.000000"/>
     <asset>
         <texture height="512" width="512" rgb1="0.300000 0.500000 0.700000" rgb2="0.000000 0.000000 0.000000" builtin="gradient" type="skybox"/>
@@ -17,80 +17,126 @@
         <global offheight="800" offwidth="800"/>
     </visual>
     <worldbody>
-        <geom conaffinity="1" contype="0" friction="0.700000 0.100000 0.100000" pos="0.000000 0.000000 -0.050000" quat="1.000000 0.000000 0.000000 0.000000" size="5.000000 5.000000 0.100000" name="tGen_terrainGen0_0" type="box"/>
+        <geom conaffinity="1" contype="0" friction="0.700000 0.100000 0.100000" pos="0.000000 0.000000 -0.100000" quat="1.000000 0.000000 0.000000 0.000000" size="5.000000 5.000000 0.100000" name="tGen_terrainGen0_0" type="box"/>
     </worldbody>
     <worldbody>
-        <body pos="0.000000 0.000000 2.500000" quat="1.000000 0.000000 0.000000 0.000000" name="body_agent0_torso">
-            <joint axis="1.000000 0.000000 0.000000" pos="0.000000 0.000000 0.000000" limited="false" name="joint_agent0_rootx" type="slide"/>
-            <joint axis="0.000000 0.000000 1.000000" pos="0.000000 0.000000 0.000000" limited="false" name="joint_agent0_rootz" type="slide"/>
-            <joint axis="0.000000 1.000000 0.000000" pos="0.000000 0.000000 0.000000" limited="false" name="joint_agent0_rooty" type="hinge"/>
-            <geom conaffinity="0" condim="3" contype="1" density="1000.000000" friction="0.700000 0.100000 0.100000" pos="0.000000 0.000000 0.000000" quat="1.000000 0.000000 0.000000 0.000000" rgba="0.700000 0.500000 0.300000 1.000000" size="0.070000 0.300000 0.000000" name="geom_agent0_torso" type="capsule"/>
-            <body pos="0.000000 -0.050000 -0.300000" quat="1.000000 0.000000 0.000000 0.000000" name="body_agent0_right_thigh">
-                <joint armature="0.010000" damping="0.100000" axis="0.000000 -1.000000 0.000000" pos="0.000000 0.000000 0.000000" range="-20.000000 100.000000" limited="true" name="joint_agent0_right_hip" type="hinge"/>
-                <geom conaffinity="0" condim="3" contype="1" density="1000.000000" friction="0.700000 0.100000 0.100000" pos="0.000000 0.000000 -0.225000" quat="1.000000 0.000000 0.000000 0.000000" rgba="0.700000 0.500000 0.300000 1.000000" size="0.050000 0.225000 0.000000" name="geom_agent0_right_thigh" type="capsule"/>
-                <body pos="0.000000 0.000000 -0.700000" quat="1.000000 0.000000 0.000000 0.000000" name="body_agent0_right_leg">
-                    <joint armature="0.010000" damping="0.100000" axis="0.000000 -1.000000 0.000000" pos="0.000000 0.000000 0.250000" range="-150.000000 0.000000" limited="true" name="joint_agent0_right_knee" type="hinge"/>
-                    <geom conaffinity="0" condim="3" contype="1" density="1000.000000" friction="0.700000 0.100000 0.100000" pos="0.000000 0.000000 0.000000" quat="1.000000 0.000000 0.000000 0.000000" rgba="0.700000 0.500000 0.300000 1.000000" size="0.040000 0.250000 0.000000" name="geom_agent0_right_leg" type="capsule"/>
-                    <body pos="0.060000 0.000000 -0.250000" quat="1.000000 0.000000 0.000000 0.000000" name="body_agent0_right_foot">
-                        <joint armature="0.010000" damping="0.100000" axis="0.000000 -1.000000 0.000000" pos="-0.060000 0.000000 0.000000" range="-45.000000 45.000000" limited="true" name="joint_agent0_right_ankle" type="hinge"/>
-                        <geom conaffinity="0" condim="3" contype="1" density="1000.000000" friction="0.700000 0.100000 0.100000" pos="0.000000 0.000000 0.000000" quat="0.707107 0.000000 0.707107 0.000000" rgba="0.700000 0.500000 0.300000 1.000000" size="0.050000 0.100000 0.000000" name="geom_agent0_right_foot" type="capsule"/>
-                    </body>
-                </body>
-            </body>
-            <body pos="0.000000 0.050000 -0.300000" quat="1.000000 0.000000 0.000000 0.000000" name="body_agent0_left_thigh">
-                <joint armature="0.010000" damping="0.100000" axis="0.000000 -1.000000 0.000000" pos="0.000000 0.000000 0.000000" range="-20.000000 100.000000" limited="true" name="joint_agent0_left_hip" type="hinge"/>
-                <geom conaffinity="0" condim="3" contype="1" density="1000.000000" friction="0.700000 0.100000 0.100000" pos="0.000000 0.000000 -0.225000" quat="1.000000 0.000000 0.000000 0.000000" rgba="0.700000 0.500000 0.300000 1.000000" size="0.050000 0.225000 0.000000" name="geom_agent0_left_thigh" type="capsule"/>
-                <body pos="0.000000 0.000000 -0.700000" quat="1.000000 0.000000 0.000000 0.000000" name="body_agent0_left_leg">
-                    <joint armature="0.010000" damping="0.100000" axis="0.000000 -1.000000 0.000000" pos="0.000000 0.000000 0.250000" range="-150.000000 0.000000" limited="true" name="joint_agent0_left_knee" type="hinge"/>
-                    <geom conaffinity="0" condim="3" contype="1" density="1000.000000" friction="0.700000 0.100000 0.100000" pos="0.000000 0.000000 0.000000" quat="1.000000 0.000000 0.000000 0.000000" rgba="0.700000 0.500000 0.300000 1.000000" size="0.040000 0.250000 0.000000" name="geom_agent0_left_leg" type="capsule"/>
-                    <body pos="0.060000 0.000000 -0.250000" quat="1.000000 0.000000 0.000000 0.000000" name="body_agent0_left_foot">
-                        <joint armature="0.010000" damping="0.100000" axis="0.000000 -1.000000 0.000000" pos="-0.060000 0.000000 0.000000" range="-45.000000 45.000000" limited="true" name="joint_agent0_left_ankle" type="hinge"/>
-                        <geom conaffinity="0" condim="3" contype="1" density="1000.000000" friction="0.700000 0.100000 0.100000" pos="0.000000 0.000000 0.000000" quat="0.707107 0.000000 0.707107 0.000000" rgba="0.700000 0.500000 0.300000 1.000000" size="0.050000 0.100000 0.000000" name="geom_agent0_left_foot" type="capsule"/>
-                    </body>
-                </body>
-            </body>
+        <body pos="-1.473849 -0.165399 3.000000" quat="0.599169 -0.476653 -0.064530 0.640026" name="box_0">
+            <freejoint name="box_0_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="box_0_col_0" type="box"/>
         </body>
     </worldbody>
-    <actuator>
-        <motor ctrlrange="-1.000000 1.000000" gear="100.000000" ctrllimited="true" joint="joint_agent0_right_hip" name="actuator_agent0_right_hip"/>
-        <motor ctrlrange="-1.000000 1.000000" gear="50.000000" ctrllimited="true" joint="joint_agent0_right_knee" name="actuator_agent0_right_knee"/>
-        <motor ctrlrange="-1.000000 1.000000" gear="20.000000" ctrllimited="true" joint="joint_agent0_right_ankle" name="actuator_agent0_right_ankle"/>
-        <motor ctrlrange="-1.000000 1.000000" gear="100.000000" ctrllimited="true" joint="joint_agent0_left_hip" name="actuator_agent0_left_hip"/>
-        <motor ctrlrange="-1.000000 1.000000" gear="50.000000" ctrllimited="true" joint="joint_agent0_left_knee" name="actuator_agent0_left_knee"/>
-        <motor ctrlrange="-1.000000 1.000000" gear="20.000000" ctrllimited="true" joint="joint_agent0_left_ankle" name="actuator_agent0_left_ankle"/>
-    </actuator>
-    <sensor>
-        <jointpos joint="joint_agent0_rootx" name="sensor_agent0_joint_agent0_rootx_jointpos"/>
-        <jointvel joint="joint_agent0_rootx" name="sensor_agent0_joint_agent0_rootx_jointvel"/>
-        <jointpos joint="joint_agent0_rootz" name="sensor_agent0_joint_agent0_rootz_jointpos"/>
-        <jointvel joint="joint_agent0_rootz" name="sensor_agent0_joint_agent0_rootz_jointvel"/>
-        <jointpos joint="joint_agent0_rooty" name="sensor_agent0_joint_agent0_rooty_jointpos"/>
-        <jointvel joint="joint_agent0_rooty" name="sensor_agent0_joint_agent0_rooty_jointvel"/>
-        <jointpos joint="joint_agent0_right_hip" name="sensor_agent0_joint_agent0_right_hip_jointpos"/>
-        <jointvel joint="joint_agent0_right_hip" name="sensor_agent0_joint_agent0_right_hip_jointvel"/>
-        <jointpos joint="joint_agent0_right_knee" name="sensor_agent0_joint_agent0_right_knee_jointpos"/>
-        <jointvel joint="joint_agent0_right_knee" name="sensor_agent0_joint_agent0_right_knee_jointvel"/>
-        <jointpos joint="joint_agent0_right_ankle" name="sensor_agent0_joint_agent0_right_ankle_jointpos"/>
-        <jointvel joint="joint_agent0_right_ankle" name="sensor_agent0_joint_agent0_right_ankle_jointvel"/>
-        <jointpos joint="joint_agent0_left_hip" name="sensor_agent0_joint_agent0_left_hip_jointpos"/>
-        <jointvel joint="joint_agent0_left_hip" name="sensor_agent0_joint_agent0_left_hip_jointvel"/>
-        <jointpos joint="joint_agent0_left_knee" name="sensor_agent0_joint_agent0_left_knee_jointpos"/>
-        <jointvel joint="joint_agent0_left_knee" name="sensor_agent0_joint_agent0_left_knee_jointvel"/>
-        <jointpos joint="joint_agent0_left_ankle" name="sensor_agent0_joint_agent0_left_ankle_jointpos"/>
-        <jointvel joint="joint_agent0_left_ankle" name="sensor_agent0_joint_agent0_left_ankle_jointvel"/>
-        <framelinvel name="sensoragent0_body_agent0_torso_framelinvel" objname="body_agent0_torso" objtype="body"/>
-        <framelinacc name="sensoragent0_body_agent0_torso_framelinacc" objname="body_agent0_torso" objtype="body"/>
-        <framelinvel name="sensoragent0_body_agent0_right_thigh_framelinvel" objname="body_agent0_right_thigh" objtype="body"/>
-        <framelinacc name="sensoragent0_body_agent0_right_thigh_framelinacc" objname="body_agent0_right_thigh" objtype="body"/>
-        <framelinvel name="sensoragent0_body_agent0_right_leg_framelinvel" objname="body_agent0_right_leg" objtype="body"/>
-        <framelinacc name="sensoragent0_body_agent0_right_leg_framelinacc" objname="body_agent0_right_leg" objtype="body"/>
-        <framelinvel name="sensoragent0_body_agent0_right_foot_framelinvel" objname="body_agent0_right_foot" objtype="body"/>
-        <framelinacc name="sensoragent0_body_agent0_right_foot_framelinacc" objname="body_agent0_right_foot" objtype="body"/>
-        <framelinvel name="sensoragent0_body_agent0_left_thigh_framelinvel" objname="body_agent0_left_thigh" objtype="body"/>
-        <framelinacc name="sensoragent0_body_agent0_left_thigh_framelinacc" objname="body_agent0_left_thigh" objtype="body"/>
-        <framelinvel name="sensoragent0_body_agent0_left_leg_framelinvel" objname="body_agent0_left_leg" objtype="body"/>
-        <framelinacc name="sensoragent0_body_agent0_left_leg_framelinacc" objname="body_agent0_left_leg" objtype="body"/>
-        <framelinvel name="sensoragent0_body_agent0_left_foot_framelinvel" objname="body_agent0_left_foot" objtype="body"/>
-        <framelinacc name="sensoragent0_body_agent0_left_foot_framelinacc" objname="body_agent0_left_foot" objtype="body"/>
-    </sensor>
+    <worldbody>
+        <body pos="0.077665 -1.861712 3.000000" quat="0.576142 -0.413014 -0.563366 -0.424380" name="box_1">
+            <freejoint name="box_1_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="box_1_col_0" type="box"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="0.747091 1.721746 3.000000" quat="0.925153 -0.035322 0.240126 0.291862" name="box_2">
+            <freejoint name="box_2_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="box_2_col_0" type="box"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="1.048792 -1.810142 3.000000" quat="0.888869 -0.160436 0.420850 -0.084014" name="box_3">
+            <freejoint name="box_3_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="box_3_col_0" type="box"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="1.930201 1.013423 3.000000" quat="0.676409 -0.464881 0.493741 0.287360" name="box_4">
+            <freejoint name="box_4_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="box_4_col_0" type="box"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="-0.089073 -0.900373 3.000000" quat="0.727867 0.009558 0.648825 -0.221683" name="sphere_0">
+            <freejoint name="sphere_0_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="sphere_0_col_0" type="sphere"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="0.018092 -0.723868 3.000000" quat="0.624025 -0.377992 -0.465346 -0.501167" name="sphere_1">
+            <freejoint name="sphere_1_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="sphere_1_col_0" type="sphere"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="-0.463431 1.655270 3.000000" quat="0.706860 0.228306 -0.608290 0.279658" name="sphere_2">
+            <freejoint name="sphere_2_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="sphere_2_col_0" type="sphere"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="-1.498538 0.753821 3.000000" quat="0.792908 -0.039308 0.386900 0.469105" name="sphere_3">
+            <freejoint name="sphere_3_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="sphere_3_col_0" type="sphere"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="-0.774713 0.053095 3.000000" quat="0.694185 0.498515 0.374694 -0.359438" name="sphere_4">
+            <freejoint name="sphere_4_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="sphere_4_col_0" type="sphere"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="-0.128331 -1.286689 3.000000" quat="0.738328 0.081847 -0.665418 0.073429" name="cylinder_0">
+            <freejoint name="cylinder_0_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="cylinder_0_col_0" type="cylinder"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="0.993171 1.562950 3.000000" quat="0.768871 0.179660 -0.565854 -0.237421" name="cylinder_1">
+            <freejoint name="cylinder_1_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="cylinder_1_col_0" type="cylinder"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="-0.901647 -0.342827 3.000000" quat="0.869235 0.178632 -0.444526 -0.122137" name="cylinder_2">
+            <freejoint name="cylinder_2_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="cylinder_2_col_0" type="cylinder"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="0.608235 0.725385 3.000000" quat="0.764690 0.139609 -0.520322 0.353586" name="cylinder_3">
+            <freejoint name="cylinder_3_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="cylinder_3_col_0" type="cylinder"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="1.821635 -1.407394 3.000000" quat="0.984712 -0.140237 0.103270 -0.003231" name="cylinder_4">
+            <freejoint name="cylinder_4_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="cylinder_4_col_0" type="cylinder"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="1.844381 -1.200971 3.000000" quat="0.867841 0.068558 0.294714 0.394075" name="capsule_0">
+            <freejoint name="capsule_0_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="capsule_0_col_0" type="capsule"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="-0.094273 -1.186999 3.000000" quat="0.720532 0.433686 -0.496310 0.215468" name="capsule_1">
+            <freejoint name="capsule_1_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="capsule_1_col_0" type="capsule"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="1.542593 -1.351206 3.000000" quat="0.811451 -0.213156 -0.516531 -0.171197" name="capsule_2">
+            <freejoint name="capsule_2_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="capsule_2_col_0" type="capsule"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="-0.190799 1.726698 3.000000" quat="0.469891 -0.582189 0.269695 0.606237" name="capsule_3">
+            <freejoint name="capsule_3_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="capsule_3_col_0" type="capsule"/>
+        </body>
+    </worldbody>
+    <worldbody>
+        <body pos="0.023823 1.270246 3.000000" quat="0.846335 -0.151487 0.152026 0.487500" name="capsule_4">
+            <freejoint name="capsule_4_jnt_free"/>
+            <geom pos="0.000000 0.000000 0.000000" quat="0.000000 0.000000 0.000000 1.000000" size="0.100000 0.100000 0.100000" name="capsule_4_col_0" type="capsule"/>
+        </body>
+    </worldbody>
 </mujoco>

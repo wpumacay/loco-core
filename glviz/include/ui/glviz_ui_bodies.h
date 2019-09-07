@@ -30,8 +30,12 @@ namespace tysoc {
     private :
 
         void _renderBodyInfo();
-        void _renderCollisionPanel();
-        void _renderVisualPanel();
+        void _renderCollisionInfo();
+        void _renderVisualInfo();
+
+        void _renderShapeInfo( const TShapeData& data,
+                               TVec3& size,
+                               bool isCollider );
 
         TGLUi*      m_parentUiPtr;
         TScenario*  m_scenarioPtr;

@@ -234,7 +234,8 @@ namespace tysoc {
             if ( !_collisionDrawable )
                 continue;
 
-            _collisionDrawable->show( false );
+            _collisionDrawable->show( true );
+            _collisionDrawable->wireframe( true );
 
             _collisions[i]->setDrawable( _collisionDrawable );
             m_glScenePtr->addRenderable( _collisionDrawable->renderable() );
@@ -251,6 +252,9 @@ namespace tysoc {
 
             if ( !_visualDrawable )
                 continue;
+
+            _visualDrawable->show( true );
+            _visualDrawable->wireframe( false );
 
             _visualDrawable->setAmbientColor( _visuals[i]->data().ambient );
             _visualDrawable->setDiffuseColor( _visuals[i]->data().diffuse );

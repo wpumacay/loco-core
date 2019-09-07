@@ -137,11 +137,39 @@ namespace tysoc {
 
     void TGLDrawable::changeSize( const tysoc::TVec3& newSize )
     {
-        // the trick here is to just use the scale, based on the initial size of the shape
         m_size = newSize;
-        m_scale = { m_size.x / m_size0.x,
-                    m_size.y / m_size0.y,
-                    m_size.z / m_size0.z };
+        if ( m_type == eShapeType::PLANE )
+        {
+            m_scale.x = m_size.x / m_size0.x;
+            m_scale.y = m_size.y / m_size0.y;
+        }
+        else if ( m_type == eShapeType::BOX )
+        {
+            m_scale = { m_size.x / m_size0.x,
+                        m_size.y / m_size0.y,
+                        m_size.z / m_size0.z };
+        }
+        else if ( m_type == eShapeType::SPHERE )
+        {
+            // scale according to radius
+            m_scale.x = m_scale.y = m_scale.z = m_size.x / m_size0.x;
+        }
+        else if ( m_type == eShapeType::CYLINDER )
+        {
+            // scale according to radius
+            m_scale.x = m_size.x / m_size0.x;
+            m_scale.y = m_size.x / m_size0.x;
+            // scale according to height
+            m_scale.z = m_size.y / m_size0.y;
+        }
+        else if ( m_type == eShapeType::CAPSULE )
+        {
+            // scale according to radius
+            m_scale.x = m_size.x / m_size0.x;
+            m_scale.y = m_size.x / m_size0.x;
+            // scale according to height
+            m_scale.z = m_size.y / m_size0.y;
+        }
 
         if ( !m_renderablePtr )
             return;
@@ -155,6 +183,14 @@ namespace tysoc {
             return;
 
         m_renderablePtr->setVisibility( visible );
+    }
+
+    void TGLDrawable::wireframe( bool wireframe )
+    {
+        if ( !m_renderablePtr )
+            return;
+
+        m_renderablePtr->setWireframeMode( wireframe );
     }
 
     void TGLDrawable::recycle()

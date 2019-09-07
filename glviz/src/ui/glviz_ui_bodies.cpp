@@ -49,8 +49,19 @@ namespace tysoc {
 
                 if ( ImGui::Selectable( _singleBody->name().c_str(), _isSelected ) )
                 {
+                    if ( _singleBody->name() != m_currentBodyName )
+                    {
+                        m_currentCollisionPtr = NULL;
+                        m_currentCollisionIndex = -1;
+                        m_currentCollisionName = "";
+
+                        m_currentVisualPtr = NULL;
+                        m_currentVisualIndex = -1;
+                        m_currentVisualName = "";
+                    }
+                    
                     m_currentBodyIndex  = i;
-                    m_currentBodyPtr    = _singleBodies[i];
+                    m_currentBodyPtr    = _singleBody;
                     m_currentBodyName   = _singleBody->name();
                 }
 
@@ -64,13 +75,13 @@ namespace tysoc {
         if ( m_currentBodyIndex != -1 )
             _renderBodyInfo();
 
-        ImGui::End();
-
         if ( m_currentCollisionIndex != -1 )
-            _renderCollisionPanel();
+            _renderCollisionInfo();
 
         if ( m_currentVisualIndex != -1 )
-            _renderVisualPanel();
+            _renderVisualInfo();
+
+        ImGui::End();
     }
 
     void TGLUiBodies::_renderBodyInfo()
@@ -91,16 +102,109 @@ namespace tysoc {
 
         m_currentBodyPtr->setPosition( _position );
         m_currentBodyPtr->setRotation( TMat3::fromEuler( _rotation ) );
+
+        ImGui::Spacing();
+
+        auto _collisions = m_currentBodyPtr->collisions();
+        if ( ImGui::BeginCombo( "colliders", m_currentCollisionName.c_str() ) )
+        {
+            for ( size_t i = 0; i < _collisions.size(); i++ )
+            {
+                auto _collision = _collisions[i];
+                bool _isSelected = ( _collision->name() == m_currentCollisionName );
+
+                if ( ImGui::Selectable( _collision->name().c_str(), _isSelected ) )
+                {
+                    m_currentCollisionIndex  = i;
+                    m_currentCollisionPtr    = _collision;
+                    m_currentCollisionName   = _collision->name();
+                }
+
+                if ( _isSelected )
+                    ImGui::SetItemDefaultFocus();
+            }
+
+            ImGui::EndCombo();
+        }
+
+        ImGui::Spacing();
+
+        auto _visuals = m_currentBodyPtr->visuals();
+        if ( ImGui::BeginCombo( "visuals", m_currentVisualName.c_str() ) )
+        {
+            for ( size_t i = 0; i < _visuals.size(); i++ )
+            {
+                auto _visual = _visuals[i];
+                bool _isSelected = ( _visual->name() == m_currentVisualName );
+
+                if ( ImGui::Selectable( _visual->name().c_str(), _isSelected ) )
+                {
+                    m_currentVisualIndex  = i;
+                    m_currentVisualPtr    = _visual;
+                    m_currentVisualName   = _visual->name();
+                }
+
+                if ( _isSelected )
+                    ImGui::SetItemDefaultFocus();
+            }
+
+            ImGui::EndCombo();
+        }
     }
 
-    void TGLUiBodies::_renderCollisionPanel()
+    void TGLUiBodies::_renderCollisionInfo()
     {
+        assert( m_currentCollisionPtr != NULL );
 
+        ImGui::Spacing();
+
+        auto _size = m_currentCollisionPtr->size();
+        _renderShapeInfo( m_currentCollisionPtr->data(), _size, true );
+
+        m_currentCollisionPtr->changeSize( _size );
     }
 
-    void TGLUiBodies::_renderVisualPanel()
+    void TGLUiBodies::_renderVisualInfo()
     {
+        assert( m_currentVisualPtr != NULL );
 
+        ImGui::Spacing();
+
+        auto _size = m_currentVisualPtr->size();
+        _renderShapeInfo( m_currentVisualPtr->data(), _size, false );
+
+        m_currentVisualPtr->changeSize( _size );
+    }
+
+    void TGLUiBodies::_renderShapeInfo( const TShapeData& data,
+                                        TVec3& size,
+                                        bool isCollider )
+    {
+        if ( data.type == eShapeType::PLANE )
+        {
+            ImGui::InputFloat( isCollider ? "width-col" : "width-vis", &size.x );
+            ImGui::InputFloat( isCollider ? "depth-col" : "width-vis", &size.y );
+        }
+        else if ( data.type == eShapeType::BOX )
+        {
+            ImGui::InputFloat( isCollider ? "width-col" : "width-vis", &size.x );
+            ImGui::InputFloat( isCollider ? "depth-col" : "depth-vis", &size.y );
+            ImGui::InputFloat( isCollider ? "height-col" : "height-vis", &size.z );
+        }
+        else if ( data.type == eShapeType::SPHERE )
+        {
+            ImGui::InputFloat( isCollider ? "radius-col" : "radius-vis", &size.x );
+        }
+        else if ( data.type == eShapeType::CYLINDER )
+        {
+            ImGui::InputFloat( isCollider ? "radius-col" : "radius-vis", &size.x );
+            ImGui::InputFloat( isCollider ? "height-col" : "height-vis", &size.y );
+        }
+        else if ( data.type == eShapeType::CAPSULE )
+        {
+            ImGui::InputFloat( isCollider ? "radius-col" : "radius-vis", &size.x );
+            ImGui::InputFloat( isCollider ? "height-col" : "height-vis", &size.y );
+        }
     }
 
 }
