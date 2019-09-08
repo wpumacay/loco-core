@@ -27,6 +27,8 @@ namespace tysoc {
 
         void show( bool visible );
 
+        void wireframe( bool wireframe );
+
         void update();
 
         void reset();
@@ -52,6 +54,10 @@ namespace tysoc {
         void changeShininess( const TScalar& shininess );
 
         std::string name() { return m_name; }
+
+        bool isVisible();
+
+        bool isWireframe();
 
         TVec3 pos() { return m_pos; }
 

@@ -205,6 +205,26 @@ namespace pytysoc
         this->filename = filename;
     }
 
+    void PyVisualData::setAmbientColor( py::array_t<TScalar>& ambient )
+    {
+        this->ambient = numpyToVec3( ambient );
+    }
+
+    void PyVisualData::setDiffuseColor( py::array_t<TScalar>& diffuse )
+    {
+        this->diffuse = numpyToVec3( diffuse );
+    }
+
+    void PyVisualData::setSpecularColor( py::array_t<TScalar>& specular )
+    {
+        this->specular = numpyToVec3( specular );
+    }
+
+    void PyVisualData::setShininess( const TScalar& shininess )
+    {
+        this->shininess = shininess;
+    }
+
     tysoc::eShapeType PyVisualData::getType()
     {
         return this->type;
@@ -228,6 +248,26 @@ namespace pytysoc
     std::string PyVisualData::getFilename()
     {
         return this->filename;
+    }
+
+    py::array_t<TScalar> PyVisualData::getAmbientColor()
+    {
+        return vec3ToNumpy( this->ambient );
+    }
+
+    py::array_t<TScalar> PyVisualData::getDiffuseColor()
+    {
+        return vec3ToNumpy( this->diffuse );
+    }
+
+    py::array_t<TScalar> PyVisualData::getSpecularColor()
+    {
+        return vec3ToNumpy( this->specular );
+    }
+
+    TScalar PyVisualData::getShininess()
+    {
+        return this->shininess;
     }
 
     PyVisualData toPyVisualData( const tysoc::TVisualData& data )

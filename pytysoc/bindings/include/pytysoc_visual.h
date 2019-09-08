@@ -28,7 +28,9 @@ namespace pytysoc
 
         void setParentBody( PyBody* parenPyBodyPtr );
 
-        void show( bool visible );
+        void setVisibility( bool visible );
+
+        void setWireframe( bool wireframe );
 
         void setLocalPosition( py::array_t<TScalar>& localPosition );
 
@@ -51,6 +53,10 @@ namespace pytysoc
         void changeShininess( const TScalar& shininess );
 
         std::string name();
+
+        bool visible();
+
+        bool wireframe();
 
         py::array_t<TScalar> pos();
 
@@ -87,3 +93,27 @@ namespace pytysoc
     };
 
 }
+
+#define PYTYSOC_VISUAL_BINDINGS(m) \
+    py::class_<pytysoc::PyVisual>(m, "PyVisual") \
+        .def( py::init<const std::string&, const pytysoc::PyVisualData&>() ) \
+        .def_property( "parent", &pytysoc::PyVisual::parent, &pytysoc::PyVisual::setParentBody ) \
+        .def_property( "visible", &pytysoc::PyVisual::visible, &pytysoc::PyVisual::setVisibility ) \
+        .def_property( "wireframe", &pytysoc::PyVisual::wireframe, &pytysoc::PyVisual::setWireframe ) \
+        .def_property( "localPos", &pytysoc::PyVisual::localPos, &pytysoc::PyVisual::setLocalPosition ) \
+        .def_property( "localRot", &pytysoc::PyVisual::localRot, &pytysoc::PyVisual::setLocalRotation ) \
+        .def_property( "localQuat", &pytysoc::PyVisual::localQuat, &pytysoc::PyVisual::setLocalQuat ) \
+        .def_property( "localTf", &pytysoc::PyVisual::localTf, &pytysoc::PyVisual::setLocalTransform ) \
+        .def_property( "size", &pytysoc::PyVisual::size, &pytysoc::PyVisual::changeSize ) \
+        .def_property_readonly( "name", &pytysoc::PyVisual::name ) \
+        .def_property_readonly( "pos", &pytysoc::PyVisual::pos ) \
+        .def_property_readonly( "rot", &pytysoc::PyVisual::rot ) \
+        .def_property_readonly( "quat", &pytysoc::PyVisual::quat ) \
+        .def_property_readonly( "tf", &pytysoc::PyVisual::tf ) \
+        .def_property_readonly( "shape", &pytysoc::PyVisual::shape ) \
+        .def_property_readonly( "data", &pytysoc::PyVisual::data ) \
+        .def( "changeColor", &pytysoc::PyVisual::changeColor ) \
+        .def( "changeAmbientColor", &pytysoc::PyVisual::changeAmbientColor ) \
+        .def( "changeDiffuseColor", &pytysoc::PyVisual::changeDiffuseColor ) \
+        .def( "changeSpecularColor", &pytysoc::PyVisual::changeSpecularColor ) \
+        .def( "changeShininess", &pytysoc::PyVisual::changeShininess );

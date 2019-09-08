@@ -33,11 +33,18 @@ namespace pytysoc
         m_collisionPtr->setParentBody( m_parentPyBodyPtr->ptr() );
     }
 
-    void PyCollision::show( bool visible )
+    void PyCollision::setVisibility( bool visible )
     {
         assert( m_collisionPtr );
 
         m_collisionPtr->show( visible );
+    }
+
+    void PyCollision::setWireframe( bool wireframe )
+    {
+        assert( m_collisionPtr );
+
+        m_collisionPtr->wireframe( wireframe );
     }
 
     void PyCollision::setLocalPosition( py::array_t<TScalar>& localPosition )
@@ -87,6 +94,20 @@ namespace pytysoc
         assert( m_collisionPtr );
 
         return vec3ToNumpy( m_collisionPtr->pos() );
+    }
+
+    bool PyCollision::visible()
+    {
+        assert( m_collisionPtr );
+
+        return m_collisionPtr->isVisible();
+    }
+
+    bool PyCollision::wireframe()
+    {
+        assert( m_collisionPtr );
+
+        return m_collisionPtr->isWireframe();
     }
 
     py::array_t<TScalar> PyCollision::rot()

@@ -34,6 +34,12 @@ PYBIND11_MODULE( tysoc_bindings, m )
     // Enums and Data bindings
     PYTYSOC_ENUM_BINDINGS( m )
     PYTYSOC_DATA_BINDINGS( m )
+    // Core collision bindings
+    PYTYSOC_COLLISION_BINDINGS( m )
+    // Core visual bindings
+    PYTYSOC_VISUAL_BINDINGS( m )
+    // Core body bindings
+    PYTYSOC_BODY_BINDINGS( m )
     // Core agent bindings
     PYTYSOC_CORE_AGENT_BINDINGS( m )
     // Core terrainGen bindings

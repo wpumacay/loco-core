@@ -33,11 +33,18 @@ namespace pytysoc
         m_visualPtr->setParentBody( m_parentPyBodyPtr->ptr() );
     }
 
-    void PyVisual::show( bool visible )
+    void PyVisual::setVisibility( bool visible )
     {
         assert( m_visualPtr );
 
         m_visualPtr->show( visible );
+    }
+
+    void PyVisual::setWireframe( bool wireframe )
+    {
+        assert( m_visualPtr );
+
+        m_visualPtr->wireframe( wireframe );
     }
 
     void PyVisual::setLocalPosition( py::array_t<TScalar>& localPosition )
@@ -115,6 +122,20 @@ namespace pytysoc
         assert( m_visualPtr );
 
         return m_visualPtr->name();
+    }
+
+    bool PyVisual::visible()
+    {
+        assert( m_visualPtr );
+
+        return m_visualPtr->isVisible();
+    }
+
+    bool PyVisual::wireframe()
+    {
+        assert( m_visualPtr );
+
+        return m_visualPtr->isWireframe();
     }
 
     py::array_t<TScalar> PyVisual::pos()

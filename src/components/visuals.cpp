@@ -42,6 +42,28 @@ namespace tysoc {
             m_drawableImplPtr->show( visible );
     }
 
+    void TVisual::wireframe( bool wireframe )
+    {
+        if ( m_drawableImplPtr )
+            m_drawableImplPtr->wireframe( wireframe );
+    }
+
+    bool TVisual::isVisible()
+    {
+        if ( !m_drawableImplPtr )
+            return false;
+
+        return m_drawableImplPtr->isVisible();
+    }
+
+    bool TVisual::isWireframe()
+    {
+        if ( !m_drawableImplPtr )
+            return false;
+
+        return m_drawableImplPtr->isWireframe();
+    }
+
     void TVisual::update()
     {
         // update our own transform using the world-transform from the parent

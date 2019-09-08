@@ -56,6 +56,28 @@ namespace tysoc {
             m_drawableImplPtr->show( visible );
     }
 
+    void TCollision::wireframe( bool wireframe )
+    {
+        if ( m_drawableImplPtr )
+            m_drawableImplPtr->wireframe( wireframe );
+    }
+
+    bool TCollision::isVisible()
+    {
+        if ( !m_drawableImplPtr )
+            return false;
+
+        return m_drawableImplPtr->isVisible();
+    }
+
+    bool TCollision::isWireframe()
+    {
+        if ( !m_drawableImplPtr )
+            return false;
+
+        return m_drawableImplPtr->isWireframe();
+    }
+
     void TCollision::update()
     {
         // update internal stuff that might be required in the backend

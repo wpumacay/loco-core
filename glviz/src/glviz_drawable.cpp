@@ -193,6 +193,22 @@ namespace tysoc {
         m_renderablePtr->setWireframeMode( wireframe );
     }
 
+    bool TGLDrawable::isVisible()
+    {
+        if ( !m_renderablePtr )
+            return false;
+
+        return m_renderablePtr->isVisible();
+    }
+
+    bool TGLDrawable::isWireframe()
+    {
+        if ( !m_renderablePtr )
+            return false;
+
+        return m_renderablePtr->isWireframe();
+    }
+
     void TGLDrawable::recycle()
     {
         if ( !m_renderablePtr )

@@ -29,6 +29,23 @@ namespace pytysoc
         }
     }
 
+    void PyScenario::addBody( PyBody* pyBodyPtr )
+    {
+        assert( m_scenarioPtr );
+        assert( pyBodyPtr->ptr() );
+
+        if ( m_pyBodiesMap.find( pyBodyPtr->name() ) != m_pyBodiesMap.end() )
+        {
+            std::cout << "WARNING> tried to add an existing body with name: " << pyBodyPtr->name() << std::endl;
+            return;
+        }
+
+        m_scenarioPtr->addBody( pyBodyPtr->ptr() );
+
+        m_pyBodies.push_back( pyBodyPtr );
+        m_pyBodiesMap[ pyBodyPtr->name() ] = pyBodyPtr;
+    }
+
     void PyScenario::addAgent( PyCoreAgent* pyCoreAgentPtr )
     {
         if ( !m_scenarioPtr )
@@ -50,27 +67,6 @@ namespace pytysoc
 
         m_pyCoreAgents.push_back( pyCoreAgentPtr );
         m_pyCoreAgentsMap[ pyCoreAgentPtr->name() ] = pyCoreAgentPtr;
-    }
-
-    PyCoreAgent* PyScenario::getAgentByName( const std::string& name )
-    {
-        if ( m_pyCoreAgentsMap.find( name ) == m_pyCoreAgentsMap.end() )
-        {
-            std::cout << "WARNING> agent: " << name << " not found in scenario" << std::endl;
-            return nullptr;
-        }
-
-        return m_pyCoreAgentsMap[ name ];
-    }
-
-    std::vector< PyCoreAgent* > PyScenario::getAgents()
-    {
-        return m_pyCoreAgents;
-    }
-
-    std::map< std::string, PyCoreAgent* > PyScenario::getAgentsMap()
-    {
-        return m_pyCoreAgentsMap;
     }
 
     void PyScenario::addTerrainGen( PyTerrainGen* pyTerrainGenPtr )
@@ -96,27 +92,6 @@ namespace pytysoc
         m_pyTerrainGensMap[ pyTerrainGenPtr->name() ] = pyTerrainGenPtr;
     }
 
-    PyTerrainGen* PyScenario::getTerrainGenByName( const std::string& name )
-    {
-        if ( m_pyTerrainGensMap.find( name ) == m_pyTerrainGensMap.end() )
-        {
-            std::cout << "WARNING> terrainGen: " << name << " not found in scenario" << std::endl;
-            return nullptr;
-        }
-
-        return m_pyTerrainGensMap[ name ];
-    }
-
-    std::vector< PyTerrainGen* > PyScenario::getTerrainGens()
-    {
-        return m_pyTerrainGens;
-    }
-
-    std::map< std::string, PyTerrainGen* > PyScenario::getTerrainGensMap()
-    {
-        return m_pyTerrainGensMap;
-    }
-
     void PyScenario::addSensor( PySensor* pySensorPtr )
     {
         if ( !m_scenarioPtr )
@@ -140,6 +115,39 @@ namespace pytysoc
         m_pySensorsMap[ pySensorPtr->name() ] = pySensorPtr;
     }
 
+    PyBody* PyScenario::getBodyByName( const std::string& name )
+    {
+        if ( m_pyBodiesMap.find( name ) == m_pyBodiesMap.end() )
+        {
+            std::cout << "WARNING> body: " << name << " not found in scenario" << std::endl;
+            return nullptr;
+        }
+
+        return m_pyBodiesMap[ name ];
+    }
+
+    PyCoreAgent* PyScenario::getAgentByName( const std::string& name )
+    {
+        if ( m_pyCoreAgentsMap.find( name ) == m_pyCoreAgentsMap.end() )
+        {
+            std::cout << "WARNING> agent: " << name << " not found in scenario" << std::endl;
+            return nullptr;
+        }
+
+        return m_pyCoreAgentsMap[ name ];
+    }
+
+    PyTerrainGen* PyScenario::getTerrainGenByName( const std::string& name )
+    {
+        if ( m_pyTerrainGensMap.find( name ) == m_pyTerrainGensMap.end() )
+        {
+            std::cout << "WARNING> terrainGen: " << name << " not found in scenario" << std::endl;
+            return nullptr;
+        }
+
+        return m_pyTerrainGensMap[ name ];
+    }
+
     PySensor* PyScenario::getSensorByName( const std::string& name )
     {
         if ( m_pySensorsMap.find( name ) == m_pySensorsMap.end() )
@@ -151,9 +159,39 @@ namespace pytysoc
         return m_pySensorsMap[ name ];
     }
 
+    std::vector< PyBody* > PyScenario::getBodies()
+    {
+        return m_pyBodies;
+    }
+
+    std::vector< PyCoreAgent* > PyScenario::getAgents()
+    {
+        return m_pyCoreAgents;
+    }
+
+    std::vector< PyTerrainGen* > PyScenario::getTerrainGens()
+    {
+        return m_pyTerrainGens;
+    }
+
     std::vector< PySensor* > PyScenario::getSensors()
     {
         return m_pySensors;
+    }
+
+    std::map< std::string, PyBody* > PyScenario::getBodiesMap()
+    {
+        return m_pyBodiesMap;
+    }
+
+    std::map< std::string, PyCoreAgent* > PyScenario::getAgentsMap()
+    {
+        return m_pyCoreAgentsMap;
+    }
+
+    std::map< std::string, PyTerrainGen* > PyScenario::getTerrainGensMap()
+    {
+        return m_pyTerrainGensMap;
     }
 
     std::map< std::string, PySensor* > PyScenario::getSensorsMap()

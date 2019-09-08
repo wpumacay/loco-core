@@ -35,6 +35,10 @@ namespace tysoc {
 
         virtual void wireframe( bool wireframe ) = 0;
 
+        virtual bool isVisible() = 0;
+
+        virtual bool isWireframe() = 0;
+
         virtual void recycle() = 0;
 
     protected :

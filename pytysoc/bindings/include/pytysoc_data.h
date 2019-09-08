@@ -52,12 +52,20 @@ namespace pytysoc
         void setLocalPos( py::array_t<TScalar>& localPos );
         void setLocalRot( py::array_t<TScalar>& localRot );
         void setFilename( const std::string& filename );
+        void setAmbientColor( py::array_t<TScalar>& ambient );
+        void setDiffuseColor( py::array_t<TScalar>& diffuse );
+        void setSpecularColor( py::array_t<TScalar>& specular );
+        void setShininess( const TScalar& shininess );
 
         tysoc::eShapeType getType();
         py::array_t<TScalar> getSize();
         py::array_t<TScalar> getLocalPos();
         py::array_t<TScalar> getLocalRot();
         std::string getFilename();
+        py::array_t<TScalar> getAmbientColor();
+        py::array_t<TScalar> getDiffuseColor();
+        py::array_t<TScalar> getSpecularColor();
+        TScalar getShininess();
     };
 
     PyVisualData toPyVisualData( const tysoc::TVisualData& data );
@@ -134,7 +142,11 @@ namespace pytysoc
             .def_property( "size", &pytysoc::PyVisualData::getSize, &pytysoc::PyVisualData::setSize ) \
             .def_property( "localPos", &pytysoc::PyVisualData::getLocalPos, &pytysoc::PyVisualData::setLocalPos ) \
             .def_property( "localRot", &pytysoc::PyVisualData::getLocalRot, &pytysoc::PyVisualData::setLocalRot ) \
-            .def_property( "filename", &pytysoc::PyVisualData::getFilename, &pytysoc::PyVisualData::setFilename ); \
+            .def_property( "filename", &pytysoc::PyVisualData::getFilename, &pytysoc::PyVisualData::setFilename ) \
+            .def_property( "ambient", &pytysoc::PyVisualData::getAmbientColor, &pytysoc::PyVisualData::setAmbientColor ) \
+            .def_property( "diffuse", &pytysoc::PyVisualData::getDiffuseColor, &pytysoc::PyVisualData::setDiffuseColor ) \
+            .def_property( "specular", &pytysoc::PyVisualData::getSpecularColor, &pytysoc::PyVisualData::setSpecularColor ) \
+            .def_property( "shininess", &pytysoc::PyVisualData::getShininess, &pytysoc::PyVisualData::setShininess ); \
     py::class_<pytysoc::PyBodyData>(m, "PyBodyData") \
             .def( py::init<>() ) \
             .def_property( "dyntype", &pytysoc::PyBodyData::getDynType, &pytysoc::PyBodyData::setDynType ) \

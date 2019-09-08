@@ -39,6 +39,10 @@ namespace tysoc {
 
         void wireframe( bool wireframe ) override;
 
+        bool isVisible() override;
+
+        bool isWireframe() override;
+
         void recycle() override;
 
         void reuse( const TShapeData& data );

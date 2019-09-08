@@ -85,5 +85,20 @@ namespace pytysoc
 
     };
 
-
 }
+
+#define PYTYSOC_BODY_BINDINGS(m) \
+    py::class_<pytysoc::PyBody>(m, "PyBody") \
+        .def( py::init<const std::string&, const pytysoc::PyBodyData&, py::array_t<TScalar>&, py::array_t<TScalar>&>() ) \
+        .def_property( "pos", &pytysoc::PyBody::pos, &pytysoc::PyBody::setPosition ) \
+        .def_property( "rot", &pytysoc::PyBody::rot, &pytysoc::PyBody::setRotation ) \
+        .def_property( "quat", &pytysoc::PyBody::quat, &pytysoc::PyBody::setEuler ) \
+        .def_property( "euler", &pytysoc::PyBody::euler, &pytysoc::PyBody::setQuaternion ) \
+        .def_property( "tf", &pytysoc::PyBody::tf, &pytysoc::PyBody::setTransform ) \
+        .def_property_readonly( "dyntype", &pytysoc::PyBody::dyntype ) \
+        .def_property_readonly( "name", &pytysoc::PyBody::name ) \
+        .def_property_readonly( "data", &pytysoc::PyBody::data ) \
+        .def( "addVisual", &pytysoc::PyBody::addVisual ) \
+        .def( "addCollision", &pytysoc::PyBody::addCollision ) \
+        .def( "visuals", &pytysoc::PyBody::visuals ) \
+        .def( "collisions", &pytysoc::PyBody::collisions );
