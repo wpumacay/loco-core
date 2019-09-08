@@ -40,6 +40,10 @@ namespace tysoc {
 
         void setRotation( const TMat3& rotation );
 
+        void setEuler( const TVec3& euler );
+
+        void setQuaternion( const TVec4& quat );
+
         void setTransform( const TMat4& transform );
 
         std::string name() { return m_name; }

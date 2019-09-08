@@ -24,6 +24,9 @@ namespace pytysoc
         std::string getFilename();
     };
 
+    PyShapeData toPyShapeData( const tysoc::TShapeData& data );
+    tysoc::TShapeData toTShapeData( const PyShapeData& pydata );
+
     struct PyCollisionData : public tysoc::TCollisionData
     {
         void setType( const tysoc::eShapeType& type );
@@ -39,6 +42,9 @@ namespace pytysoc
         std::string getFilename();
     };
 
+    PyCollisionData toPyCollisionData( const tysoc::TCollisionData& data );
+    tysoc::TCollisionData toTCollisionData( const PyCollisionData& pydata );
+
     struct PyVisualData : public tysoc::TVisualData
     {
         void setType( const tysoc::eShapeType& type );
@@ -53,6 +59,9 @@ namespace pytysoc
         py::array_t<TScalar> getLocalRot();
         std::string getFilename();
     };
+
+    PyVisualData toPyVisualData( const tysoc::TVisualData& data );
+    tysoc::TVisualData toTVisualData( const PyVisualData& pydata );
 
     struct PyBodyData : public tysoc::TBodyData
     {
@@ -77,6 +86,9 @@ namespace pytysoc
         std::vector< PyCollisionData > pyCollisions;
         std::vector< PyVisualData > pyVisuals;
     };
+
+    PyBodyData toPyBodyData( const tysoc::TBodyData& data );
+    tysoc::TBodyData toTBodyData( const PyBodyData& pydata );
 
 }
 

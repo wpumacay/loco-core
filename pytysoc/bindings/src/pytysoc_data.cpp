@@ -62,6 +62,30 @@ namespace pytysoc
         return this->filename;
     }
 
+    PyShapeData toPyShapeData( const tysoc::TShapeData& data )
+    {
+        PyShapeData _pydata;
+        _pydata.type = data.type;
+        _pydata.size = data.size;
+        _pydata.localPos = data.localPos;
+        _pydata.localRot = data.localRot;
+        _pydata.filename = data.filename;
+
+        return _pydata;
+    }
+
+    tysoc::TShapeData toTShapeData( const PyShapeData& pydata )
+    {
+        tysoc::TShapeData _data;
+        _data.type = pydata.type;
+        _data.size = pydata.size;
+        _data.localPos = pydata.localPos;
+        _data.localRot = pydata.localRot;
+        _data.filename = pydata.filename;
+
+        return _data;
+    }
+
     /***************************************************************************
     *                                                                          *
     *                        CollisionData extension                           *
@@ -118,6 +142,38 @@ namespace pytysoc
         return this->filename;
     }
 
+    PyCollisionData toPyCollisionData( const tysoc::TCollisionData& data )
+    {
+        PyCollisionData _pydata;
+        _pydata.type = data.type;
+        _pydata.size = data.size;
+        _pydata.localPos = data.localPos;
+        _pydata.localRot = data.localRot;
+        _pydata.filename = data.filename;
+        _pydata.collisionGroup = data.collisionGroup;
+        _pydata.collisionMask = data.collisionMask;
+        _pydata.friction = data.friction;
+        _pydata.density = data.density;
+
+        return _pydata;
+    }
+
+    tysoc::TCollisionData toTCollisionData( const PyCollisionData& pydata )
+    {
+        tysoc::TCollisionData _data;
+        _data.type = pydata.type;
+        _data.size = pydata.size;
+        _data.localPos = pydata.localPos;
+        _data.localRot = pydata.localRot;
+        _data.filename = pydata.filename;
+        _data.collisionGroup = pydata.collisionGroup;
+        _data.collisionMask = pydata.collisionMask;
+        _data.friction = pydata.friction;
+        _data.density = pydata.density;
+
+        return _data;
+    }
+
     /***************************************************************************
     *                                                                          *
     *                          VisualData extension                            *
@@ -172,6 +228,38 @@ namespace pytysoc
     std::string PyVisualData::getFilename()
     {
         return this->filename;
+    }
+
+    PyVisualData toPyVisualData( const tysoc::TVisualData& data )
+    {
+        PyVisualData _pydata;
+        _pydata.type = data.type;
+        _pydata.size = data.size;
+        _pydata.localPos = data.localPos;
+        _pydata.localRot = data.localRot;
+        _pydata.filename = data.filename;
+        _pydata.ambient = data.ambient;
+        _pydata.diffuse = data.diffuse;
+        _pydata.specular = data.specular;
+        _pydata.shininess = data.shininess;
+
+        return _pydata;
+    }
+
+    tysoc::TVisualData toTVisualData( const PyVisualData& pydata )
+    {
+        tysoc::TVisualData _data;
+        _data.type = pydata.type;
+        _data.size = pydata.size;
+        _data.localPos = pydata.localPos;
+        _data.localRot = pydata.localRot;
+        _data.filename = pydata.filename;
+        _data.ambient = pydata.ambient;
+        _data.diffuse = pydata.diffuse;
+        _data.specular = pydata.specular;
+        _data.shininess = pydata.shininess;
+
+        return _data;
     }
 
     /***************************************************************************
@@ -244,24 +332,60 @@ namespace pytysoc
         return mat4ToNumpy( this->inertialFrame );
     }
 
-    void PyBodyData::addCollision( PyCollisionData collision )
+    void PyBodyData::addCollision( PyCollisionData pyCollision )
     {
-        pyCollisions.push_back( collision );
+        collisions.push_back( toTCollisionData( pyCollision ) );
     }
 
-    void PyBodyData::addVisual( PyVisualData visual )
+    void PyBodyData::addVisual( PyVisualData pyVisual )
     {
-        pyVisuals.push_back( visual );
+        visuals.push_back( toTVisualData( pyVisual ) );
     }
 
     std::vector< PyCollisionData > PyBodyData::getCollisions()
     {
-        return pyCollisions;
+        std::vector< PyCollisionData > _pycols;
+        for ( size_t i = 0; i < collisions.size(); i++ )
+            _pycols.push_back( toPyCollisionData( collisions[i] ) );
+
+        return _pycols;
     }
 
     std::vector< PyVisualData > PyBodyData::getVisuals()
     {
-        return pyVisuals;
+        std::vector< PyVisualData > _pyvisuals;
+        for ( size_t i = 0; i < visuals.size(); i++ )
+            _pyvisuals.push_back( toPyVisualData( visuals[i] ) );
+        
+        return _pyvisuals;
+    }
+
+    PyBodyData toPyBodyData( const tysoc::TBodyData& data )
+    {
+        PyBodyData _pydata;
+        _pydata.dyntype = data.dyntype;
+        _pydata.hasInertia = data.hasInertia;
+        _pydata.mass = data.mass;
+        _pydata.inertia = data.inertia;
+        _pydata.inertialFrame = data.inertialFrame;
+        _pydata.collisions = data.collisions;
+        _pydata.visuals = data.visuals;
+
+        return _pydata;
+    }
+
+    tysoc::TBodyData toTBodyData( const PyBodyData& pydata )
+    {
+        tysoc::TBodyData _data;
+        _data.dyntype = pydata.dyntype;
+        _data.hasInertia = pydata.hasInertia;
+        _data.mass = pydata.mass;
+        _data.inertia = pydata.inertia;
+        _data.inertialFrame = pydata.inertialFrame;
+        _data.collisions = pydata.collisions;
+        _data.visuals = pydata.visuals;
+
+        return _data;
     }
 
 }

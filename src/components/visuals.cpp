@@ -72,6 +72,12 @@ namespace tysoc {
         m_localTf.setRotation( m_localRot );
     }
 
+    void TVisual::setLocalQuat( const TVec4& localQuaternion )
+    {
+        m_localRot = TMat3::fromQuaternion( localQuaternion );
+        m_localTf.setRotation( m_localRot );
+    }
+
     void TVisual::setLocalTransform( const TMat4& localTransform )
     {
         m_localTf = localTransform;

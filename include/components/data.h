@@ -77,7 +77,7 @@ namespace tysoc {
         eDynamicsType                   dyntype;        // dynamics type used to instantiate either static, kinematic or dynamic bodies
         bool                            hasInertia;     // true: use own mass and inertia, false: compute from shapes
         TScalar                         mass;           // mass to be used when creating inertial properties
-        TScalar                         inertia[6];     // inertia matrix to be used when creating inertial properties
+        std::array< TScalar, 6 >        inertia;        // inertia matrix to be used when creating inertial properties
         TMat4                           inertialFrame;  // inertia-frame (principal axes of inertia tensor)
         std::vector< TCollisionData >   collisions;     // collisions owned by this body
         std::vector< TVisualData >      visuals;        // visuals owned by this body

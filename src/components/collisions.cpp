@@ -97,6 +97,15 @@ namespace tysoc {
             m_collisionImplPtr->setLocalRotation( m_localRot );
     }
 
+    void TCollision::setLocalQuat( const TVec4& localQuaternion )
+    {
+        m_localRot = TMat3::fromQuaternion( localQuaternion );
+        m_localTf.setRotation( m_localRot );
+
+        if ( m_collisionImplPtr )
+            m_collisionImplPtr->setLocalRotation( m_localRot );
+    }
+
     void TCollision::setLocalTransform( const TMat4& localTransform )
     {
         m_localTf = localTransform;

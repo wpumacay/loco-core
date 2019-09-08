@@ -21,7 +21,7 @@ namespace tysoc {
         TCollision( const std::string& name,
                     const TCollisionData& collisionData );
 
-        virtual ~TCollision();
+        ~TCollision();
 
         void setParentBody( TBody* parentBodyPtr );
 
@@ -37,7 +37,9 @@ namespace tysoc {
 
         void setLocalPosition( const TVec3& localPosition );
 
-        void setLocalRotation( const TMat3& rotation );
+        void setLocalRotation( const TMat3& localRotation );
+
+        void setLocalQuat( const TVec4& localQuaternion );
 
         void setLocalTransform( const TMat4& transform );
 
@@ -49,6 +51,8 @@ namespace tysoc {
 
         TMat3 rot() { return m_rot; }
 
+        TVec3 euler() { return m_tf.getRotEuler(); }
+
         TVec4 quat() { return m_tf.getRotQuaternion(); }
 
         TMat4 tf() { return m_tf; }
@@ -57,9 +61,11 @@ namespace tysoc {
 
         TMat3 localRot() { return m_localRot; }
 
-        TMat4 localTf() { return m_localTf; }
+        TVec3 localEuler() { return m_localTf.getRotEuler(); }
 
         TVec4 localQuat() { return m_localTf.getRotQuaternion(); }
+
+        TMat4 localTf() { return m_localTf; }
 
         eShapeType shape() { return m_data.type; }
 

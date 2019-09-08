@@ -168,6 +168,36 @@ namespace tysoc {
             m_visuals[i]->update();
     }
 
+    void TBody::setEuler( const TVec3& euler )
+    {
+        m_rot = TMat3::fromEuler( euler );
+        m_tf.setRotation( m_rot );
+
+        if ( m_bodyImpl )
+            m_bodyImpl->setRotation( m_rot );
+
+        for ( size_t i = 0; i < m_collisions.size(); i++ )
+            m_collisions[i]->update();
+
+        for ( size_t i = 0; i < m_visuals.size(); i++ )
+            m_visuals[i]->update();
+    }
+
+    void TBody::setQuaternion( const TVec4& quat )
+    {
+        m_rot = TMat3::fromQuaternion( quat );
+        m_tf.setRotation( m_rot );
+
+        if ( m_bodyImpl )
+            m_bodyImpl->setRotation( m_rot );
+
+        for ( size_t i = 0; i < m_collisions.size(); i++ )
+            m_collisions[i]->update();
+
+        for ( size_t i = 0; i < m_visuals.size(); i++ )
+            m_visuals[i]->update();
+    }
+
     void TBody::setTransform( const TMat4& transform )
     {
         m_tf = transform;
