@@ -70,6 +70,10 @@ typedef float TScalar;
     #define TYSOC_PATH_WORKING_DIR "../../res/xml/"
 #endif
 
+#ifndef TYSOC_PATH_MESHES_DIR
+    #define TYSOC_PATH_MESHES_DIR "../../res/meshes/"
+#endif
+
 // Log levels consist of the following:
 //  * level 0: nothing at all
 //  * level 1: only errors
@@ -265,7 +269,12 @@ namespace tysoc
 
     std::vector< TScalar > generateRandomArray( int size, TScalar min, TScalar max );
 
+    std::vector< std::string > split( const std::string &txt, char separator = '/' );
 
+    std::string getFilenameFromFilePath( const std::string& filepath );
+    std::string getFoldernameFromFilePath( const std::string& filepath );
+    std::string getFolderpathFromFilePath( const std::string& filepath );
+    std::string getFilenameNoExtensionFromFilePath( const std::string& filepath );
 
     class TGenericParams
     {

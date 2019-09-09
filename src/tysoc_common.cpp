@@ -709,6 +709,68 @@ namespace tysoc
         return _res;
     }
 
+    std::vector< std::string > split( const std::string &txt, char separator )
+    {
+        std::vector< std::string > _res;
+
+        int pos = txt.find( separator );
+        if ( pos == std::string::npos )
+        {
+            _res.push_back( txt );
+            return _res;
+        }
+
+        int initpos = 0;
+
+        while ( pos != std::string::npos )
+        {
+            _res.push_back( txt.substr( initpos, pos - initpos ) );
+            initpos = pos + 1;
+
+            pos = txt.find( separator, initpos );
+        }
+
+        _res.push_back( txt.substr( initpos, std::min( pos, (int) txt.size() ) - initpos ) );
+
+        return _res;
+    }
+
+    std::string getFilenameFromFilePath(  const std::string& filepath )
+    {
+        return split( filepath, '/' ).back();
+    }
+
+    std::string getFoldernameFromFilePath(  const std::string& filepath )
+    {
+        auto _pathParts = split( filepath, '/' );
+        if ( _pathParts.size() < 2 )
+        {
+            return "./";
+        }
+
+        return _pathParts[ _pathParts.size() - 2 ];
+    }
+
+    std::string getFolderpathFromFilePath( const std::string& filepath )
+    {
+        auto _pathParts = split( filepath, '/' );
+        if ( _pathParts.size() < 2 )
+        {
+            return "./";
+        }
+
+        std::stringstream _ss;
+        for ( size_t i = 0; i < _pathParts.size() - 1; i++ )
+            _ss << _pathParts[i] << "/";
+
+        return _ss.str();
+    }
+
+    std::string getFilenameNoExtensionFromFilePath(  const std::string& filepath )
+    {
+        return split( split( filepath, '/' ).back(), '.' ).front();
+    }
+
     void TGenericParams::set( const std::string& name, int val )
     {
         m_ints[ name ] = val;
