@@ -140,6 +140,15 @@ namespace tysoc {
 
     void TCollision::changeSize( const TVec3& newSize )
     {
+        if ( m_data.type == eShapeType::MESH )
+        {
+            std::cout << "WARNING> changing mesh sizes at runtime is not supported, "
+                      << "as it requires recomputing the vertex positions for this new size "
+                      << "in various backend in some specific way. Please set the initial "
+                      << "scale of the mesh first, which does the job during construction." << std::endl;
+            return;
+        }
+
         // change the collision-data size property
         m_data.size = newSize;
 

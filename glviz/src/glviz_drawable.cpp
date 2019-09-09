@@ -33,6 +33,12 @@ namespace tysoc {
             _renderablePtr = engine::LMeshBuilder::createCapsule( data.size.x,
                                                                   data.size.y );
         }
+        else if ( data.type == eShapeType::MESH )
+        {
+            _renderablePtr = engine::LMeshBuilder::createModelFromFile( data.filename,
+                                                                        getFilenameNoExtensionFromFilePath( data.filename ) );
+            _renderablePtr->scale = { data.size.x, data.size.y, data.size.z };
+        }
         else
         {
             std::cout << "WARNING> drawable of type: " 
@@ -91,13 +97,22 @@ namespace tysoc {
         auto _eRotation = fromTMat3( _rotation );
 
         m_renderablePtr->pos = _ePosition;
-        m_renderablePtr->rotation = _eRotation;
+        m_renderablePtr->rotation =  _eRotation;
     }
 
     void TGLDrawable::setColor( const TVec3& fullColor )
     {
         if ( !m_renderablePtr )
             return;
+
+        if ( m_renderablePtr->getType() == RENDERABLE_TYPE_MODEL )
+        {
+            auto _children = reinterpret_cast< engine::LModel* >( m_renderablePtr )->getMeshes();
+            for ( size_t i = 0; i < _children.size(); i++ )
+                _children[i]->getMaterial()->setColor( { fullColor.x, fullColor.y, fullColor.z } );
+
+            return;
+        }
 
         // all color components are set to the same given color
         m_renderablePtr->getMaterial()->setColor( fromTVec3( fullColor ) );
@@ -108,6 +123,15 @@ namespace tysoc {
         if ( !m_renderablePtr )
             return;
 
+        if ( m_renderablePtr->getType() == RENDERABLE_TYPE_MODEL )
+        {
+            auto _children = reinterpret_cast< engine::LModel* >( m_renderablePtr )->getMeshes();
+            for ( size_t i = 0; i < _children.size(); i++ )
+                _children[i]->getMaterial()->ambient = { ambientColor.x, ambientColor.y, ambientColor.z };
+
+            return;
+        }
+
         m_renderablePtr->getMaterial()->ambient = fromTVec3( ambientColor );
     }
 
@@ -115,6 +139,15 @@ namespace tysoc {
     {
         if ( !m_renderablePtr )
             return;
+
+        if ( m_renderablePtr->getType() == RENDERABLE_TYPE_MODEL )
+        {
+            auto _children = reinterpret_cast< engine::LModel* >( m_renderablePtr )->getMeshes();
+            for ( size_t i = 0; i < _children.size(); i++ )
+                _children[i]->getMaterial()->diffuse = { diffuseColor.x, diffuseColor.y, diffuseColor.z };
+
+            return;
+        }
 
         m_renderablePtr->getMaterial()->diffuse = fromTVec3( diffuseColor );
     }
@@ -124,6 +157,15 @@ namespace tysoc {
         if ( !m_renderablePtr )
             return;
 
+        if ( m_renderablePtr->getType() == RENDERABLE_TYPE_MODEL )
+        {
+            auto _children = reinterpret_cast< engine::LModel* >( m_renderablePtr )->getMeshes();
+            for ( size_t i = 0; i < _children.size(); i++ )
+                _children[i]->getMaterial()->specular = { specularColor.x, specularColor.y, specularColor.z };
+
+            return;
+        }
+
         m_renderablePtr->getMaterial()->specular = fromTVec3( specularColor );
     }
 
@@ -131,6 +173,15 @@ namespace tysoc {
     {
         if ( !m_renderablePtr )
             return;
+
+        if ( m_renderablePtr->getType() == RENDERABLE_TYPE_MODEL )
+        {
+            auto _children = reinterpret_cast< engine::LModel* >( m_renderablePtr )->getMeshes();
+            for ( size_t i = 0; i < _children.size(); i++ )
+                _children[i]->getMaterial()->shininess = shininess;
+
+            return;
+        }
 
         m_renderablePtr->getMaterial()->shininess = shininess;
     }
@@ -169,6 +220,13 @@ namespace tysoc {
             m_scale.y = m_size.x / m_size0.x;
             // scale according to height
             m_scale.z = m_size.y / m_size0.y;
+        }
+        else if ( m_type == eShapeType::MESH )
+        {
+            // scale every dimension
+            m_scale.x = m_size.x / m_size0.x;
+            m_scale.y = m_size.y / m_size0.y;
+            m_scale.z = m_size.z / m_size0.z;
         }
 
         if ( !m_renderablePtr )
