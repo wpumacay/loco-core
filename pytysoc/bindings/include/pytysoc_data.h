@@ -9,6 +9,20 @@ namespace py = pybind11;
 namespace pytysoc
 {
 
+    struct PyHeightFieldData : public tysoc::THeightFieldData
+    {
+        void setNumWidthSamples( int numWidthSamples );
+        void setNumDepthSamples( int numDepthSamples );
+        void setHeightData( py::array_t< float >& heightData );
+
+        int getNumWidthSamples();
+        int getNumDepthSamples();
+        py::array_t< float > getHeightData();
+    };
+
+    PyHeightFieldData toPyHeightFieldData( const tysoc::THeightFieldData& data );
+    tysoc::THeightFieldData toTHeightFieldData( const PyHeightFieldData& pydata );
+
     struct PyShapeData : public tysoc::TShapeData
     {
         void setType( const tysoc::eShapeType& type );
@@ -16,12 +30,14 @@ namespace pytysoc
         void setLocalPos( py::array_t<TScalar>& localPos );
         void setLocalRot( py::array_t<TScalar>& localRot );
         void setFilename( const std::string& filename );
+        void setHeightFieldData( const PyHeightFieldData& hdata );
 
         tysoc::eShapeType getType();
         py::array_t<TScalar> getSize();
         py::array_t<TScalar> getLocalPos();
         py::array_t<TScalar> getLocalRot();
         std::string getFilename();
+        PyHeightFieldData getHeightFieldData();
     };
 
     PyShapeData toPyShapeData( const tysoc::TShapeData& data );
@@ -34,12 +50,14 @@ namespace pytysoc
         void setLocalPos( py::array_t<TScalar>& localPos );
         void setLocalRot( py::array_t<TScalar>& localRot );
         void setFilename( const std::string& filename );
+        void setHeightFieldData( const PyHeightFieldData& hdata );
 
         tysoc::eShapeType getType();
         py::array_t<TScalar> getSize();
         py::array_t<TScalar> getLocalPos();
         py::array_t<TScalar> getLocalRot();
         std::string getFilename();
+        PyHeightFieldData getHeightFieldData();
     };
 
     PyCollisionData toPyCollisionData( const tysoc::TCollisionData& data );
@@ -52,6 +70,7 @@ namespace pytysoc
         void setLocalPos( py::array_t<TScalar>& localPos );
         void setLocalRot( py::array_t<TScalar>& localRot );
         void setFilename( const std::string& filename );
+        void setHeightFieldData( const PyHeightFieldData& hdata );
         void setAmbientColor( py::array_t<TScalar>& ambient );
         void setDiffuseColor( py::array_t<TScalar>& diffuse );
         void setSpecularColor( py::array_t<TScalar>& specular );
@@ -62,6 +81,7 @@ namespace pytysoc
         py::array_t<TScalar> getLocalPos();
         py::array_t<TScalar> getLocalRot();
         std::string getFilename();
+        PyHeightFieldData getHeightFieldData();
         py::array_t<TScalar> getAmbientColor();
         py::array_t<TScalar> getDiffuseColor();
         py::array_t<TScalar> getSpecularColor();
@@ -108,7 +128,8 @@ namespace pytysoc
             .value( "SPHERE", tysoc::eShapeType::SPHERE ) \
             .value( "CYLINDER", tysoc::eShapeType::CYLINDER ) \
             .value( "CAPSULE", tysoc::eShapeType::CAPSULE ) \
-            .value( "MESH", tysoc::eShapeType::MESH ); \
+            .value( "MESH", tysoc::eShapeType::MESH ) \
+            .value( "HFIELD", tysoc::eShapeType::HFIELD ); \
     py::enum_<tysoc::eJointType>(m, "eJointType", py::arithmetic()) \
             .value( "FREE", tysoc::eJointType::FREE ) \
             .value( "REVOLUTE", tysoc::eJointType::REVOLUTE ) \
@@ -122,20 +143,27 @@ namespace pytysoc
             .value( "KINEMATIC", tysoc::eDynamicsType::KINEMATIC );
 
 #define PYTYSOC_DATA_BINDINGS(m) \
+    py::class_<pytysoc::PyHeightFieldData>(m, "PyHeightFieldData") \
+            .def( py::init<>() ) \
+            .def_property( "nWidthSamples", &pytysoc::PyHeightFieldData::getNumWidthSamples, &pytysoc::PyHeightFieldData::setNumWidthSamples ) \
+            .def_property( "nDepthSamples", &pytysoc::PyHeightFieldData::getNumDepthSamples, &pytysoc::PyHeightFieldData::setNumDepthSamples ) \
+            .def_property( "heightData", &pytysoc::PyHeightFieldData::getHeightData, &pytysoc::PyHeightFieldData::setHeightData ); \
     py::class_<pytysoc::PyShapeData>(m, "PyShapeData") \
             .def( py::init<>() ) \
             .def_property( "type", &pytysoc::PyShapeData::getType, &pytysoc::PyShapeData::setType ) \
             .def_property( "size", &pytysoc::PyShapeData::getSize, &pytysoc::PyShapeData::setSize ) \
             .def_property( "localPos", &pytysoc::PyShapeData::getLocalPos, &pytysoc::PyShapeData::setLocalPos ) \
             .def_property( "localRot", &pytysoc::PyShapeData::getLocalRot, &pytysoc::PyShapeData::setLocalRot ) \
-            .def_property( "filename", &pytysoc::PyShapeData::getFilename, &pytysoc::PyShapeData::setFilename ); \
+            .def_property( "filename", &pytysoc::PyShapeData::getFilename, &pytysoc::PyShapeData::setFilename ) \
+            .def_property( "hdata", &pytysoc::PyShapeData::getHeightFieldData, &pytysoc::PyShapeData::setHeightFieldData ); \
     py::class_<pytysoc::PyCollisionData>(m, "PyCollisionData") \
             .def( py::init<>() ) \
             .def_property( "type", &pytysoc::PyCollisionData::getType, &pytysoc::PyCollisionData::setType ) \
             .def_property( "size", &pytysoc::PyCollisionData::getSize, &pytysoc::PyCollisionData::setSize ) \
             .def_property( "localPos", &pytysoc::PyCollisionData::getLocalPos, &pytysoc::PyCollisionData::setLocalPos ) \
             .def_property( "localRot", &pytysoc::PyCollisionData::getLocalRot, &pytysoc::PyCollisionData::setLocalRot ) \
-            .def_property( "filename", &pytysoc::PyCollisionData::getFilename, &pytysoc::PyCollisionData::setFilename ); \
+            .def_property( "filename", &pytysoc::PyCollisionData::getFilename, &pytysoc::PyCollisionData::setFilename ) \
+            .def_property( "hdata", &pytysoc::PyCollisionData::getHeightFieldData, &pytysoc::PyCollisionData::setHeightFieldData ); \
     py::class_<pytysoc::PyVisualData>(m, "PyVisualData") \
             .def( py::init<>() ) \
             .def_property( "type", &pytysoc::PyVisualData::getType, &pytysoc::PyVisualData::setType ) \
@@ -146,7 +174,8 @@ namespace pytysoc
             .def_property( "ambient", &pytysoc::PyVisualData::getAmbientColor, &pytysoc::PyVisualData::setAmbientColor ) \
             .def_property( "diffuse", &pytysoc::PyVisualData::getDiffuseColor, &pytysoc::PyVisualData::setDiffuseColor ) \
             .def_property( "specular", &pytysoc::PyVisualData::getSpecularColor, &pytysoc::PyVisualData::setSpecularColor ) \
-            .def_property( "shininess", &pytysoc::PyVisualData::getShininess, &pytysoc::PyVisualData::setShininess ); \
+            .def_property( "shininess", &pytysoc::PyVisualData::getShininess, &pytysoc::PyVisualData::setShininess ) \
+            .def_property( "hdata", &pytysoc::PyVisualData::getHeightFieldData, &pytysoc::PyVisualData::setHeightFieldData ); \
     py::class_<pytysoc::PyBodyData>(m, "PyBodyData") \
             .def( py::init<>() ) \
             .def_property( "dyntype", &pytysoc::PyBodyData::getDynType, &pytysoc::PyBodyData::setDynType ) \

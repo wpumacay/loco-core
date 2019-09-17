@@ -8,6 +8,64 @@ namespace pytysoc
 
     /***************************************************************************
     *                                                                          *
+    *                       HeightFieldData extension                          *
+    *                                                                          *
+    ***************************************************************************/
+
+    void PyHeightFieldData::setNumWidthSamples( int numWidthSamples )
+    {
+        this->nWidthSamples = numWidthSamples;
+    }
+
+    void PyHeightFieldData::setNumDepthSamples( int numDepthSamples )
+    {
+        this->nDepthSamples = numDepthSamples;
+    }
+
+    void PyHeightFieldData::setHeightData( py::array_t< float >& heightData )
+    {
+        this->heightData = numpyToVecArray( heightData );
+    }
+
+    int PyHeightFieldData::getNumWidthSamples()
+    {
+        return this->nWidthSamples;
+    }
+
+    int PyHeightFieldData::getNumDepthSamples()
+    {
+        return this->nDepthSamples;
+    }
+
+    py::array_t< float > PyHeightFieldData::getHeightData()
+    {
+        return vecArrayToNumpy( this->heightData );
+    }
+
+    PyHeightFieldData toPyHeightFieldData( const tysoc::THeightFieldData& data )
+    {
+        PyHeightFieldData _pydata;
+
+        _pydata.nWidthSamples = data.nWidthSamples;
+        _pydata.nDepthSamples = data.nDepthSamples;
+        _pydata.heightData = data.heightData;
+
+        return _pydata;
+    }
+
+    tysoc::THeightFieldData toTHeightFieldData( const PyHeightFieldData& pydata )
+    {
+        tysoc::THeightFieldData _data;
+
+        _data.nWidthSamples = pydata.nWidthSamples;
+        _data.nDepthSamples = pydata.nDepthSamples;
+        _data.heightData = pydata.heightData;
+
+        return _data;
+    }
+
+    /***************************************************************************
+    *                                                                          *
     *                          ShapeData extension                             *
     *                                                                          *
     ***************************************************************************/
@@ -37,6 +95,11 @@ namespace pytysoc
         this->filename = filename;
     }
 
+    void PyShapeData::setHeightFieldData( const PyHeightFieldData& pydata )
+    {
+        this->hdata = toTHeightFieldData( pydata );
+    }
+
     tysoc::eShapeType PyShapeData::getType()
     {
         return this->type;
@@ -60,6 +123,11 @@ namespace pytysoc
     std::string PyShapeData::getFilename()
     {
         return this->filename;
+    }
+
+    PyHeightFieldData PyShapeData::getHeightFieldData()
+    {
+        return toPyHeightFieldData( this->hdata );
     }
 
     PyShapeData toPyShapeData( const tysoc::TShapeData& data )
@@ -117,6 +185,11 @@ namespace pytysoc
         this->filename = filename;
     }
 
+    void PyCollisionData::setHeightFieldData( const PyHeightFieldData& pydata )
+    {
+        this->hdata = toTHeightFieldData( pydata );
+    }
+
     tysoc::eShapeType PyCollisionData::getType()
     {
         return this->type;
@@ -142,6 +215,11 @@ namespace pytysoc
         return this->filename;
     }
 
+    PyHeightFieldData PyCollisionData::getHeightFieldData()
+    {
+        return toPyHeightFieldData( this->hdata );
+    }
+
     PyCollisionData toPyCollisionData( const tysoc::TCollisionData& data )
     {
         PyCollisionData _pydata;
@@ -150,6 +228,7 @@ namespace pytysoc
         _pydata.localPos = data.localPos;
         _pydata.localRot = data.localRot;
         _pydata.filename = data.filename;
+        _pydata.hdata = data.hdata;
         _pydata.collisionGroup = data.collisionGroup;
         _pydata.collisionMask = data.collisionMask;
         _pydata.friction = data.friction;
@@ -170,6 +249,7 @@ namespace pytysoc
         _data.collisionMask = pydata.collisionMask;
         _data.friction = pydata.friction;
         _data.density = pydata.density;
+        _data.hdata = pydata.hdata;
 
         return _data;
     }
@@ -203,6 +283,11 @@ namespace pytysoc
     void PyVisualData::setFilename( const std::string& filename )
     {
         this->filename = filename;
+    }
+
+    void PyVisualData::setHeightFieldData( const PyHeightFieldData& pydata )
+    {
+        this->hdata = toTHeightFieldData( pydata );
     }
 
     void PyVisualData::setAmbientColor( py::array_t<TScalar>& ambient )
@@ -250,6 +335,11 @@ namespace pytysoc
         return this->filename;
     }
 
+    PyHeightFieldData PyVisualData::getHeightFieldData()
+    {
+        return toPyHeightFieldData( this->hdata );
+    }
+
     py::array_t<TScalar> PyVisualData::getAmbientColor()
     {
         return vec3ToNumpy( this->ambient );
@@ -278,6 +368,7 @@ namespace pytysoc
         _pydata.localPos = data.localPos;
         _pydata.localRot = data.localRot;
         _pydata.filename = data.filename;
+        _pydata.hdata = data.hdata;
         _pydata.ambient = data.ambient;
         _pydata.diffuse = data.diffuse;
         _pydata.specular = data.specular;
@@ -294,6 +385,7 @@ namespace pytysoc
         _data.localPos = pydata.localPos;
         _data.localRot = pydata.localRot;
         _data.filename = pydata.filename;
+        _data.hdata = pydata.hdata;
         _data.ambient = pydata.ambient;
         _data.diffuse = pydata.diffuse;
         _data.specular = pydata.specular;
