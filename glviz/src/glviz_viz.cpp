@@ -5,7 +5,7 @@
 namespace tysoc {
 
     TGLVisualizer::TGLVisualizer( TScenario* scenarioPtr,
-                                          const std::string& workingDir )
+                                  const std::string& workingDir )
         : TIVisualizer( scenarioPtr, workingDir )
     {
         m_glAppPtr      = NULL;
@@ -50,7 +50,6 @@ namespace tysoc {
         m_uiContextPtr = new TGLUiContext();
         m_uiContextPtr->isUiActive          = false;
         m_uiContextPtr->isBasicUiActive     = true;
-        m_uiContextPtr->glfwWindowPtr       = m_glAppPtr->window()->getGLFWwindow();
         m_uiContextPtr->vizKinTreePtrs      = m_vizKinTreeWrappers;
         m_uiContextPtr->vizTerrainGenPtrs   = m_vizTerrainGeneratorWrappers;
         // and then the UI
@@ -110,7 +109,7 @@ namespace tysoc {
         {
             // @CHECK: Should apply globally, as some cameras will not listen
             m_glScenePtr->getCurrentCamera()->setActiveMode( false );
-            m_glAppPtr->window()->enableCursor();
+            engine::COpenGLApp::GetWindow()->enableCursor();
 
             // @DIRTY: enable UI
             m_uiContextPtr->isUiActive = true;
@@ -118,7 +117,7 @@ namespace tysoc {
         else if ( engine::InputSystem::isKeyDown( GLFW_KEY_ENTER ) )
         {
             m_glScenePtr->getCurrentCamera()->setActiveMode( true );
-            m_glAppPtr->window()->disableCursor();
+            engine::COpenGLApp::GetWindow()->disableCursor();
 
             // @DIRTY: disable UI
             m_uiContextPtr->isUiActive = false;
@@ -159,8 +158,8 @@ namespace tysoc {
     }
 
     void TGLVisualizer::_grabCameraFrameInternal( TIVizCamera* cameraPtr,
-                                                      TIVizTexture& rgbTexture,
-                                                      TIVizTexture& depthTexture )
+                                                  TIVizTexture& rgbTexture,
+                                                  TIVizTexture& depthTexture )
     {
         // @TODO|@WIP
     }
@@ -175,7 +174,9 @@ namespace tysoc {
 
     void TGLVisualizer::_setupGlRenderingEngine()
     {
-        auto _app = m_glAppPtr = engine::LApp::GetInstance();
+        auto _app = m_glAppPtr = new engine::COpenGLApp();
+        _app->init();
+
         auto _scene = m_glScenePtr = _app->scene();
 
         auto _camera = new engine::LFpsCamera( "fps",
@@ -205,15 +206,15 @@ namespace tysoc {
 
         // Make fps camera inactive at startup
         m_glScenePtr->getCurrentCamera()->setActiveMode( false );
-        m_glAppPtr->window()->enableCursor();
+        engine::COpenGLApp::GetWindow()->enableCursor();
     }
 
     void TGLVisualizer::_collectKinTreeAgent( agent::TAgent* agentPtr )
     {
         // create the kintree viz wrapper
         auto _vizKinTreeWrapper = new TGLVizKinTree( agentPtr,
-                                                         m_glScenePtr,
-                                                         m_workingDir );
+                                                     m_glScenePtr,
+                                                     m_workingDir );
         // and add it to the buffer of kintree vizs
         m_vizKinTreeWrappers.push_back( _vizKinTreeWrapper );
     }
@@ -353,50 +354,9 @@ namespace tysoc {
     int TGLVisualizer::_remapKeyInternal( int keyCode )
     {
         /*
-        *   This rendering backend uses glfw, so map 
-        *   this keyCode their representation
+        *   This rendering backend uses glfw, so no mapping required as the
+        *   standard keycodes values are defined as in glfw3 keycode definitions
         */
-
-        // letters (KEY_A=0, GLFW_KEY_A=65)
-        if ( keys::KEY_A <= keyCode && keyCode <= keys::KEY_Z )
-        {
-            return keyCode + 65;
-        }
-        // arrows (KEY_RIGHT=43, GLFW_KEY_RIGHT=262)
-        else if ( keys::KEY_RIGHT <= keyCode && keyCode <= keys::KEY_UP )
-        {
-            return keyCode + 219;
-        }
-        // all other keys
-        else
-        {
-            switch ( keyCode )
-            {
-                case keys::KEY_ESCAPE : return GLFW_KEY_ESCAPE;
-                case keys::KEY_ENTER : return GLFW_KEY_ENTER;
-                case keys::KEY_SPACE : return GLFW_KEY_SPACE;
-                case keys::KEY_TAB : return GLFW_KEY_TAB;
-                case keys::KEY_BACKSPACE : return GLFW_KEY_BACKSPACE;
-
-                case keys::KEY_INSERT : return GLFW_KEY_INSERT;
-                case keys::KEY_DELETE : return GLFW_KEY_DELETE;
-                case keys::KEY_HOME : return GLFW_KEY_HOME;
-                case keys::KEY_END : return GLFW_KEY_END;
-                case keys::KEY_PAGE_UP : return GLFW_KEY_PAGE_UP;
-                case keys::KEY_PAGE_DOWN : return GLFW_KEY_PAGE_DOWN;
-
-                case keys::KEY_LEFT_CTRL : return GLFW_KEY_LEFT_CONTROL;
-                case keys::KEY_LEFT_ALT : return GLFW_KEY_LEFT_ALT;
-                case keys::KEY_LEFT_SHIFT : return GLFW_KEY_LEFT_SHIFT;
-                case keys::KEY_RIGHT_CTRL : return GLFW_KEY_RIGHT_CONTROL;
-                case keys::KEY_RIGHT_ALT : return GLFW_KEY_RIGHT_ALT;
-                case keys::KEY_RIGHT_SHIFT : return GLFW_KEY_RIGHT_SHIFT;
-
-                default :
-                    std::cout << "WARNING> keyCode: " << keyCode << " is not mapped" << std::endl;
-            }
-        }
-
         return keyCode;
     }
 

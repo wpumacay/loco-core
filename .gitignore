@@ -22,4 +22,5 @@ _templates/
 # dependencies exclusions
 ext/cat1
 ext/imgui
+ext/spdlog
 ext/pybind11

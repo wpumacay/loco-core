@@ -8,8 +8,8 @@ namespace tysoc {
     //        for special gizmos that give better feedback than primitives
 
     TGLVizKinTree::TGLVizKinTree( agent::TAgent* agentPtr,
-                                          engine::LScene* scenePtr,
-                                          const std::string& workingDir )
+                                  engine::LScene* scenePtr,
+                                  const std::string& workingDir )
     {
         m_scenePtr      = scenePtr;
         m_agentPtr      = agentPtr;
@@ -102,7 +102,7 @@ namespace tysoc {
                                              VIZKINTREE_BODY_DEFAULT_COLOR,
                                              VIZKINTREE_BODY_DEFAULT_COLOR );
             // and create the axes
-            _vizBody.axesPtr = engine::LMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
+            _vizBody.axesPtr = engine::CMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
             // and add it to the scene
             m_scenePtr->addRenderable( _vizBody.axesPtr );
             // and add it to the bodies buffer
@@ -128,7 +128,7 @@ namespace tysoc {
                                               VIZKINTREE_JOINT_DEFAULT_COLOR,
                                               VIZKINTREE_JOINT_DEFAULT_COLOR );
             // and create the axes
-            _vizJoint.axesPtr = engine::LMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
+            _vizJoint.axesPtr = engine::CMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
             // and add it to the scene
             m_scenePtr->addRenderable( _vizJoint.axesPtr );
             // and add it to the joints buffer
@@ -154,7 +154,7 @@ namespace tysoc {
                                                 VIZKINTREE_ACTUATOR_DEFAULT_COLOR,
                                                 VIZKINTREE_ACTUATOR_DEFAULT_COLOR );
             // and create the axes
-            _vizActuator.axesPtr = engine::LMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
+            _vizActuator.axesPtr = engine::CMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
             // and add it to the scene
             m_scenePtr->addRenderable( _vizActuator.axesPtr );
             // and add it to the actuators buffer
@@ -180,7 +180,7 @@ namespace tysoc {
                                               VIZKINTREE_SENSOR_DEFAULT_COLOR,
                                               VIZKINTREE_SENSOR_DEFAULT_COLOR );
             // and create the axes
-            _vizSensor.axesPtr = engine::LMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
+            _vizSensor.axesPtr = engine::CMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
             // and add it to the scene
             m_scenePtr->addRenderable( _vizSensor.axesPtr );
             // and add it to the sensors buffer
@@ -208,7 +208,7 @@ namespace tysoc {
                                               _visuals[i]->material.specular,
                                               _geometry.filename );
             // and create the axes
-            _vizVisual.axesPtr = engine::LMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
+            _vizVisual.axesPtr = engine::CMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
             // and add it to the scene
             m_scenePtr->addRenderable( _vizVisual.axesPtr );
             // and add it to the visuals buffer
@@ -238,7 +238,7 @@ namespace tysoc {
                                                  _geometry.filename );
             _vizCollision.meshPtr->setWireframeMode( true );
             // and create the axes
-            _vizCollision.axesPtr = engine::LMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
+            _vizCollision.axesPtr = engine::CMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
             // and add it to the scene
             m_scenePtr->addRenderable( _vizCollision.axesPtr );
             // and add it to the collisions buffer
@@ -262,26 +262,26 @@ namespace tysoc {
 
         if ( type == "box" )
         {
-            _renderable = engine::LMeshBuilder::createBox( size.x,
+            _renderable = engine::CMeshBuilder::createBox( size.x,
                                                            size.y,
                                                            size.z );
         }
         else if ( type == "sphere" )
         {
-            _renderable = engine::LMeshBuilder::createSphere( size.x );
+            _renderable = engine::CMeshBuilder::createSphere( size.x );
         }
         else if ( type == "capsule" )
         {
-            _renderable = engine::LMeshBuilder::createCapsule( size.x, size.y );
+            _renderable = engine::CMeshBuilder::createCapsule( size.x, size.y );
         }
         else if ( type == "cylinder" )
         {
-            _renderable = engine::LMeshBuilder::createCylinder( size.x, size.y );
+            _renderable = engine::CMeshBuilder::createCylinder( size.x, size.y );
         }
         else if ( type == "mesh" )
         {
             auto _meshFilePath = m_workingDir + filename;
-            _renderable = engine::LMeshBuilder::createModelFromFile( _meshFilePath,
+            _renderable = engine::CMeshBuilder::createModelFromFile( _meshFilePath,
                                                                      "" );
             // std::cout << "mesh created: " << filename << std::endl;
         }

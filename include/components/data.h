@@ -12,7 +12,8 @@ namespace tysoc {
         SPHERE, 
         CYLINDER, 
         CAPSULE, 
-        MESH
+        MESH,
+        HFIELD
     };
 
     enum class eJointType

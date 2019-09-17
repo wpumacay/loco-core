@@ -1,12 +1,7 @@
-
 #pragma once
 
-#include <vector>
-#include <iostream>
-#include <string>
-
-#include <LMeshBuilder.h>
 #include <LScene.h>
+#include <graphics/CMeshBuilder.h>
 
 #include <agent/agent.h>
 

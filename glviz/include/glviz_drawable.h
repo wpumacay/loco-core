@@ -4,7 +4,7 @@
 
 #include <viz/drawable.h>
 
-#include <LMeshBuilder.h>
+#include <graphics/CMeshBuilder.h>
 #include <LScene.h>
 
 namespace tysoc {

@@ -1,10 +1,10 @@
 
 #pragma once
 
+// application resource from rendering engine
+#include <core/COpenGLApp.h>
 // interface for our UI implementation
 #include <viz/ui.h>
-// cat1 rendering engine resources
-#include <LApp.h>
 // dear imgui resources
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -12,7 +12,6 @@
 // visualization wrappers
 #include <glviz_kintree.h>
 #include <glviz_terrainGen.h>
-
 // separate ui panels
 #include <ui/glviz_ui_bodies.h>
 
@@ -24,7 +23,6 @@ namespace tysoc {
     {
         bool                                    isUiActive;
         bool                                    isBasicUiActive;
-        GLFWwindow*                             glfwWindowPtr;
         std::vector< TGLVizKinTree* >           vizKinTreePtrs;
         std::vector< TGLVizTerrainGenerator* >  vizTerrainGenPtrs;
     };
@@ -58,7 +56,6 @@ namespace tysoc {
         void _showCollisionInfo( agent::TKinTreeCollision* kinTreeCollisionPtr );
         void _showVisualInfo( agent::TKinTreeVisual* kinTreeVisualPtr );
 
-        GLFWwindow*     m_glfwWindowPtr;
         TGLUiContext*   m_uiContextPtr;
 
         int             m_basicCurrentKinTreeIndx;

@@ -2,8 +2,6 @@
 
 // interface for our UI implementation
 #include <viz/ui.h>
-// cat1 rendering engine resources
-#include <LApp.h>
 // dear imgui resources
 #include <imgui.h>
 #include <imgui_impl_glfw.h>

@@ -142,7 +142,7 @@ namespace tysoc {
     bool TIVisualizer::isKeyDown( int keyCode )
     {
         int _keyCodeMapped = _remapKeyInternal( keyCode );
-        return _isKeyDownInternal( _keyCodeMapped );
+        return _isKeyDownInternal( keyCode );
     }
 
     bool TIVisualizer::checkSingleKeyPress( int keyCode )

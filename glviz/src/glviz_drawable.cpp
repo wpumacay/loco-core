@@ -15,27 +15,27 @@ namespace tysoc {
 
         if ( data.type == eShapeType::BOX )
         {
-            _renderablePtr = engine::LMeshBuilder::createBox( data.size.x,
+            _renderablePtr = engine::CMeshBuilder::createBox( data.size.x,
                                                               data.size.y,
                                                               data.size.z );
         }
         else if ( data.type == eShapeType::SPHERE )
         {
-            _renderablePtr = engine::LMeshBuilder::createSphere( data.size.x );
+            _renderablePtr = engine::CMeshBuilder::createSphere( data.size.x );
         }
         else if ( data.type == eShapeType::CYLINDER )
         {
-            _renderablePtr = engine::LMeshBuilder::createCylinder( data.size.x,
+            _renderablePtr = engine::CMeshBuilder::createCylinder( data.size.x,
                                                                    data.size.y );
         }
         else if ( data.type == eShapeType::CAPSULE )
         {
-            _renderablePtr = engine::LMeshBuilder::createCapsule( data.size.x,
+            _renderablePtr = engine::CMeshBuilder::createCapsule( data.size.x,
                                                                   data.size.y );
         }
         else if ( data.type == eShapeType::MESH )
         {
-            _renderablePtr = engine::LMeshBuilder::createModelFromFile( data.filename,
+            _renderablePtr = engine::CMeshBuilder::createModelFromFile( data.filename,
                                                                         getFilenameNoExtensionFromFilePath( data.filename ) );
             _renderablePtr->scale = { data.size.x, data.size.y, data.size.z };
         }

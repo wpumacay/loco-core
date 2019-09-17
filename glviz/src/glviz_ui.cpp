@@ -4,11 +4,10 @@
 namespace tysoc {
 
     TGLUi::TGLUi( TScenario* scenarioPtr,
-                          TGLUiContext* uiContextPtr )
+                  TGLUiContext* uiContextPtr )
         : TIVisualizerUI( scenarioPtr )
     {
-        m_uiContextPtr          = uiContextPtr;
-        m_glfwWindowPtr         = uiContextPtr->glfwWindowPtr;
+        m_uiContextPtr = uiContextPtr;
 
         m_basicCurrentKinTreeName    = "";
         m_basicCurrentKinTreeIndx    = -1;
@@ -27,8 +26,6 @@ namespace tysoc {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
-        
-        m_glfwWindowPtr = NULL;
 
         if ( m_uiContextPtr )
         {
@@ -50,7 +47,7 @@ namespace tysoc {
         ImGuiIO& _io = ImGui::GetIO(); (void) _io;
         _io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
-        ImGui_ImplGlfw_InitForOpenGL( m_glfwWindowPtr, true );
+        ImGui_ImplGlfw_InitForOpenGL( engine::COpenGLApp::GetWindow()->glfwWindow(), true );
     #ifdef __APPLE__
         ImGui_ImplOpenGL3_Init( "#version 150" );
     #else
@@ -80,7 +77,7 @@ namespace tysoc {
 
         ImGui::Render();
         int _ww, _wh;
-        glfwGetFramebufferSize( m_glfwWindowPtr, &_ww, &_wh );
+        glfwGetFramebufferSize( engine::COpenGLApp::GetWindow()->glfwWindow(), &_ww, &_wh );
         glViewport( 0, 0, _ww, _wh );
         ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
     }
@@ -116,6 +113,10 @@ namespace tysoc {
         ImGui::Spacing();
         if ( ImGui::Button( "Show debug draws" ) )
             m_simulationPtr->toggleDebugDraws();
+
+        ImGui::Spacing();
+        ImGui::Text( "frame-time : %.3f", engine::COpenGLApp::GetInstance()->frametime() );
+        ImGui::Text( "fps        : %.3f", engine::COpenGLApp::GetInstance()->fps() );
 
         ImGui::End();
 

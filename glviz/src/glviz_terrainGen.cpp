@@ -53,7 +53,7 @@ namespace tysoc {
             // and assign it to our wrapper
             _vizTerrainPrimitive.terrainPrimitivePtr = _terrainPrimitivePtr;
             // add the axes as well
-            _vizTerrainPrimitive.axesPtr = engine::LMeshBuilder::createAxes( VIZTERRAIN_AXES_DEFAULT_SIZE );
+            _vizTerrainPrimitive.axesPtr = engine::CMeshBuilder::createAxes( VIZTERRAIN_AXES_DEFAULT_SIZE );
             // and add it to the scene
             m_scenePtr->addRenderable( _vizTerrainPrimitive.axesPtr );
 
@@ -81,28 +81,28 @@ namespace tysoc {
         // create the mesh with some default sizes (for rescaling later)
         if ( terrainPrimitivePtr->geomType == "plane" )
         {
-            _renderablePtr = engine::LMeshBuilder::createPlane( 2.0f, 2.0f, _size.y / 10.0f, _size.x / 10.0f );
+            _renderablePtr = engine::CMeshBuilder::createPlane( 2.0f, 2.0f );
         }
         else if ( terrainPrimitivePtr->geomType == "box" )
         {
-            _renderablePtr = engine::LMeshBuilder::createBox( 2.0f, 2.0f, 2.0f );
+            _renderablePtr = engine::CMeshBuilder::createBox( 2.0f, 2.0f, 2.0f );
         }
         else if ( terrainPrimitivePtr->geomType == "sphere" )
         {
-            _renderablePtr = engine::LMeshBuilder::createSphere( 1.0f );
+            _renderablePtr = engine::CMeshBuilder::createSphere( 1.0f );
         }
         else if ( terrainPrimitivePtr->geomType == "capsule" )
         {
-            _renderablePtr = engine::LMeshBuilder::createCapsule( 1.0f, 2.0f );
+            _renderablePtr = engine::CMeshBuilder::createCapsule( 1.0f, 2.0f );
         }
         else if ( terrainPrimitivePtr->geomType == "cylinder" )
         {
-            _renderablePtr = engine::LMeshBuilder::createCylinder( 1.0f, 2.0f );
+            _renderablePtr = engine::CMeshBuilder::createCylinder( 1.0f, 2.0f );
         }
         else if ( terrainPrimitivePtr->geomType == "mesh" )
         {
             auto _meshFilePath = m_workingDir + terrainPrimitivePtr->filename;
-            _renderablePtr = engine::LMeshBuilder::createModelFromFile( _meshFilePath, "" );
+            _renderablePtr = engine::CMeshBuilder::createModelFromFile( _meshFilePath, "" );
         }
 
         if ( _renderablePtr )
