@@ -43,6 +43,8 @@ namespace tysoc {
 
         void changeSize( const TVec3& newSize );
 
+        void changeElevationData( const std::vector< float >& heightData );
+
         void changeColor( const TVec3& newFullColor );
 
         void changeAmbientColor( const TVec3& newAmbientColor );

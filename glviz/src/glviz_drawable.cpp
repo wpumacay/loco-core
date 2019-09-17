@@ -39,6 +39,21 @@ namespace tysoc {
                                                                         getFilenameNoExtensionFromFilePath( data.filename ) );
             _renderablePtr->scale = { data.size.x, data.size.y, data.size.z };
         }
+        else if ( data.type == eShapeType::HFIELD )
+        {
+            auto _heightDataScaled = data.hdata.heightData;
+            for ( size_t i = 0; i < _heightDataScaled.size(); i++ )
+                _heightDataScaled[i] *= data.size.z;
+
+            _renderablePtr = engine::CMeshBuilder::createHeightField( data.hdata.nWidthSamples,
+                                                                      data.hdata.nDepthSamples,
+                                                                      data.size.x,
+                                                                      data.size.y,
+                                                                      data.size.x / 2.0f, 
+                                                                      data.size.y / 2.0f,
+                                                                      _heightDataScaled,
+                                                                      GLVIZ_DEFAULT_HFIELD_BASE );
+        }
         else
         {
             std::cout << "WARNING> drawable of type: " 
@@ -73,6 +88,7 @@ namespace tysoc {
         m_size0         = shapeData.size;
         m_type          = shapeData.type;
         m_renderablePtr = renderablePtr;
+        m_data          = shapeData;
     }
 
     TGLDrawable::~TGLDrawable()
@@ -228,11 +244,43 @@ namespace tysoc {
             m_scale.y = m_size.y / m_size0.y;
             m_scale.z = m_size.z / m_size0.z;
         }
+        else if ( m_type == eShapeType::HFIELD )
+        {
+            // not allowed, use changeElevationData instead
+            std::cout << "WARNING> tried changing the scale of the drawable for a hfield. Should "
+                      << "change the elevation data instead" << std::endl;
+        }
 
         if ( !m_renderablePtr )
             return;
 
         m_renderablePtr->scale = fromTVec3( m_scale );
+    }
+
+    void TGLDrawable::changeElevationData( const std::vector< float >& heightData )
+    {
+        if ( m_data.type != eShapeType::HFIELD )
+        {
+            std::cout << "WARNING> tried changing gldrawable's elevation data, even though "
+                      << "its not a hfield shape" << std::endl;
+            return;
+        }
+
+        if( ( m_data.hdata.nWidthSamples * m_data.hdata.nDepthSamples ) != heightData.size() )
+        {
+            std::cout << "WARNING> number of elements in internal and given elevation buffers does not match" << std::endl;
+            std::cout << "nx-samples    : " << m_data.hdata.nWidthSamples << std::endl;
+            std::cout << "ny-samples    : " << m_data.hdata.nDepthSamples << std::endl;
+            std::cout << "hdata.size()  : " << heightData.size() << std::endl;
+            return;
+        }
+
+        // @TODO: Should add support for dynamic buffers, so for now just destroy the 
+        //        renderable and create a new one :(
+        delete m_renderablePtr;
+
+        m_data.hdata.heightData = heightData;
+        m_renderablePtr = createRenderable( m_data );
     }
 
     void TGLDrawable::show( bool visible )

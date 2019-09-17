@@ -47,6 +47,8 @@ namespace tysoc {
 
         void changeSize( const TVec3& newSize );
 
+        void changeElevationData( const std::vector< float >& heightData );
+
         std::string name() { return m_name; }
 
         bool isVisible();

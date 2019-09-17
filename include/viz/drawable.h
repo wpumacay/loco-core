@@ -31,6 +31,8 @@ namespace tysoc {
 
         virtual void changeSize( const TVec3& newSize ) = 0;
 
+        virtual void changeElevationData( const std::vector< float >& heightData ) = 0;
+
         virtual void show( bool visible ) = 0;
 
         virtual void wireframe( bool wireframe ) = 0;

@@ -7,6 +7,8 @@
 #include <graphics/CMeshBuilder.h>
 #include <LScene.h>
 
+#define GLVIZ_DEFAULT_HFIELD_BASE 0.1f
+
 namespace tysoc {
 
     engine::LIRenderable* createRenderable( const TShapeData& data );
@@ -35,6 +37,8 @@ namespace tysoc {
 
         void changeSize( const tysoc::TVec3& newSize ) override;
 
+        void changeElevationData( const std::vector< float >& heightData ) override;
+
         void show( bool visible ) override;
 
         void wireframe( bool wireframe ) override;
@@ -58,6 +62,8 @@ namespace tysoc {
 
         engine::LIRenderable* m_renderablePtr;
 
+        /* construction data of this drawable object */
+        TShapeData m_data;
     };
 
     extern "C" TIDrawable* visualizer_createDrawable( const TShapeData& data );

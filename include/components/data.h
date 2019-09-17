@@ -37,13 +37,21 @@ namespace tysoc {
     std::string toString( const eJointType& type );
     std::string toString( const eDynamicsType& type );
 
+    struct THeightFieldData
+    {
+        int                     nWidthSamples;  // number of samples of the grid in the x-dimension (extent is given by size.x)
+        int                     nDepthSamples;  // number of samples of the grid on the y-dimension (extent is given by size.y)
+        std::vector< float >    heightData;     // height values in [0-1], scaled to actual height by size.z component
+    };
+
     struct TShapeData
     {
-        eShapeType  type;       // type of collision shape (see enum above)
-        TVec3       size;       // size of the collision shape (e.g. x->radius for sphere shapes)
-        TVec3       localPos;   // relative position w.r.t. parent body
-        TMat3       localRot;   // relative orientation w.r.t. parent body
-        std::string filename;   // in case of a mesh shape, abs-path for the resource
+        eShapeType          type;       // type of collision shape (see enum above)
+        TVec3               size;       // size of the collision shape (e.g. x->radius for sphere shapes)
+        TVec3               localPos;   // relative position w.r.t. parent body
+        TMat3               localRot;   // relative orientation w.r.t. parent body
+        std::string         filename;   // in case of a mesh shape, abs-path for the resource
+        THeightFieldData    hdata;      // heightfield struct with required data for hfield type objects
     };
 
     std::string toString( const TShapeData& shapeData );

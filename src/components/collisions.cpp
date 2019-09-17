@@ -149,6 +149,15 @@ namespace tysoc {
             return;
         }
 
+        if ( m_data.type == eShapeType::HFIELD )
+        {
+            std::cout << "WARNING> changing hfield sizes at runtime is not supported (yet), "
+                      << "as it requires recomputing the elevation data every time. For now, "
+                      << "set the size properties of the hfield first, which will do the job, "
+                      << "during construction" << std::endl;
+            return;
+        }
+
         // change the collision-data size property
         m_data.size = newSize;
 
@@ -159,5 +168,35 @@ namespace tysoc {
         // tell the rendering resource to change the size internally
         if ( m_drawableImplPtr )
             m_drawableImplPtr->changeSize( newSize );
+    }
+
+    void TCollision::changeElevationData( const std::vector< float >& heightData )
+    {
+        if ( m_data.type != eShapeType::HFIELD )
+        {
+            std::cout << "WARNING> tried changing elevation data of a non-hfield collider" << std::endl;
+            return;
+        }
+
+        // sanity check: make sure that both internal and given buffers have same num-elements
+        if( ( m_data.hdata.nWidthSamples * m_data.hdata.nDepthSamples ) != heightData.size() )
+        {
+            std::cout << "WARNING> number of elements in internal and given elevation buffers does not match" << std::endl;
+            std::cout << "nx-samples    : " << m_data.hdata.nWidthSamples << std::endl;
+            std::cout << "ny-samples    : " << m_data.hdata.nDepthSamples << std::endl;
+            std::cout << "hdata.size()  : " << heightData.size() << std::endl;
+            return;
+        }
+
+        // change the internal elevation data
+        m_data.hdata.heightData = heightData;
+
+        // tell the backend resource to change the elevation data internally
+        if ( m_collisionImplPtr )
+            m_collisionImplPtr->changeElevationData( heightData );
+
+        // tell the rendering resource to change the elevation data internally
+        if ( m_drawableImplPtr )
+            m_drawableImplPtr->changeElevationData( heightData );
     }
 }

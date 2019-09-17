@@ -28,6 +28,8 @@ namespace tysoc {
 
         virtual void changeSize( const TVec3& newSize ) = 0;
 
+        virtual void changeElevationData( const std::vector<float>& heightData ) = 0;
+
         TCollision* collision() { return m_collisionPtr; }
 
         protected :

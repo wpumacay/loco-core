@@ -20,6 +20,9 @@ namespace tysoc {
         if ( type == eShapeType::MESH )
             return "mesh";
 
+        if ( type == eShapeType::HFIELD )
+            return "hfield";
+
         if ( type == eShapeType::NONE )
             return "none";
 
