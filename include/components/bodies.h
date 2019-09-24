@@ -113,3 +113,17 @@ namespace tysoc {
     };
 
 }
+
+
+// // example usage (when joint adapters are implemented (again, as I had them in another impl :/))
+// 
+// _doorBase = TBody();
+// // ... configure door base geometry and collider
+// 
+// _doorMovable = TBody()
+// // ... configure door movable part geometry and collider
+// 
+// _doorMovJoint = TJoint()
+// // ... configure transforms and other settings for movable door joint
+// 
+// _doorBase.addBody( _doorMovable, _doorMovJoint )
