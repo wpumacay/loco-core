@@ -73,13 +73,6 @@ namespace pytysoc
         *   @exposed        Exposed through python API
         */
         bool checkSingleKeyPress( int keyCode );
-
-        /**
-        *   Get the type of rendering backend used for the visualizer
-        *
-        *   @exposed        Exposed through python API
-        */
-        std::string type();
     };
 
 
@@ -91,5 +84,4 @@ namespace pytysoc
         .def( "render", &pytysoc::PyVisualizer::render ) \
         .def( "isActive", &pytysoc::PyVisualizer::isActive ) \
         .def( "isKeyDown", &pytysoc::PyVisualizer::isKeyDown ) \
-        .def( "checkSingleKeyPress", &pytysoc::PyVisualizer::checkSingleKeyPress ) \
-        .def( "type", &pytysoc::PyVisualizer::type );
+        .def( "checkSingleKeyPress", &pytysoc::PyVisualizer::checkSingleKeyPress );

@@ -7,18 +7,13 @@
 namespace tysoc {
 namespace urdf {
 
-    // @CHECK|@REFACTOR: Check if needs to create data in heap, or could just ...
-    //                   create the data into the stack, by replacing pointers ...
-    //                   by the structs itself (like the urdfgeometry. It could ...
-    //                   just be a plain variable and not a pointer)
-
     /*************************************************************
     *   NATERIAL AND INERTIA INFORMATION
     *************************************************************/
 
     struct UrdfMaterial
     {
-        static std::map< std::string, UrdfMaterial* > MATERIALS;
+        static std::map< std::string, UrdfMaterial > MATERIALS;
 
         std::string     name;
         std::string     filename;
@@ -28,7 +23,7 @@ namespace urdf {
         {
             name        = "undefined";
             filename    = "";
-            color       = TVec4( 0.8, 0.8, 0.8, 1.0 );
+            color       = TYSOC_DEFAULT_RGBA_COLOR;
         }
 
         void collectAttribs( tinyxml2::XMLElement* xmlElement );
@@ -36,24 +31,24 @@ namespace urdf {
 
     struct UrdfInertia
     {
-        TMat4       localTransform;
-        double      mass;
-        double      ixx; 
-        double      ixy;
-        double      ixz;
-        double      iyy;
-        double      iyz;
-        double      izz;
+        TMat4 localTransform;
+        float mass;
+        float ixx; 
+        float ixy;
+        float ixz;
+        float iyy;
+        float iyz;
+        float izz;
 
         UrdfInertia()
         {
-            mass    = 1.0f;
-            ixx     = 1.0f;
-            iyy     = 1.0f;
-            izz     = 1.0f;
-            ixy     = 0.0f;
-            ixz     = 0.0f;
-            iyz     = 0.0f;
+            mass = 0.0f;
+            ixx = 0.0f;
+            iyy = 0.0f;
+            izz = 0.0f;
+            ixy = 0.0f;
+            ixz = 0.0f;
+            iyz = 0.0f;
         }
 
         void collectAttribs( tinyxml2::XMLElement* xmlElement,
@@ -64,31 +59,18 @@ namespace urdf {
     *   GEOEMTRY TYPES INFORMATION
     *************************************************************/
 
-    struct UrdfGeometry
-    {
-        std::string     type;
-        std::string     filename;
-        TVec3           size;
-
-        UrdfGeometry()        
-        {
-            type        = "undefined";
-            filename    = "";
-            size        = TVec3( 0, 0, 0 );
-        }
-
-        void collectAttribs( tinyxml2::XMLElement* xmlElement, 
-                             const std::string& worldUp );
-    };
-
     struct UrdfShape
     {
+        std::string     type;
+        TVec3           size;
+        std::string     filename;
         TMat4           localTransform;
-        UrdfGeometry*   geometry;
 
         UrdfShape()
         {
-            geometry = new UrdfGeometry();
+            type        = "sphere";
+            size        = { 0.1f, 0.0f, 0.0f };
+            filename    = "";
         }
 
         virtual void collectAttribs( tinyxml2::XMLElement* xmlElement, 
@@ -98,13 +80,9 @@ namespace urdf {
     struct UrdfVisual : UrdfShape
     {
         std::string     name;
-        UrdfMaterial*   material;
+        UrdfMaterial    material;
 
-        UrdfVisual() : UrdfShape()
-        {
-            name        = "undefined";
-            material    = new UrdfMaterial();
-        }
+        UrdfVisual() : UrdfShape(), name( "undefined" ) {}
 
         void collectAttribs( tinyxml2::XMLElement* xmlElement, 
                              const std::string& worldUp ) override;
@@ -114,10 +92,7 @@ namespace urdf {
     {
         std::string name;
 
-        UrdfCollision() : UrdfShape()
-        {
-            name = "undefined";
-        }
+        UrdfCollision() : UrdfShape(), name( "undefined" ) {}
 
         void collectAttribs( tinyxml2::XMLElement* xmlElement,
                              const std::string& worldUp ) override;
@@ -132,19 +107,18 @@ namespace urdf {
     struct UrdfLink
     {
         std::string                         name;
-        UrdfInertia*                        inertia;
-        std::vector< UrdfVisual* >          visuals;
-        std::vector< UrdfCollision* >       collisions;
+        UrdfInertia                         inertia;
+        std::vector< UrdfVisual >           visuals;
+        std::vector< UrdfCollision >        collisions;
         UrdfLink*                           parentLink;
         UrdfJoint*                          parentJoint;
-        std::vector< UrdfJoint* >           childJoints;
-        std::vector< UrdfLink* >            childLinks;
+        std::vector< UrdfJoint* >           joints;
+        std::vector< UrdfLink* >            children;
 
         UrdfLink()
         {
-            inertia         = NULL;
-            parentLink      = NULL;
-            parentJoint     = NULL;
+            parentLink      = nullptr;
+            parentJoint     = nullptr;
         }
 
         void collectAttribs( tinyxml2::XMLElement* xmlElement, 
@@ -188,7 +162,7 @@ namespace urdf {
     struct UrdfModel
     {
         std::string                             name;
-        std::map< std::string, UrdfMaterial*>   materials;
+        std::map< std::string, UrdfMaterial>    materials;
         std::map< std::string, UrdfLink*>       links;
         std::map< std::string, UrdfJoint*>      joints;
         std::vector< UrdfLink* >                rootLinks;

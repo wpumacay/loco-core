@@ -1,5 +1,8 @@
 #pragma once
 
+/* keycodes based on glfw3 keycodes (default windowing library). For other windowing 
+   backends create a helper mapping function to map your keycodes to these keycodes */
+
 namespace tysoc {
 namespace keys {
 

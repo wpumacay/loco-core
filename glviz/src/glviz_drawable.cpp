@@ -5,90 +5,18 @@ namespace tysoc {
 
     /***************************************************************************
     *                                                                          *
-    *                               UTILITIES                                  *
-    *                                                                          *
-    ***************************************************************************/
-
-    engine::LIRenderable* createRenderable( const TShapeData& data )
-    {
-        engine::LIRenderable* _renderablePtr = NULL;
-
-        if ( data.type == eShapeType::BOX )
-        {
-            _renderablePtr = engine::CMeshBuilder::createBox( data.size.x,
-                                                              data.size.y,
-                                                              data.size.z );
-        }
-        else if ( data.type == eShapeType::SPHERE )
-        {
-            _renderablePtr = engine::CMeshBuilder::createSphere( data.size.x );
-        }
-        else if ( data.type == eShapeType::CYLINDER )
-        {
-            _renderablePtr = engine::CMeshBuilder::createCylinder( data.size.x,
-                                                                   data.size.y );
-        }
-        else if ( data.type == eShapeType::CAPSULE )
-        {
-            _renderablePtr = engine::CMeshBuilder::createCapsule( data.size.x,
-                                                                  data.size.y );
-        }
-        else if ( data.type == eShapeType::MESH )
-        {
-            _renderablePtr = engine::CMeshBuilder::createModelFromFile( data.filename,
-                                                                        getFilenameNoExtensionFromFilePath( data.filename ) );
-            _renderablePtr->scale = { data.size.x, data.size.y, data.size.z };
-        }
-        else if ( data.type == eShapeType::HFIELD )
-        {
-            auto _heightDataScaled = data.hdata.heightData;
-            for ( size_t i = 0; i < _heightDataScaled.size(); i++ )
-                _heightDataScaled[i] *= data.size.z;
-
-            _renderablePtr = engine::CMeshBuilder::createHeightField( data.hdata.nWidthSamples,
-                                                                      data.hdata.nDepthSamples,
-                                                                      data.size.x,
-                                                                      data.size.y,
-                                                                      data.size.x / 2.0f, 
-                                                                      data.size.y / 2.0f,
-                                                                      _heightDataScaled,
-                                                                      GLVIZ_DEFAULT_HFIELD_BASE );
-        }
-        else
-        {
-            std::cout << "WARNING> drawable of type: " 
-                      << toString( data.type ) << " not supported yet" << std::endl;
-        }
-
-        if ( !_renderablePtr )
-            return NULL;
-
-        return _renderablePtr;
-    }
-
-    /***************************************************************************
-    *                                                                          *
     *                           TGLDRAWABLE-IMPL                               *
     *                                                                          *
     ***************************************************************************/
 
-    std::map< eShapeType, std::queue< TGLDrawable* > > TGLDrawable::m_shapesPool;
-
-    std::map< eShapeType, int > TGLDrawable::m_numShapes = { { eShapeType::BOX, 0 },
-                                                             { eShapeType::SPHERE, 0 },
-                                                             { eShapeType::CYLINDER, 0 },
-                                                             { eShapeType::CAPSULE, 0 } };
-
-
-    TGLDrawable::TGLDrawable( engine::LIRenderable* renderablePtr,
-                              const TShapeData& shapeData )
+    TGLDrawable::TGLDrawable( const TShapeData& shapeData )
     {
         m_scale         = { 1.0, 1.0, 1.0 };
         m_size          = shapeData.size;
         m_size0         = shapeData.size;
         m_type          = shapeData.type;
-        m_renderablePtr = renderablePtr;
         m_data          = shapeData;
+        m_renderablePtr = createRenderable( shapeData );
     }
 
     TGLDrawable::~TGLDrawable()
@@ -98,7 +26,7 @@ namespace tysoc {
         // if ( m_renderablePtr )
         //     m_renderablePtr->free();
 
-        m_renderablePtr = NULL;
+        m_renderablePtr = nullptr;
     }
 
     void TGLDrawable::setWorldTransform( const TMat4& transform )
@@ -112,8 +40,8 @@ namespace tysoc {
         auto _ePosition = fromTVec3( _position );
         auto _eRotation = fromTMat3( _rotation );
 
-        m_renderablePtr->pos = _ePosition;
-        m_renderablePtr->rotation =  _eRotation;
+        m_renderablePtr->position = _ePosition;
+        m_renderablePtr->rotation = _eRotation;
     }
 
     void TGLDrawable::setColor( const TVec3& fullColor )
@@ -121,17 +49,22 @@ namespace tysoc {
         if ( !m_renderablePtr )
             return;
 
-        if ( m_renderablePtr->getType() == RENDERABLE_TYPE_MODEL )
+        if ( m_renderablePtr->type() == engine::eRenderableType::MESH )
         {
-            auto _children = reinterpret_cast< engine::LModel* >( m_renderablePtr )->getMeshes();
-            for ( size_t i = 0; i < _children.size(); i++ )
-                _children[i]->getMaterial()->setColor( { fullColor.x, fullColor.y, fullColor.z } );
-
-            return;
+            m_renderablePtr->material()->ambient = { fullColor.x, fullColor.y, fullColor.z };
+            m_renderablePtr->material()->diffuse = { fullColor.x, fullColor.y, fullColor.z };
+            m_renderablePtr->material()->specular = { fullColor.x, fullColor.y, fullColor.z };
         }
-
-        // all color components are set to the same given color
-        m_renderablePtr->getMaterial()->setColor( fromTVec3( fullColor ) );
+        else if ( m_renderablePtr->type() == engine::eRenderableType::MODEL )
+        {
+            auto _submeshes = dynamic_cast< engine::CModel* >( m_renderablePtr )->meshes();
+            for ( auto _submesh : _submeshes )
+            {
+                _submesh->material()->ambient = { fullColor.x, fullColor.y, fullColor.z };
+                _submesh->material()->diffuse = { fullColor.x, fullColor.y, fullColor.z };
+                _submesh->material()->specular = { fullColor.x, fullColor.y, fullColor.z };
+            }
+        }
     }
 
     void TGLDrawable::setAmbientColor( const TVec3& ambientColor )
@@ -139,16 +72,16 @@ namespace tysoc {
         if ( !m_renderablePtr )
             return;
 
-        if ( m_renderablePtr->getType() == RENDERABLE_TYPE_MODEL )
+        if ( m_renderablePtr->type() == engine::eRenderableType::MESH )
         {
-            auto _children = reinterpret_cast< engine::LModel* >( m_renderablePtr )->getMeshes();
-            for ( size_t i = 0; i < _children.size(); i++ )
-                _children[i]->getMaterial()->ambient = { ambientColor.x, ambientColor.y, ambientColor.z };
-
-            return;
+            m_renderablePtr->material()->ambient = fromTVec3( ambientColor );
         }
-
-        m_renderablePtr->getMaterial()->ambient = fromTVec3( ambientColor );
+        else if ( m_renderablePtr->type() == engine::eRenderableType::MODEL )
+        {
+            auto _submeshes = dynamic_cast< engine::CModel* >( m_renderablePtr )->meshes();
+            for ( auto _submesh : _submeshes )
+                _submesh->material()->ambient = { ambientColor.x, ambientColor.y, ambientColor.z };
+        }
     }
 
     void TGLDrawable::setDiffuseColor( const TVec3& diffuseColor )
@@ -156,16 +89,16 @@ namespace tysoc {
         if ( !m_renderablePtr )
             return;
 
-        if ( m_renderablePtr->getType() == RENDERABLE_TYPE_MODEL )
+        if ( m_renderablePtr->type() == engine::eRenderableType::MESH )
         {
-            auto _children = reinterpret_cast< engine::LModel* >( m_renderablePtr )->getMeshes();
-            for ( size_t i = 0; i < _children.size(); i++ )
-                _children[i]->getMaterial()->diffuse = { diffuseColor.x, diffuseColor.y, diffuseColor.z };
-
-            return;
+            m_renderablePtr->material()->diffuse = fromTVec3( diffuseColor );
         }
-
-        m_renderablePtr->getMaterial()->diffuse = fromTVec3( diffuseColor );
+        else if ( m_renderablePtr->type() == engine::eRenderableType::MODEL )
+        {
+            auto _submeshes = dynamic_cast< engine::CModel* >( m_renderablePtr )->meshes();
+            for ( auto _submesh : _submeshes )
+                _submesh->material()->diffuse = { diffuseColor.x, diffuseColor.y, diffuseColor.z };
+        }
     }
 
     void TGLDrawable::setSpecularColor( const TVec3& specularColor )
@@ -173,16 +106,16 @@ namespace tysoc {
         if ( !m_renderablePtr )
             return;
 
-        if ( m_renderablePtr->getType() == RENDERABLE_TYPE_MODEL )
+        if ( m_renderablePtr->type() == engine::eRenderableType::MESH )
         {
-            auto _children = reinterpret_cast< engine::LModel* >( m_renderablePtr )->getMeshes();
-            for ( size_t i = 0; i < _children.size(); i++ )
-                _children[i]->getMaterial()->specular = { specularColor.x, specularColor.y, specularColor.z };
-
-            return;
+            m_renderablePtr->material()->specular = fromTVec3( specularColor );
         }
-
-        m_renderablePtr->getMaterial()->specular = fromTVec3( specularColor );
+        else if ( m_renderablePtr->type() == engine::eRenderableType::MODEL )
+        {
+            auto _submeshes = dynamic_cast< engine::CModel* >( m_renderablePtr )->meshes();
+            for ( auto _submesh : _submeshes )
+                _submesh->material()->specular = { specularColor.x, specularColor.y, specularColor.z };
+        }
     }
 
     void TGLDrawable::setShininess( const TScalar& shininess )
@@ -190,16 +123,16 @@ namespace tysoc {
         if ( !m_renderablePtr )
             return;
 
-        if ( m_renderablePtr->getType() == RENDERABLE_TYPE_MODEL )
+        if ( m_renderablePtr->type() == engine::eRenderableType::MESH )
         {
-            auto _children = reinterpret_cast< engine::LModel* >( m_renderablePtr )->getMeshes();
-            for ( size_t i = 0; i < _children.size(); i++ )
-                _children[i]->getMaterial()->shininess = shininess;
-
-            return;
+            m_renderablePtr->material()->shininess = shininess;
         }
-
-        m_renderablePtr->getMaterial()->shininess = shininess;
+        else if ( m_renderablePtr->type() == engine::eRenderableType::MODEL )
+        {
+            auto _submeshes = dynamic_cast< engine::CModel* >( m_renderablePtr )->meshes();
+            for ( auto _submesh : _submeshes )
+                _submesh->material()->shininess = shininess;
+        }
     }
 
     void TGLDrawable::changeSize( const tysoc::TVec3& newSize )
@@ -296,7 +229,7 @@ namespace tysoc {
         if ( !m_renderablePtr )
             return;
 
-        m_renderablePtr->setWireframeMode( wireframe );
+        m_renderablePtr->setWireframe( wireframe );
     }
 
     bool TGLDrawable::isVisible()
@@ -304,7 +237,7 @@ namespace tysoc {
         if ( !m_renderablePtr )
             return false;
 
-        return m_renderablePtr->isVisible();
+        return m_renderablePtr->visible();
     }
 
     bool TGLDrawable::isWireframe()
@@ -312,53 +245,12 @@ namespace tysoc {
         if ( !m_renderablePtr )
             return false;
 
-        return m_renderablePtr->isWireframe();
-    }
-
-    void TGLDrawable::recycle()
-    {
-        if ( !m_renderablePtr )
-        {
-            std::cout << "WARNING> There's a dangling gl-drawable in here" << std::endl;
-            return;
-        }
-
-        // hide it till we have to use it again
-        m_renderablePtr->setVisibility( false );
-        // and add it to the corresponding pool
-        if ( TGLDrawable::m_shapesPool.find( m_type ) == TGLDrawable::m_shapesPool.end() )
-            TGLDrawable::m_shapesPool[m_type] = std::queue< TGLDrawable* >();
-        TGLDrawable::m_shapesPool[m_type].push( this );
-    }
-
-    void TGLDrawable::reuse( const TShapeData& data )
-    {
-        changeSize( data.size );
-    }
-
-    TGLDrawable* TGLDrawable::CreateDrawable( const TShapeData& data )
-    {
-        if ( TGLDrawable::m_shapesPool[data.type].size() > 0 )
-        {
-            // grab an object from the pool
-            auto _recycledDrawable = TGLDrawable::m_shapesPool[data.type].front();
-            _recycledDrawable->reuse( data );
-
-            // and make sure we remove it
-            TGLDrawable::m_shapesPool[data.type].pop();
-
-            return _recycledDrawable;
-        }
-
-        auto _renderablePtr = createRenderable( data );
-
-        return new TGLDrawable( _renderablePtr,
-                                data );
+        return m_renderablePtr->wireframe();
     }
 
     extern "C" TIDrawable* visualizer_createDrawable( const TShapeData& data )
     {
-        return TGLDrawable::CreateDrawable( data );
+        return new TGLDrawable( data );
     }
 
 }

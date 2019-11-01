@@ -60,338 +60,163 @@ namespace agent {
         auto _rlsimBodyPtr = rlsimJointPtr->childBodies.front();
 
         // Create a body out of some of the joint info
-        auto _kinTreeBodyPtr = new TKinTreeBody();
-        _kinTreeBodyPtr->name = rlsim::computeName( "body", 
-                                                    _rlsimBodyPtr->name, 
-                                                    context.agentPtr->name() );
-        _kinTreeBodyPtr->parentBodyPtr = parentKinBodyPtr;
+        auto _kinBody = new TKinTreeBody();
+        _kinBody->name = rlsim::computeName( "body", _rlsimBodyPtr->name, context.agentPtr->name() );
+        _kinBody->parentBodyPtr = parentKinBodyPtr;
 
         // store it into the appropiate containers
-        context.agentPtr->bodies.push_back( _kinTreeBodyPtr );
-        context.agentPtr->bodiesMap[ _kinTreeBodyPtr->name ] = _kinTreeBodyPtr;
+        context.agentPtr->bodies.push_back( _kinBody );
+        context.agentPtr->bodiesMap[ _kinBody->name ] = _kinBody;
 
         // grab the transform from the attachPos and attachTheta from the ...
         // joint element, as this is the one that defines the reference frame ...
         // of the body itself
-        _kinTreeBodyPtr->relTransform.setPosition( rlsimJointPtr->localPos );
-        _kinTreeBodyPtr->relTransform.setRotation( rlsimJointPtr->localEuler );
+        _kinBody->localTransformZero.setPosition( rlsimJointPtr->localPos );
+        _kinBody->localTransformZero.setRotation( rlsimJointPtr->localEuler );
 
         // link the visuals of the "joint" to this current body
-        auto _rlsimVisuals = rlsimJointPtr->childVisuals;
-        for ( size_t q = 0; q < _rlsimVisuals.size(); q++ )
+        for ( auto _rlsimVisual : rlsimJointPtr->childVisuals )
         {
-            auto _kinTreeVisualPtr = _processVisualFromRlsim( context, _rlsimVisuals[q] );
-            _kinTreeVisualPtr->parentBodyPtr = _kinTreeBodyPtr;
-            _kinTreeBodyPtr->childVisuals.push_back( _kinTreeVisualPtr );
+            auto _kinVisual = _processVisualFromRlsim( context, _rlsimVisual );
+            _kinVisual->parentBodyPtr = _kinBody;
+            _kinBody->visuals.push_back( _kinVisual );
         }
 
         // create a single collision using the body info (it encodes the collision)
-        auto _kinTreeCollisionPtr = _processCollisionFromRlsim( context, _rlsimBodyPtr );
-        _kinTreeCollisionPtr->parentBodyPtr = _kinTreeBodyPtr;
-        _kinTreeBodyPtr->childCollisions.push_back( _kinTreeCollisionPtr );
+        auto _kinCollision = _processCollisionFromRlsim( context, _rlsimBodyPtr );
+        _kinCollision->parentBodyPtr = _kinBody;
+        _kinBody->collisions.push_back( _kinCollision );
 
-        // create a single joint as dof using the current rlsimjoint (it encodes the local dof)
-        // @HACK: If there is a spherical joint, treat is as 3 separate revolute joints
-    #if HACK_SPLIT_SPHERICAL_JOINTS
-        if ( rlsimJointPtr->type == "spherical" )
-    #else
-        if ( false )
-    #endif
-        {
-            std::vector< rlsim::RlsimJoint* > _joints;
-            _joints.push_back( new rlsim::RlsimJoint() );
-            _joints.push_back( new rlsim::RlsimJoint() );
-            _joints.push_back( new rlsim::RlsimJoint() );
-
-            // configure each joint appropriately
-            for ( size_t q = 0; q < _joints.size(); q++ )
-            {
-                _joints[q]->name = rlsimJointPtr->name + "_" + std::to_string( (q + 1) );
-                _joints[q]->type = "revolute";
-                _joints[q]->localPos = rlsimJointPtr->localPos;
-                _joints[q]->localEuler = rlsimJointPtr->localEuler;
-                _joints[q]->parentJointId = rlsimJointPtr->parentJointId;
-                _joints[q]->torqueLimit = rlsimJointPtr->torqueLimit;
-                _joints[q]->limitsPerDof.push_back( rlsimJointPtr->limitsPerDof[q] );
-
-                if ( q == 0 )
-                    _joints[q]->axis = { 1., 0., 0. };
-                else if ( q == 1 )
-                    _joints[q]->axis = { 0., 1., 0. };
-                else
-                    _joints[q]->axis = { 0., 0., 1. };
-            }
-
-            // construct all joints for this spherical
-            for ( size_t q = 0; q < _joints.size(); q++ )
-            {
-                auto _kinTreeJointPtr = _processJointFromRlsim( context, _joints[q] );
-                _kinTreeJointPtr->parentBodyPtr = _kinTreeBodyPtr;
-                _kinTreeBodyPtr->childJoints.push_back( _kinTreeJointPtr );
-            }
-
-            // save these dummies for ourselves (later usage)
-            for ( size_t q = 0; q < _joints.size(); q++ )
-                context.hackSphericalJoints.push_back( _joints[q] );
-
-            _joints.clear();
-        }
-        else
-        {
-        #if ENABLE_PLANAR_JOINTS
-            if ( rlsimJointPtr->type == "planar" )
-            {
-                auto _rlsimJointSlideX = new rlsim::RlsimJoint();
-                auto _rlsimJointSlideZ = new rlsim::RlsimJoint();
-                auto _rlsimJointHingeY = new rlsim::RlsimJoint();
-
-                _rlsimJointSlideX->name = rlsimJointPtr->name + "_planar_fix_slidex";
-                _rlsimJointSlideZ->name = rlsimJointPtr->name + "_planar_fix_slidez";
-                _rlsimJointHingeY->name = rlsimJointPtr->name + "_planar_fix_hingey";
-
-                _rlsimJointSlideX->type = "slide";
-                _rlsimJointSlideZ->type = "slide";
-                _rlsimJointHingeY->type = "hinge";
-
-                // _rlsimJointSlideX->axis = { 1.0f, 0.0f, 0.0f };
-                // _rlsimJointSlideZ->axis = { 0.0f, 0.0f, 1.0f };
-                // _rlsimJointHingeY->axis = { 0.0f, 1.0f, 0.0f };
-
-                _rlsimJointSlideX->axis = { 0.0f, 1.0f, 0.0f };
-                _rlsimJointSlideZ->axis = { 0.0f, 0.0f, 1.0f };
-                _rlsimJointHingeY->axis = { 1.0f, 0.0f, 0.0f };
-
-                _rlsimJointSlideX->limitsPerDof = { { 1.0f, -1.0f } };
-                _rlsimJointSlideZ->limitsPerDof = { { 1.0f, -1.0f } };
-                _rlsimJointHingeY->limitsPerDof = { { 1.0f, -1.0f } };
-
-                std::vector< rlsim::RlsimJoint* > _rlsimJointsPlanar = { _rlsimJointSlideX,
-                                                                         _rlsimJointSlideZ,
-                                                                         _rlsimJointHingeY };
-
-                for ( size_t q = 0; q < _rlsimJointsPlanar.size(); q++ )
-                {
-                    auto _kinTreeJointPtr = _processJointFromRlsim( context, _rlsimJointsPlanar[q] );
-                    _kinTreeJointPtr->parentBodyPtr = _kinTreeBodyPtr;
-                    _kinTreeBodyPtr->childJoints.push_back( _kinTreeJointPtr );
-                }
-            }
-            else
-            {
-                auto _kinTreeJointPtr = _processJointFromRlsim( context, rlsimJointPtr );
-                _kinTreeJointPtr->parentBodyPtr = _kinTreeBodyPtr;
-                _kinTreeBodyPtr->childJoints.push_back( _kinTreeJointPtr );
-            }
-        #else
-            if ( rlsimJointPtr->type == "planar" )
-                rlsimJointPtr->type = "none";
-
-            auto _kinTreeJointPtr = _processJointFromRlsim( context, rlsimJointPtr );
-            _kinTreeJointPtr->parentBodyPtr = _kinTreeBodyPtr;
-            _kinTreeBodyPtr->childJoints.push_back( _kinTreeJointPtr );
-        #endif
-        }
+        // create the joint using the given joint information
+        auto _kinJoint = _processJointFromRlsim( context, rlsimJointPtr );
+        _kinJoint->parentBodyPtr = _kinBody;
+        _kinBody->joints.push_back( _kinJoint );
 
         // @HACK: Compute density required to give required mass instead
         // of using the given mass and computing the inertia matrix ourselves
-        if ( _rlsimBodyPtr->mass > 0. )
+        if ( _rlsimBodyPtr->mass > 0.0f )
         {
             // Compute required density
             TScalar _targetMass = _rlsimBodyPtr->mass;
-            TScalar _volume = computeVolumeFromShape( _kinTreeCollisionPtr->geometry.type,
-                                                      _kinTreeCollisionPtr->geometry.size );
-            _kinTreeCollisionPtr->density = _targetMass / _volume;
+            TScalar _volume = computeVolumeFromShape( _kinCollision->data );
+            _kinCollision->data.density = _targetMass / _volume;
         }
 
         // process the next nodes via the child joints
-        auto _rlsimJoints = rlsimJointPtr->childJoints;
-        for ( size_t q = 0; q < _rlsimJoints.size(); q++ )
+        for ( auto _rlsimJoint : rlsimJointPtr->childJoints )
         {
-            auto _childKinTreeBodyPtr = _processNode( context, 
-                                                      _rlsimJoints[q],
-                                                      _kinTreeBodyPtr );
-            _kinTreeBodyPtr->childBodies.push_back( _childKinTreeBodyPtr );
+            auto _childKinBody = _processNode( context, _rlsimJoint, _kinBody );
+            _kinBody->children.push_back( _childKinBody );
 
-            // exclude contact between this body and this child body
-            context.agentPtr->exclusionContacts.push_back( std::make_pair( 
-                                                                _kinTreeBodyPtr->name,
-                                                                _childKinTreeBodyPtr->name ) );
+            // exclude contact between this body and its children
+            context.agentPtr->exclusionContacts.push_back( std::make_pair( _kinBody->name, _childKinBody->name ) );
         }
 
-        return _kinTreeBodyPtr;
+        return _kinBody;
     }
 
     TKinTreeJoint* _processJointFromRlsim( TRlsimParsingContext& context, 
                                            rlsim::RlsimJoint* rlsimJointPtr )
     {
-        // create a joint out of the joint info
-        auto _kinTreeJointPtr = new TKinTreeJoint();
-        _kinTreeJointPtr->name = rlsim::computeName( "joint",
-                                                     rlsimJointPtr->name,
-                                                     context.agentPtr->name() );
+        auto _kinJointType = toEnumJoint( rlsimJointPtr->type );
+        auto _kinJoint = new TKinTreeJoint( _kinJointType );
 
-        // the relative transform is identity, as the body frame is the ...
-        // same as the joint frame for this format
+        // modify the name accordingly
+        _kinJoint->name = rlsim::computeName( "joint", rlsimJointPtr->name, context.agentPtr->name() );
+        // local-transform is identity, as the body frame coincides with the joint frame for this format
+        _kinJoint->data.localTransform.setIdentity();
+        // grab remaining information
+        _kinJoint->data.axis = rlsimJointPtr->axis;
+        _kinJoint->data.limits = rlsimJointPtr->limitsPerDof[0]; // @todo: for ball joints should have per-dof limits
+        _kinJoint->data.stiffness = 0.0f;
+        _kinJoint->data.armature = 0.0f;
+        _kinJoint->data.damping = 0.0f;
 
-        // check if this joint is from a planar joint
-        bool _fromPlanarJoint = false;
-        if ( rlsimJointPtr->name.find( "_planar_fix_" ) != std::string::npos )
-            _fromPlanarJoint = true;
-
-        // grab the type of joint
-        if ( rlsimJointPtr->type == "none" )
-            _kinTreeJointPtr->type = "free";
-        else
-            _kinTreeJointPtr->type = rlsimJointPtr->type;
-
-        _kinTreeJointPtr->axis = rlsimJointPtr->axis;
-
-        // grab the joint limits (@TODO: for ball joints should have per-dof ...
-        // limits, for now just pick first one)
-        _kinTreeJointPtr->lowerLimit = rlsimJointPtr->limitsPerDof[0].x;
-        _kinTreeJointPtr->upperLimit = rlsimJointPtr->limitsPerDof[0].y;
-
-        // all models in this format have limited constraints
-        auto _lowerLimit = _kinTreeJointPtr->lowerLimit;
-        auto _upperLimit = _kinTreeJointPtr->upperLimit;
-        _kinTreeJointPtr->limited = ( _lowerLimit < _upperLimit ) ? true : false;
-        // and the joint stiffness
-        _kinTreeJointPtr->stiffness = _fromPlanarJoint ? 0.0 : 0.5;
-        // and the joint armature
-        _kinTreeJointPtr->armature = 0.0;
-        // and the joint damping
-        _kinTreeJointPtr->damping = _fromPlanarJoint ? 0.0 : 0.3;
-        // and store it in the joints buffer
-        context.agentPtr->joints.push_back( _kinTreeJointPtr );
-        // and to the joints map
-        context.agentPtr->jointsMap[ _kinTreeJointPtr->name ] = _kinTreeJointPtr;
+        context.agentPtr->joints.push_back( _kinJoint );
+        context.agentPtr->jointsMap[ _kinJoint->name ] = _kinJoint;
 
         // save the rlsim node ptr for later usage (actuators)
-        context.jointNameToJointNodeMap[ _kinTreeJointPtr->name ] = rlsimJointPtr;
+        context.jointNameToJointNodeMap[_kinJoint->name] = rlsimJointPtr;
 
-        // let the joint configure its internal props
-        _kinTreeJointPtr->configure();
-
-        return _kinTreeJointPtr;
+        return _kinJoint;
     }
 
     TKinTreeVisual* _processVisualFromRlsim( TRlsimParsingContext& context, 
-                                             rlsim::RlsimVisual* rlsimVisualPtr )
+                                             const rlsim::RlsimVisual& rlsimVisual )
     {
         // create a visual out of the visual info
-        auto _kinTreeVisualPtr = new TKinTreeVisual();
-        _kinTreeVisualPtr->name = rlsim::computeName( "visual",
-                                                      rlsimVisualPtr->name,
-                                                      context.agentPtr->name() );
-
-        // grab the transform from the attach pos and theta from the visual element
-        _kinTreeVisualPtr->relTransform.setPosition( rlsimVisualPtr->localPos );
-        _kinTreeVisualPtr->relTransform.setRotation( rlsimVisualPtr->localEuler );
-
-        // and the type of visual/geom
-        _kinTreeVisualPtr->geometry.type = rlsimVisualPtr->shape;
-
-        // and the visual size
-        _extractStandardSize( rlsimVisualPtr->shape, 
-                              rlsimVisualPtr->size,
-                              _kinTreeVisualPtr->geometry.size );
-        _kinTreeVisualPtr->geometry.usesFromto = false;
-
+        auto _kinVisual = new TKinTreeVisual();
+        _kinVisual->name = rlsim::computeName( "visual", rlsimVisual.name, context.agentPtr->name() );
+        _kinVisual->data.localTransform.setPosition( rlsimVisual.localPos );
+        _kinVisual->data.localTransform.setRotation( rlsimVisual.localEuler );
+        _kinVisual->data.type = toEnumShape( rlsimVisual.shape );
+        _extractStandardSize( rlsimVisual.shape, rlsimVisual.size, _kinVisual->data.size );
         // and the material (colors)
-        auto _rgba = rlsimVisualPtr->rgba;
-        _kinTreeVisualPtr->material.diffuse     = { _rgba.x, _rgba.y, _rgba.z };
-        _kinTreeVisualPtr->material.specular    = { _rgba.x, _rgba.y, _rgba.z };
+        auto _rgba = rlsimVisual.rgba;
+        _kinVisual->data.ambient  = { _rgba.x, _rgba.y, _rgba.z };
+        _kinVisual->data.diffuse  = { _rgba.x, _rgba.y, _rgba.z };
+        _kinVisual->data.specular = { _rgba.x, _rgba.y, _rgba.z };
+        _kinVisual->data.filename = "";
 
-        // and the material name
-        _kinTreeVisualPtr->material.name = "";
-        // and store it in the visuals buffer
-        context.agentPtr->visuals.push_back( _kinTreeVisualPtr );
-        // and to the visuals map
-        context.agentPtr->visualsMap[ _kinTreeVisualPtr->name ] = _kinTreeVisualPtr;
+        context.agentPtr->visuals.push_back( _kinVisual );
+        context.agentPtr->visualsMap[ _kinVisual->name ] = _kinVisual;
 
-        return _kinTreeVisualPtr;
+        return _kinVisual;
     }
 
     TKinTreeCollision* _processCollisionFromRlsim( TRlsimParsingContext& context, 
                                                    rlsim::RlsimBody* rlsimBodyPtr )
     {
         // create a collision out of the body info
-        auto _kinTreeCollisionPtr = new TKinTreeCollision();
-        _kinTreeCollisionPtr->name = rlsim::computeName( "collision", 
-                                                         rlsimBodyPtr->name, 
-                                                         context.agentPtr->name() );
+        auto _kinCollision = new TKinTreeCollision();
+        _kinCollision->name = rlsim::computeName( "collision", rlsimBodyPtr->name, context.agentPtr->name() );
+        // grab the transform from the attachPos and attachTheta from the body element, as this is 
+        // the one that defines the reference frame of the collision itself
+        _kinCollision->data.localTransform.setPosition( rlsimBodyPtr->localPos );
+        _kinCollision->data.localTransform.setRotation( rlsimBodyPtr->localEuler );
+        // grab remaining information
+        _kinCollision->data.type = toEnumShape( rlsimBodyPtr->shape );
+        _extractStandardSize( rlsimBodyPtr->shape, rlsimBodyPtr->size, _kinCollision->data.size );
+        _kinCollision->data.collisionGroup = 1;
+        _kinCollision->data.collisionMask = 1;
+        _kinCollision->data.friction = { 1.0f, 0.005f, 0.0001f };
+        _kinCollision->data.density = TYSOC_DEFAULT_DENSITY;
 
-        // grab the transform from the attachPos and attachTheta from the body ...
-        // element, as this is the one that defines the reference frame of the ...
-        // collision itself
-        _kinTreeCollisionPtr->relTransform.setPosition( rlsimBodyPtr->localPos );
-        _kinTreeCollisionPtr->relTransform.setRotation( rlsimBodyPtr->localEuler );
-        // and the collision/geom shape
-        _kinTreeCollisionPtr->geometry.type = rlsimBodyPtr->shape;
-        // and the size
-        _extractStandardSize( rlsimBodyPtr->shape,
-                              rlsimBodyPtr->size,
-                              _kinTreeCollisionPtr->geometry.size );
-        _kinTreeCollisionPtr->geometry.usesFromto = false;
+        context.agentPtr->collisions.push_back( _kinCollision );
+        context.agentPtr->collisionsMap[ _kinCollision->name ] = _kinCollision;
 
-        // and the contype collision bitmask
-        _kinTreeCollisionPtr->contype = 1;
-        // and the conaffinity collision bitmask
-        _kinTreeCollisionPtr->conaffinity = 1;
-        // and the condim contact dimensionality
-        _kinTreeCollisionPtr->condim = 3;
-        // and the group the object belongs (for internal compiler calcs.)
-        // and store it in the collisions buffer
-        context.agentPtr->collisions.push_back( _kinTreeCollisionPtr );
-        // and to the collisions map
-        context.agentPtr->collisionsMap[ _kinTreeCollisionPtr->name ] = _kinTreeCollisionPtr;
-
-        return _kinTreeCollisionPtr;
+        return _kinCollision;
     }
 
     void _constructDefaultActuators( TRlsimParsingContext& context )
     {
-        for ( size_t q = 0; q < context.agentPtr->joints.size(); q++ )
+        for ( auto _kinJoint : context.agentPtr->joints )
         {
-            if ( context.agentPtr->joints[q]->name.find( "_planar_fix_" ) !=
-                 std::string::npos )
-            {
+            if ( _kinJoint->data.type == eJointType::FREE || 
+                 _kinJoint->data.type == eJointType::FIXED ||
+                 _kinJoint->data.type == eJointType::PLANAR )
                 continue;
-            }
-
-            if ( context.agentPtr->joints[q]->type == "free" ||
-                 context.agentPtr->joints[q]->type == "fixed" )
-            {
-                continue;
-            }
 
             // grab the rlsim joint reference
-            auto _rlsimJointPtr = context.jointNameToJointNodeMap[context.agentPtr->joints[q]->name];
+            auto _rlsimJointPtr = context.jointNameToJointNodeMap[_kinJoint->name];
 
             auto _kinTreeActuatorPtr = new TKinTreeActuator();
-            _kinTreeActuatorPtr->name = rlsim::computeName( "actuator",
-                                                            context.agentPtr->joints[q]->name,
-                                                            context.agentPtr->name() );
-            // set a default "motor" type
-            _kinTreeActuatorPtr->type = "motor";
-            // set a reference to the joint it handles
-            _kinTreeActuatorPtr->jointPtr = context.agentPtr->joints[q];
-            // set some default control props
-            _kinTreeActuatorPtr->minCtrl = -1;
-            _kinTreeActuatorPtr->maxCtrl = 1;
-            _kinTreeActuatorPtr->clampCtrl = true;
-            _kinTreeActuatorPtr->kp = 0.0f;
-            _kinTreeActuatorPtr->kv = 0.0f;
+            _kinTreeActuatorPtr->name = rlsim::computeName( "actuator", _kinJoint->name, context.agentPtr->name() );
+            _kinTreeActuatorPtr->jointPtr = _kinJoint; // set a reference to the joint it handles
+            _kinTreeActuatorPtr->data.type = eActuatorType::TORQUE;
+            _kinTreeActuatorPtr->data.limits = { -1.0f, 1.0f };
+            _kinTreeActuatorPtr->data.kp = 0.0f;
+            _kinTreeActuatorPtr->data.kv = 0.0f;
 
             if ( _rlsimJointPtr->torqueLimit > 0. )
             {
-                _kinTreeActuatorPtr->gear = { 1, { _rlsimJointPtr->torqueLimit } };
+                _kinTreeActuatorPtr->data.gear = { 1, { _rlsimJointPtr->torqueLimit } };
             }
             else
             {
-                std::cout << "WARNING> joint: " << context.agentPtr->joints[q]->name
+                std::cout << "WARNING> joint: " << _kinJoint->name
                           << " has no torque limits" << std::endl;
-                _kinTreeActuatorPtr->gear = { 1, { 10. } };
+                _kinTreeActuatorPtr->data.gear = { 1, { 10. } };
             }
 
             context.agentPtr->actuators.push_back( _kinTreeActuatorPtr );

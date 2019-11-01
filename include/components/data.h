@@ -12,7 +12,8 @@ namespace tysoc {
         SPHERE, 
         CYLINDER, 
         CAPSULE, 
-        MESH,
+        ELLIPSOID, 
+        MESH, 
         HFIELD
     };
 
@@ -29,13 +30,39 @@ namespace tysoc {
     enum class eDynamicsType
     {
         DYNAMIC = 0,
-        STATIC = 1,
-        KINEMATIC = 2
+        STATIC,
+        KINEMATIC
+    };
+
+    enum class eSensorType
+    {
+        NONE = 0,
+        PROP_JOINT,
+        PROP_BODY,
+        EXT_HEIGHTFIELD_1D,
+        EXT_HEIGHTFIELD_2D,
+        EXT_CAMERA_RGB,
+        EXT_CAMERA_DEPTH,
+        EXT_CAMERA_SEGMENTATION
+    };
+
+    enum class eActuatorType
+    {
+        TORQUE = 0,
+        POSITION,
+        VELOCITY,
+        PD_CONTROLLER
     };
 
     std::string toString( const eShapeType& type );
     std::string toString( const eJointType& type );
     std::string toString( const eDynamicsType& type );
+    std::string toString( const eSensorType& type );
+    std::string toString( const eActuatorType& type );
+
+    eShapeType toEnumShape( const std::string& shape );
+    eJointType toEnumJoint( const std::string& type );
+    eActuatorType toEnumActuator( const std::string& type );
 
     struct THeightFieldData
     {
@@ -46,23 +73,27 @@ namespace tysoc {
 
     struct TShapeData
     {
-        eShapeType          type;       // type of collision shape (see enum above)
-        TVec3               size;       // size of the collision shape (e.g. x->radius for sphere shapes)
-        TVec3               localPos;   // relative position w.r.t. parent body
-        TMat3               localRot;   // relative orientation w.r.t. parent body
-        std::string         filename;   // in case of a mesh shape, abs-path for the resource
-        THeightFieldData    hdata;      // heightfield struct with required data for hfield type objects
+        eShapeType          type;               // type of collision shape (see enum above)
+        TVec3               size;               // size of the collision shape (e.g. x->radius for sphere shapes)
+        std::string         filename;           // in case of a mesh shape, abs-path for the resource
+        THeightFieldData    hdata;              // heightfield struct with required data for hfield-type objects
+        TMat4               localTransform;     // relative transform of this shape (visual|collision) w.r.t. owner (body)
     };
 
     std::string toString( const TShapeData& shapeData );
 
     struct TJointData
     {
-        eJointType  type;               // type of joint (see enum above)
-        TVec3       axis;               // axis of joint to be constructed
-        TMat4       tfParentBody2Joint; // current body's parent w.r.t. this joint
-        TMat4       tfThisBody2Joint;   // current body w.r.t. this joint
-        TVec2       limits;             // motion range (lo==hi: fixed, lo>hi: continuous, lo<hi: limited)
+        eJointType  type;                   // type of joint (see enum above)
+        TVec3       axis;                   // axis of joint to be constructed
+        TVec2       limits;                 // motion range (lo==hi: fixed, lo>hi: continuous, lo<hi: limited)
+        TScalar     stiffness;              // Stiffness (spring like behaviour)
+        TScalar     armature;               // Armature (extra diag inertia)
+        TScalar     damping;                // Damping applied to the joint
+        TScalar     ref;                    // Ref. for the joint
+        int         nqpos;                  // Number of generalized coordinates
+        int         nqvel;                  // Number of degrees of freedom
+        TMat4       localTransform;         // relative transform of this joint w.r.t. owner (body)
     };
 
     struct TCollisionData : public TShapeData
@@ -75,21 +106,50 @@ namespace tysoc {
 
     struct TVisualData : public TShapeData
     {
-        TVec3    ambient;   // ambient-color (rgb) of the renderable associated with this shape
-        TVec3    diffuse;   // diffuse-color (rgb) of the renderable associated with this shape
-        TVec3    specular;  // specular-color (rgb) of the renderable associated with this shape
-        TScalar  shininess; // shininess-value for the specular-component of the color material
+        TVec3       ambient;    // ambient-color (rgb) of the renderable associated with this shape
+        TVec3       diffuse;    // diffuse-color (rgb) of the renderable associated with this shape
+        TVec3       specular;   // specular-color (rgb) of the renderable associated with this shape
+        TScalar     shininess;  // shininess-value for the specular-component of the color material
+        std::string texture;    // texture id (or filename if not cached)
+    };
+
+    struct TActuatorData
+    {
+        eActuatorType   type;               // type of actuator (see enum above)
+        TVec2           limits;             // range for control limits. If no limits, then lower(x) > high(y)
+        TSizef          gear;               // Scaling factors for actuator's transmissions
+        TScalar         kp;                 // Position feedback gain (in case controller-typ used)
+        TScalar         kv;                 // Velocity feedback gain (in case controller-typ used)
+        TMat4           localTransform;     // relative transform of this actuator w.r.t. owner (body)
+    };
+
+    struct TSensorData
+    {
+        eSensorType type;               // type of sensor (see enum above)
+        TMat4       localTransform;     // relative transform of this sensor w.r.t. owner (either body or joint)
+    };
+
+    struct TInertialData
+    {
+        TScalar     mass;               // mass of the body (if equal to 0.0, then inertial props come from colliders)
+        TScalar     ixx;                // elements of the inertia matrix
+        TScalar     ixy;
+        TScalar     ixz;
+        TScalar     iyy;
+        TScalar     iyz;
+        TScalar     izz;
+        TMat4       localTransform;     // relative transform w.r.t. owner (body) of the inertial frame
     };
 
     struct TBodyData
     {
         eDynamicsType                   dyntype;        // dynamics type used to instantiate either static, kinematic or dynamic bodies
-        bool                            hasInertia;     // true: use own mass and inertia, false: compute from shapes
-        TScalar                         mass;           // mass to be used when creating inertial properties
-        std::array< TScalar, 6 >        inertia;        // inertia matrix to be used when creating inertial properties
-        TMat4                           inertialFrame;  // inertia-frame (principal axes of inertia tensor)
+        TInertialData                   inertialData;   // inertial properties of this body
+        TMat4                           localTransformZero; // relative transform at zero-configuration of this body w.r.t. parent body
         std::vector< TCollisionData >   collisions;     // collisions owned by this body
         std::vector< TVisualData >      visuals;        // visuals owned by this body
     };
+
+    TScalar computeVolumeFromShape( const TShapeData& shapeData );
 
 }

@@ -167,6 +167,8 @@ namespace tysoc
                TScalar m10, TScalar m11, TScalar m12,
                TScalar m20, TScalar m21, TScalar m22 );
 
+        void setIdentity();
+
         static TMat3 fromQuaternion( const TVec4& quat );
         static TMat3 fromEuler( const TVec3& euler );
 
@@ -260,7 +262,7 @@ namespace tysoc
         std::string     meshId;         // id in case of a mesh
         std::string     filename;       // file name in case of a mesh
         TVec3           size;           // size params for primitives, scale for mesh
-        TMat4           worldTransform; // position part of the world-transform
+        TMat4           worldTransform; // world-transform
         bool            usesFromto;     // flag for fromto checking
     };
 
@@ -358,9 +360,6 @@ namespace tysoc
             return _vecpoints;
         }
     };
-
-    TScalar computeVolumeFromShape( const std::string& type,
-                                    const TVec3& size );
 
     /**
     *   Rearranges the elements of a TVec3 from a format where the z vector ...

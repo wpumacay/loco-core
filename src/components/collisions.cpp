@@ -9,9 +9,9 @@ namespace tysoc {
         m_name = name;
         m_data = collisionData;
 
-        m_parentBodyPtr = NULL;
-        m_collisionImplPtr = NULL;
-        m_drawableImplPtr = NULL;
+        m_parentBodyPtr = nullptr;
+        m_collisionImplPtr = nullptr;
+        m_drawableImplPtr = nullptr;
     }
 
     TCollision::~TCollision()
@@ -22,8 +22,8 @@ namespace tysoc {
         if ( m_collisionImplPtr )
             delete m_collisionImplPtr;
 
-        m_drawableImplPtr = NULL;
-        m_collisionImplPtr = NULL;
+        m_drawableImplPtr = nullptr;
+        m_collisionImplPtr = nullptr;
     }
 
     void TCollision::setParentBody( TBody* parentBodyPtr )
@@ -42,10 +42,6 @@ namespace tysoc {
 
     void TCollision::setDrawable( TIDrawable* drawablePtr )
     {
-        // be nice and tell the drawable that it can be recycled for later usage (if applicable)
-        if ( m_drawableImplPtr )
-            m_drawableImplPtr->recycle();
-
         // change the reference to our new shiny drawable
         m_drawableImplPtr = drawablePtr;
     }
@@ -85,7 +81,7 @@ namespace tysoc {
             m_collisionImplPtr->update();
 
         // update our own transform using the world-transform from the parent
-        assert( m_parentBodyPtr != NULL );
+        assert( m_parentBodyPtr != nullptr );
         m_tf = m_parentBodyPtr->tf() * m_localTf;
         m_pos = m_tf.getPosition();
         m_rot = m_tf.getRotation();

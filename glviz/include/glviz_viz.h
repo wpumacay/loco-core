@@ -1,20 +1,11 @@
 
 #pragma once
 
-// interface for our VIZ implementation
 #include <viz/viz.h>
-// cat1 engine functionality
-#include <core/COpenGLApp.h>
-#include <graphics/CMeshBuilder.h>
-#include <LFpsCamera.h>
-#include <LFixedCamera3d.h>
-#include <LLightDirectional.h>
-// and some specific viz wrappers
+#include <glviz_common.h>
 #include <glviz_kintree.h>
 #include <glviz_terrainGen.h>
 #include <glviz_drawable.h>
-// and the current UI functionality
-#include <glviz_ui.h>
 
 #include <components/bodies.h>
 
@@ -23,30 +14,19 @@ namespace tysoc {
     class TGLVisualizer : public TIVisualizer
     {
 
-        private :
+    public :
 
-        // cat1 rendering engine resources
-        engine::COpenGLApp* m_glAppPtr;
-        engine::LScene*     m_glScenePtr;
-        
-        // visualization wrappers
-        std::vector< TGLVizKinTree* >             m_vizKinTreeWrappers;
-        std::vector< TGLVizTerrainGenerator* >    m_vizTerrainGeneratorWrappers;
+        TGLVisualizer( TScenario* scenarioPtr,
+                       const std::string& workingDir );
+        ~TGLVisualizer();
 
-        // the UI context
-        TGLUiContext*   m_uiContextPtr;
+        void addBody( TBody* bodyPtr );
+        void addAgent( agent::TAgent* agentPtr );
 
-        void _setupGlRenderingEngine();
-        void _collectSingleBodies( TBody* bodyPtr );
-        void _collectKinTreeAgent( agent::TAgent* agentPtr );
-        void _collectTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr );
-        void _renderSensorReading( sensor::TISensor* sensorPtr );
-
-        protected :
+    protected :
 
         bool _initializeInternal() override;
         void _updateInternal() override;
-        void _renderUIInternal() override;
         bool _isActiveInternal() override;
 
         void _drawLineInternal( const TVec3& start, const TVec3& end, const TVec3& color ) override;
@@ -69,14 +49,23 @@ namespace tysoc {
                                           const std::string& type,
                                           const TVec3& pos ) override;
 
-        public :
+    private :
 
-        TGLVisualizer( TScenario* scenarioPtr,
-                           const std::string& workingDir );
-        ~TGLVisualizer(); // @CHECK: check for virtual destructors
+        void _setupGlRenderingEngine();
+        void _collectSingleBodies( TBody* bodyPtr );
+        void _collectKinTreeAgent( agent::TAgent* agentPtr );
+        void _collectTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr );
+        void _renderSensorReading( sensor::TISensor* sensorPtr );
 
-        void addBody( TBody* bodyPtr );
-        void addAgent( agent::TAgent* agentPtr );
+    private :
+
+        // rendering engine resources
+        engine::CScene* m_glScene;
+        std::unique_ptr< engine::CApplication > m_glApplication;
+        
+        // visualization wrappers
+        std::vector< std::unique_ptr< TGLVizKinTree > >             m_vizKinTreeWrappers;
+        std::vector< std::unique_ptr< TGLVizTerrainGenerator > >    m_vizTerrainGeneratorWrappers;
 
     };
 

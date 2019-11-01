@@ -1,11 +1,13 @@
 
 #include <glviz_terrainGen.h>
 
+using namespace tysoc::terrain;
+
 namespace tysoc {
 
-    TGLVizTerrainGenerator::TGLVizTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr,
-                                                            engine::LScene* scenePtr,
-                                                            const std::string& workingDir )
+    TGLVizTerrainGenerator::TGLVizTerrainGenerator( TITerrainGenerator* terrainGeneratorPtr,
+                                                    engine::CScene* scenePtr,
+                                                    const std::string& workingDir )
     {
         m_scenePtr              = scenePtr;
         m_terrainGeneratorPtr   = terrainGeneratorPtr;
@@ -16,217 +18,56 @@ namespace tysoc {
 
     TGLVizTerrainGenerator::~TGLVizTerrainGenerator()
     {
-        m_scenePtr              = NULL;
-        m_terrainGeneratorPtr   = NULL;
+        m_scenePtr              = nullptr;
+        m_terrainGeneratorPtr   = nullptr;
 
-        for ( size_t i = 0; i < m_vizTerrainPrimitives.size(); i++ )
-        {
-            m_vizTerrainPrimitives[i].axesPtr               = NULL;
-            m_vizTerrainPrimitives[i].meshPtr               = NULL;
-            m_vizTerrainPrimitives[i].terrainPrimitivePtr   = NULL;
-        }
-        m_vizTerrainPrimitives.clear();
+        m_terrainDrawables.clear();
     }
 
     void TGLVizTerrainGenerator::update()
     {
-        for ( size_t i = 0; i < m_vizTerrainPrimitives.size(); i++ )
-        {
-            _updateVizTerrainPrimitive( m_vizTerrainPrimitives[i] );
-        }
-    }
-
-    terrain::TITerrainGenerator* TGLVizTerrainGenerator::getTerrainGeneratorPtr()
-    {
-        return m_terrainGeneratorPtr;
+        for ( auto _terrainDrawable : m_terrainDrawables )
+            _updateTerrainDrawable( _terrainDrawable );
     }
 
     void TGLVizTerrainGenerator::_collectTerrainPrimitives()
     {
         auto _terrainPrimitives = m_terrainGeneratorPtr->getPrimitives();
-        for ( size_t i = 0; i < _terrainPrimitives.size(); i++ )
+        for ( auto _primitive : _terrainPrimitives )
         {
-            TGLVizTerrainPrimitive _vizTerrainPrimitive;
+            TGLTerrainDrawable _terrainDrawable;
 
-            // get the underlying primitive
-            terrain::TTerrainPrimitive* _terrainPrimitivePtr = _terrainPrimitives[i];
-            // and assign it to our wrapper
-            _vizTerrainPrimitive.terrainPrimitivePtr = _terrainPrimitivePtr;
-            // add the axes as well
-            _vizTerrainPrimitive.axesPtr = engine::CMeshBuilder::createAxes( VIZTERRAIN_AXES_DEFAULT_SIZE );
-            // and add it to the scene
-            m_scenePtr->addRenderable( _vizTerrainPrimitive.axesPtr );
+            _terrainDrawable.size       = _primitive->size;
+            _terrainDrawable.size0      = _primitive->size;
+            _terrainDrawable.primitive  = _primitive;
+            // @todo: move enumerators from components to tysoc-common (or similar)
+            _terrainDrawable.renderable = tysoc::createRenderable( toEnumShape( _primitive->geomType ),
+                                                                   _primitive->size,
+                                                                   _primitive->filename ) ;
+            m_scenePtr->addRenderable( std::unique_ptr< engine::CIRenderable >( _terrainDrawable.renderable ) );
 
-            // and create the appropiate mesh
-            if ( _terrainPrimitivePtr->geomType != "data" )
-            {
-                _vizTerrainPrimitive.meshPtr = _createMeshPrimitive( _terrainPrimitivePtr );
-            }
-            else
-            {
-                _vizTerrainPrimitive.meshPtr = _createMeshFromData( _terrainPrimitivePtr );
-            }
+            if ( engine::CTextureManager::HasCachedTexture( _primitive->texturename ) )
+                tysoc::setRenderableTexture( _terrainDrawable.renderable, 
+                                             engine::CTextureManager::GetCachedTexture( _primitive->texturename ) );
 
-            m_vizTerrainPrimitives.push_back( _vizTerrainPrimitive );
+            m_terrainDrawables.push_back( _terrainDrawable );
         }
     }
 
-    engine::LIRenderable* TGLVizTerrainGenerator::_createMeshPrimitive( terrain::TTerrainPrimitive* terrainPrimitivePtr )
+    void TGLVizTerrainGenerator::_updateTerrainDrawable( TGLTerrainDrawable terrainDrawable )
     {
-        engine::LIRenderable* _renderablePtr = NULL;
-        auto _size = TVec3( terrainPrimitivePtr->size.x,
-                            terrainPrimitivePtr->size.y,
-                            terrainPrimitivePtr->size.z );
+        auto _renderable = terrainDrawable.renderable;
+        auto _primitive = terrainDrawable.primitive;
+        auto _oldSize = terrainDrawable.size0;
+        auto _newSize = terrainDrawable.size = terrainDrawable.primitive->size;
 
-        // create the mesh with some default sizes (for rescaling later)
-        if ( terrainPrimitivePtr->geomType == "plane" )
-        {
-            _renderablePtr = engine::CMeshBuilder::createPlane( 2.0f, 2.0f );
-        }
-        else if ( terrainPrimitivePtr->geomType == "box" )
-        {
-            _renderablePtr = engine::CMeshBuilder::createBox( 2.0f, 2.0f, 2.0f );
-        }
-        else if ( terrainPrimitivePtr->geomType == "sphere" )
-        {
-            _renderablePtr = engine::CMeshBuilder::createSphere( 1.0f );
-        }
-        else if ( terrainPrimitivePtr->geomType == "capsule" )
-        {
-            _renderablePtr = engine::CMeshBuilder::createCapsule( 1.0f, 2.0f );
-        }
-        else if ( terrainPrimitivePtr->geomType == "cylinder" )
-        {
-            _renderablePtr = engine::CMeshBuilder::createCylinder( 1.0f, 2.0f );
-        }
-        else if ( terrainPrimitivePtr->geomType == "mesh" )
-        {
-            auto _meshFilePath = m_workingDir + terrainPrimitivePtr->filename;
-            _renderablePtr = engine::CMeshBuilder::createModelFromFile( _meshFilePath, "" );
-        }
+        // update renderable according to the current information hold by the primitive (@todo: do it just once)
+        tysoc::resizeRenderable( _renderable, toEnumShape( _primitive->geomType ), _oldSize, _newSize );
+        tysoc::setRenderableColor( _renderable, _primitive->color, _primitive->color, _primitive->color );
 
-        if ( _renderablePtr )
-        {
-            // resize the mesh to its actual size
-            _resizeMesh( _renderablePtr, terrainPrimitivePtr );
-
-            // apply material settings
-            TVec3 _color = { terrainPrimitivePtr->color.r,
-                             terrainPrimitivePtr->color.g,
-                             terrainPrimitivePtr->color.b };
-
-            _renderablePtr->getMaterial()->ambient     = { _color.x, _color.y, _color.z };
-            _renderablePtr->getMaterial()->diffuse     = { _color.x, _color.y, _color.z };
-            _renderablePtr->getMaterial()->specular    = { _color.x, _color.y, _color.z };
-
-            // Add a texture if requested
-            if ( terrainPrimitivePtr->texturename != "" )
-            {
-                auto _texturename = terrainPrimitivePtr->texturename;
-                auto _texture = engine::LAssetsManager::getBuiltInTexture( _texturename );
-                if ( _texture )
-                    _renderablePtr->addTexture( _texture );
-            }
-
-            // and add it to the renderer scene
-            m_scenePtr->addRenderable( _renderablePtr );
-        }
-        else
-        {
-            std::cout << "WARNING> could not create mesh of type: " << terrainPrimitivePtr->geomType << std::endl;
-            if ( terrainPrimitivePtr->geomType == "mesh" )
-            {
-                std::cout << "WARNING> filename of mesh: " << terrainPrimitivePtr->filename << std::endl;
-            }
-        }
-
-        return _renderablePtr;
-    }
-
-    engine::LIRenderable* TGLVizTerrainGenerator::_createMeshFromData( terrain::TTerrainPrimitive* terrainPrimitivePtr )
-    {
-        // @WIP
-        std::cout << "WARNING> WIP-terrainFromData. Working to add support for this feature" << std::endl;
-        return NULL;
-    }
-
-    void TGLVizTerrainGenerator::_resizeMesh( engine::LIRenderable* renderablePtr, terrain::TTerrainPrimitive* terrainPrimitivePtr )
-    {
-        if ( terrainPrimitivePtr->geomType == "plane" )
-        {
-            renderablePtr->scale.x = 0.5f * terrainPrimitivePtr->size.x;
-            renderablePtr->scale.y = 0.5f * terrainPrimitivePtr->size.y;
-        }
-        else if ( terrainPrimitivePtr->geomType == "sphere" )
-        {
-            renderablePtr->scale.x = terrainPrimitivePtr->size.x;
-        }
-        else if ( terrainPrimitivePtr->geomType == "capsule" )
-        {
-            renderablePtr->scale.x = terrainPrimitivePtr->size.x;
-            renderablePtr->scale.y = terrainPrimitivePtr->size.x;
-            renderablePtr->scale.z = 0.5f * terrainPrimitivePtr->size.y;
-        }
-        else if ( terrainPrimitivePtr->geomType == "cylinder" )
-        {
-            renderablePtr->scale.x = terrainPrimitivePtr->size.x;
-            renderablePtr->scale.y = terrainPrimitivePtr->size.x;
-            renderablePtr->scale.z = 0.5f * terrainPrimitivePtr->size.y;
-        }
-        else if ( terrainPrimitivePtr->geomType == "box" )
-        {
-            renderablePtr->scale.x = 0.5f * terrainPrimitivePtr->size.x;
-            renderablePtr->scale.y = 0.5f * terrainPrimitivePtr->size.y;
-            renderablePtr->scale.z = 0.5f * terrainPrimitivePtr->size.z;
-        }
-    }
-
-    void TGLVizTerrainGenerator::_updateVizTerrainPrimitive( TGLVizTerrainPrimitive& vizTerrainPrimitive )
-    {
-        auto _axesPtr               = vizTerrainPrimitive.axesPtr;
-        auto _renderablePtr         = vizTerrainPrimitive.meshPtr;
-        auto _terrainPrimitivePtr   = vizTerrainPrimitive.terrainPrimitivePtr;
-
-        // Set some rendering options
-        _renderablePtr->setVisibility( drawState.showPrimitives ||
-                                       _terrainPrimitivePtr->inUse );
-        _renderablePtr->setWireframeMode( drawState.drawAsWireframe );
-        _axesPtr->setVisibility( drawState.showFrameAxes );
-
-        // also, resize the mesh appropiately (@CHECK: this could be done once, but will check later)
-        _resizeMesh( _renderablePtr, _terrainPrimitivePtr );
-
-        // @TODO: Check the case where there are models as well as meshes ...
-        // as there could be some issues with their children ahving different colors
-
-        // and update the colors (@CHECK: again, this could be done once, but will check later if breaks something)
-        _renderablePtr->getMaterial()->ambient.x = _terrainPrimitivePtr->color.r;
-        _renderablePtr->getMaterial()->ambient.y = _terrainPrimitivePtr->color.g;
-        _renderablePtr->getMaterial()->ambient.z = _terrainPrimitivePtr->color.b;
-
-        _renderablePtr->getMaterial()->diffuse.x = _terrainPrimitivePtr->color.r;
-        _renderablePtr->getMaterial()->diffuse.y = _terrainPrimitivePtr->color.g;
-        _renderablePtr->getMaterial()->diffuse.z = _terrainPrimitivePtr->color.b;
-
-        _renderablePtr->getMaterial()->specular.x = _terrainPrimitivePtr->color.r;
-        _renderablePtr->getMaterial()->specular.y = _terrainPrimitivePtr->color.g;
-        _renderablePtr->getMaterial()->specular.z = _terrainPrimitivePtr->color.b;
-
-        // finally update the position
-        _renderablePtr->pos.x = _terrainPrimitivePtr->pos.x;
-        _renderablePtr->pos.y = _terrainPrimitivePtr->pos.y;
-        _renderablePtr->pos.z = _terrainPrimitivePtr->pos.z;
-
-        // and the orientation
-        _renderablePtr->rotation.set( 0, 0, _terrainPrimitivePtr->rotmat[0] );
-        _renderablePtr->rotation.set( 0, 1, _terrainPrimitivePtr->rotmat[3] );
-        _renderablePtr->rotation.set( 0, 2, _terrainPrimitivePtr->rotmat[6] );
-        _renderablePtr->rotation.set( 1, 0, _terrainPrimitivePtr->rotmat[1] );
-        _renderablePtr->rotation.set( 1, 1, _terrainPrimitivePtr->rotmat[4] );
-        _renderablePtr->rotation.set( 1, 2, _terrainPrimitivePtr->rotmat[7] );
-        _renderablePtr->rotation.set( 2, 0, _terrainPrimitivePtr->rotmat[2] );
-        _renderablePtr->rotation.set( 2, 1, _terrainPrimitivePtr->rotmat[5] );
-        _renderablePtr->rotation.set( 2, 2, _terrainPrimitivePtr->rotmat[8] );
+        // finally update the world-transform
+        _renderable->position = fromTVec3( _primitive->pos );
+        _renderable->rotation = fromTMat3( _primitive->rotmat );
     }
 
 }

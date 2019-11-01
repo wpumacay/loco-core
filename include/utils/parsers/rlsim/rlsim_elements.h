@@ -19,6 +19,11 @@ namespace rlsim {
 
         RlsimVisual() 
         {
+            name    = "undefined";
+            shape   = "sphere";
+            size    = { 0.1f, 0.0f, 0.0f };
+            rgba    = TYSOC_DEFAULT_RGBA_COLOR;
+
             parentJointId = -1;
         }
 
@@ -39,6 +44,12 @@ namespace rlsim {
 
         RlsimBody()
         {
+            name    = "undefined";
+            shape   = "sphere";
+            mass    = 0.0f;
+            size    = { 0.1f, 0.0f, 0.0f };
+            rgba    = TYSOC_DEFAULT_RGBA_COLOR;
+
             collGroup = -1;
             parentJointId = -1;
         }
@@ -58,13 +69,15 @@ namespace rlsim {
         TScalar                     torqueLimit;
         std::vector< RlsimJoint* >  childJoints;
         std::vector< RlsimBody* >   childBodies;
-        std::vector< RlsimVisual* > childVisuals;
+        std::vector< RlsimVisual >  childVisuals;
 
         RlsimJoint()
         {
+            name = "undefined";
+            type = "revolute";
+            axis = { 1.0f, 0.0f, 0.0f };
+
             parentJointId = -1;
-            // the joint axis is "z", as the joint frame is aligned to the body frame
-            axis = TVec3( 1.0f, 0.0f, 0.0f );
         }
 
         void collectAttribs( const nlohmann::json& jsonElement, const std::string& worldUp );
@@ -74,7 +87,7 @@ namespace rlsim {
     struct RlsimModel
     {
         std::string                     name;
-        std::vector< RlsimVisual* >     visuals;
+        std::vector< RlsimVisual >      visuals;
         std::vector< RlsimJoint* >      joints;
         std::vector< RlsimBody* >       bodies;
         RlsimJoint*                     rootJoint;
@@ -83,12 +96,24 @@ namespace rlsim {
 
         RlsimModel() 
         {
-            rootJoint = NULL;
-            worldUp = "y";
-            worldScale = 1.0;
+            name        = "undefined";
+            rootJoint   = nullptr;
+            worldUp     = "y";
+            worldScale  = 1.0;
         }
 
-        ~RlsimModel() {} // @TODO: Check what to release
+        ~RlsimModel()
+        {
+            for ( auto _joint : joints )
+                delete _joint;
+            for ( auto _body : bodies )
+                delete _body;
+
+            rootJoint = nullptr;
+            joints.clear();
+            bodies.clear();
+            visuals.clear();
+        }
     };
 
 }}

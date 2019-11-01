@@ -32,8 +32,8 @@ namespace terrain {
 
         for ( int o = 0; o < octaves; o++ )
         {
-            m_octaveOffsets.push_back( Vec2( _RANDOM( -10000.0f, 10000.0f ),
-                                             _RANDOM( -10000.0f, 10000.0f ) ) );
+            m_octaveOffsets.push_back( Vec2( TERRAIN_RANDOM( -10000.0f, 10000.0f ),
+                                             TERRAIN_RANDOM( -10000.0f, 10000.0f ) ) );
         }
 
         // Initialize the permutation vector with ken perlin's reference permutation ...

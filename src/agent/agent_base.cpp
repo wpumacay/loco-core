@@ -4,6 +4,22 @@
 namespace tysoc {
 namespace agent {
 
+    std::string toString( const eModelFormat& format )
+    {
+        if ( format == eModelFormat::NONE ) return "none";
+        if ( format == eModelFormat::MJCF ) return "mjcf";
+        if ( format == eModelFormat::URDF ) return "urdf";
+        if ( format == eModelFormat::RLSIM ) return "rlsim";
+
+        return "undefined";
+    }
+
+    std::string toString( const eAgentType& type )
+    {
+        if ( type == eAgentType::BASE ) return "base";
+
+        return "undefined";
+    }
 
     TAgent::TAgent( const std::string& name,
                     const TVec3& position,
@@ -11,20 +27,20 @@ namespace agent {
     {
 
         m_name = name;
-        m_type  = AGENT_TYPE_BASE;
+        m_type  = eAgentType::BASE;
 
         m_position = position;
         m_rotation = rotation;
         m_startPosition = position;
         m_startRotation = rotation;
 
-        m_modelFormat = MODEL_FORMAT_NONE;
+        m_modelFormat = eModelFormat::NONE;
 
-        m_modelDataMjcfPtr  = NULL;
-        m_modelDataUrdfPtr  = NULL;
-        m_modelDataRlsimPtr = NULL;
+        m_modelDataMjcfPtr  = nullptr;
+        m_modelDataUrdfPtr  = nullptr;
+        m_modelDataRlsimPtr = nullptr;
 
-        m_rootBodyPtr = NULL;
+        m_rootBodyPtr = nullptr;
     }
 
     TAgent::TAgent( mjcf::GenericElement* modelDataPtr,
@@ -35,7 +51,7 @@ namespace agent {
         // use mjcf-format helpers to construct the kintree for this agent
         constructAgentFromModel( this, modelDataPtr );
 
-        m_modelFormat = MODEL_FORMAT_MJCF;
+        m_modelFormat = eModelFormat::MJCF;
         m_modelDataMjcfPtr = modelDataPtr;
     }
 
@@ -47,7 +63,7 @@ namespace agent {
         // use urdf-format helpers to construct the kintree for this agent
         constructAgentFromModel( this, modelDataPtr );
 
-        m_modelFormat = MODEL_FORMAT_URDF;
+        m_modelFormat = eModelFormat::URDF;
         m_modelDataUrdfPtr = modelDataPtr;
     }
 
@@ -59,7 +75,7 @@ namespace agent {
         // use rlsim-format helpers to construct the kintree for this agent
         constructAgentFromModel( this, modelDataPtr );
 
-        m_modelFormat = MODEL_FORMAT_RLSIM;
+        m_modelFormat = eModelFormat::RLSIM;
         m_modelDataRlsimPtr = modelDataPtr;
     }
 
@@ -67,56 +83,30 @@ namespace agent {
     {
         TYSOC_LOG( "Destroying agent: " + m_name );
 
-        m_rootBodyPtr = NULL;
+        m_rootBodyPtr = nullptr;
 
-        for ( size_t i = 0; i < meshAssets.size(); i++ )
-        {
-            delete meshAssets[i];
-        }
+        for ( auto _meshAsset : meshAssets ) delete _meshAsset;
+        for ( auto _visual : visuals ) delete _visual;
+        for ( auto _collision : collisions ) delete _collision;
+        for ( auto _sensor : sensors ) delete _sensor;
+        for ( auto _joint : joints ) delete _joint;
+        for ( auto _body : bodies ) delete _body;
+
         meshAssets.clear();
-        meshAssetsMap.clear();
-
-        for ( size_t i = 0; i < joints.size(); i++ )
-        {
-            delete joints[i];
-        }
-        joints.clear();
-        jointsMap.clear();
-
-        for ( size_t i = 0; i < visuals.size(); i++ )
-        {
-            delete visuals[i];
-        }
         visuals.clear();
-        visualsMap.clear();
-
-        for ( size_t i = 0; i < collisions.size(); i++ )
-        {
-            delete collisions[i];
-        }
         collisions.clear();
-        collisionsMap.clear();
-
-        for ( size_t i = 0; i < bodies.size(); i++ )
-        {
-            delete bodies[i];
-        }
-        bodies.clear();
-        bodiesMap.clear();
-
-        for ( size_t i = 0; i < actuators.size(); i++ )
-        {
-            delete actuators[i];
-        }
         actuators.clear();
-        actuatorsMap.clear();
-
-        for ( size_t i = 0; i < sensors.size(); i++ )
-        {
-            delete sensors[i];
-        }
         sensors.clear();
+        joints.clear();
+        bodies.clear();
+
+        meshAssetsMap.clear();
+        visualsMap.clear();
+        collisionsMap.clear();
+        actuatorsMap.clear();
         sensorsMap.clear();
+        jointsMap.clear();
+        bodiesMap.clear();
     }
 
     void TAgent::initialize()
@@ -125,7 +115,6 @@ namespace agent {
         _constructDefaultSensors();
         // initialize the world transforms in the kintree to the initial configuration
         _initializeWorldTransforms();
-
         // make the specific initialization required by the derived agents
         _initializeAgentInternal();
     }
@@ -138,19 +127,19 @@ namespace agent {
             return;
         }
 
-    #ifndef UPDATE_TREE_RECURSIVE_DH
-        _update_v1();
-    #else 
-        _update_v2();
-    #endif
+        // Update internal data from the kintree. The bodies are updated by the internal backend.
+        // We should update the joints, visuals and collisions world transforms for later usage
+        // by other modules.
+        for ( auto _body : bodies )
+            _updateBodyComponents( _body );
 
-        // Then, update the sensors and actuators, as they are placed ...
-        // in the objects updated before (joints, visuals, collisions, bodies)
-        for ( size_t i = 0; i < sensors.size(); i++ )
-            _updateSensor( sensors[i] );
+        // Then, update the sensors and actuators, as they are placed in the objects updated before 
+        // (joints, visuals, collisions, bodies)
+        for ( auto _sensor : sensors )
+            _updateSensor( _sensor );
 
-        for ( size_t i = 0; i < actuators.size(); i++ )
-            _updateActuator( actuators[i] );
+        for ( auto _actuator : actuators )
+            _updateActuator( _actuator );
 
         // update the global position of the kintree
         m_position = m_rootBodyPtr->worldTransform.getPosition();
@@ -158,21 +147,6 @@ namespace agent {
 
         // make the specific updates required by the derived agents
         _updateAgentInternal();
-    }
-
-    void TAgent::_update_v1()
-    {
-        // Update internal data from the kintree. The bodies are ... 
-        // updated by the internal backend. We should update the ... 
-        // joints, visuals and collisions world transforms, for ...
-        // later usage by other modules.
-        for ( size_t i = 0; i < bodies.size(); i++ )
-            _updateBodyComponents( bodies[i] );
-    }
-
-    void TAgent::_update_v2()
-    {
-        
     }
 
     void TAgent::reset()
@@ -194,60 +168,48 @@ namespace agent {
         }
 
         for ( size_t i = 0; i < actuators.size(); i++ )
-        {
             actuators[i]->ctrlValue = actions[i];
-        }
     }
 
     TVec2 TAgent::getActuatorLimits( int actuatorIndx )
     {
-        if ( 0 > actuatorIndx || actuatorIndx >= actuators.size()  )
+        if ( actuatorIndx < 0 || actuatorIndx >= actuators.size()  )
         {
             std::cout << "WARNING> tried to query non-existent actuator: " 
                       << actuatorIndx << std::endl;
-            return { 0.0, 0.0 };
+            return { 1.0, -1.0 };
         }
 
-        return { actuators[ actuatorIndx ]->minCtrl,
-                 actuators[ actuatorIndx ]->maxCtrl };
+        return actuators[actuatorIndx]->data.limits;
     }
 
     void TAgent::_constructDefaultSensors()
     {
         // Construct joint sensors for each joint
-        for ( size_t i = 0; i < joints.size(); i++ )
+        for ( auto _joint : joints )
         {
-            if ( joints[i]->type != "continuous" &&
-                 joints[i]->type != "revolute" &&
-                 joints[i]->type != "hinge" &&
-                 joints[i]->type != "prismatic" &&
-                 joints[i]->type != "slide" )
-            {
-                // Only these types of joints should have a joint-sensor ...
-                // associated with it
+            // For now, only these types of joints should have a joint-sensor associated with it
+            if ( _joint->data.type != eJointType::REVOLUTE )
                 continue;
-            }
 
             auto _kinTreeJointSensor = new TKinTreeJointSensor();
-            // set joint parent name
-            _kinTreeJointSensor->jointName = joints[i]->name;
-            // set an appropiate name (will be used by wrappers, like mujoco)
-            _kinTreeJointSensor->name = std::string( "sensor_" ) + m_name + 
-                                        std::string( "_" ) + joints[i]->name;
-            // and just add it to the list of sensors
+            // set joint parent name (used for indexing during construction)
+            _kinTreeJointSensor->jointName = _joint->name;
+            // set an appropiate name for later debugging
+            _kinTreeJointSensor->name = std::string( "sensor_" ) + m_name + "_" + _joint->name;
+
             sensors.push_back( _kinTreeJointSensor );
         }
 
         // Construct joint sensors for each body
-        for ( size_t i = 0; i < bodies.size(); i++ )
+        for ( auto _body : bodies )
         {
             auto _kinTreeBodySensor = new TKinTreeBodySensor();
-            // set body parent name
-            _kinTreeBodySensor->bodyName = bodies[i]->name;
-            // set an appropiate name (will be used by wrappers, like mujoco)
-            _kinTreeBodySensor->name = std::string( "sensor" ) + m_name + 
-                                       std::string( "_" ) + bodies[i]->name;
-            // and just add it to the list of sensors
+            // set body parent name (used for indexing during construction)
+            _kinTreeBodySensor->bodyName = _body->name;
+            // set an appropiate name for later debugging
+            _kinTreeBodySensor->name = std::string( "sensor" ) + m_name + "_" + _body->name;
+
             sensors.push_back( _kinTreeBodySensor );
         }
     }
@@ -264,273 +226,225 @@ namespace agent {
         // compensate it with the zero configuration transform
         m_rootBodyPtr->worldTransform = m_rootBodyPtr->worldTransform * m_zeroCompensation;
 
-        // make an update in the tree (the default transforms ...
-        // should give a results that makes sense, at least visually)
+        // initialize bodies and their components recursively (zero configuration)
         _initializeBody( m_rootBodyPtr );
 
-        // update the sensors and actuators, as they are placed ...
-        // in the objects updated before (joints, visuals, collisions, bodies)
-        for ( size_t i = 0; i < sensors.size(); i++ )
-            _updateSensor( sensors[i] );
-
-        for ( size_t i = 0; i < actuators.size(); i++ )
-            _updateActuator( actuators[i] );
+        // update the sensors and actuators, as they are placed in the objects updated 
+        // before (joints, visuals, collisions, bodies)
+        for ( auto _sensor : sensors )
+            _updateSensor( _sensor );
+        for ( auto _actuator : actuators )
+            _updateActuator( _actuator );
     }
 
-    void TAgent::_initializeBody( TKinTreeBody* kinTreeBodyPtr )
+    void TAgent::_initializeBody( TKinTreeBody* kinBody )
     {
-        if ( !kinTreeBodyPtr )
+        if ( !kinBody )
+            return;
+
+        // Update the frame of non-root bodies based on their parents and their 
+        // initial local transform (zero-configuration | rest-configuration)
+        if ( kinBody->parentBodyPtr )
+            kinBody->worldTransform = kinBody->parentBodyPtr->worldTransform * kinBody->localTransformZero;
+
+        for ( auto _visual : kinBody->visuals )
+            if ( _visual )
+                _updateVisual( _visual );
+
+        for ( auto _collision : kinBody->collisions )
+            if ( _collision )
+                _updateCollision( _collision );
+
+        for ( auto _joint : kinBody->joints )
+            if ( _joint )
+                _updateJoint( _joint );
+
+        for ( auto _childBody : kinBody->children )
+            if ( _childBody )
+                _initializeBody( _childBody );
+    }
+
+    void TAgent::_updateBodyComponents( TKinTreeBody* kinBody )
+    {
+        if ( !kinBody )
+            return;
+
+        for ( auto _visual : kinBody->visuals )
+            if ( _visual )
+                _updateVisual( _visual );
+
+        for ( auto _collision : kinBody->collisions )
+            if ( _collision )
+                _updateCollision( _collision );
+
+        for ( auto _joint : kinBody->joints )
+            if ( _joint )
+                _updateJoint( _joint );
+    }
+
+    void TAgent::_updateJoint( TKinTreeJoint* kinJoint )
+    {
+        if ( !kinJoint->parentBodyPtr )
         {
+            std::cout << "WARNING> joint " << kinJoint->name << " "
+                      << "does not have a parent body" << std::endl;
             return;
         }
 
-        // Update the frame of non-root bodies based on their parents' frame
-        if ( kinTreeBodyPtr->parentBodyPtr )
-        {
-            kinTreeBodyPtr->worldTransform = kinTreeBodyPtr->parentBodyPtr->worldTransform * 
-                                             kinTreeBodyPtr->relTransform;
-        }
-
-        for ( size_t i = 0; i < kinTreeBodyPtr->childVisuals.size(); i++ )
-        {
-            if ( kinTreeBodyPtr->childVisuals[i] )
-                _updateVisual( kinTreeBodyPtr->childVisuals[i] );
-        }
-
-        for ( size_t i = 0; i < kinTreeBodyPtr->childCollisions.size(); i++ )
-        {
-            if ( kinTreeBodyPtr->childCollisions[i] )
-                _updateCollision( kinTreeBodyPtr->childCollisions[i] );
-        }
-
-        for ( size_t i = 0; i < kinTreeBodyPtr->childJoints.size(); i++ )
-        {
-            if ( kinTreeBodyPtr->childJoints[i] )
-                _updateJoint( kinTreeBodyPtr->childJoints[i] );
-        }
-
-        for ( size_t i = 0; i < kinTreeBodyPtr->childBodies.size(); i++ )
-        {
-            if ( kinTreeBodyPtr->childBodies[i] )
-                _initializeBody( kinTreeBodyPtr->childBodies[i] );
-        }
+        kinJoint->worldTransform = kinJoint->parentBodyPtr->worldTransform * kinJoint->data.localTransform;
     }
 
-    void TAgent::_updateBodyComponents( TKinTreeBody* kinTreeBodyPtr )
+    void TAgent::_updateVisual( TKinTreeVisual* kinVisual )
     {
-        if ( !kinTreeBodyPtr )
+        if ( !kinVisual->parentBodyPtr )
         {
+            std::cout << "WARNING> visual " << kinVisual->name << " "
+                      << "does not have a parent body" << std::endl;
             return;
         }
 
-        for ( size_t i = 0; i < kinTreeBodyPtr->childVisuals.size(); i++ )
-        {
-            if ( kinTreeBodyPtr->childVisuals[i] )
-                _updateVisual( kinTreeBodyPtr->childVisuals[i] );
-        }
-
-        for ( size_t i = 0; i < kinTreeBodyPtr->childCollisions.size(); i++ )
-        {
-            if ( kinTreeBodyPtr->childCollisions[i] )
-                _updateCollision( kinTreeBodyPtr->childCollisions[i] );
-        }
-
-        for ( size_t i = 0; i < kinTreeBodyPtr->childJoints.size(); i++ )
-        {
-            if ( kinTreeBodyPtr->childJoints[i] )
-                _updateJoint( kinTreeBodyPtr->childJoints[i] );
-        }
+        kinVisual->worldTransform = kinVisual->parentBodyPtr->worldTransform * kinVisual->data.localTransform;
     }
 
-    void TAgent::_updateJoint( TKinTreeJoint* kinTreeJointPtr )
+    void TAgent::_updateCollision( TKinTreeCollision* kinCollision )
     {
-        TKinTreeBody* _parent = kinTreeJointPtr->parentBodyPtr;
-
-        if ( _parent )
+        if( !kinCollision->parentBodyPtr )
         {
-            kinTreeJointPtr->worldTransform = _parent->worldTransform * 
-                                              kinTreeJointPtr->relTransform;
-        }
-        else
-        {
-            std::cout << "WARNING> joint " << kinTreeJointPtr->name << " "
+            std::cout << "WARNING> collision " << kinCollision->name << " "
                       << "does not have a parent body" << std::endl;
+            return;
         }
+
+        kinCollision->worldTransform = kinCollision->parentBodyPtr->worldTransform * kinCollision->data.localTransform;
     }
 
-    void TAgent::_updateVisual( TKinTreeVisual* kinTreeVisualPtr )
+    void TAgent::_updateActuator( TKinTreeActuator* kinActuator )
     {
-        TKinTreeBody* _parent = kinTreeVisualPtr->parentBodyPtr;
-
-        if ( _parent )
+        if( !kinActuator->jointPtr )
         {
-            kinTreeVisualPtr->geometry.worldTransform = _parent->worldTransform *
-                                                        kinTreeVisualPtr->relTransform;
-        }
-        else
-        {
-            std::cout << "WARNING> visual " << kinTreeVisualPtr->name << " "
-                      << "does not have a parent body" << std::endl;
-        }
-
-    }
-
-    void TAgent::_updateCollision( TKinTreeCollision* kinTreeCollisionPtr )
-    {
-        TKinTreeBody* _parent = kinTreeCollisionPtr->parentBodyPtr;
-
-        if ( _parent )
-        {
-            kinTreeCollisionPtr->geometry.worldTransform = _parent->worldTransform * 
-                                                           kinTreeCollisionPtr->relTransform;
-        }
-        else
-        {
-            std::cout << "WARNING> collision " << kinTreeCollisionPtr->name << " "
-                      << "does not have a parent body" << std::endl;
-        }
-    }
-
-    void TAgent::_updateActuator( TKinTreeActuator* kinTreeActuatorPtr )
-    {
-        TKinTreeJoint* _joint = kinTreeActuatorPtr->jointPtr;
-
-        if ( _joint )
-        {
-            kinTreeActuatorPtr->worldTransform = _joint->worldTransform;
-        }
-        else
-        {
-            std::cout << "WARNING> actuator " << kinTreeActuatorPtr->name << " "
+            std::cout << "WARNING> actuator " << kinActuator->name << " "
                       << "does not have a joint to be attached to" << std::endl;
+            return;
         }
+
+        kinActuator->worldTransform = kinActuator->jointPtr->worldTransform * kinActuator->data.localTransform;
     }
 
-    void TAgent::_updateSensor( TKinTreeSensor* kinTreeSensorPtr )
+    void TAgent::_updateSensor( TKinTreeSensor* kinSensor )
     {
-        if ( kinTreeSensorPtr->bodyPtr )
-        {
-            kinTreeSensorPtr->worldTransform = kinTreeSensorPtr->bodyPtr->worldTransform;
-        }
-        else if ( kinTreeSensorPtr->jointPtr )
-        {
-            kinTreeSensorPtr->worldTransform = kinTreeSensorPtr->jointPtr->worldTransform;
-        }
+        if ( kinSensor->bodyPtr )
+            kinSensor->worldTransform = kinSensor->bodyPtr->worldTransform * kinSensor->data.localTransform;
+
+        else if ( kinSensor->jointPtr )
+            kinSensor->worldTransform = kinSensor->jointPtr->worldTransform * kinSensor->data.localTransform;
     }
 
     std::string TAgent::toString()
     {
-        std::string _res;
-
         if ( !m_rootBodyPtr )
-            return _res;
+            return "nullptr";
 
-        _res += "******************************************************\n\r";
-        _res += std::string( "name: " ) + m_name + std::string( "\n\r" );
+        std::string _strRep;
 
-        _res += "BODIES INFO: ----------------\n\r";
+        _strRep += "******************************************************\n\r";
+        _strRep += std::string( "name: " ) + m_name + std::string( "\n\r" );
 
-        _res += std::string( "bodies: " ) + std::string( "\n\r" );
-        for ( size_t i = 0; i < bodies.size(); i++ )
-            _res += agent::toString( this->bodies[i] );
+        _strRep += "BODIES INFO: ----------------\n\r";
 
-        _res += "-----------------------------\n\r";
+        _strRep += std::string( "bodies: " ) + std::string( "\n\r" );
+        for ( auto _body : bodies )
+            _strRep += agent::toString( _body );
 
-        _res += "JOINTS INFO: ----------------\n\r";
+        _strRep += "-----------------------------\n\r";
+
+        _strRep += "JOINTS INFO: ----------------\n\r";
         
-        for ( size_t i = 0; i < joints.size(); i++ )
-            _res += agent::toString( this->joints[i] );
+        for ( auto _joint : joints )
+            _strRep += agent::toString( _joint );
 
-        _res += "-----------------------------\n\r";
+        _strRep += "-----------------------------\n\r";
 
-        _res += "COLLISIONS INFO: ------------\n\r";
+        _strRep += "COLLISIONS INFO: ------------\n\r";
 
-        for ( size_t i = 0; i < collisions.size(); i++ )
-            _res += agent::toString( this->collisions[i] );
+        for ( auto _collision : collisions )
+            _strRep += agent::toString( _collision );
 
-        _res += "-----------------------------\n\r";
+        _strRep += "-----------------------------\n\r";
 
-        _res += "VISUALS INFO: ---------------\n\r";
+        _strRep += "VISUALS INFO: ---------------\n\r";
 
-        for ( size_t i = 0; i < visuals.size(); i++ )
-            _res += agent::toString( this->visuals[i] );
+        for ( auto _visual : visuals )
+            _strRep += agent::toString( _visual );
 
-        _res += "-----------------------------\n\r";
+        _strRep += "-----------------------------\n\r";
 
-        _res += "SENSORS INFO: ---------------\n\r";
+        _strRep += "SENSORS INFO: ---------------\n\r";
 
-        for ( size_t i = 0; i < sensors.size(); i++ )
-            _res += agent::toString( this->sensors[i] );
+        for ( auto _sensor : sensors )
+            _strRep += agent::toString( _sensor );
 
-        _res += "-----------------------------\n\r";
+        _strRep += "-----------------------------\n\r";
 
-        _res += "ACTUATORS INFO: -------------\n\r";
+        _strRep += "ACTUATORS INFO: -------------\n\r";
 
-        for ( size_t i = 0; i < actuators.size(); i++ )
-            _res += agent::toString( this->actuators[i] );
+        for ( auto _actuator : actuators )
+            _strRep += agent::toString( _actuator );
 
-        _res += "-----------------------------\n\r";
-        _res += "TREE STRUCTURE: -------------\n\r";
+        _strRep += "-----------------------------\n\r";
+        _strRep += "TREE STRUCTURE: -------------\n\r";
 
-        _res += _strTraverse( m_rootBodyPtr, 0 );
+        _strRep += _strTraverse( m_rootBodyPtr, 0 );
 
-        _res += "-----------------------------\n\r";
-        _res += "******************************************************\n\r";
+        _strRep += "-----------------------------\n\r";
+        _strRep += "******************************************************\n\r";
 
-        return _res;
+        return _strRep;
     }
 
-    std::string TAgent::_strTraverse( TKinTreeBody* kinTreeBodyPtr, size_t depth )
+    std::string TAgent::_strTraverse( TKinTreeBody* kinBody, size_t depth )
     {
-        std::string _res;
+        if ( !kinBody )
+            return "nullptr";
 
+        std::string _strRep;
+
+        // some tabs for a nicer format
         std::string _preTabs;
         for ( size_t i = 0; i < depth; i++ )
-        {
             _preTabs += "\t";
-        }
 
-        _res += _preTabs;
-        _res += "body: ";
-        _res += kinTreeBodyPtr->name;
-        _res += "\n\r";
+        _strRep += _preTabs;
+        _strRep += "body: ";
+        _strRep += kinBody->name;
+        _strRep += "\n\r";
 
-        _res += _preTabs;
-        _res += "childJoints: [";
-        for ( size_t i = 0; i < kinTreeBodyPtr->childJoints.size(); i++ )
+        _strRep += _preTabs;
+        _strRep += "childJoints: |";
+        for ( auto _joint : kinBody->joints )
+            _strRep += _joint->name + " | ";
+        _strRep += "\n\r";
+
+        _strRep += _preTabs;
+        _strRep += "childVisuals: [";
+        for ( auto _visual : kinBody->visuals )
+            _strRep += _visual->name + " | ";
+        _strRep += "\n\r";
+
+        _strRep += _preTabs;
+        _strRep += "childCollisions: [";
+        for ( auto _collision : kinBody->collisions )
+            _strRep += _collision->name + " | ";
+        _strRep += "\n\r";
+
+        for ( auto _childBody : kinBody->children )
         {
-            _res += kinTreeBodyPtr->childJoints[i]->name;
-            _res += ( i != ( kinTreeBodyPtr->childJoints.size() - 1 ) ) ? ", " : "";
-        }
-        _res += "]\n\r";
-
-        _res += _preTabs;
-        _res += "childVisuals: [";
-        for ( size_t i = 0; i < kinTreeBodyPtr->childVisuals.size(); i++ )
-        {
-            _res += kinTreeBodyPtr->childVisuals[i]->name;
-            _res += ( i != ( kinTreeBodyPtr->childVisuals.size() - 1 ) ) ? ", " : "";
-        }
-        _res += "]\n\r";
-
-        _res += _preTabs;
-        _res += "childCollisions: [";
-        for ( size_t i = 0; i < kinTreeBodyPtr->childCollisions.size(); i++ )
-        {
-            _res += kinTreeBodyPtr->childCollisions[i]->name;
-            _res += ( i != ( kinTreeBodyPtr->childCollisions.size() - 1 ) ) ? ", " : "";
-        }
-        _res += "]\n\r";
-
-        for ( size_t i = 0; i < kinTreeBodyPtr->childBodies.size(); i++ )
-        {
-            if ( !kinTreeBodyPtr->childBodies[i] )
+            if ( _childBody )
                 continue;
 
-            _res += _strTraverse( kinTreeBodyPtr->childBodies[i], depth + 1 );
+            _strRep += _strTraverse( _childBody, depth + 1 );
         }
 
-        return _res;
+        return _strRep;
     }
 
 }}

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "rlsim_elements.h"
+#include <utils/parsers/rlsim/rlsim_elements.h>
 
 #define JSON_KEY_SKELETON       "Skeleton"
 #define JSON_KEY_JOINTS         "Joints"

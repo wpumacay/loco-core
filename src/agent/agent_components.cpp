@@ -9,6 +9,8 @@ namespace agent {
     size_t NUM_UNKNOWN_JOINTS       = 0;
     size_t NUM_UNKNOWN_BODIES       = 0;
 
+    //------------------------TKinTreeMeshAsset-------------------------------//
+
     TKinTreeMeshAsset::TKinTreeMeshAsset()
     {
         name    = "undefined";
@@ -17,143 +19,148 @@ namespace agent {
     }
 
     //------------------------TKinTreeCollision-------------------------------//
-    TMaterial::TMaterial()
-    {
-        name        = "";
-        texture     = "";
-        diffuse     = TYSOC_DEFAULT_DIFFUSE_COLOR;
-        specular    = TYSOC_DEFAULT_SPECULAR_COLOR;
-    }
-
-    //------------------------TKinTreeCollision-------------------------------//
     TKinTreeCollision::TKinTreeCollision()
     {
-        name            = "undefined";
-        parentBodyPtr   = NULL;
-        friction        = { 3, { 1., 0.005, 0.0001 } };
-        density         = TYSOC_DEFAULT_DENSITY;
-        contype         = 1;
-        conaffinity     = 1;
-        condim          = 3;
+        name                = "undefined";
+        data.type           = eShapeType::SPHERE;
+        data.size           = { 0.1f, 0.0f, 0.0f };
+        data.friction       = { 1., 0.005, 0.0001 };
+        data.density        = TYSOC_DEFAULT_DENSITY;
+        data.collisionGroup = 1;
+        data.collisionMask  = 1;
+        parentBodyPtr       = nullptr;
     }
 
     //------------------------TKinTreeVisual----------------------------------//
     TKinTreeVisual::TKinTreeVisual()
     {
         name            = "undefined";
-        parentBodyPtr   = NULL;
+        data.type       = eShapeType::SPHERE;
+        data.size       = { 0.1f, 0.0f, 0.0f };
+        data.ambient    = DEFAULT_AMBIENT_COLOR;
+        data.diffuse    = DEFAULT_DIFFUSE_COLOR;
+        data.specular   = DEFAULT_SPECULAR_COLOR;
+        data.shininess  = DEFAULT_SHININESS;
+        data.texture    = "";
+        parentBodyPtr   = nullptr;
     }
 
     //------------------------TKinTreeSensor----------------------------------//
     TKinTreeSensor::TKinTreeSensor()
     {
         name        = "undefined";
-        bodyPtr     = NULL;
-        jointPtr    = NULL;
+        data.type   = eSensorType::NONE;
+        bodyName    = "";
+        jointName   = "";
+        bodyPtr     = nullptr;
+        jointPtr    = nullptr;
+    }
+
+    TKinTreeSensor::~TKinTreeSensor()
+    {
+        bodyPtr     = nullptr;
+        jointPtr    = nullptr;
     }
 
     //------------------------TKinTreeJointSensor-----------------------------//
     TKinTreeJointSensor::TKinTreeJointSensor()
         : TKinTreeSensor()
     {
-        type        = "joint";
-        jointName   = "";
-        theta       = 0;
-        thetadot    = 0;
+        data.type   = eSensorType::PROP_JOINT;
+        theta       = 0.0f;
+        thetadot    = 0.0f;
     }
 
     //------------------------TKinTreeJointSensor-----------------------------//
     TKinTreeBodySensor::TKinTreeBodySensor()
         : TKinTreeSensor()
     {
-        type        = "body";
-        bodyName    = "";
+        data.type       = eSensorType::PROP_BODY;
+        linVelocity     = { 0.0f, 0.0f, 0.0f };
+        linAcceleration = { 0.0f, 0.0f, 0.0f };
+        comForce        = { 0.0f, 0.0f, 0.0f };
+        comTorque       = { 0.0f, 0.0f, 0.0f };
     }
 
     //------------------------TKinTreeBody------------------------------------//
     TKinTreeBody::TKinTreeBody()
     {
-        name            = "undefined";
-        parentBodyPtr   = NULL;
-        inertiaPtr      = NULL;
+        name                = "undefined";
+        inertialData.mass   = 0.0f; // 0.0 => compute from colliders
+        inertialData.ixx    = 0.0f;
+        inertialData.iyy    = 0.0f;
+        inertialData.izz    = 0.0f;
+        inertialData.ixy    = 0.0f;
+        inertialData.ixz    = 0.0f;
+        inertialData.iyz    = 0.0f;
+        parentBodyPtr       = nullptr;
     }
 
     //------------------------TKinTreeJoint-----------------------------------//
-    TKinTreeJoint::TKinTreeJoint()
+    TKinTreeJoint::TKinTreeJoint( const eJointType& type )
     {
         name            = "undefined";
-        type            = "hinge";
-        axis            = { 1.0, 0.0, 0.0 };
-        parentBodyPtr   = NULL;
-        lowerLimit      = 1.0;      // defaults to lower>upper <> free
-        upperLimit      = -1.0;     // defaults to lower>upper <> free
-        limited         = false;
-        stiffness       = 0.0;
-        armature        = 0.0;
-        damping         = 0.0;
-        ref             = 0.0;
-        nqpos           = 0;
-        nqvel           = 0;
-        qpos            = { 0., 0., 0., 0., 0., 0., 0. };
-        qvel            = { 0., 0., 0., 0., 0., 0. };
-        qpos0           = { 0., 0., 0., 0., 0., 0., 0. };
-        qvel0           = { 0., 0., 0., 0., 0., 0. };
-    }
+        data.type       = type;
+        data.axis       = { 1.0f, 0.0f, 0.0f };
+        data.limits     = { 1.0f, -1.0f }; // defaults to lower > upper <> free
+        data.stiffness  = 0.0f;
+        data.armature   = 0.0f;
+        data.damping    = 0.0f;
+        data.ref        = 0.0f;
+        data.nqpos      = 0;
+        data.nqvel      = 0;
+        parentBodyPtr   = nullptr;
 
-    void TKinTreeJoint::configure()
-    {
-        /* Configure internals in a type-specific way */
-
-        if ( type == "hinge" || type == "revolute" || type == "continuous" )
+        if ( type == eJointType::REVOLUTE )
         {
             // revolute joints have just 1dof, and 1qpos for this dof
-            nqpos = 1;
-            nqvel = 1;
+            data.nqpos = 1;
+            data.nqvel = 1;
             // qpos and qvel set to zero by default
             qpos0[0] = 0.0f;
             qvel0[0] = 0.0f;
         }
-        else if ( type == "prismatic" || type == "slide" || type == "slider" )
+        else if ( type == eJointType::PRISMATIC )
         {
             // prismatic joints have just 1dof, and 1qpos for this dof
-            nqpos = 1;
-            nqvel = 1;
+            data.nqpos = 1;
+            data.nqvel = 1;
             // qpos and qvel set to zero by default
             qpos0[0] = 0.0f;
             qvel0[0] = 0.0f;
         }
-        else if ( type == "ball" || type == "spherical" || type == "spheric" )
+        else if ( type == eJointType::SPHERICAL )
         {
             // spherical joints have 3dofs, and 4qpos (quaternion) representing it
-            nqpos = 4;
-            nqvel = 3;
+            data.nqpos = 4;
+            data.nqvel = 3;
             // qpos and qvel set to "zero" by default
             //       qx  qy  qz  qw   --unused--
             qpos0 = { 0., 0., 0., 1., 0., 0., 0. }; // zero-quaternion
             //       ex  ey  ez  ---unused---
             qvel0 = { 0., 0., 0., 0., 0., 0. }; // zero velocity
         }
-        else if ( type == "free" )
+        else if ( type == eJointType::FREE )
         {
             // free joints have 6dofs, and 7qpos (quat + xyz) representing it
-            nqpos = 7;
-            nqvel = 6;
+            data.nqpos = 7;
+            data.nqvel = 6;
             // qpos and qvel set to "zero" by default
             //        x   y   z  qx  qy  qz  qw
             qpos0 = { 0., 0., 0., 0., 0., 0., 1. }; // zero-xyz + zero-quat
             //        x   y   z   ex  ey  ez
             qvel0 = { 0., 0., 0., 0., 0., 0. }; // zero-xyz + zero-euler? velocity
         }
-        else if ( type == "fixed" )
+        else if ( type == eJointType::FIXED )
         {
             // fixed joints have 0dofs, as expected
-            nqpos = 0;
-            nqvel = 0;
+            data.nqpos = 0;
+            data.nqvel = 0;
         }
         else
         {
             std::cout << "ERROR> Joint with name: " << name << " has not supported type: " 
-                      << type << std::endl;
+                      << tysoc::toString( type ) << std::endl;
         }
     }
 
@@ -161,318 +168,232 @@ namespace agent {
     TKinTreeActuator::TKinTreeActuator()
     {
         name        = "undefined";
-        type        = "motor";
-        jointPtr    = NULL;
-        minCtrl     = -1.0;
-        maxCtrl     = 1.0;
-        ctrlValue   = 0.0;
-        gear        = { 1, { 1.0 } };
-        kp          = 1.0;
-        kv          = 1.0;
-        clampCtrl   = true;
+        data.type   = eActuatorType::TORQUE;
+        data.limits = { -1.0, 1.0f };
+        data.gear   = { 1, { 1.0 } };
+        data.kp     = 1.0f;
+        data.kv     = 1.0f;
+        ctrlValue   = 0.0f;
+        jointPtr    = nullptr;
     }
 
-    //------------------------to-string herlpers------------------------------//
+    //------------------------to-string helpers-------------------------------//
 
     std::string toString( TKinTreeBody* kinTreeBodyPtr )
     {
         if ( !kinTreeBodyPtr )
-            return std::string( "\tbodyName: NULL\n\r" );
+            return std::string( "\tBody.name             : nullptr\n\r" );
 
-        std::string _res;
+        std::string _strRep;
 
-        _res += std::string( "\tbodyName: " ) + 
-                kinTreeBodyPtr->name + 
-                std::string( "\n\r" );
-
-        _res += std::string( "\tbodyRelTransform: " ) +
-                TMat4::toString( kinTreeBodyPtr->relTransform ) +
-                std::string( "\n\r" );
-
-        if ( kinTreeBodyPtr->inertiaPtr )
-        {
-            _res += std::string( "\tbodyMass: " ) + 
-                    std::to_string( kinTreeBodyPtr->inertiaPtr->mass ) +
-                    std::string( "\n\r" );
-
-            auto _inertiaMat = TMat3( kinTreeBodyPtr->inertiaPtr->ixx,
-                                      kinTreeBodyPtr->inertiaPtr->ixy,
-                                      kinTreeBodyPtr->inertiaPtr->ixz,
-                                      kinTreeBodyPtr->inertiaPtr->ixy,
-                                      kinTreeBodyPtr->inertiaPtr->iyy,
-                                      kinTreeBodyPtr->inertiaPtr->iyz,
-                                      kinTreeBodyPtr->inertiaPtr->ixz,
-                                      kinTreeBodyPtr->inertiaPtr->iyz,
-                                      kinTreeBodyPtr->inertiaPtr->izz );
-
-            _res += std::string( "\tbodyInertia: " ) + 
-                    TMat3::toString( _inertiaMat ) +
-                    std::string( "\n\r" );
-
-            _res += std::string( "\tbodyInertiaRelFrame: " ) +
-                    TMat4::toString( kinTreeBodyPtr->inertiaPtr->relTransform ) +
-                    std::string( "\n\r" );
-        }
+        _strRep += std::string( "\tBody.name                : " ) + kinTreeBodyPtr->name + "\n\r";
+        _strRep += std::string( "\tBody.mass                : " ) + std::to_string( kinTreeBodyPtr->inertialData.mass ) + "\n\r";
+        _strRep += std::string( "\tBody.ixx                 : " ) + std::to_string( kinTreeBodyPtr->inertialData.ixx ) + "\n\r";
+        _strRep += std::string( "\tBody.ixy                 : " ) + std::to_string( kinTreeBodyPtr->inertialData.ixy ) + "\n\r";
+        _strRep += std::string( "\tBody.ixz                 : " ) + std::to_string( kinTreeBodyPtr->inertialData.ixz ) + "\n\r";
+        _strRep += std::string( "\tBody.iyy                 : " ) + std::to_string( kinTreeBodyPtr->inertialData.iyy ) + "\n\r";
+        _strRep += std::string( "\tBody.iyz                 : " ) + std::to_string( kinTreeBodyPtr->inertialData.iyz ) + "\n\r";
+        _strRep += std::string( "\tBody.izz                 : " ) + std::to_string( kinTreeBodyPtr->inertialData.izz ) + "\n\r";
+        _strRep += std::string( "\tBody.inertiaFrame        : " ) + TMat4::toString( kinTreeBodyPtr->inertialData.localTransform ) + "\n\r";
 
         if ( kinTreeBodyPtr->parentBodyPtr )
-        {
-            _res += std::string( "\tbodyParentBody: " ) +
-                    kinTreeBodyPtr->parentBodyPtr->name +
-                    std::string( "\n\r" );
-        }
+            _strRep += std::string( "\tBody.parentBody          : " ) + kinTreeBodyPtr->parentBodyPtr->name + "\n\r";
         else
-        {
-            _res += std::string( "\tbodyParentBody: NULL\n\r" );
-        }
+            _strRep += std::string( "\tBody.parentBody          : nullptr\n\r" );
 
-        _res += std::string( "\tbodyChildVisuals: " );
-        for ( size_t j = 0; j < kinTreeBodyPtr->childVisuals.size(); j++ )
-        {
-            _res += kinTreeBodyPtr->childVisuals[j]->name + 
-                    ( ( j != ( kinTreeBodyPtr->childVisuals.size() - 1 ) ) ? 
-                                std::string( ", " ) : std::string( "" ) );
-        }
-        _res += std::string( "\n\r" );
+        _strRep += std::string( "\tVisuals                  : " );
+        for ( auto _visual : kinTreeBodyPtr->visuals )
+            _strRep += ( _visual ) ? ( _visual->name + " | " ) : ( "nullptr | " );
+        _strRep += std::string( "\n\r" );
 
-        _res += std::string( "\tbodyChildCollisions: " );
-        for ( size_t j = 0; j < kinTreeBodyPtr->childCollisions.size(); j++ )
-        {
-            _res += kinTreeBodyPtr->childCollisions[j]->name + 
-                    ( ( j != ( kinTreeBodyPtr->childCollisions.size() - 1 ) ) ? 
-                                std::string( ", " ) : std::string( "" ) );
-        }
-        _res += std::string( "\n\r" );
+        _strRep += std::string( "\tCollisions               : " );
+        for ( auto _collision : kinTreeBodyPtr->collisions )
+            _strRep += ( _collision ) ? ( _collision->name + " | " ) : ( "nullptr | " );
+        _strRep += std::string( "\n\r" );
 
-        _res += std::string( "\tbodyChildJoints: " );
-        for ( size_t j = 0; j < kinTreeBodyPtr->childJoints.size(); j++ )
-        {
-            _res += kinTreeBodyPtr->childJoints[j]->name + 
-                    ( ( j != ( kinTreeBodyPtr->childJoints.size() - 1 ) ) ? 
-                                std::string( ", " ) : std::string( "" ) );
-        }
-        _res += std::string( "\n\r" );
+        _strRep += std::string( "\tJoints                   : " );
+        for ( auto _joint : kinTreeBodyPtr->joints )
+            _strRep += ( _joint ) ? ( _joint->name + " | " ) : ( "nullptr | " );
+        _strRep += std::string( "\n\r" );
 
-        return _res;
+        _strRep += std::string( "\tBody.localTransformZero  : " ) + TMat4::toString( kinTreeBodyPtr->localTransformZero ) + "\n\r";
+        _strRep += std::string( "\tBody.worldTransform      : " ) + TMat4::toString( kinTreeBodyPtr->worldTransform ) + "\n\r";
+
+        return _strRep;
     }
 
     std::string toString( TKinTreeJoint* kinTreeJointPtr )
     {
         if ( !kinTreeJointPtr )
-            return std::string( "\tjoint.name: NULL\n\r" );
+            return std::string( "\tJoint.name                   : nullptr\n\r" );
 
-        std::string _res;
+        std::string _strRep;
 
-        _res += std::string( "\tjoint.Name: " ) +
-                kinTreeJointPtr->name + 
-                std::string( "\n\r" );
+        _strRep += std::string( "\tJoint.name                   : " ) + kinTreeJointPtr->name + "\n\r";
+        _strRep += std::string( "\tJoint.type                   : " ) + tysoc::toString( kinTreeJointPtr->data.type ) + "\n\r";
+        _strRep += std::string( "\tjoint.axis                   : " ) + TVec3::toString( kinTreeJointPtr->data.axis ) + "\n\r";
+        _strRep += std::string( "\tJoint.limits                 : " ) + TVec2::toString( kinTreeJointPtr->data.limits ) + "\n\r";
+        _strRep += std::string( "\tJoint.stiffness              : " ) + std::to_string( kinTreeJointPtr->data.stiffness ) + "\n\r";
+        _strRep += std::string( "\tJoint.armature               : " ) + std::to_string( kinTreeJointPtr->data.armature ) + "\n\r";
+        _strRep += std::string( "\tJoint.damping                : " ) + std::to_string( kinTreeJointPtr->data.damping ) + "\n\r";
+        _strRep += std::string( "\tJoint.ref                    : " ) + std::to_string( kinTreeJointPtr->data.ref ) + "\n\r";
+        _strRep += std::string( "\tJoint.nqpos                  : " ) + std::to_string( kinTreeJointPtr->data.nqpos ) + "\n\r";
+        _strRep += std::string( "\tJoint.nqvel                  : " ) + std::to_string( kinTreeJointPtr->data.nqvel ) + "\n\r";
+        _strRep += std::string( "\tJoint.localTransform         : \n\r" ) + TMat4::toString( kinTreeJointPtr->data.localTransform ) +  "\n\r";
 
-        _res += std::string( "\tjoint.Type: " ) +
-                kinTreeJointPtr->type + 
-                std::string( "\n\r" );
+        _strRep += std::string( "\tJoint.qpos                   : |");
+        for ( auto _qpos_i : kinTreeJointPtr->qpos )
+            _strRep += std::to_string( _qpos_i ) + " | ";
+        _strRep += std::string( "\n\r" );
 
-        _res += std::string( "\tjoint.Axis: " ) +
-                TVec3::toString( kinTreeJointPtr->axis ) + 
-                std::string( "\n\r" );
+        _strRep += std::string( "\tJoint.qvel                   : |");
+        for ( auto _qvel_i : kinTreeJointPtr->qvel )
+            _strRep += std::to_string( _qvel_i ) + " | ";
+        _strRep += std::string( "\n\r" );
 
-        _res += std::string( "\tjoint.RelTransform: " ) +
-                TMat4::toString( kinTreeJointPtr->relTransform ) + 
-                std::string( "\n\r" );
+        _strRep += std::string( "\tJoint.qpos0                  : |");
+        for ( auto _qpos0_i : kinTreeJointPtr->qpos0 )
+            _strRep += std::to_string( _qpos0_i ) + " | ";
+        _strRep += std::string( "\n\r" );
+
+        _strRep += std::string( "\tJoint.qvel0                  : |");
+        for ( auto _qvel0_i : kinTreeJointPtr->qvel0 )
+            _strRep += std::to_string( _qvel0_i ) + " | ";
+        _strRep += std::string( "\n\r" );
 
         if ( kinTreeJointPtr->parentBodyPtr )
-        {
-            _res += std::string( "\tjoint.ParentBody: " ) +
-                    kinTreeJointPtr->parentBodyPtr->name +
-                    std::string( "\n\r" );
-        }
+            _strRep += std::string( "\tJoint.ParentBody             : " ) + kinTreeJointPtr->parentBodyPtr->name + "\n\r";
         else
-        {
-            _res += std::string( "\tjoint.ParentBody: NULL\n\r" );
-        }
+            _strRep += std::string( "\tJoint.ParentBody             : nullptr\n\r" );
 
-        _res += std::string( "\tjoint.lowerLimit: " ) +
-                std::to_string( kinTreeJointPtr->lowerLimit ) +
-                std::string( "\n\r" );
+        _strRep += std::string( "\tJoint.worldTransform         : " ) + TMat4::toString( kinTreeJointPtr->worldTransform ) + "\n\r";
 
-        _res += std::string( "\tjoint.upperLimit: " ) +
-                std::to_string( kinTreeJointPtr->upperLimit ) +
-                std::string( "\n\r" );
-
-        _res += std::string( "\tjoint.limited: " ) +
-                std::string( ( kinTreeJointPtr->limited ) ? "true" : "false" ) +
-                std::string( "\n\r" );
-
-        return _res;
+        return _strRep;
     }
 
     std::string toString( TKinTreeCollision* kinTreeCollisionPtr )
     {
         if ( !kinTreeCollisionPtr )
-            return std::string( "\tcollision.Name: NULL\n\r" );
+            return std::string( "\tCollision.name   : nullptr\n\r" );
 
-        std::string _res;
+        std::string _strRep;
 
-        _res += std::string( "\tcollision.Name: " ) +
-                kinTreeCollisionPtr->name + 
-                std::string( "\n\r" );
-
-        _res += std::string( "\tcollision.Type: " ) +
-                kinTreeCollisionPtr->geometry.type + 
-                std::string( "\n\r" );
-
-        _res += std::string( "\tcollision.MeshId: " ) +
-                kinTreeCollisionPtr->geometry.meshId + 
-                std::string( "\n\r" );
-
-        _res += std::string( "\tcollision.Filename: " ) +
-                kinTreeCollisionPtr->geometry.filename + 
-                std::string( "\n\r" );
-
-        _res += std::string( "\tcollision.Size: " ) +
-                TVec3::toString( kinTreeCollisionPtr->geometry.size ) + 
-                std::string( "\n\r" );
-
-        _res += std::string( "\tcollision.RelTransform: " ) +
-                TMat4::toString( kinTreeCollisionPtr->relTransform ) + 
-                std::string( "\n\r" );
+        _strRep += std::string( "\tCollision.name               : " ) + kinTreeCollisionPtr->name + "\n\r";
+        _strRep += std::string( "\tCollision.shape              : " ) + tysoc::toString( kinTreeCollisionPtr->data.type ) + "\n\r";
+        _strRep += std::string( "\tCollision.size               : " ) + TVec3::toString( kinTreeCollisionPtr->data.size ) + "\n\r";
+        _strRep += std::string( "\tCollision.filename           : " ) + kinTreeCollisionPtr->data.filename + "\n\r";
+        _strRep += std::string( "\tCollision.localTransform     : " ) + TMat4::toString( kinTreeCollisionPtr->data.localTransform ) + "\n\r";
+        _strRep += std::string( "\tCollision.collisionGroup     : " ) + std::to_string( kinTreeCollisionPtr->data.collisionGroup ) + "\n\r";
+        _strRep += std::string( "\tCollision.collisionMask      : " ) + std::to_string( kinTreeCollisionPtr->data.collisionMask ) + "\n\r";
+        _strRep += std::string( "\tCollision.friction           : " ) + TVec3::toString( kinTreeCollisionPtr->data.friction ) + "\n\r";
+        _strRep += std::string( "\tCollision.density            : " ) + std::to_string( kinTreeCollisionPtr->data.density ) + "\n\r";
 
         if ( kinTreeCollisionPtr->parentBodyPtr )
-        {
-            _res += std::string( "\tcollision.ParentBody: " ) +
-                    kinTreeCollisionPtr->parentBodyPtr->name +
-                    std::string( "\n\r" );
-        }
+            _strRep += std::string( "\tCollision.parentBody         : " ) + kinTreeCollisionPtr->parentBodyPtr->name + "\n\r";
         else
-        {
-            _res += std::string( "\tcollision.ParentBody: NULL\n\r" );
-        }
+            _strRep += std::string( "\tCollision.parentBody         : nullptr\n\r" );
 
-        return _res;
+        _strRep += std::string( "\tCollision.worldTransform     : " ) + TMat4::toString( kinTreeCollisionPtr->worldTransform ) + "\n\r";
+
+        return _strRep;
     }
 
     std::string toString( TKinTreeVisual* kinTreeVisualPtr )
     {
         if ( !kinTreeVisualPtr )
-            return std::string( "\tvisual.name: NULL\n\r" );
+            return std::string( "\tVisual.name  : nullptr\n\r" );
 
-        std::string _res;
+        std::string _strRep;
 
-        _res += std::string( "\tvisual.Name: " ) +
-                kinTreeVisualPtr->name + 
-                std::string( "\n\r" );
-
-        _res += std::string( "\tvisual.Type: " ) +
-                kinTreeVisualPtr->geometry.type + 
-                std::string( "\n\r" );
-
-        _res += std::string( "\tvisual.MeshId: " ) +
-                kinTreeVisualPtr->geometry.meshId + 
-                std::string( "\n\r" );
-
-        _res += std::string( "\tvisual.Filename: " ) +
-                kinTreeVisualPtr->geometry.filename + 
-                std::string( "\n\r" );
-
-        _res += std::string( "\tvisual.Size: " ) +
-                TVec3::toString( kinTreeVisualPtr->geometry.size ) + 
-                std::string( "\n\r" );
-
-        _res += std::string( "\tvisual.RelTransform: " ) +
-                TMat4::toString( kinTreeVisualPtr->relTransform ) + 
-                std::string( "\n\r" );
+        _strRep += std::string( "\tVisual.name              : " ) + kinTreeVisualPtr->name + "\n\r";
+        _strRep += std::string( "\tVisual.shape             : " ) + tysoc::toString( kinTreeVisualPtr->data.type ) + "\n\r";
+        _strRep += std::string( "\tVisual.size              : " ) + TVec3::toString( kinTreeVisualPtr->data.size ) + "\n\r";
+        _strRep += std::string( "\tVisual.filename          : " ) + kinTreeVisualPtr->data.filename + "\n\r";
+        _strRep += std::string( "\tVisual.localTransform    : " ) + TMat4::toString( kinTreeVisualPtr->data.localTransform ) + "\n\r";
+        _strRep += std::string( "\tVisual.ambient           : " ) + TVec3::toString( kinTreeVisualPtr->data.ambient ) + "\n\r";
+        _strRep += std::string( "\tVisual.diffuse           : " ) + TVec3::toString( kinTreeVisualPtr->data.diffuse ) + "\n\r";
+        _strRep += std::string( "\tVisual.specular          : " ) + TVec3::toString( kinTreeVisualPtr->data.specular ) + "\n\r";
+        _strRep += std::string( "\tVisual.shininess         : " ) + std::to_string( kinTreeVisualPtr->data.shininess ) + "\n\r";
+        _strRep += std::string( "\tVisual.texture           : " ) + kinTreeVisualPtr->data.texture + "\n\r";
 
         if ( kinTreeVisualPtr->parentBodyPtr )
-        {
-            _res += std::string( "\tvisual.ParentBody: " ) +
-                    kinTreeVisualPtr->parentBodyPtr->name +
-                    std::string( "\n\r" );
-        }
+            _strRep += std::string( "\tVisual.parentBody        : " ) + kinTreeVisualPtr->parentBodyPtr->name + "\n\r";
         else
-        {
-            _res += std::string( "\tvisual.ParentBody: NULL\n\r" );
-        }
+            _strRep += std::string( "\tVisual.parentBody        : nullptr\n\r" );
 
-        return _res;
+        _strRep += std::string( "\tVisual.worldTransform    : " ) + TMat4::toString( kinTreeVisualPtr->worldTransform ) + "\n\r";
+
+        return _strRep;
     }
 
     std::string toString( TKinTreeSensor* kinTreeSensorPtr )
     {
         if ( !kinTreeSensorPtr )
-            return std::string( "\tsensor.Name: NULL\n\r" );
+            return std::string( "\tSensor.name  : nullptr\n\r" );
 
-        std::string _res;
+        std::string _strRep;
 
-        _res += std::string( "\tsensor.Name: " ) +
-                kinTreeSensorPtr->name + 
-                std::string( "\n\r" );
+        _strRep += std::string( "\tSensor.name                  : " ) + kinTreeSensorPtr->name + "\n\r";
+        _strRep += std::string( "\tSensor.type                  : " ) + tysoc::toString( kinTreeSensorPtr->data.type ) + "\n\r";
+        _strRep += std::string( "\tSensor.localTransform        : " ) + TMat4::toString( kinTreeSensorPtr->data.localTransform ) + "\n\r";
 
-        _res += std::string( "\tsensor.Type: " ) +
-                kinTreeSensorPtr->type + 
-                std::string( "\n\r" );
-
+        _strRep += std::string( "\tSensor.bodyName              : " ) + kinTreeSensorPtr->bodyName + "\n\r";
         if ( kinTreeSensorPtr->bodyPtr )
-        {
-            _res += std::string( "\tsensor.ParentBody: " ) +
-                    kinTreeSensorPtr->bodyPtr->name +
-                    std::string( "\n\r" );
-        }
+            _strRep += std::string( "\tSensor.bodyPtr               : " ) + kinTreeSensorPtr->bodyPtr->name + "\n\r";
         else
-        {
-            _res += std::string( "\tsensor.ParentBody: NULL\n\r" );
-        }
+            _strRep += std::string( "\tSensor.bodyPtr               : nullptr\n\r" );
 
+        _strRep += std::string( "\tSensor.jointName             : " ) + kinTreeSensorPtr->jointName + "\n\r";
         if ( kinTreeSensorPtr->jointPtr )
-        {
-            _res += std::string( "\tsensor.ChildBody: " ) +
-                    kinTreeSensorPtr->jointPtr->name +
-                    std::string( "\n\r" );
-        }
+            _strRep += std::string( "\tSensor.jointPtr              : " ) + kinTreeSensorPtr->jointPtr->name + "\n\r";
         else
+            _strRep += std::string( "\tSensor.jointPtr              : nullptr\n\r" );
+
+        if ( kinTreeSensorPtr->data.type == eSensorType::PROP_JOINT )
         {
-            _res += std::string( "\tsensor.ChildBody: NULL\n\r" );
+            _strRep += std::string( "\tSensor.theta                 : " ) + std::to_string( dynamic_cast< TKinTreeJointSensor* >( kinTreeSensorPtr )->theta ) + "\n\r";
+            _strRep += std::string( "\tSensor.thetadot              : " ) + std::to_string( dynamic_cast< TKinTreeJointSensor* >( kinTreeSensorPtr )->thetadot ) + "\n\r";
+        }
+        else if ( kinTreeSensorPtr->data.type == eSensorType::PROP_BODY )
+        {
+            _strRep += std::string( "\tSensor.linVelocity           : " ) + TVec3::toString( dynamic_cast< TKinTreeBodySensor* >( kinTreeSensorPtr )->linVelocity ) + "\n\r";
+            _strRep += std::string( "\tSensor.linAcceleration       : " ) + TVec3::toString( dynamic_cast< TKinTreeBodySensor* >( kinTreeSensorPtr )->linAcceleration ) + "\n\r";
+            _strRep += std::string( "\tSensor.comForce              : " ) + TVec3::toString( dynamic_cast< TKinTreeBodySensor* >( kinTreeSensorPtr )->comForce ) + "\n\r";
+            _strRep += std::string( "\tSensor.comTorque             : " ) + TVec3::toString( dynamic_cast< TKinTreeBodySensor* >( kinTreeSensorPtr )->comTorque ) + "\n\r";
         }
 
-        return _res;
+        // @todo: add extra logging for other sensor-types as well
+        // ...
+
+        _strRep += std::string( "\tSensor.worldTransform        : " ) + TMat4::toString( kinTreeSensorPtr->worldTransform ) + "\n\r";
+
+        return _strRep;
     }
 
     std::string toString( TKinTreeActuator* kinTreeActuatorPtr )
     {
         if ( !kinTreeActuatorPtr )
-            return std::string( "\tactuator.Name: NULL\n\r" );
+            return std::string( "\tActuator.name    : nullptr\n\r" );
 
-        std::string _res;
+        std::string _strRep;
 
-        _res += std::string( "\tactuator.Name: " ) +
-                kinTreeActuatorPtr->name + 
-                std::string( "\n\r" );
-
-        _res += std::string( "\tactuator.Type: " ) +
-                kinTreeActuatorPtr->type + 
-                std::string( "\n\r" );
-
-        _res += std::string( "\tactuator.RelTransform: " ) +
-                TMat4::toString( kinTreeActuatorPtr->relTransform ) + 
-                std::string( "\n\r" );
-
-        _res += std::string( "\tactuator.minCtrl: " ) +
-                std::to_string( kinTreeActuatorPtr->minCtrl ) +
-                std::string( "\n\r" );
-
-        _res += std::string( "\tactuator.maxCtrl: " ) +
-                std::to_string( kinTreeActuatorPtr->maxCtrl ) +
-                std::string( "\n\r" );
+        _strRep += std::string( "\tActuator.name            : " ) + kinTreeActuatorPtr->name +  "\n\r";
+        _strRep += std::string( "\tActuator.type            : " ) + tysoc::toString( kinTreeActuatorPtr->data.type ) + "\n\r";
+        _strRep += std::string( "\tActuator.limits          : " ) + TVec2::toString( kinTreeActuatorPtr->data.limits ) + "\n\r";
+        _strRep += std::string( "\tActuator.gear            : [" ) + tysoc::toString( kinTreeActuatorPtr->data.gear ) + "]\n\r";
+        _strRep += std::string( "\tActuator.kp              : " ) + std::to_string( kinTreeActuatorPtr->data.kp ) + "\n\r";
+        _strRep += std::string( "\tActuator.kv              : " ) + std::to_string( kinTreeActuatorPtr->data.kv ) + "\n\r";
+        _strRep += std::string( "\tActuator.localTransform  : " ) + TMat4::toString( kinTreeActuatorPtr->data.localTransform ) + "\n\r";
+        _strRep += std::string( "\tActuator.ctrlValue       : " ) + std::to_string( kinTreeActuatorPtr->ctrlValue ) + "\n\r";
 
         if ( kinTreeActuatorPtr->jointPtr )
-        {
-            _res += std::string( "\tactuator.ChildBody: " ) +
-                    kinTreeActuatorPtr->jointPtr->name +
-                    std::string( "\n\r" );
-        }
+            _strRep += std::string( "\tActuator.jointPtr        : " ) + kinTreeActuatorPtr->jointPtr->name + "\n\r";
         else
-        {
-            _res += std::string( "\tactuator.ChildBody: NULL\n\r" );
-        }
+            _strRep += std::string( "\tActuator.jointPtr        : nullptr\n\r" );
 
-        return _res;
+        _strRep += std::string( "\tActuator.worldTransform  : " ) + TMat4::toString( kinTreeActuatorPtr->worldTransform ) + "\n\r";
+
+        return _strRep;
     }
 
 }}

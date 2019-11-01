@@ -3,39 +3,27 @@
 
 #include <agent/agent.h>
 #include <terrain/terrain.h>
+#include <components/data.h>
 
 namespace tysoc {
 namespace sensor {
-
-    const std::string SENSOR_TYPE_INTRINSICS          = "intrinsics";
-    const std::string SENSOR_TYPE_EXTRINSICS_TERRAIN  = "extrinsics_terrain";
-
 
     /**
     * Base sensor measurement
     */
     struct TISensorMeasurement
     {
-        std::string type;
+        eSensorType type;
     };
-
 
     class TISensor
     {
 
-        protected :
-        
-        std::string m_name;
-        std::string m_type;
-
-        public :
+    public :
 
         TISensor( const std::string& name );
         
         virtual ~TISensor();
-
-        std::string name();
-        std::string type();
 
         /**
         * Should update measurements here, given specific resources
@@ -51,6 +39,14 @@ namespace sensor {
         * Collects the polymorphic sensor measurement
         */
         virtual TISensorMeasurement* getSensorMeasurement() = 0;
+
+        std::string name() const { return m_name; }
+        eSensorType type() const { return m_type; }
+
+    protected :
+        
+        std::string m_name;
+        eSensorType m_type;
     };
 
     

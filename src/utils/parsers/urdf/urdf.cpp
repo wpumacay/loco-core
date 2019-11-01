@@ -5,7 +5,7 @@
 namespace tysoc {
 namespace urdf {
 
-    std::map< std::string, UrdfMaterial* > UrdfMaterial::MATERIALS;
+    std::map< std::string, UrdfMaterial > UrdfMaterial::MATERIALS;
 
     UrdfModel* loadGenericModel( const std::string& modelfile )
     {
@@ -17,14 +17,14 @@ namespace urdf {
             parsing::logError( _doc.ErrorStr() );
             _doc.Clear();
 
-            return NULL;
+            return nullptr;
         }
 
         auto _robotElement = _doc.FirstChildElement( "robot" );
         if ( !_robotElement )
         {
             parsing::logError( "expected a robot element" );
-            return NULL;
+            return nullptr;
         }
 
         // Define some general settings to fix model discrepancies
@@ -60,20 +60,10 @@ namespace urdf {
             _urdfLink->collectAttribs( _linkElement, _worldUp );
 
             // cache this link for later initialization
-            if ( _urdfModel->links.find( _urdfLink->name ) !=
-                 _urdfModel->links.end() )
-            {
-                std::string _msg;
-                _msg += "Link with name: ";
-                _msg += _urdfLink->name + " ";
-                _msg += "already exists!";
-
-                parsing::logError( _msg );
-            }
+            if ( _urdfModel->links.find( _urdfLink->name ) != _urdfModel->links.end() )
+                parsing::logError( std::string( "Link with name: " ) + _urdfLink->name + "already exists" );
             else
-            {
-                _urdfModel->links[ _urdfLink->name ] = _urdfLink;
-            }
+                _urdfModel->links[_urdfLink->name] = _urdfLink;
         }
 
         // Get all Joint elements
@@ -86,20 +76,10 @@ namespace urdf {
             _urdfJoint->collectAttribs( _jointElement, _worldUp );
 
             // cache this joint for later initialization
-            if ( _urdfModel->joints.find( _urdfJoint->name ) !=
-                 _urdfModel->joints.end() )
-            {
-                std::string _msg;
-                _msg += "Joint with name: ";
-                _msg += _urdfJoint->name + " ";
-                _msg += "already exists!";
-
-                parsing::logError( _msg );
-            }
+            if ( _urdfModel->joints.find( _urdfJoint->name ) != _urdfModel->joints.end() )
+                parsing::logError( std::string( "Joint with name: " ) + _urdfJoint->name + " already exists" );
             else
-            {
-                _urdfModel->joints[ _urdfJoint->name ] = _urdfJoint;
-            }
+                _urdfModel->joints[_urdfJoint->name] = _urdfJoint;
         }
 
         // Get all exclusion elements
@@ -118,9 +98,7 @@ namespace urdf {
         }
 
         if ( !_initTreeAndRoot( _urdfModel ) )
-        {
-            return NULL;
-        }
+            return nullptr;
 
         // Copy the materials cache into this model
         _urdfModel->materials = UrdfMaterial::MATERIALS;
@@ -131,20 +109,17 @@ namespace urdf {
     bool _initTreeAndRoot( UrdfModel* urdfModelPtr )
     {
         // loop through all joints, for every link, assign children links and children joints
-        for ( auto it = urdfModelPtr->joints.begin(); 
-                   it != urdfModelPtr->joints.end(); 
-                   it++ )
+        for ( auto pair : urdfModelPtr->joints )
         {
-            auto _jointPtr = it->second;
+            auto _jointPtr = pair.second;
 
             if ( _jointPtr )
             {
-                UrdfLink* _childLink = NULL;
+                UrdfLink* _childLink = nullptr;
 
-                if ( urdfModelPtr->links.find( _jointPtr->childLinkName ) !=
-                     urdfModelPtr->links.end() )
+                if ( urdfModelPtr->links.find( _jointPtr->childLinkName ) != urdfModelPtr->links.end() )
                 {
-                    _childLink = urdfModelPtr->links[ _jointPtr->childLinkName ];
+                    _childLink = urdfModelPtr->links[_jointPtr->childLinkName];
                 }
                 else
                 {
@@ -160,16 +135,15 @@ namespace urdf {
                 if ( _jointPtr->type == "world" )
                 {
                     _childLink->parentJoint = _jointPtr;
-                    _childLink->parentLink  = NULL;
+                    _childLink->parentLink  = nullptr;
                     continue;
                 }
 
-                UrdfLink* _parentLink = NULL;
+                UrdfLink* _parentLink = nullptr;
                 
-                if ( urdfModelPtr->links.find( _jointPtr->parentLinkName ) !=
-                     urdfModelPtr->links.end() )
+                if ( urdfModelPtr->links.find( _jointPtr->parentLinkName ) != urdfModelPtr->links.end() )
                 {
-                    _parentLink = urdfModelPtr->links[ _jointPtr->parentLinkName ];
+                    _parentLink = urdfModelPtr->links[_jointPtr->parentLinkName];
                 }
                 else
                 {
@@ -187,32 +161,22 @@ namespace urdf {
                 // Skip if trying to connect to the WORLD
                 if ( _jointPtr->parentLinkName != "WORLD" )
                 {
-                    _parentLink->childJoints.push_back( _jointPtr );
-                    _parentLink->childLinks.push_back( _childLink );
+                    _parentLink->joints.push_back( _jointPtr );
+                    _parentLink->children.push_back( _childLink );
                 }
             }
         }
 
         //search for children that have no parent, those are 'root'
-        for ( auto it = urdfModelPtr->links.begin(); 
-                   it != urdfModelPtr->links.end(); 
-                   it++ )
+        for ( auto pair : urdfModelPtr->links )
         {
-            auto _linkPtr = it->second;
-
-            if ( _linkPtr )
-            {
-                if ( !_linkPtr->parentLink )
-                {
+            auto _linkPtr = pair.second;
+            if ( _linkPtr && !_linkPtr->parentLink )
                     urdfModelPtr->rootLinks.push_back( _linkPtr );
-                }
-            }
         }
 
         if ( urdfModelPtr->rootLinks.size() > 1 )
-        {
             parsing::logWarning( "URDF file with multiple root links found" );
-        }
 
         if ( urdfModelPtr->rootLinks.size() == 0 )
         {
@@ -230,56 +194,43 @@ namespace urdf {
         target->name = agentName;
 
         // Create materials from dictionary of material in the source model
-        for ( auto it = source->materials.begin();
-                   it != source->materials.end();
-                   it++ )
+        for ( auto pair : source->materials )
         {
-            auto _targetMaterial = new UrdfMaterial();
-            auto _sourceMaterial = it->second;
-
-            // Just copy everything directly (no pointer references here)
-            *( _targetMaterial ) = *( _sourceMaterial );
-
+            // Just copy everything directly (there are no pointer references here)
+            UrdfMaterial _targetMaterial = pair.second;
             // and store it into the target's materials dictionary
-            target->materials[ _targetMaterial->name ] = _targetMaterial;
+            target->materials[_targetMaterial.name] = _targetMaterial;
         }
 
         // Create links from dictionary of links in the source model
-        for ( auto it = source->links.begin();
-                   it != source->links.end();
-                   it++ )
+        for ( auto pair : source->links )
         {
             auto _targetLink = new UrdfLink();
-            auto _sourceLink = it->second;
+            auto _sourceLink = pair.second;
 
             _deepCopyLink( _targetLink, _sourceLink, agentName );
 
             // and store it into the target's links dictionary
-            target->links[ _targetLink->name ] = _targetLink;
+            target->links[_targetLink->name] = _targetLink;
         }
 
         // Create joints from dictionary of joints in the source model
-        for ( auto it = source->joints.begin();
-                   it != source->joints.end();
-                   it++ )
+        for ( auto pair : source->joints )
         {
             auto _targetJoint = new UrdfJoint();
-            auto _sourceJoint = it->second;
+            auto _sourceJoint = pair.second;
 
             _deepCopyJoint( _targetJoint, _sourceJoint, agentName );
 
             // and store it into the target's joints dictionary
-            target->joints[ _targetJoint->name ] = _targetJoint;
+            target->joints[_targetJoint->name] = _targetJoint;
         }
 
         // Change the exclusion contact pairs names appropriately
-        for ( size_t q = 0; q < source->exclusionPairs.size(); q++ )
+        for ( auto pair : source->exclusionPairs )
         {
-            auto _name1 = source->exclusionPairs[q].first;
-            auto _name2 = source->exclusionPairs[q].second;
-
-            auto _newName1 = computeUrdfName( "link", _name1, agentName );
-            auto _newName2 = computeUrdfName( "link", _name2, agentName );
+            auto _newName1 = computeUrdfName( "link", pair.first, agentName );
+            auto _newName2 = computeUrdfName( "link", pair.second, agentName );
 
             target->exclusionPairs.push_back( std::make_pair( _newName1, _newName2 ) );
         }
@@ -297,57 +248,32 @@ namespace urdf {
                         const std::string& agentName )
     {
         // grab the name of the source accordingly
-        targetLink->name = computeUrdfName( "link",
-                                            sourceLink->name,
-                                            agentName );
+        targetLink->name = computeUrdfName( "link", sourceLink->name, agentName );
 
         // and the inertia
-        if ( sourceLink->inertia )
-        {
-            targetLink->inertia         = new UrdfInertia();
-            *( targetLink->inertia )    = *( sourceLink->inertia );
-        }
+        targetLink->inertia = sourceLink->inertia;
 
         // and the visuals
-        auto _visualsSource = sourceLink->visuals;
-        for ( size_t i = 0; i < _visualsSource.size(); i++ )
+        for ( auto _visualSource : sourceLink->visuals )
         {
-            auto _visualSource = _visualsSource[i];
-            auto _visualTarget = new UrdfVisual();
-
-            // grab the visual name accordingly
-            _visualTarget->name = computeUrdfName( "visual",
-                                                   _visualSource->name,
-                                                   agentName );
-
-            // and continue copyting everything else
-            _visualTarget->localTransform   = _visualSource->localTransform;
-            *( _visualTarget->material )    = *( _visualSource->material );
-            *( _visualTarget->geometry )    = *( _visualSource->geometry );
+            // copy everything from the source's visual
+            UrdfVisual _visualTarget = _visualSource;
+            // modify the visual name accordingly
+            _visualTarget.name = computeUrdfName( "visual", _visualSource.name, agentName );
 
             targetLink->visuals.push_back( _visualTarget );
-
             CURRENT_VISUALS_COUNTER++;
         }
 
         // and the collisions
-        auto _collisionsSource = sourceLink->collisions;
-        for ( size_t i = 0; i < _collisionsSource.size(); i++ )
+        for ( auto _collisionSource : sourceLink->collisions )
         {
-            auto _collisionSource = _collisionsSource[i];
-            auto _collisionTarget = new UrdfCollision();
-
-            // grab the collision name accordingly
-            _collisionTarget->name = computeUrdfName( "collision",
-                                                      _collisionSource->name,
-                                                      agentName );
-
-            // and continue copyting everything else
-            _collisionTarget->localTransform   = _collisionSource->localTransform;
-            *( _collisionTarget->geometry )    = *( _collisionSource->geometry );
+            // copy everything from the source's collision
+            UrdfCollision _collisionTarget = _collisionSource;
+            // modify the collision name accordingly
+            _collisionTarget.name = computeUrdfName( "collision", _collisionSource.name, agentName );
 
             targetLink->collisions.push_back( _collisionTarget );
-
             CURRENT_COLLISIONS_COUNTER++;
         }
     }
@@ -356,21 +282,13 @@ namespace urdf {
                          UrdfJoint* sourceJoint,
                          const std::string& agentName )
     {
-        // Firstly, copy everything directly (no pointer references here)
+        // Copy everything directly (no pointer references here)
         *( targetJoint ) = *( sourceJoint );
 
-        // and then modify some names accordingly (for generic/unique representation)
-        targetJoint->name = computeUrdfName( "joint",
-                                             sourceJoint->name,
-                                             agentName );
-
-        targetJoint->parentLinkName = computeUrdfName( "link",
-                                                       sourceJoint->parentLinkName,
-                                                       agentName );
-
-        targetJoint->childLinkName = computeUrdfName( "link",
-                                                      sourceJoint->childLinkName,
-                                                      agentName );
+        // modify some names accordingly (for generic/unique representation)
+        targetJoint->name = computeUrdfName( "joint", sourceJoint->name, agentName );
+        targetJoint->parentLinkName = computeUrdfName( "link", sourceJoint->parentLinkName, agentName );
+        targetJoint->childLinkName = computeUrdfName( "link", sourceJoint->childLinkName, agentName );
     }
 
     std::string computeUrdfName( const std::string& type, 

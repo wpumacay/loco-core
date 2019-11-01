@@ -9,10 +9,10 @@ namespace sensor {
                                                         agent::TAgent* agentPtr )
             : TISensor( name )
         {
-            m_type                      = SENSOR_TYPE_INTRINSICS;
+            m_type                      = eSensorType::PROP_JOINT;
             m_agentPtr                  = agentPtr;
             m_sensorMeasurement         = new TAgentIntrinsicsSensorMeasurement();
-            m_sensorMeasurement->type   = "AgentIntrinsicsMeasurement";
+            m_sensorMeasurement->type   = eSensorType::PROP_JOINT;
 
             // Take an initial measurement
             update();
@@ -80,22 +80,22 @@ namespace sensor {
             auto _kinSensors = m_agentPtr->sensors;
             for ( size_t i = 0; i < _kinSensors.size(); i++ )
             {
-                if ( _kinSensors[i]->type == "joint" )
+                if ( _kinSensors[i]->data.type == eSensorType::PROP_JOINT )
                 {
                     auto _kinJointSensor = reinterpret_cast< agent::TKinTreeJointSensor* >( _kinSensors[i] );
 
                     m_sensorMeasurement->thetas.push_back( _kinJointSensor->theta );
                     m_sensorMeasurement->thetadots.push_back( _kinJointSensor->thetadot );
                 }
-                else if ( _kinSensors[i]->type == "body" )
+                else if ( _kinSensors[i]->data.type == eSensorType::PROP_BODY )
                 {
                     auto _kinBodySensor = reinterpret_cast< agent::TKinTreeBodySensor* >( _kinSensors[i] );
 
                     m_sensorMeasurement->bodiesLinVelocities.push_back( _kinBodySensor->linVelocity );
                     m_sensorMeasurement->bodiesLinAccelerations.push_back( _kinBodySensor->linAcceleration );
 
-                    m_sensorMeasurement->comForces.push_back( _kinBodySensor->comForces );
-                    m_sensorMeasurement->comTorques.push_back( _kinBodySensor->comTorques );
+                    m_sensorMeasurement->comForces.push_back( _kinBodySensor->comForce );
+                    m_sensorMeasurement->comTorques.push_back( _kinBodySensor->comTorque );
                 }
             }
 
@@ -108,7 +108,7 @@ namespace sensor {
             std::cout << "*******************************************" << std::endl;
             std::cout << "---------------" << std::endl;
             std::cout << "sensor name: " << m_name << std::endl;
-            std::cout << "sensor type: " << m_type << std::endl;
+            std::cout << "sensor type: " << tysoc::toString( m_type ) << std::endl;
             std::cout << "---------------" << std::endl;
             std::cout << "sensor data: relative positions to COM" << std::endl;
 

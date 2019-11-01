@@ -1,70 +1,50 @@
 #pragma once
 
-#include <graphics/CMeshBuilder.h>
-#include <LScene.h>
-#include <LAssetsManager.h>
-
-#include <terrain/terrain_base.h>
-// some commom functionality
 #include <glviz_common.h>
+#include <terrain/terrain_base.h>
 
-#define VIZTERRAIN_AXES_DEFAULT_SIZE 0.1f
+// resources from rendering engine
+#include <graphics/CScene.h>
+#include <utils/CDebugDrawer.h>
+#include <assets/CTextureManager.h>
+
+using namespace tysoc::terrain;
 
 namespace tysoc {
 
-    struct TGLVizTerrainPrimitive
+    struct TGLTerrainDrawable
     {
-        engine::LModel*                 axesPtr;
-        engine::LIRenderable*           meshPtr;
-        terrain::TTerrainPrimitive*     terrainPrimitivePtr;
-    };
-
-    struct TGLVizTerrainDrawState
-    {
-        bool drawAsWireframe;
-        bool showFrameAxes;
-        bool showPrimitives;
-
-        TGLVizTerrainDrawState()
-        {
-            drawAsWireframe     = false;
-            showFrameAxes       = false;
-            showPrimitives      = true;
-        }
+        TVec3                   size;
+        TVec3                   size0;
+        TTerrainPrimitive*      primitive;
+        engine::CIRenderable*   renderable;
     };
 
     class TGLVizTerrainGenerator
     {
 
-        private :
-
-        engine::LScene*                 m_scenePtr;
-        terrain::TITerrainGenerator*    m_terrainGeneratorPtr;
-        std::string                     m_workingDir;
-
-        std::vector< TGLVizTerrainPrimitive > m_vizTerrainPrimitives;
-
-        void _collectTerrainPrimitives();
-
-        engine::LIRenderable* _createMeshPrimitive( terrain::TTerrainPrimitive* terrainPrimitivePtr );
-        engine::LIRenderable* _createMeshFromData( terrain::TTerrainPrimitive* terrainPrimitivePtr );
-
-        void _resizeMesh( engine::LIRenderable* renderablePtr, terrain::TTerrainPrimitive* terrainPrimitivePtr );
-        void _updateVizTerrainPrimitive( TGLVizTerrainPrimitive& vizTerrainPrimitivePtr );
-
-        public :
+    public :
 
         TGLVizTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr,
-                                    engine::LScene* scenePtr,
-                                    const std::string& workingDir );
+                                engine::CScene* scenePtr,
+                                const std::string& workingDir );
         ~TGLVizTerrainGenerator();
 
-        TGLVizTerrainDrawState drawState;
-
         void update();
-        terrain::TITerrainGenerator* getTerrainGeneratorPtr();
+
+    private :
+
+        void _collectTerrainPrimitives();
+        void _updateTerrainDrawable( TGLTerrainDrawable terrainDrawable );
+
+    private :
+
+        engine::CScene*         m_scenePtr;
+        TITerrainGenerator*     m_terrainGeneratorPtr;
+        std::string             m_workingDir;
+
+        std::vector< TGLTerrainDrawable > m_terrainDrawables;
 
     };
-
 
 }

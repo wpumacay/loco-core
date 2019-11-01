@@ -8,22 +8,15 @@ namespace tysoc {
     TIVisualizer::TIVisualizer( TScenario* scenarioPtr,
                                 const std::string& workingDir )
     {
-        m_uiPtr         = NULL;
         m_scenarioPtr   = scenarioPtr;
-        m_type          = "undefined";
         m_workingDir    = workingDir;
-        m_simulationPtr = NULL;
+        m_simulationPtr = nullptr;
     }
 
     TIVisualizer::~TIVisualizer()
     {
-        m_scenarioPtr = NULL;
-
-        if ( m_uiPtr )
-        {
-            delete m_uiPtr;
-            m_uiPtr = NULL;
-        }
+        m_scenarioPtr   = nullptr;
+        m_simulationPtr = nullptr;
     }
 
     void TIVisualizer::setScenario( TScenario* scenarioPtr )
@@ -34,9 +27,6 @@ namespace tysoc {
     void TIVisualizer::setSimulation( TISimulation* simulationPtr )
     {
         m_simulationPtr = simulationPtr;
-
-        if ( m_uiPtr )
-            m_uiPtr->setSimulation( simulationPtr );
     }
 
     bool TIVisualizer::initialize()
@@ -47,11 +37,6 @@ namespace tysoc {
     void TIVisualizer::update()
     {
         _updateInternal();
-    }
-
-    void TIVisualizer::renderUI()
-    {
-        _renderUIInternal();
     }
 
     bool TIVisualizer::isActive()
@@ -74,69 +59,59 @@ namespace tysoc {
                                   const TVec3& pos,
                                   const TMat3& rot )
     {
-        // create a new camera using the specific backend
-        auto _camera = _createCameraInternal( name, type, pos, rot );
-        if ( !_camera )
+        if ( m_cameras.find( name ) != m_cameras.end() )
         {
+            std::cout << "WARNING> Camera with name: " << name << " already exists" << std::endl;
             return;
         }
 
-        // add camera if not already there
-        if ( m_cameras.find( name ) != m_cameras.end() )
-        {
-            m_cameras[ name ] = _camera;
-        }
-        else
-        {
-            std::cout << "WARNING> Camera with name: " << name << " already exists" << std::endl;
-        }
+        // create a new camera using the specific backend
+        auto _camera = _createCameraInternal( name, type, pos, rot );
+        if ( !_camera )
+            return;
+
+        m_cameras[ name ] = _camera;
     }
 
     void TIVisualizer::changeToCamera( const std::string& name )
     {
-        if ( m_cameras.find( name ) != m_cameras.end() )
-        {
-            _changeToCameraInternal( m_cameras[ name ] );
-        }
-        else
+        if ( m_cameras.find( name ) == m_cameras.end() )
         {
             std::cout << "WARNING> Can't change to non-existent camera with name: " << name << std::endl;
+            return;
         }
+
+        _changeToCameraInternal( m_cameras[ name ] );
     }
 
     void TIVisualizer::grabCameraFrame( const std::string& name,
                                         TIVizTexture& rgbTexture,
                                         TIVizTexture& depthTexture )
     {
-        if ( m_cameras.find( name ) != m_cameras.end() )
-        {
-            _grabCameraFrameInternal( m_cameras[ name ], rgbTexture, depthTexture );
-        }
-        else
+        if ( m_cameras.find( name ) == m_cameras.end() )
         {
             std::cout << "WARNING> Can't grab data from non-existent camera with name: " << name << std::endl;
+            return;
         }
+
+        _grabCameraFrameInternal( m_cameras[ name ], rgbTexture, depthTexture );
     }
 
     void TIVisualizer::addLight( const std::string& name,
                                  const std::string& type,
                                  const TVec3& pos )
     {
-        auto _light = _createLightInternal( name, type, pos );
-        if ( !_light )
+        if ( m_lights.find( name ) != m_lights.end() )
         {
+            std::cout << "WARNING> Light with name: " << name << " already exists" << std::endl;
             return;
         }
 
-        // add light if not already there
-        if ( m_lights.find( name ) != m_lights.end() )
-        {
-            m_lights[ name ] = _light;
-        }
-        else
-        {
-            std::cout << "WARNING> Light with name: " << name << " already exists" << std::endl;
-        }
+        auto _light = _createLightInternal( name, type, pos );
+        if ( !_light )
+            return;
+
+        m_lights[ name ] = _light;
     }
 
     bool TIVisualizer::isKeyDown( int keyCode )
@@ -149,16 +124,6 @@ namespace tysoc {
     {
         int _keyCodeMapped = _remapKeyInternal( keyCode );
         return _checkSingleKeyPressInternal( _keyCodeMapped );
-    }
-
-    TIVisualizerUI* TIVisualizer::getUI()
-    {
-        return m_uiPtr;
-    }
-
-    std::string TIVisualizer::type()
-    {
-        return m_type;
     }
 
 }

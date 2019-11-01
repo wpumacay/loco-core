@@ -144,6 +144,13 @@ namespace tysoc
         buff[2] = m20; buff[5] = m21; buff[8] = m22;
     }
 
+    void TMat3::setIdentity()
+    {
+        buff[0] = 1; buff[3] = 0; buff[6] = 0;
+        buff[1] = 0; buff[4] = 1; buff[7] = 0;
+        buff[2] = 0; buff[5] = 0; buff[8] = 1;
+    }
+
     TMat3 TMat3::fromQuaternion( const TVec4& quat )
     {
         TScalar _qi = quat.x;
@@ -937,45 +944,6 @@ namespace tysoc
         }
 
         return _vec3s;
-    }
-
-    TScalar computeVolumeFromShape( const std::string& type,
-                                    const TVec3& size )
-    {
-        TScalar _volume;
-        TScalar _pi = 3.141592653589793;
-
-        if ( type == "box" )
-        {
-            _volume = ( size.x * size.y * size.z );
-        }
-        else if ( type == "sphere" )
-        {
-            _volume = (4. / 3.) * _pi * ( size.x * size.x * size.x );
-        }
-        else if ( type == "cylinder" )
-        {
-            auto _cylinderRadius = size.x;
-            auto _cylinderHeight = size.y;
-
-            _volume = ( _pi * _cylinderRadius * _cylinderRadius ) * _cylinderHeight;
-        }
-        else if ( type == "capsule" )
-        {
-            auto _capsuleRadius = size.x;
-            auto _capsuleHeight = size.y;
-
-            _volume = ( _pi * _capsuleRadius * _capsuleRadius ) * _capsuleHeight +
-                      (4. / 3.) * ( _pi * _capsuleRadius * _capsuleRadius * _capsuleRadius );
-        }
-        else
-        {
-            std::cout << "WARNING> unsupported type: " << type 
-                      << " for volume computation" << std::endl;
-            _volume = 0.1;
-        }
-
-        return _volume;
     }
 
     TVec3 rearrange( const TVec3& vec, const std::string& worldUp )

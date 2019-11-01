@@ -33,17 +33,16 @@ namespace terrain {
         // and the filename (meshfile or heightmap)
         _terrainPrimitivePtr->filename = filename;
         // and the size of the primitive
-        _terrainPrimitivePtr->size = { size.x, size.y, size.z };
+        _terrainPrimitivePtr->size = size;
         // also the position
-        _terrainPrimitivePtr->pos = { position.x, position.y, position.z };
+        _terrainPrimitivePtr->pos = position;
         // the rotation as well
-        for ( size_t i = 0; i < 9; i++ )
-            _terrainPrimitivePtr->rotmat[i] = rotation.buff[i];
+        _terrainPrimitivePtr->rotmat = rotation;
         // set it as already in use (unlike in-pool)
         _terrainPrimitivePtr->inUse = true;
         // force to use the color given from the user
         _terrainPrimitivePtr->useCustomColor = true;
-        _terrainPrimitivePtr->color = { rgb.x, rgb.y, rgb.z };
+        _terrainPrimitivePtr->color = rgb;
         // and a approx bound of the primitive (radius of a bounding sphere)
         _terrainPrimitivePtr->rbound = TVec3::length( size );
 

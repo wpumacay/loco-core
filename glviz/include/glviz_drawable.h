@@ -1,25 +1,17 @@
 #pragma once
 
 #include <glviz_common.h>
-
 #include <viz/drawable.h>
-
 #include <graphics/CMeshBuilder.h>
-#include <LScene.h>
-
-#define GLVIZ_DEFAULT_HFIELD_BASE 0.1f
 
 namespace tysoc {
-
-    engine::LIRenderable* createRenderable( const TShapeData& data );
 
     class TGLDrawable : public TIDrawable
     {
 
     public :
 
-        TGLDrawable( engine::LIRenderable* renderablePtr,
-                     const TShapeData& shapeData );
+        TGLDrawable( const TShapeData& shapeData );
 
         ~TGLDrawable();
 
@@ -47,20 +39,12 @@ namespace tysoc {
 
         bool isWireframe() override;
 
-        void recycle() override;
-
-        void reuse( const TShapeData& data );
-
-        engine::LIRenderable* renderable() { return m_renderablePtr; }
-
-        static TGLDrawable* CreateDrawable( const TShapeData& data );
-
-        static std::map< eShapeType, std::queue< TGLDrawable* > > m_shapesPool;
-        static std::map< eShapeType, int > m_numShapes;
+        engine::CIRenderable* renderable() { return m_renderablePtr; }
 
     private :
 
-        engine::LIRenderable* m_renderablePtr;
+        /* reference to the created renderable (not owned, scene owns it) */
+        engine::CIRenderable* m_renderablePtr;
 
         /* construction data of this drawable object */
         TShapeData m_data;

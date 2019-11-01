@@ -19,8 +19,8 @@ namespace urdf {
         // Check if the material has already been cached
         if ( UrdfMaterial::MATERIALS.find( this->name ) != UrdfMaterial::MATERIALS.end() )
         {
-            this->filename  = UrdfMaterial::MATERIALS[ this->name ]->filename;
-            this->color     = UrdfMaterial::MATERIALS[ this->name ]->color;
+            this->filename  = UrdfMaterial::MATERIALS[ this->name ].filename;
+            this->color     = UrdfMaterial::MATERIALS[ this->name ].color;
         }
         else
         {
@@ -34,7 +34,7 @@ namespace urdf {
             if ( _colorElement )
                 this->color = xml::safeParseVec4( _colorElement, "rgba" );
 
-            UrdfMaterial::MATERIALS[ this->name ] = this;
+            UrdfMaterial::MATERIALS[ this->name ] = *this;
         }
     }
 
@@ -97,63 +97,6 @@ namespace urdf {
         }
     }
 
-    void UrdfGeometry::collectAttribs( tinyxml2::XMLElement* xmlElement,
-                                       const std::string& worldUp )
-    {
-        auto _shapeElement = xmlElement->FirstChildElement();
-
-        if ( !_shapeElement )
-        {
-            parsing::logError( "Geometry tag contains no child element" );
-            return;
-        }
-
-        std::string _typeName = _shapeElement->Value();
-        if ( _typeName == "sphere" )
-        {
-            this->type      = "sphere";
-            this->size.x    = xml::safeParseFloat( _shapeElement, "radius" );
-        }
-        else if ( _typeName == "box" )
-        {
-            this->type  = "box";
-            this->size  = rearrange( xml::safeParseVec3( _shapeElement, "size" ), worldUp );
-        }
-        else if ( _typeName == "cylinder" )
-        {
-            this->type      = "cylinder";
-            this->size.x    = xml::safeParseFloat( _shapeElement, "radius" );
-            this->size.y    = xml::safeParseFloat( _shapeElement, "length" );
-        }
-        else if ( _typeName == "capsule" )
-        {
-            this->type      = "capsule";
-            this->size.x    = xml::safeParseFloat( _shapeElement, "radius" );
-            this->size.y    = xml::safeParseFloat( _shapeElement, "length" );
-        }
-        else if ( _typeName == "mesh" )
-        {
-            this->type      = "mesh";
-            this->size      = xml::safeParseVec3( _shapeElement, "scale", { 1, 1, 1 } );
-            this->filename  = xml::safeParseString( _shapeElement, "filename", "" );
-        }
-        else if ( _typeName == "plane" )
-        {
-            this->type      = "plane";
-            this->size.x    = xml::safeParseFloat( _shapeElement, "width", 1 );
-            this->size.y    = xml::safeParseFloat( _shapeElement, "depth", 1 );
-        }
-        else
-        {
-            std::string _msg;
-
-            _msg += "Unknown geometry type: ";
-            _msg += _typeName;
-
-            parsing::logError( _msg );
-        }
-    }
-
     void UrdfShape::collectAttribs( tinyxml2::XMLElement* xmlElement,
                                     const std::string& worldUp )
     {
@@ -173,7 +116,55 @@ namespace urdf {
         // Grab the geometry info
         auto _geometryElement = xmlElement->FirstChildElement( "geometry" );
         if ( _geometryElement )
-            this->geometry->collectAttribs( _geometryElement, worldUp );
+        {
+            auto _geometryDataElement = _geometryElement->FirstChildElement();
+
+            if ( !_geometryDataElement )
+            {
+                parsing::logError( "Geometry tag contains no child element with required geometry data" );
+                return;
+            }
+
+            std::string _typeName = _geometryDataElement->Value();
+            if ( _typeName == "sphere" )
+            {
+                this->type      = "sphere";
+                this->size.x    = xml::safeParseFloat( _geometryDataElement, "radius" );
+            }
+            else if ( _typeName == "box" )
+            {
+                this->type  = "box";
+                this->size  = rearrange( xml::safeParseVec3( _geometryDataElement, "size" ), worldUp );
+            }
+            else if ( _typeName == "cylinder" )
+            {
+                this->type      = "cylinder";
+                this->size.x    = xml::safeParseFloat( _geometryDataElement, "radius" );
+                this->size.y    = xml::safeParseFloat( _geometryDataElement, "length" );
+            }
+            else if ( _typeName == "capsule" )
+            {
+                this->type      = "capsule";
+                this->size.x    = xml::safeParseFloat( _geometryDataElement, "radius" );
+                this->size.y    = xml::safeParseFloat( _geometryDataElement, "length" );
+            }
+            else if ( _typeName == "mesh" )
+            {
+                this->type      = "mesh";
+                this->size      = xml::safeParseVec3( _geometryDataElement, "scale", { 1, 1, 1 } );
+                this->filename  = xml::safeParseString( _geometryDataElement, "filename", "" );
+            }
+            else if ( _typeName == "plane" )
+            {
+                this->type      = "plane";
+                this->size.x    = xml::safeParseFloat( _geometryDataElement, "width", 1 );
+                this->size.y    = xml::safeParseFloat( _geometryDataElement, "depth", 1 );
+            }
+            else
+            {
+                parsing::logError( std::string( "Unknown geometry type: " ) + _typeName );
+            }
+        }
     }
 
     void UrdfVisual::collectAttribs( tinyxml2::XMLElement* xmlElement,
@@ -187,7 +178,7 @@ namespace urdf {
         // Grab the material
         auto _materialElement = xmlElement->FirstChildElement( "material" );
         if ( _materialElement )
-            this->material->collectAttribs( _materialElement );
+            this->material.collectAttribs( _materialElement );
     }
 
     void UrdfCollision::collectAttribs( tinyxml2::XMLElement* xmlElement,
@@ -208,19 +199,15 @@ namespace urdf {
         // Inertial (optional)
         auto _inertialElement = xmlElement->FirstChildElement( "inertial" );
         if ( _inertialElement )
-        {
-            this->inertia = new UrdfInertia();
-            this->inertia->collectAttribs( _inertialElement, worldUp );
-        }
+            this->inertia.collectAttribs( _inertialElement, worldUp );
 
         // Multiple Visuals (optional)
         for ( auto _visualElement = xmlElement->FirstChildElement( "visual" ); 
                    _visualElement != NULL; 
                    _visualElement = _visualElement->NextSiblingElement( "visual" ) )
         {
-            auto _visual = new UrdfVisual();
-            _visual->collectAttribs( _visualElement, worldUp );
-            
+            UrdfVisual _visual;
+            _visual.collectAttribs( _visualElement, worldUp );
             this->visuals.push_back( _visual );
         }
 
@@ -229,9 +216,8 @@ namespace urdf {
                    _collisionElement != NULL; 
                    _collisionElement = _collisionElement->NextSiblingElement( "collision" ) )
         {
-            auto _collision = new UrdfCollision();
-            _collision->collectAttribs( _collisionElement, worldUp );
-
+            UrdfCollision _collision;
+            _collision.collectAttribs( _collisionElement, worldUp );
             this->collisions.push_back( _collision );
         }
     }

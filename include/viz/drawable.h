@@ -41,8 +41,6 @@ namespace tysoc {
 
         virtual bool isWireframe() = 0;
 
-        virtual void recycle() = 0;
-
     protected :
 
         /* current size of the drawable */

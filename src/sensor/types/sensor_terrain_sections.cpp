@@ -11,13 +11,13 @@ namespace sensor {
                                                     bool useComplement )
         : TISensor( name )
     {
-        m_type          = SENSOR_TYPE_EXTRINSICS_TERRAIN;
+        m_type          = eSensorType::EXT_HEIGHTFIELD_1D;
         m_agentPtr      = agentPtr;
         m_terrainGenPtr = terrainGenPtr;
         m_useComplement = useComplement;
 
         m_sensorMeasurement = new TSectionsTerrainSensorMeasurement();
-        m_sensorMeasurement->type = "PathTerrainMeasurement";
+        m_sensorMeasurement->type = eSensorType::EXT_HEIGHTFIELD_1D;
         m_sensorMeasurement->usesComplement = m_useComplement;
 
         // Take an initial measurement
@@ -130,7 +130,7 @@ namespace sensor {
         std::cout << "*******************************************" << std::endl;
         std::cout << "---------------" << std::endl;
         std::cout << "sensor name: " << m_name << std::endl;
-        std::cout << "sensor type: " << m_type << std::endl;
+        std::cout << "sensor type: " << tysoc::toString( m_type ) << std::endl;
         std::cout << "---------------" << std::endl;
 
         for ( size_t i = 0; i < m_sensorMeasurement->profile.size() / 3; i++ )

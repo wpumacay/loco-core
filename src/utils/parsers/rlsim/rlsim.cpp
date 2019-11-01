@@ -82,8 +82,8 @@ namespace rlsim {
         auto _size = _visualsJson.size();
         for ( size_t q = 0; q < _visualsJson.size(); q++ )
         {
-            auto _simVisual = new RlsimVisual();
-            _simVisual->collectAttribs( _visualsJson[q], _worldUp );
+            RlsimVisual _simVisual;
+            _simVisual.collectAttribs( _visualsJson[q], _worldUp );
 
             _simModel->visuals.push_back( _simVisual );
         }
@@ -115,55 +115,54 @@ namespace rlsim {
         auto _visuals   = modelDataPtr->visuals;
 
         // Link visuals to their parent joints
-        for ( size_t q = 0; q < _visuals.size(); q++ )
+        for ( auto _visual : _visuals )
         {
             // validate that the parentJointId is in range
-            if ( _visuals[q]->parentJointId < 0 ||
-                 _visuals[q]->parentJointId >= _joints.size() )
+            if ( _visual.parentJointId < 0 || _visual.parentJointId >= _joints.size() )
             {
-                std::cout << "ERROR> visual: " << _visuals[q]->name 
+                std::cout << "ERROR> visual: " << _visual.name 
                           << " has an invalid parentJointId: "
-                          << _visuals[q]->parentJointId << std::endl;
+                          << _visual.parentJointId << std::endl;
                 return false;
             }
-            auto _parentJointId = _visuals[q]->parentJointId;
+
+            auto _parentJointId = _visual.parentJointId;
             auto _parentJoint = _joints[_parentJointId];
-            _parentJoint->childVisuals.push_back( _visuals[q] );
+            _parentJoint->childVisuals.push_back( _visual );
         }
 
         // Link bodies to their parent joints
-        for ( size_t q = 0; q < _bodies.size(); q++ )
+        for ( auto _body : _bodies )
         {
             // validate that the parentJointId is in range
-            if ( _bodies[q]->parentJointId < 0 ||
-                 _bodies[q]->parentJointId >= _joints.size() )
+            if ( _body->parentJointId < 0 || _body->parentJointId >= _joints.size() )
             {
-                std::cout << "ERROR> body: " << _bodies[q]->name 
+                std::cout << "ERROR> body: " << _body->name 
                           << " has an invalid parentJointId: "
-                          << _bodies[q]->parentJointId << std::endl;
+                          << _body->parentJointId << std::endl;
                 return false;
             }
 
-            auto _parentJoint = _joints[ _bodies[q]->parentJointId ];
-            _parentJoint->childBodies.push_back( _bodies[q] );
+            auto _parentJoint = _joints[ _body->parentJointId ];
+            _parentJoint->childBodies.push_back( _body );
         }
 
         // Link joints between them
-        for ( size_t q = 0; q < _joints.size(); q++ )
+        for ( auto _joint : _joints )
         {
             // Check if root
-            if ( _joints[q]->parentJointId == -1 )
+            if ( _joint->parentJointId == -1 )
             {
                 if ( modelDataPtr->rootJoint )
                 {
                     std::cout << "ERROR> There seems to be more than one root joint" << std::endl;
                     std::cout << "ERROR> previous root has name: " << modelDataPtr->rootJoint->name << std::endl;
-                    std::cout << "ERROR> extra root has name: " << _joints[q]->name << std::endl;
+                    std::cout << "ERROR> extra root has name: " << _joint->name << std::endl;
                     return false;
                 }
                 else
                 {
-                    modelDataPtr->rootJoint = _joints[q];
+                    modelDataPtr->rootJoint = _joint;
                 }
             }
             else
@@ -171,16 +170,16 @@ namespace rlsim {
                 // Validate joint connection
                 // @WEIRD: didn't know that int vs uint could lead to ...
                 // bad checks. parentjointid was -1 int, and joints.size() was uint
-                if ( _joints[q]->parentJointId >= _joints.size() )
+                if ( _joint->parentJointId >= _joints.size() )
                 {
-                    std::cout << "ERROR> joint: " << _joints[q]->name
+                    std::cout << "ERROR> joint: " << _joint->name
                               << " has an invalid parentJointId: "
-                              << _joints[q]->parentJointId << std::endl;
+                              << _joint->parentJointId << std::endl;
                     return false;
                 }
 
-                auto _parentJoint = _joints[ _joints[q]->parentJointId ];
-                _parentJoint->childJoints.push_back( _joints[q] );
+                auto _parentJoint = _joints[ _joint->parentJointId ];
+                _parentJoint->childJoints.push_back( _joint );
             }
         }
 
@@ -194,41 +193,30 @@ namespace rlsim {
         if ( agentName != "" )
             target->name = agentName;
 
-        for ( size_t q = 0; q < source->bodies.size(); q++ )
+        for ( auto _sourceBody : source->bodies )
         {
             auto _targetBody = new RlsimBody();
-            auto _sourceBody = source->bodies[q];
-
             // Just copy everything directly (no pointer references here)
             *( _targetBody ) = *( _sourceBody );
             // and modify the name accordingly
-            _targetBody->name = computeName( "body",
-                                             _sourceBody->name,
-                                             agentName );
+            _targetBody->name = computeName( "body", _sourceBody->name, agentName );
 
             target->bodies.push_back( _targetBody );
         }
 
-        for ( size_t q = 0; q < source->visuals.size(); q++ )
+        for ( auto _sourceVisual : source->visuals )
         {
-            auto _targetVisual = new RlsimVisual();
-            auto _sourceVisual = source->visuals[q];
-
             // Just copy everything directly (no pointer references here)
-            *( _targetVisual ) = *( _sourceVisual );
+            RlsimVisual _targetVisual = _sourceVisual;
             // and modify the name accordingly
-            _targetVisual->name = computeName( "visual",
-                                               _sourceVisual->name,
-                                               agentName );
+            _targetVisual.name = computeName( "visual", _sourceVisual.name, agentName );
 
             target->visuals.push_back( _targetVisual );
         }
 
-        for ( size_t q = 0; q < source->joints.size(); q++ )
+        for ( auto _sourceJoint : source->joints )
         {
             auto _targetJoint = new RlsimJoint();
-            auto _sourceJoint = source->joints[q];
-
             // First copy all contents from source to target
             *( _targetJoint ) = *( _sourceJoint );
             // and then clear the child containers
@@ -236,9 +224,7 @@ namespace rlsim {
             _targetJoint->childJoints.clear();
             _targetJoint->childBodies.clear();
             // and modify the name accordingly
-            _targetJoint->name = computeName( "joint",
-                                              _sourceJoint->name,
-                                              agentName );
+            _targetJoint->name = computeName( "joint", _sourceJoint->name, agentName );
 
             target->joints.push_back( _targetJoint );
         }

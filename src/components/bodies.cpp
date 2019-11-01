@@ -11,7 +11,7 @@ namespace tysoc {
     {
         m_name = name;
         m_data = data;
-        m_bodyImpl = NULL;
+        m_bodyImpl = nullptr;
 
         m_pos = m_pos0 = position;
         m_rot = m_rot0 = rotation;
@@ -45,15 +45,15 @@ namespace tysoc {
         if ( m_bodyImpl )
             delete m_bodyImpl;
 
-        m_bodyImpl = NULL;
+        m_bodyImpl = nullptr;
 
-        for ( size_t i = 0; i < m_collisions.size(); i++ )
-            delete m_collisions[i];
+        for ( auto _collision : m_collisions )
+            delete _collision;
+        for ( auto _visual : m_visuals )
+            delete _visual;
+
         m_collisions.clear();
         m_collisionsMap.clear();
-
-        for ( size_t i = 0; i < m_visuals.size(); i++ )
-            delete m_visuals[i];
         m_visuals.clear();
         m_visualsMap.clear();
     }
@@ -105,11 +105,11 @@ namespace tysoc {
             m_bodyImpl->getTransform( m_tf );
         }
 
-        for ( size_t i = 0; i < m_collisions.size(); i++ )
-            m_collisions[i]->update();
+        for ( auto _collision : m_collisions )
+            _collision->update();
 
-        for ( size_t i = 0; i < m_visuals.size(); i++ )
-            m_visuals[i]->update();
+        for ( auto _visual : m_visuals )
+            _visual->update();
     }
 
     void TBody::reset()
@@ -125,16 +125,16 @@ namespace tysoc {
             m_bodyImpl->getTransform( m_tf );
         }
 
-        for ( size_t i = 0; i < m_collisions.size(); i++ )
+        for ( auto _collision : m_collisions )
         {
-            m_collisions[i]->reset();
-            m_collisions[i]->update();
+            _collision->reset();
+            _collision->update();
         }
 
-        for ( size_t i = 0; i < m_visuals.size(); i++ )
+        for ( auto _visual : m_visuals )
         {
-            m_visuals[i]->reset();
-            m_visuals[i]->update();
+            _visual->reset();
+            _visual->update();
         }
     }
 
@@ -146,11 +146,11 @@ namespace tysoc {
         if ( m_bodyImpl )
             m_bodyImpl->setPosition( m_pos );
 
-        for ( size_t i = 0; i < m_collisions.size(); i++ )
-            m_collisions[i]->update();
+        for ( auto _collision : m_collisions )
+            _collision->update();
 
-        for ( size_t i = 0; i < m_visuals.size(); i++ )
-            m_visuals[i]->update();
+        for ( auto _visual : m_visuals )
+            _visual->update();
     }
 
     void TBody::setRotation( const TMat3& rotation )
@@ -161,11 +161,11 @@ namespace tysoc {
         if ( m_bodyImpl )
             m_bodyImpl->setRotation( m_rot );
 
-        for ( size_t i = 0; i < m_collisions.size(); i++ )
-            m_collisions[i]->update();
+        for ( auto _collision : m_collisions )
+            _collision->update();
 
-        for ( size_t i = 0; i < m_visuals.size(); i++ )
-            m_visuals[i]->update();
+        for ( auto _visual : m_visuals )
+            _visual->update();
     }
 
     void TBody::setEuler( const TVec3& euler )
@@ -176,11 +176,11 @@ namespace tysoc {
         if ( m_bodyImpl )
             m_bodyImpl->setRotation( m_rot );
 
-        for ( size_t i = 0; i < m_collisions.size(); i++ )
-            m_collisions[i]->update();
+        for ( auto _collision : m_collisions )
+            _collision->update();
 
-        for ( size_t i = 0; i < m_visuals.size(); i++ )
-            m_visuals[i]->update();
+        for ( auto _visual : m_visuals )
+            _visual->update();
     }
 
     void TBody::setQuaternion( const TVec4& quat )
@@ -191,11 +191,11 @@ namespace tysoc {
         if ( m_bodyImpl )
             m_bodyImpl->setRotation( m_rot );
 
-        for ( size_t i = 0; i < m_collisions.size(); i++ )
-            m_collisions[i]->update();
+        for ( auto _collision : m_collisions )
+            _collision->update();
 
-        for ( size_t i = 0; i < m_visuals.size(); i++ )
-            m_visuals[i]->update();
+        for ( auto _visual : m_visuals )
+            _visual->update();
     }
 
     void TBody::setTransform( const TMat4& transform )
@@ -207,11 +207,11 @@ namespace tysoc {
         if ( m_bodyImpl )
             m_bodyImpl->setTransform( m_tf );
 
-        for ( size_t i = 0; i < m_collisions.size(); i++ )
-            m_collisions[i]->update();
+        for ( auto _collision : m_collisions )
+            _collision->update();
 
-        for ( size_t i = 0; i < m_visuals.size(); i++ )
-            m_visuals[i]->update();
+        for ( auto _visual : m_visuals )
+            _visual->update();
     }
 
 }

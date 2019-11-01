@@ -36,20 +36,20 @@ namespace agent {
                                           urdf::UrdfJoint* urdfJointPtr );
 
     TKinTreeVisual* _processVisualFromUrdf( TUrdfParsingContext& context, 
-                                            urdf::UrdfVisual* urdfVisualtPtr );
+                                            const urdf::UrdfVisual& urdfVisual );
 
     TKinTreeCollision* _processCollisionFromUrdf( TUrdfParsingContext& context, 
-                                                  urdf::UrdfCollision* urdfCollisionPtr );
+                                                  const urdf::UrdfCollision& urdfCollision );
 
-    TKinTreeInertia* _processInertialFromUrdf( TUrdfParsingContext& context, 
-                                               urdf::UrdfInertia* urdfInertiaPtr );
+    TInertialData _processInertialFromUrdf( TUrdfParsingContext& context, 
+                                            const urdf::UrdfInertia& urdfInertia );
 
     void _collectAssetsFromLink( TUrdfParsingContext& context, 
                                   urdf::UrdfLink* urdfLinkPtr );
 
     void _constructDefaultActuators( TUrdfParsingContext& context );
 
-    void _extractStandardSize( urdf::UrdfGeometry* urdfGeometryPtr,
+    void _extractStandardSize( const urdf::UrdfShape& urdfShape,
                                TVec3& targetSize );
 
 }}

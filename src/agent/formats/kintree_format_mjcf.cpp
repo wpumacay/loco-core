@@ -13,7 +13,7 @@ namespace agent {
         _context.modelDataPtr = new mjcf::GenericElement();
 
         // create a copy of the model data with the names modified appropriately
-        mjcf::deepCopy( _context.modelDataPtr, modelDataPtr, NULL, agentPtr->name() );
+        mjcf::deepCopy( _context.modelDataPtr, modelDataPtr, nullptr, agentPtr->name() );
 
         // grab some required info before start constructing the kintree
         _extractMjcfModelSettings( _context );
@@ -43,29 +43,25 @@ namespace agent {
         }
 
         // start recursive processing of all kintree components, starting at root
-        auto _rootBodyPtr = _processBodyFromMjcf( _context, _rootBodyElmPtr, NULL );
+        auto _rootBodyPtr = _processBodyFromMjcf( _context, _rootBodyElmPtr, nullptr );
 
         if ( !_rootBodyPtr )
         {
             std::cout << "ERROR> something went wrong while parsing agent: "
-                      << agentPtr->name() << ". Processed root body is NULL" << std::endl;
+                      << agentPtr->name() << ". Processed root body is nullptr" << std::endl;
         }
 
         // make sure we set the root for this agent we are constructing
         _context.agentPtr->setRootBody( _rootBodyPtr );
 
-        // grab the actuators. Sensors are just copied, ...
-        // and the joint sensors are created as needed
+        // grab the actuators. Sensors are just copied, and the joint sensors are created as needed
         auto _actuatorsElmPtr = mjcf::findFirstChildByType( _context.modelDataPtr, 
                                                             "actuator" );
+
+        // create the actual actuator
         if ( _actuatorsElmPtr )
-        {
-            for ( size_t i = 0; i < _actuatorsElmPtr->children.size(); i++ )
-            {
-                // create the actual actuator
-                _processActuator( _context, _actuatorsElmPtr->children[i] );
-            }
-        }
+            for ( auto _actuatorElm : _actuatorsElmPtr->children )
+                _processActuator( _context, _actuatorElm );
 
         if ( !_context.useLocalCoordinates )
             _convertGlobalToLocalCoordinates( _rootBodyPtr, TMat4() );
@@ -83,13 +79,12 @@ namespace agent {
         if ( !_defaultsElmPtr )
             return;
 
-        for ( size_t q = 0; q < _defaultsElmPtr->children.size(); q++ )
+        for ( auto _defaultElm : _defaultsElmPtr->children )
         {
-            auto _child = _defaultsElmPtr->children[q];
-            if ( _child->etype == "default" )
-                _collectDefaultsFromClass( context, _child );
+            if ( _defaultElm->etype == "default" )
+                _collectDefaultsFromClass( context, _defaultElm );
             else
-                _collectDefaultsNoClass( context, _child );
+                _collectDefaultsNoClass( context, _defaultElm );
         }
     }
 
@@ -103,46 +98,41 @@ namespace agent {
         if ( context.defaultsPerClass.find( _classId ) == context.defaultsPerClass.end() )
             context.defaultsPerClass[_classId] = std::map< std::string, TGenericParams >();
 
-        auto _children = defClassElmPtr->children;
-        for ( size_t q = 0; q < _children.size(); q++ )
+        for ( auto _child : defClassElmPtr->children )
         {
-            auto _child = _children[q];
-            auto _etype = _child->etype;
-            auto _possibleAttribsDict = mjcf::MJCF_SCHEMA->getPossibleAttribs( _etype );
+            auto _possibleAttribsDict = mjcf::MJCF_SCHEMA->getPossibleAttribs( _child->etype );
 
-            for ( auto _it = _possibleAttribsDict.begin();
-                       _it != _possibleAttribsDict.end();
-                       _it++ )
+            for ( auto _pair : _possibleAttribsDict )
             {
-                if ( _it->second == mjcf::TYPE_ARRAY_FLOAT &&
-                     _child->hasAttributeArrayFloat( _it->first ) )
+                if ( _pair.second == mjcf::TYPE_ARRAY_FLOAT &&
+                     _child->hasAttributeArrayFloat( _pair.first ) )
                 {
-                    context.defaultsPerClass[_classId][_etype].set( _it->first,
-                                                                  _child->getAttributeArrayFloat( _it->first ) );
+                    context.defaultsPerClass[_classId][_child->etype].set( _pair.first,
+                                                                  _child->getAttributeArrayFloat( _pair.first ) );
                 }
-                else if ( _it->second == mjcf::TYPE_ARRAY_INT &&
-                          _child->hasAttributeArrayInt( _it->first ) )
+                else if ( _pair.second == mjcf::TYPE_ARRAY_INT &&
+                          _child->hasAttributeArrayInt( _pair.first ) )
                 {
-                    context.defaultsPerClass[_classId][_etype].set( _it->first,
-                                                                  _child->getAttributeArrayInt( _it->first ) );
+                    context.defaultsPerClass[_classId][_child->etype].set( _pair.first,
+                                                                  _child->getAttributeArrayInt( _pair.first ) );
                 }
-                else if ( _it->second == mjcf::TYPE_FLOAT &&
-                          _child->hasAttributeFloat( _it->first ) )
+                else if ( _pair.second == mjcf::TYPE_FLOAT &&
+                          _child->hasAttributeFloat( _pair.first ) )
                 {
-                    context.defaultsPerClass[_classId][_etype].set( _it->first,
-                                                                  _child->getAttributeFloat( _it->first ) );
+                    context.defaultsPerClass[_classId][_child->etype].set( _pair.first,
+                                                                  _child->getAttributeFloat( _pair.first ) );
                 }
-                else if ( _it->second == mjcf::TYPE_INT &&
-                          _child->hasAttributeInt( _it->first ) )
+                else if ( _pair.second == mjcf::TYPE_INT &&
+                          _child->hasAttributeInt( _pair.first ) )
                 {
-                    context.defaultsPerClass[_classId][_etype].set( _it->first,
-                                                                  _child->getAttributeInt( _it->first ) );
+                    context.defaultsPerClass[_classId][_child->etype].set( _pair.first,
+                                                                  _child->getAttributeInt( _pair.first ) );
                 }
-                else if ( _it->second == mjcf::TYPE_STRING &&
-                          _child->hasAttributeString( _it->first ) )
+                else if ( _pair.second == mjcf::TYPE_STRING &&
+                          _child->hasAttributeString( _pair.first ) )
                 {
-                    context.defaultsPerClass[_classId][_etype].set( _it->first,
-                                                                  _child->getAttributeString( _it->first ) );
+                    context.defaultsPerClass[_classId][_child->etype].set( _pair.first,
+                                                                  _child->getAttributeString( _pair.first ) );
                 }
             }
         }
@@ -154,39 +144,37 @@ namespace agent {
         auto _tagId = defElmPtr->etype;
         auto _possibleAttribsDict = mjcf::MJCF_SCHEMA->getPossibleAttribs( _tagId );
 
-        for ( auto _it = _possibleAttribsDict.begin();
-                   _it != _possibleAttribsDict.end();
-                   _it++ )
+        for ( auto _pair : _possibleAttribsDict )
         {
-            if ( _it->second == mjcf::TYPE_ARRAY_FLOAT &&
-                 defElmPtr->hasAttributeArrayFloat( _it->first ) )
+            if ( _pair.second == mjcf::TYPE_ARRAY_FLOAT &&
+                 defElmPtr->hasAttributeArrayFloat( _pair.first ) )
             {
-                context.defaultsNoClass[_tagId].set( _it->first,
-                                                   defElmPtr->getAttributeArrayFloat( _it->first ) );
+                context.defaultsNoClass[_tagId].set( _pair.first,
+                                                   defElmPtr->getAttributeArrayFloat( _pair.first ) );
             }
-            else if ( _it->second == mjcf::TYPE_ARRAY_INT &&
-                      defElmPtr->hasAttributeArrayInt( _it->first ) )
+            else if ( _pair.second == mjcf::TYPE_ARRAY_INT &&
+                      defElmPtr->hasAttributeArrayInt( _pair.first ) )
             {
-                context.defaultsNoClass[_tagId].set( _it->first,
-                                                   defElmPtr->getAttributeArrayInt( _it->first ) );
+                context.defaultsNoClass[_tagId].set( _pair.first,
+                                                   defElmPtr->getAttributeArrayInt( _pair.first ) );
             }
-            else if ( _it->second == mjcf::TYPE_FLOAT &&
-                      defElmPtr->hasAttributeFloat( _it->first ) )
+            else if ( _pair.second == mjcf::TYPE_FLOAT &&
+                      defElmPtr->hasAttributeFloat( _pair.first ) )
             {
-                context.defaultsNoClass[_tagId].set( _it->first,
-                                                   defElmPtr->getAttributeFloat( _it->first ) );
+                context.defaultsNoClass[_tagId].set( _pair.first,
+                                                   defElmPtr->getAttributeFloat( _pair.first ) );
             }
-            else if ( _it->second == mjcf::TYPE_INT &&
-                      defElmPtr->hasAttributeInt( _it->first ) )
+            else if ( _pair.second == mjcf::TYPE_INT &&
+                      defElmPtr->hasAttributeInt( _pair.first ) )
             {
-                context.defaultsNoClass[_tagId].set( _it->first,
-                                                   defElmPtr->getAttributeInt( _it->first ) );
+                context.defaultsNoClass[_tagId].set( _pair.first,
+                                                   defElmPtr->getAttributeInt( _pair.first ) );
             }
-            else if ( _it->second == mjcf::TYPE_STRING &&
-                      defElmPtr->hasAttributeString( _it->first ) )
+            else if ( _pair.second == mjcf::TYPE_STRING &&
+                      defElmPtr->hasAttributeString( _pair.first ) )
             {
-                context.defaultsNoClass[_tagId].set( _it->first,
-                                                   defElmPtr->getAttributeString( _it->first ) );
+                context.defaultsNoClass[_tagId].set( _pair.first,
+                                                   defElmPtr->getAttributeString( _pair.first ) );
             }
         }
     }
@@ -195,13 +183,11 @@ namespace agent {
     {
         auto _assetsElmPtr = mjcf::findFirstChildByType( context.modelDataPtr, "asset" );
         if ( !_assetsElmPtr )
-            return;// Nothing to do if no assets found
+            return;// Nothing to do if no assets element found
 
-        auto _assets = _assetsElmPtr->children;
-        for ( size_t i = 0; i < _assets.size(); i++ )
+        for ( auto _asset : _assetsElmPtr->children )
         {
-            auto _asset = _assets[i];
-            if ( _asset->etype == "mesh" )
+            if ( _asset->etype != "mesh" )
             {
                 // Grab the mesh asset into a dict for later usage *************
                 auto _meshAsset = new TKinTreeMeshAsset();
@@ -223,8 +209,9 @@ namespace agent {
                 }
                 else
                 {
+                    // delete mesh-assets, as already cached (at least with the same name)
                     delete _meshAsset;
-                    _meshAsset = NULL;
+                    _meshAsset = nullptr;
                 }
                 // *************************************************************
             }
@@ -239,135 +226,121 @@ namespace agent {
 
     TKinTreeBody* _processBodyFromMjcf( TMjcfParsingContext& context, 
                                         mjcf::GenericElement* bodyElementPtr,
-                                        TKinTreeBody* parentKinBodyPtr )
+                                        TKinTreeBody* parentKinBody )
     {
         // grab body information
-        auto _kinTreeBodyPtr = new TKinTreeBody();
+        auto _kinBody = new TKinTreeBody();
         // grab the name
-        _kinTreeBodyPtr->name = bodyElementPtr->getAttributeString( "name" );
-        // and the relative transform to the parent body
-        _extractTransform( context, bodyElementPtr, _kinTreeBodyPtr->relTransform );
+        _kinBody->name = bodyElementPtr->getAttributeString( "name" );
+        // and the relative transform to the parent body (zero-configuration | rest-configuration)
+        _extractTransform( context, bodyElementPtr, _kinBody->localTransformZero );
         // and the parent bodyptr as well
-        _kinTreeBodyPtr->parentBodyPtr = parentKinBodyPtr;
+        _kinBody->parentBodyPtr = parentKinBody;
         // and store it in the bodies buffer
-        context.agentPtr->bodies.push_back( _kinTreeBodyPtr );
+        context.agentPtr->bodies.push_back( _kinBody );
         // and to the bodies map
-        context.agentPtr->bodiesMap[ _kinTreeBodyPtr->name ] = _kinTreeBodyPtr;
+        context.agentPtr->bodiesMap[_kinBody->name] = _kinBody;
 
         // grab the child-class (if given)
         auto _childClass = bodyElementPtr->getAttributeString( "childclass", "" );
 
         // grab all geom elements and process them as visual and collisions
         auto _geomElementPtrs = mjcf::getChildrenByType( bodyElementPtr, "geom" );
-        for ( size_t i = 0; i < _geomElementPtrs.size(); i++ )
+        for ( auto _geomElement : _geomElementPtrs )
         {
             // set child-class if geom element does not have any
-            if ( _childClass != "" && !_geomElementPtrs[i]->hasAttributeString( "class" ) )
-                _geomElementPtrs[i]->setAttributeString( "class", _childClass );
+            if ( _childClass != "" && !_geomElement->hasAttributeString( "class" ) )
+                _geomElement->setAttributeString( "class", _childClass );
 
-            auto _kinTreeVisualPtr      = _processVisualFromMjcf( context, _geomElementPtrs[i] );
-            auto _kinTreeCollisionPtr   = _processCollisionFromMjcf( context, _geomElementPtrs[i] );
+            auto _kinVisual     = _processVisualFromMjcf( context, _geomElement );
+            _kinVisual->parentBodyPtr    = _kinBody;
+            _kinBody->visuals.push_back( _kinVisual );
 
-            _kinTreeVisualPtr->parentBodyPtr    = _kinTreeBodyPtr;
-            _kinTreeCollisionPtr->parentBodyPtr = _kinTreeBodyPtr;
-
-            _kinTreeBodyPtr->childVisuals.push_back( _kinTreeVisualPtr );
-            _kinTreeBodyPtr->childCollisions.push_back( _kinTreeCollisionPtr );
+            auto _kinCollision  = _processCollisionFromMjcf( context, _geomElement );
+            _kinCollision->parentBodyPtr = _kinBody;
+            _kinBody->collisions.push_back( _kinCollision );
         }
 
         // grab all joint elements and process them
         auto _jointElementPtrs = mjcf::getChildrenByType( bodyElementPtr, "joint" );
-        for ( size_t i = 0; i < _jointElementPtrs.size(); i++ )
+        for ( auto _jointElement : _jointElementPtrs )
         {
             // set child-class if joint element does not have any
-            if ( _childClass != "" && !_jointElementPtrs[i]->hasAttributeString( "class" ) )
-                _jointElementPtrs[i]->setAttributeString( "class", _childClass );
+            if ( _childClass != "" && !_jointElement->hasAttributeString( "class" ) )
+                _jointElement->setAttributeString( "class", _childClass );
 
-            auto _kinTreeJointPtr =  _processJointFromMjcf( context, _jointElementPtrs[i] );
-
-            _kinTreeJointPtr->parentBodyPtr = _kinTreeBodyPtr;
-
-            _kinTreeBodyPtr->childJoints.push_back( _kinTreeJointPtr );
+            auto _kinTreeJointPtr =  _processJointFromMjcf( context, _jointElement );
+            _kinTreeJointPtr->parentBodyPtr = _kinBody;
+            _kinBody->joints.push_back( _kinTreeJointPtr );
         }
 
         // grab the inertial properties (if given, as by default is computed from the geometries)
         auto _inertialElmPtr = mjcf::findFirstChildByType( bodyElementPtr, "inertial" );
         if ( _inertialElmPtr )
-        {
-            _kinTreeBodyPtr->inertiaPtr = _processInertialFromMjcf( context, _inertialElmPtr );
-        }
+            _kinBody->inertialData = _processInertialFromMjcf( context, _inertialElmPtr );
 
-        // @TODO: Add support for sites, as some models may need them
+        // @todo: Add support for sites, as some models may need them
+        // ...
 
         // grab child bodies (if any) and repeat process
-        auto _childBodiesElementPtrs = mjcf::getChildrenByType( bodyElementPtr, "body" );
-        for ( size_t i = 0; i < _childBodiesElementPtrs.size(); i++ )
+        auto _childrenElementPtrs = mjcf::getChildrenByType( bodyElementPtr, "body" );
+        for ( auto _childBody : _childrenElementPtrs )
         {
             // set child-class if joint element does not have any
-            if ( _childClass != "" && !_childBodiesElementPtrs[i]->hasAttributeString( "childclass" ) )
-                _childBodiesElementPtrs[i]->setAttributeString( "childclass", _childClass );
+            if ( _childClass != "" && !_childBody->hasAttributeString( "childclass" ) )
+                _childBody->setAttributeString( "childclass", _childClass );
 
-            _kinTreeBodyPtr->childBodies.push_back( _processBodyFromMjcf( context,
-                                                                          _childBodiesElementPtrs[i], 
-                                                                          _kinTreeBodyPtr ) );
+            _kinBody->children.push_back( _processBodyFromMjcf( context, _childBody, _kinBody ) );
         }
 
-        return _kinTreeBodyPtr;
+        return _kinBody;
     }
 
     TKinTreeJoint* _processJointFromMjcf( TMjcfParsingContext& context, 
                                           mjcf::GenericElement* jointElementPtr )
     {
-        auto _kinTreeJointPtr = new TKinTreeJoint();
+        auto _kinTreeJointType = toEnumJoint( _grabString( context, jointElementPtr, "type", "hinge" ) );
+        auto _kinTreeJointPtr = new TKinTreeJoint( _kinTreeJointType );
+
         // grab the name
         _kinTreeJointPtr->name = jointElementPtr->getAttributeString( "name" );
-        // and the relative transform to the parent body
-        _extractTransform( context, jointElementPtr, _kinTreeJointPtr->relTransform );
-        // and the type of joint
-        _kinTreeJointPtr->type = _grabString( context, jointElementPtr, "type", "hinge" );
+        // and the relative transform to the owner body
+        _extractTransform( context, jointElementPtr, _kinTreeJointPtr->data.localTransform );
         // and the joint axis
-        auto _axis = _grabVec3( context, jointElementPtr, "axis", { 0., 1., 0. } );
-        _kinTreeJointPtr->axis = { _axis.x, _axis.y, _axis.z };
+        _kinTreeJointPtr->data.axis = _grabVec3( context, jointElementPtr, "axis", { 0., 1., 0. } );
         // and the joint value clamping flag
-        _kinTreeJointPtr->limited = ( _grabString( context, jointElementPtr, "limited", "false" ) == "true" );
-        _kinTreeJointPtr->limited |= jointElementPtr->hasAttributeVec2( "range" );
-        // in case not limited, assume low > high
-        if ( !_kinTreeJointPtr->limited )
+        bool _limited = ( _grabString( context, jointElementPtr, "limited", "false" ) == "true" );
+        _limited |= jointElementPtr->hasAttributeVec2( "range" );
+        if ( _limited )
         {
-            _kinTreeJointPtr->lowerLimit = 1.0f;
-            _kinTreeJointPtr->upperLimit = -1.0f;
-        }
-        else
-        {
-            // and the range limits
             if ( context.useDegrees )
             {
                 auto _limits = _grabVec2( context, jointElementPtr, "range", { -180., 180. } );
-                _kinTreeJointPtr->lowerLimit = degrees2rad( _limits.x );
-                _kinTreeJointPtr->upperLimit = degrees2rad( _limits.y );
+                _kinTreeJointPtr->data.limits = { degrees2rad( _limits.x ), degrees2rad( _limits.y ) };
             }
             else
             {
                 auto _limits = _grabVec2( context, jointElementPtr, "range", { -TYSOC_PI, TYSOC_PI } );
-                _kinTreeJointPtr->lowerLimit = _limits.x;
-                _kinTreeJointPtr->upperLimit = _limits.y;
+                _kinTreeJointPtr->data.limits = { _limits.x, _limits.y };
             }
         }
+        else
+        {
+            // lower > higher means not limited
+            _kinTreeJointPtr->data.limits = { 1.0f, -1.0f };
+        }
         // and the joint stiffness
-        _kinTreeJointPtr->stiffness = _grabFloat( context, jointElementPtr, "stiffness", 0.0 );
+        _kinTreeJointPtr->data.stiffness = _grabFloat( context, jointElementPtr, "stiffness", 0.0 );
         // and the joint armature
-        _kinTreeJointPtr->armature = _grabFloat( context, jointElementPtr, "armature", 0.0 );
+        _kinTreeJointPtr->data.armature = _grabFloat( context, jointElementPtr, "armature", 0.0 );
         // and the joint damping
-        _kinTreeJointPtr->damping = _grabFloat( context, jointElementPtr, "damping", 0.0 );
+        _kinTreeJointPtr->data.damping = _grabFloat( context, jointElementPtr, "damping", 0.0 );
         // and the joint ref
-        _kinTreeJointPtr->ref = _grabFloat( context, jointElementPtr, "ref", 0.0 );
+        _kinTreeJointPtr->data.ref = _grabFloat( context, jointElementPtr, "ref", 0.0 );
         // and store it in the joints buffer
         context.agentPtr->joints.push_back( _kinTreeJointPtr );
         // and to the joints map
         context.agentPtr->jointsMap[ _kinTreeJointPtr->name ] = _kinTreeJointPtr;
-
-        // let the joint configure its internal props
-        _kinTreeJointPtr->configure();
 
         return _kinTreeJointPtr;
     }
@@ -375,225 +348,177 @@ namespace agent {
     TKinTreeVisual* _processVisualFromMjcf( TMjcfParsingContext& context, 
                                             mjcf::GenericElement* geomElementPtr )
     {
-        auto _kinTreeVisualPtr = new TKinTreeVisual();
+        auto _kinVisual = new TKinTreeVisual();
         // grab the name
-        _kinTreeVisualPtr->name = geomElementPtr->getAttributeString( "name" );
+        _kinVisual->name = geomElementPtr->getAttributeString( "name" );
         // and the relative transform to the parent body
-        _extractTransform( context, geomElementPtr, _kinTreeVisualPtr->relTransform );
+        _extractTransform( context, geomElementPtr, _kinVisual->data.localTransform );
         // and the type of visual/geom
-        _kinTreeVisualPtr->geometry.type = _grabString( context, geomElementPtr, "type", "" );
-        if ( _kinTreeVisualPtr->geometry.type == "" )
-        {
-            _kinTreeVisualPtr->geometry.type = "sphere";
-        }
-        // and the mesh filename in case there is any (this one is tricky)
-        auto _meshId = _grabString( context, geomElementPtr, "mesh", "" );
-        if ( context.agentPtr->meshAssetsMap.find( _meshId ) != 
-             context.agentPtr->meshAssetsMap.end() )
-        {
-            // if the mesh is is a "pure link" to a filename, then use the stored asset in map
-            _kinTreeVisualPtr->geometry.meshId   = context.agentPtr->meshAssetsMap[ _meshId ]->name;
-            _kinTreeVisualPtr->geometry.filename = context.agentPtr->meshAssetsMap[ _meshId ]->file;
-        }
-        else
-        {
-            // if not, then is a pure path to the mesh file
-            _kinTreeVisualPtr->geometry.meshId      = "";
-            _kinTreeVisualPtr->geometry.filename    = _meshId;
-        }
-
+        _kinVisual->data.type = toEnumShape( _grabString( context, geomElementPtr, "type", "" ) );
+        // and the mesh filename in case there is any
+        _kinVisual->data.filename = _grabString( context, geomElementPtr, "mesh", "" );
         // and the visual/geom size (and check if uses fromto, so we can extract the relative transform)
-        TVec3 _posFromFromto;
-        TMat3 _rotFromFromto;
+        TVec3 _posFromFromto; TMat3 _rotFromFromto;
         bool _usesFromto = _extractStandardSize( context, 
                                                  geomElementPtr, 
-                                                 _kinTreeVisualPtr->geometry.size,
+                                                 _kinVisual->data.size,
                                                  _posFromFromto,
                                                  _rotFromFromto );
-        _kinTreeVisualPtr->geometry.usesFromto = _usesFromto;
         if ( _usesFromto )
         {
-            _kinTreeVisualPtr->relTransform.setPosition( _posFromFromto );
-            _kinTreeVisualPtr->relTransform.setRotation( _rotFromFromto );
+            _kinVisual->data.localTransform.setPosition( _posFromFromto );
+            _kinVisual->data.localTransform.setRotation( _rotFromFromto );
         }
 
-        auto _rgba = _grabVec4( context, geomElementPtr, "rgba", TYSOC_DEFAULT_RGBA_COLOR );
+        if ( geomElementPtr->hasAttributeVec4( "rgba" ) )
+        {
+            auto _rgba = _grabVec4( context, geomElementPtr, "rgba", TYSOC_DEFAULT_RGBA_COLOR );
+            _kinVisual->data.ambient     = { _rgba.x, _rgba.y, _rgba.z };
+            _kinVisual->data.diffuse     = { _rgba.x, _rgba.y, _rgba.z };
+            _kinVisual->data.specular    = { _rgba.x, _rgba.y, _rgba.z };
+        }
 
-        _kinTreeVisualPtr->material.diffuse     = { _rgba.x, _rgba.y, _rgba.z };
-        _kinTreeVisualPtr->material.specular    = { _rgba.x, _rgba.y, _rgba.z };
-
-        // and the material name
-        _kinTreeVisualPtr->material.name = _grabString( context, geomElementPtr, "material", "" );
         // and store it in the visuals buffer
-        context.agentPtr->visuals.push_back( _kinTreeVisualPtr );
+        context.agentPtr->visuals.push_back( _kinVisual );
         // and to the visuals map
-        context.agentPtr->visualsMap[ _kinTreeVisualPtr->name ] = _kinTreeVisualPtr;
+        context.agentPtr->visualsMap[_kinVisual->name] = _kinVisual;
 
-        return _kinTreeVisualPtr;
+        return _kinVisual;
     }
 
     TKinTreeCollision* _processCollisionFromMjcf( TMjcfParsingContext& context, 
                                                   mjcf::GenericElement* geomElementPtr )
     {
-        auto _kinTreeCollisionPtr = new TKinTreeCollision();
+        auto _kinCollision = new TKinTreeCollision();
         // grab the name
-        _kinTreeCollisionPtr->name = geomElementPtr->getAttributeString( "name" );
+        _kinCollision->name = geomElementPtr->getAttributeString( "name" );
         // and the relative transform to the parent body
-        _extractTransform( context, geomElementPtr, _kinTreeCollisionPtr->relTransform );
+        _extractTransform( context, geomElementPtr, _kinCollision->data.localTransform );
         // and the collision/geom
-        _kinTreeCollisionPtr->geometry.type = _grabString( context, geomElementPtr, "type", "" );
-        if ( _kinTreeCollisionPtr->geometry.type == "" )
-        {
-            _kinTreeCollisionPtr->geometry.type = "sphere";
-        }
+        _kinCollision->data.type = toEnumShape( _grabString( context, geomElementPtr, "type", "" ) );
         // and the mesh filename in case there is any (this one is tricky)
-        auto _meshId = _grabString( context, geomElementPtr, "mesh", "" );
-        if ( context.agentPtr->meshAssetsMap.find( _meshId ) != context.agentPtr->meshAssetsMap.end() )
-        {
-            // if the mesh is is a "pure link" to a filename, then use the stored asset in map
-            _kinTreeCollisionPtr->geometry.meshId      = context.agentPtr->meshAssetsMap[ _meshId ]->name;
-            _kinTreeCollisionPtr->geometry.filename    = context.agentPtr->meshAssetsMap[ _meshId ]->file;
-        }
-        else
-        {
-            // if not, then is a pure path to the mesh file
-            _kinTreeCollisionPtr->geometry.meshId      = "";
-            _kinTreeCollisionPtr->geometry.filename    = _meshId;
-        }
+        _kinCollision->data.filename = _grabString( context, geomElementPtr, "mesh", "" );
         // and the collision/geom size (and check if uses fromto, so we can extract the relative transform)
         TVec3 _posFromFromto;
         TMat3 _rotFromFromto;
         bool _usesFromto = _extractStandardSize( context, 
                                                  geomElementPtr, 
-                                                 _kinTreeCollisionPtr->geometry.size,
+                                                 _kinCollision->data.size,
                                                  _posFromFromto,
                                                  _rotFromFromto );
-        _kinTreeCollisionPtr->geometry.usesFromto = _usesFromto;
         if ( _usesFromto )
         {
-            _kinTreeCollisionPtr->relTransform.setPosition( _posFromFromto );
-            _kinTreeCollisionPtr->relTransform.setRotation( _rotFromFromto );
+            _kinCollision->data.localTransform.setPosition( _posFromFromto );
+            _kinCollision->data.localTransform.setRotation( _rotFromFromto );
         }
 
         // and the contype collision bitmask
-        _kinTreeCollisionPtr->contype = _grabInt( context, geomElementPtr, "contype", 1 );
+        _kinCollision->data.collisionGroup = _grabInt( context, geomElementPtr, "contype", 1 );
         // and the conaffinity collision bitmask
-        _kinTreeCollisionPtr->conaffinity = _grabInt( context, geomElementPtr, "conaffinity", 1 );
-        // and the condim contact dimensionality
-        _kinTreeCollisionPtr->condim = _grabInt( context, geomElementPtr, "condim", 3 );
+        _kinCollision->data.collisionMask = _grabInt( context, geomElementPtr, "conaffinity", 1 );
         // and the friction coefficients
-        _kinTreeCollisionPtr->friction = _grabArrayFloat( context, geomElementPtr, "friction", { 3, { 1., 0.005, 0.0001 } } );
+        _kinCollision->data.friction = _grabVec3( context, geomElementPtr, "friction", { 1., 0.005, 0.0001 } );
         // and the density of the geometries (for default mass calculation)
-        _kinTreeCollisionPtr->density = _grabFloat( context, geomElementPtr, "density", TYSOC_DEFAULT_DENSITY );
+        _kinCollision->data.density = _grabFloat( context, geomElementPtr, "density", TYSOC_DEFAULT_DENSITY );
         // and store it in the collisions buffer
-        context.agentPtr->collisions.push_back( _kinTreeCollisionPtr );
+        context.agentPtr->collisions.push_back( _kinCollision );
         // and to the collisions map
-        context.agentPtr->collisionsMap[ _kinTreeCollisionPtr->name ] = _kinTreeCollisionPtr;
+        context.agentPtr->collisionsMap[_kinCollision->name] = _kinCollision;
 
-        return _kinTreeCollisionPtr;
+        return _kinCollision;
     }
 
-    TKinTreeInertia* _processInertialFromMjcf( TMjcfParsingContext& context, 
-                                               mjcf::GenericElement* inertialElmPtr )
+    TInertialData _processInertialFromMjcf( TMjcfParsingContext& context, 
+                                            mjcf::GenericElement* inertialElmPtr )
     {
         // For this element, check this documentation from mujoco
         // url: http://mujoco.org/book/XMLreference.html#inertial
-        auto _kinTreeInertia = new TKinTreeInertia();
-        // grab the transform of the inertial frame:
+        auto _kinInertial = TInertialData();
+        // Grab the transform of the inertial frame
         // from mujoco docs: origin in body's CM and axes along Principal Axes of inertia
         // no transformation is required if axes are not aligned, it's going to be done by ...
         // the compiler when the body is processed by computing the eigenvalues and (perhaps) doing ...
         // a similar trick to the one done in the bullet examples (in some urdf parsing they do this trick)
-        _extractTransform( context, inertialElmPtr, _kinTreeInertia->relTransform );
+        _extractTransform( context, inertialElmPtr, _kinInertial.localTransform );
         // grab the mass as well (required)
-        _kinTreeInertia->mass = inertialElmPtr->getAttributeFloat( "mass", 1.0 );
+        _kinInertial.mass = inertialElmPtr->getAttributeFloat( "mass", 1.0 );
         // and also the inertia matrix
         if ( inertialElmPtr->hasAttributeVec3( "diaginertia" ) )
         {
             // we have been given a diagonal inertia matrix
             auto _inertiaVec3 = inertialElmPtr->getAttributeVec3( "diaginertia", { 0.1, 0.1, 0.1 } );
             // and assign the inertia matrix
-            _kinTreeInertia->ixx = _inertiaVec3.x;
-            _kinTreeInertia->iyy = _inertiaVec3.y;
-            _kinTreeInertia->izz = _inertiaVec3.z;
-            _kinTreeInertia->ixy = 0.0;
-            _kinTreeInertia->ixz = 0.0;
-            _kinTreeInertia->iyz = 0.0;
+            _kinInertial.ixx = _inertiaVec3.x;
+            _kinInertial.iyy = _inertiaVec3.y;
+            _kinInertial.izz = _inertiaVec3.z;
+            _kinInertial.ixy = 0.0;
+            _kinInertial.ixz = 0.0;
+            _kinInertial.iyz = 0.0;
         }
         else if ( inertialElmPtr->hasAttributeArrayFloat( "fullinertia" ) )
         {
             // we have been given a full positive-definite symmetric inertia matrix
             auto _inertiaArray6 = inertialElmPtr->getAttributeArrayFloat( "fullinertia" );
             // and assign the inertia matrix
-            _kinTreeInertia->ixx = _inertiaArray6.buff[0];
-            _kinTreeInertia->iyy = _inertiaArray6.buff[1];
-            _kinTreeInertia->izz = _inertiaArray6.buff[2];
-            _kinTreeInertia->ixy = _inertiaArray6.buff[3];
-            _kinTreeInertia->ixz = _inertiaArray6.buff[4];
-            _kinTreeInertia->iyz = _inertiaArray6.buff[5];
+            _kinInertial.ixx = _inertiaArray6.buff[0];
+            _kinInertial.iyy = _inertiaArray6.buff[1];
+            _kinInertial.izz = _inertiaArray6.buff[2];
+            _kinInertial.ixy = _inertiaArray6.buff[3];
+            _kinInertial.ixz = _inertiaArray6.buff[4];
+            _kinInertial.iyz = _inertiaArray6.buff[5];
         }
         else
         {
             // Must have one inertia matrix definition given by one of the previous elements
             std::cout << "ERROR> no inertia-matrix given in mjcf model "
                       << "for agent with name: " << context.agentPtr->name() << std::endl;
-            return NULL;
         }
 
-        return _kinTreeInertia;
+        return _kinInertial;
     }
 
     TKinTreeActuator* _processActuator( TMjcfParsingContext& context, 
                                         mjcf::GenericElement* actuatorElementPtr )
     {
-        auto _kinTreeActuatorPtr = new TKinTreeActuator();
+        auto _kinActuator = new TKinTreeActuator();
         // grab the name
-        _kinTreeActuatorPtr->name = actuatorElementPtr->getAttributeString( "name" );
-        // check in case the user forgot to set the name of the actuator
-        if ( _kinTreeActuatorPtr->name == "" )
-            _kinTreeActuatorPtr->name = actuatorElementPtr->getAttributeString( "joint" );
+        _kinActuator->name = actuatorElementPtr->getAttributeString( "name" );
+        // check in case the user forgot to set the name of the actuator (use joint name as default)
+        if ( _kinActuator->name == "" )
+            _kinActuator->name = actuatorElementPtr->getAttributeString( "joint" );
         // and the type of actuator
-        _kinTreeActuatorPtr->type = actuatorElementPtr->etype;
-        // and a reference to the joint it controls
+        _kinActuator->data.type = toEnumActuator( actuatorElementPtr->etype );
+        // and a reference to the joint it controls (@todo: add support for other 3 types of transmissions)
         auto _jointName = actuatorElementPtr->getAttributeString( "joint" );
         if ( context.agentPtr->jointsMap.find( _jointName ) != context.agentPtr->jointsMap.end() )
         {
-            _kinTreeActuatorPtr->jointPtr = context.agentPtr->jointsMap[ _jointName ];
+            _kinActuator->jointPtr = context.agentPtr->jointsMap[_jointName];
         }
         else
         {
-            std::cout << "WARNING> actuator with name: "
-                      << _kinTreeActuatorPtr->name << " "
-                      << "using a non existent joint: "
-                      << _jointName << std::endl;
+            std::cout << "WARNING> actuator with name: " << _kinActuator->name << " "
+                      << "using a non existent joint: " << _jointName << std::endl;
 
-            _kinTreeActuatorPtr->jointPtr = NULL;
+            _kinActuator->jointPtr = nullptr;
         }
-        // and the ctrl limits
-        auto _ctrlLimits = _grabVec2( context, actuatorElementPtr, "ctrlrange", { -1, 1 } );
-        _kinTreeActuatorPtr->minCtrl = _ctrlLimits.x;
-        _kinTreeActuatorPtr->maxCtrl = _ctrlLimits.y;
+        // and the ctrl limits (must have limited-flag set, and have a valid range). Otherwise, use defaults
+        if ( _grabString( context, actuatorElementPtr, "ctrllimited", "false" ) == "true" )
+            if ( actuatorElementPtr->hasAttributeVec2( "ctrlrange" ) )
+                _kinActuator->data.limits = _grabVec2( context, actuatorElementPtr, "ctrlrange", { -1.0f, 1.0f } );
 
-        // @CHECK|@WIP : Should use variant here for extra parameters for ...
-        // each backend type used, as some would support more/less features
-
-        // and the ctrl clamping flag
-        _kinTreeActuatorPtr->clampCtrl = ( _grabString( context, actuatorElementPtr, "ctrllimited", "true" ) == "true" );
         // and the position feedback gain
-        _kinTreeActuatorPtr->kp = _grabFloat( context, actuatorElementPtr, "kp", 1.0 );
+        _kinActuator->data.kp = _grabFloat( context, actuatorElementPtr, "kp", 1.0 );
         // and the velocity feedback gain
-        _kinTreeActuatorPtr->kv = _grabFloat( context, actuatorElementPtr, "kv", 1.0 );
+        _kinActuator->data.kv = _grabFloat( context, actuatorElementPtr, "kv", 1.0 );
         // and the gear scaling
-        _kinTreeActuatorPtr->gear = _grabArrayFloat( context, actuatorElementPtr, "gear", { 6, { 1., 0., 0., 0., 0., 0. } } );
-
-        // @TODO|CHECK: for some special joints (ball and free) "joint" is not the field we are looking for
+        _kinActuator->data.gear = _grabArrayFloat( context, actuatorElementPtr, "gear", { 6, { 1., 0., 0., 0., 0., 0. } } );
 
         // and store it in the actuators buffer
-        context.agentPtr->actuators.push_back( _kinTreeActuatorPtr );
+        context.agentPtr->actuators.push_back( _kinActuator );
         // and to the actuators map
-        context.agentPtr->actuatorsMap[ _kinTreeActuatorPtr->name ] = _kinTreeActuatorPtr;
+        context.agentPtr->actuatorsMap[_kinActuator->name] = _kinActuator;
 
-        return _kinTreeActuatorPtr;
+        return _kinActuator;
     }
 
     void _extractTransform( TMjcfParsingContext& context, 
@@ -679,7 +604,7 @@ namespace agent {
             float _width, _depth;
             if ( _gsize.ndim == 0 )
             {
-                // This is weird, but just in case make some default dimenions
+                // This is weird, but just in case make some default dimensions
                 std::cout << "WARNING> the plane " <<  _gname << " has no size :/" << std::endl;
                 _width = 3.0f;
                 _depth = 3.0f;
@@ -692,8 +617,8 @@ namespace agent {
             else if ( _gsize.ndim >= 2 )
             {
                 // each dimensiones has a separate field
-                _width = _gsize.buff[0];
-                _depth = _gsize.buff[1];
+                _width = 2.0f * _gsize.buff[0];
+                _depth = 2.0f * _gsize.buff[1];
                 // third is spacing
             }
 
@@ -811,9 +736,9 @@ namespace agent {
                 _hwidth = _hdepth = _hheight = 0.1f;
             }
 
-            targetSize.x = 2 * _hwidth;
-            targetSize.y = 2 * _hdepth;
-            targetSize.z = 2 * _hheight;
+            targetSize.x = 2.0f * _hwidth;
+            targetSize.y = 2.0f * _hdepth;
+            targetSize.z = 2.0f * _hheight;
         }
 
         return _usesFromto;
@@ -835,45 +760,32 @@ namespace agent {
         }
     }
 
-    void _convertGlobalToLocalCoordinates( TKinTreeBody* kinTreeBodyPtr, 
+    void _convertGlobalToLocalCoordinates( TKinTreeBody* kinBody, 
                                            const TMat4& parentWorldTransform )
     {
-        auto _bodyWorldTransform = kinTreeBodyPtr->relTransform;
-        kinTreeBodyPtr->relTransform = _convertGlobalToLocalTransform( parentWorldTransform,
-                                                                       _bodyWorldTransform );
+        /* convert all transforms, keeping in mind that the local transforms act as world-transforms */
 
-        auto _joints = kinTreeBodyPtr->childJoints;
-        for ( size_t q = 0; q < _joints.size(); q++ )
-        {
-            _joints[q]->relTransform = _convertGlobalToLocalTransform( _bodyWorldTransform,
-                                                                       _joints[q]->relTransform );
-        }
+        auto _bodyWorldTransform = kinBody->localTransformZero;
+        kinBody->localTransformZero = _convertGlobalToLocalTransform( parentWorldTransform,
+                                                                      _bodyWorldTransform );
 
-        auto _visuals = kinTreeBodyPtr->childVisuals;
-        for ( size_t q = 0; q < _visuals.size(); q++ )
-        {
-            _visuals[q]->relTransform = _convertGlobalToLocalTransform( _bodyWorldTransform,
-                                                                        _visuals[q]->relTransform );
-        }
+        for ( auto _joint : kinBody->joints )
+            _joint->data.localTransform = _convertGlobalToLocalTransform( _bodyWorldTransform, _joint->data.localTransform );
 
-        auto _collisions = kinTreeBodyPtr->childCollisions;
-        for ( size_t q = 0; q < _collisions.size(); q++ )
-        {
-            _collisions[q]->relTransform = _convertGlobalToLocalTransform( _bodyWorldTransform,
-                                                                           _collisions[q]->relTransform );
-        }
+        for ( auto _visual : kinBody->visuals )
+            _visual->data.localTransform = _convertGlobalToLocalTransform( _bodyWorldTransform, _visual->data.localTransform );
 
-        auto _bodies = kinTreeBodyPtr->childBodies;
-        for ( size_t q = 0; q < _bodies.size(); q++ )
-        {
-            _convertGlobalToLocalCoordinates( _bodies[q], _bodyWorldTransform );
-        }
+        for ( auto _collision : kinBody->collisions )
+            _collision->data.localTransform = _convertGlobalToLocalTransform( _bodyWorldTransform, _collision->data.localTransform );
+
+        for ( auto _childBody : kinBody->children )
+            _convertGlobalToLocalCoordinates( _childBody, _bodyWorldTransform );
     }
 
     TMat4 _convertGlobalToLocalTransform( const TMat4& parentWorldTransform,
                                           const TMat4& childWorldTransform )
     {
-        // convert coordinates from body->relTransform to local coordinates
+        // Compute the relative transform between two frames, given their world transforms
         // Use the following relation:
         //
         //  b1 : parent

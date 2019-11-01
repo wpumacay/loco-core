@@ -18,7 +18,7 @@ namespace terrain {
         float time;
         float deltatime;
         // position to use for scenario calculations
-        struct { float x; float y; float z; } trackingpoint;
+        TVec3 trackingpoint;
         // camera frustum to cull things
         float camfrustum[9];
     };
@@ -26,17 +26,17 @@ namespace terrain {
 
     struct TTerrainPrimitive
     {
-        std::string                             type;
-        std::string                             geomType;
-        std::string                             filename;
-        std::string                             texturename;
-        struct { float r; float g; float b; }   color;
-        struct { float x; float y; float z; }   size;
-        struct { float x; float y; float z; }   pos;
-        float                                   rotmat[9];
-        float                                   rbound;
-        bool                                    inUse;
-        bool                                    useCustomColor;
+        std::string     type;
+        std::string     geomType;
+        std::string     filename;
+        std::string     texturename;
+        TVec3           color;
+        TVec3           size;
+        TVec3           pos;
+        TMat3           rotmat;
+        float           rbound;
+        bool            inUse;
+        bool            useCustomColor;
     };
 
     class TITerrainGenerator

@@ -31,27 +31,8 @@ namespace tysoc
     */
     class TScenario
     {
-        protected :
 
-        ScenarioState m_state;
-
-        std::vector< TBody* >                               m_bodies;
-        std::map< std::string, TBody* >                     m_mapBodiesByName;
-        std::map< eDynamicsType, std::vector< TBody* > >    m_mapBodiesByType;
-
-        std::vector< agent::TAgent* >                              m_agents;
-        std::map< std::string, agent::TAgent* >                    m_mapAgentsByName;
-        std::map< std::string, std::vector< agent::TAgent* > >     m_mapAgentsByType;
-
-        std::vector< sensor::TISensor* >                             m_sensors;
-        std::map< std::string, sensor::TISensor* >                   m_mapSensorsByName;
-        std::map< std::string, std::vector< sensor::TISensor* > >    m_mapSensorsByType;
-
-        std::vector< terrain::TITerrainGenerator* >                          m_terrainGenerators;
-        std::map< std::string, terrain::TITerrainGenerator* >                m_mapTerrainGeneratorsByName;
-        std::map< std::string, std::vector< terrain::TITerrainGenerator* > > m_mapTerrainGeneratorsByType;
-
-        public :
+    public :
 
         /**
         *   Creates an empty scenario (no agents, no terrain-generators, no sensors).
@@ -80,8 +61,8 @@ namespace tysoc
         terrain::TITerrainGenerator*    getTerrainGeneratorByName( const std::string& name );
 
         std::vector< TBody* >                           getBodiesByType( const eDynamicsType& type );
-        std::vector< agent::TAgent* >                   getAgentsByType( const std::string& type );
-        std::vector< sensor::TISensor* >                getSensorsByType( const std::string& type );
+        std::vector< agent::TAgent* >                   getAgentsByType( const agent::eAgentType& type );
+        std::vector< sensor::TISensor* >                getSensorsByType( const eSensorType& type );
         std::vector< terrain::TITerrainGenerator* >     getTerrainGeneratorsByType( const std::string& type );
 
         bool hasBody( const std::string& bodyName );
@@ -91,6 +72,26 @@ namespace tysoc
 
         virtual void initialize();
         virtual void update();
+
+    protected :
+
+        ScenarioState m_state;
+
+        std::vector< TBody* >                               m_bodies;
+        std::map< std::string, TBody* >                     m_mapBodiesByName;
+        std::map< eDynamicsType, std::vector< TBody* > >    m_mapBodiesByType;
+
+        std::vector< agent::TAgent* >                               m_agents;
+        std::map< std::string, agent::TAgent* >                     m_mapAgentsByName;
+        std::map< agent::eAgentType, std::vector< agent::TAgent* > >       m_mapAgentsByType;
+
+        std::vector< sensor::TISensor* >                            m_sensors;
+        std::map< std::string, sensor::TISensor* >                  m_mapSensorsByName;
+        std::map< eSensorType, std::vector< sensor::TISensor* > >   m_mapSensorsByType;
+
+        std::vector< terrain::TITerrainGenerator* >                             m_terrainGenerators;
+        std::map< std::string, terrain::TITerrainGenerator* >                   m_mapTerrainGeneratorsByName;
+        std::map< std::string, std::vector< terrain::TITerrainGenerator* > >    m_mapTerrainGeneratorsByType;
     };
 
 }

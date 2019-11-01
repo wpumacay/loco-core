@@ -70,14 +70,4 @@ namespace pytysoc
         return false;
     }
 
-    std::string PyVisualizer::type()
-    {
-        if ( m_visualizerPtr )
-            return m_visualizerPtr->type();
-
-        std::cout << "ERROR> could not request backend type on "
-                  << "a non-existent wrapped visualizer object" << std::endl;
-        return "undefined";
-    }
-
 }

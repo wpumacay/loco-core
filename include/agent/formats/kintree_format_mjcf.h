@@ -49,8 +49,8 @@ namespace agent {
     TKinTreeCollision* _processCollisionFromMjcf( TMjcfParsingContext& context, 
                                                   mjcf::GenericElement* geomElementPtr );
 
-    TKinTreeInertia* _processInertialFromMjcf( TMjcfParsingContext& context, 
-                                               mjcf::GenericElement* inertialElmPtr );
+    TInertialData _processInertialFromMjcf( TMjcfParsingContext& context, 
+                                            mjcf::GenericElement* inertialElmPtr );
 
     TKinTreeActuator* _processActuator( TMjcfParsingContext& context, 
                                         mjcf::GenericElement* actuatorElementPtr );

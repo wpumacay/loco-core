@@ -6,9 +6,6 @@
 // base agent functionality
 #include <agent/agent_base.h>
 
-#define HACK_SPLIT_SPHERICAL_JOINTS 0
-#define ENABLE_PLANAR_JOINTS 1
-
 namespace tysoc {
 namespace agent {
 
@@ -44,7 +41,7 @@ namespace agent {
                                            rlsim::RlsimJoint* rlsimJointPtr );
 
     TKinTreeVisual* _processVisualFromRlsim( TRlsimParsingContext& context, 
-                                             rlsim::RlsimVisual* rlsimVisualPtr );
+                                             const rlsim::RlsimVisual& rlsimVisual );
 
     TKinTreeCollision* _processCollisionFromRlsim( TRlsimParsingContext& context, 
                                                    rlsim::RlsimBody* rlsimBodyPtr );

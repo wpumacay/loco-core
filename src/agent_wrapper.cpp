@@ -24,20 +24,20 @@ namespace tysoc {
         else
         {
             // and grab the model data for usage in specific backends (if needed)
-            auto _modelTemplateType = agentPtr->getModelFormat();
-            if ( _modelTemplateType == agent::MODEL_FORMAT_MJCF )
+            auto _modelTemplateType = agentPtr->format();
+            if ( _modelTemplateType == agent::eModelFormat::MJCF )
             {
                 m_mjcfModelTemplatePtr = m_agentPtr->getModelDataMjcf();
                 m_urdfModelTemplatePtr = NULL;
                 m_rlsimModelTemplatePtr = NULL;
             }
-            else if ( _modelTemplateType == agent::MODEL_FORMAT_URDF )
+            else if ( _modelTemplateType == agent::eModelFormat::URDF )
             {
                 m_urdfModelTemplatePtr = m_agentPtr->getModelDataUrdf();
                 m_mjcfModelTemplatePtr = NULL;
                 m_rlsimModelTemplatePtr = NULL;
             }
-            else if ( _modelTemplateType == agent::MODEL_FORMAT_RLSIM )
+            else if ( _modelTemplateType == agent::eModelFormat::RLSIM )
             {
                 m_rlsimModelTemplatePtr = m_agentPtr->getModelDataRlsim();
                 m_urdfModelTemplatePtr = NULL;

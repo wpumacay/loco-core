@@ -1,547 +1,194 @@
 
 #include <glviz_kintree.h>
 
+using namespace tysoc::agent;
+
 namespace tysoc {
 
+    /***************************************************************************
+    *                                                                          *
+    *                           TGLVIZKINTREE-IMPL                             *
+    *                                                                          *
+    ***************************************************************************/
 
-    // @TODO: Change some of the visuals for actuators, sensors, etc. ...
-    //        for special gizmos that give better feedback than primitives
-
-    TGLVizKinTree::TGLVizKinTree( agent::TAgent* agentPtr,
-                                  engine::LScene* scenePtr,
+    TGLVizKinTree::TGLVizKinTree( TAgent* agentPtr,
+                                  engine::CScene* scenePtr,
                                   const std::string& workingDir )
     {
         m_scenePtr      = scenePtr;
         m_agentPtr      = agentPtr;
         m_workingDir    = workingDir;
 
-        _collectFromKinTree();
-    }
-
-    TGLVizKinTree::~TGLVizKinTree()
-    {
-        m_scenePtr = NULL;
-        m_agentPtr = NULL;
-
-        for ( size_t i = 0; i < m_vizBodies.size(); i++ )
-        {
-            m_vizBodies[i].meshPtr = NULL;
-            m_vizBodies[i].bodyPtr = NULL;
-        }
-        m_vizBodies.clear();
-
-        for ( size_t i = 0; i < m_vizJoints.size(); i++ )
-        {
-            m_vizJoints[i].meshPtr   = NULL;
-            m_vizJoints[i].jointPtr  = NULL;
-        }
-        m_vizJoints.clear();
-
-        for ( size_t i = 0; i < m_vizActuators.size(); i++ )
-        {
-            m_vizActuators[i].meshPtr        = NULL;
-            m_vizActuators[i].actuatorPtr    = NULL;
-        }
-        m_vizActuators.clear();
-
-        for ( size_t i = 0; i < m_vizSensors.size(); i++ )
-        {
-            m_vizSensors[i].meshPtr      = NULL;
-            m_vizSensors[i].sensorPtr    = NULL;
-        }
-        m_vizSensors.clear();
-
-        for ( size_t i = 0; i < m_vizVisuals.size(); i++ )
-        {
-            m_vizVisuals[i].meshPtr = NULL;
-            m_vizVisuals[i].visualPtr = NULL;
-        }
-        m_vizVisuals.clear();
-
-        for ( size_t i = 0; i < m_vizCollisions.size(); i++ )
-        {
-            m_vizCollisions[i].meshPtr      = NULL;
-            m_vizCollisions[i].collisionPtr = NULL;
-        }
-        m_vizCollisions.clear();
-    }
-
-    void TGLVizKinTree::_collectFromKinTree()
-    {
         if ( !m_agentPtr )
         {
-            std::cout << "WARNING> There is no kintree to extract info from" << std::endl;
+            ENGINE_ERROR( "WARNING> There is no kintree to extract info from" );
             return;
         }
 
-        // @TODO: Change render calls to debug objects (frames, etc) to a ...
-        // separate simmple renderer, as it should not cast shadow, not anything
-
-        _collectKinBodies();
-        _collectKinJoints();
-        _collectKinActuators();
-        _collectKinSensors();
         _collectKinVisuals();
         _collectKinCollisions();
     }
 
-
-    void TGLVizKinTree::_collectKinBodies()
+    TGLVizKinTree::~TGLVizKinTree()
     {
-        auto _bodies = m_agentPtr->bodies;
+        m_scenePtr = nullptr;
+        m_agentPtr = nullptr;
 
-        for ( size_t i = 0; i < _bodies.size(); i++ )
-        {
-            TGLVizKinBody _vizBody;
-            // wrap the kinBody object
-            _vizBody.bodyPtr = _bodies[i];
-            // and create the appropiate mesh
-            _vizBody.meshPtr = _createMesh( "sphere",
-                                             VIZKINTREE_BODY_DEFAULT_SIZE,
-                                             VIZKINTREE_BODY_DEFAULT_COLOR,
-                                             VIZKINTREE_BODY_DEFAULT_COLOR,
-                                             VIZKINTREE_BODY_DEFAULT_COLOR );
-            // and create the axes
-            _vizBody.axesPtr = engine::CMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
-            // and add it to the scene
-            m_scenePtr->addRenderable( _vizBody.axesPtr );
-            // and add it to the bodies buffer
-            m_vizBodies.push_back( _vizBody );
-
-            _vizBody.axesPtr->debug = true;
-        }
-    }
-
-    void TGLVizKinTree::_collectKinJoints()
-    {
-        auto _joints = m_agentPtr->joints;
-
-        for ( size_t i = 0; i < _joints.size(); i++ )
-        {
-            TGLVizKinJoint _vizJoint;
-            // wrap the kinJoint object
-            _vizJoint.jointPtr = _joints[i];
-            // and create the appropiate mesh
-            _vizJoint.meshPtr = _createMesh( "cylinder",
-                                              VIZKINTREE_JOINT_DEFAULT_SIZE,
-                                              VIZKINTREE_JOINT_DEFAULT_COLOR,
-                                              VIZKINTREE_JOINT_DEFAULT_COLOR,
-                                              VIZKINTREE_JOINT_DEFAULT_COLOR );
-            // and create the axes
-            _vizJoint.axesPtr = engine::CMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
-            // and add it to the scene
-            m_scenePtr->addRenderable( _vizJoint.axesPtr );
-            // and add it to the joints buffer
-            m_vizJoints.push_back( _vizJoint );
-
-            _vizJoint.axesPtr->debug = true;
-        }
-    }
-
-    void TGLVizKinTree::_collectKinActuators()
-    {
-        auto _actuators = m_agentPtr->actuators;
-
-        for ( size_t i = 0; i < _actuators.size(); i++ )
-        {
-            TGLVizKinActuator _vizActuator;
-            // wrap the kinActuator object
-            _vizActuator.actuatorPtr = _actuators[i];
-            // and create the appropiate mesh
-            _vizActuator.meshPtr = _createMesh( "cylinder",
-                                                VIZKINTREE_ACTUATOR_DEFAULT_SIZE,
-                                                VIZKINTREE_ACTUATOR_DEFAULT_COLOR,
-                                                VIZKINTREE_ACTUATOR_DEFAULT_COLOR,
-                                                VIZKINTREE_ACTUATOR_DEFAULT_COLOR );
-            // and create the axes
-            _vizActuator.axesPtr = engine::CMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
-            // and add it to the scene
-            m_scenePtr->addRenderable( _vizActuator.axesPtr );
-            // and add it to the actuators buffer
-            m_vizActuators.push_back( _vizActuator );
-
-            _vizActuator.axesPtr->debug = true;
-        }
-    }
-
-    void TGLVizKinTree::_collectKinSensors()
-    {
-        auto _sensors = m_agentPtr->sensors;
-
-        for ( size_t i = 0; i < _sensors.size(); i++ )
-        {
-            TGLVizKinSensor _vizSensor;
-            // wrap the kinSensor object
-            _vizSensor.sensorPtr = _sensors[i];
-            // and create the appropiate mesh
-            _vizSensor.meshPtr = _createMesh( "box",
-                                              VIZKINTREE_SENSOR_DEFAULT_SIZE,
-                                              VIZKINTREE_SENSOR_DEFAULT_COLOR,
-                                              VIZKINTREE_SENSOR_DEFAULT_COLOR,
-                                              VIZKINTREE_SENSOR_DEFAULT_COLOR );
-            // and create the axes
-            _vizSensor.axesPtr = engine::CMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
-            // and add it to the scene
-            m_scenePtr->addRenderable( _vizSensor.axesPtr );
-            // and add it to the sensors buffer
-            m_vizSensors.push_back( _vizSensor );
-
-            _vizSensor.axesPtr->debug = true;
-        }
+        m_vizVisuals.clear();
+        m_vizCollisions.clear();
     }
 
     void TGLVizKinTree::_collectKinVisuals()
     {
-        auto _visuals = m_agentPtr->visuals;
-
-        for ( size_t i = 0; i < _visuals.size(); i++ )
+        for ( auto _visual : m_agentPtr->visuals )
         {
-            TGLVizKinVisual _vizVisual;
-            // wrap the kinVisual object
-            _vizVisual.visualPtr = _visuals[i];
-            // and create the appropiate mesh
-            auto _geometry = _visuals[i]->geometry;
-            _vizVisual.meshPtr = _createMesh( _geometry.type,
-                                              _geometry.size,
-                                              _visuals[i]->material.diffuse,
-                                              _visuals[i]->material.diffuse,
-                                              _visuals[i]->material.specular,
-                                              _geometry.filename );
-            // and create the axes
-            _vizVisual.axesPtr = engine::CMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
-            // and add it to the scene
-            m_scenePtr->addRenderable( _vizVisual.axesPtr );
-            // and add it to the visuals buffer
-            m_vizVisuals.push_back( _vizVisual );
+            auto _renderable = createRenderable( _visual->data.type,
+                                                 _visual->data.size,
+                                                 _visual->data.filename );
 
-            // make axes ptr as debug @DIRTY
-            _vizVisual.axesPtr->debug = true;
+            if ( _renderable )
+            {
+                setRenderableColor( _renderable, 
+                                    DEFAULT_VISUAL_COLOR, 
+                                    DEFAULT_VISUAL_COLOR, 
+                                    DEFAULT_VISUAL_COLOR );
+
+                m_scenePtr->addRenderable( std::unique_ptr< engine::CIRenderable >( _renderable ) );
+            }
+
+            m_vizVisuals.push_back( std::make_pair( _visual, _renderable ) );
         }
     }
 
     void TGLVizKinTree::_collectKinCollisions()
     {
         auto _collisions = m_agentPtr->collisions;
+        for ( auto _collision : _collisions )
+        {
+            auto _renderable = createRenderable( _collision->data.type, 
+                                                 _collision->data.size, 
+                                                 _collision->data.filename );
 
-        for ( size_t i = 0; i < _collisions.size(); i++ )
-        {
-            TGLVizKinCollision _vizCollision;
-            // wrap the kinCollision object
-            _vizCollision.collisionPtr = _collisions[i];
-            // and create the appropiate mesh
-            auto _geometry = _collisions[i]->geometry;
-            _vizCollision.meshPtr = _createMesh( _geometry.type,
-                                                 _geometry.size,
-                                                 VIZKINTREE_COLLISION_DEFAULT_COLOR,
-                                                 VIZKINTREE_COLLISION_DEFAULT_COLOR,
-                                                 VIZKINTREE_COLLISION_DEFAULT_COLOR,
-                                                 _geometry.filename );
-            _vizCollision.meshPtr->setWireframeMode( true );
-            // and create the axes
-            _vizCollision.axesPtr = engine::CMeshBuilder::createAxes( VIZKINTREE_AXES_DEFAULT_SIZE );
-            // and add it to the scene
-            m_scenePtr->addRenderable( _vizCollision.axesPtr );
-            // and add it to the collisions buffer
-            m_vizCollisions.push_back( _vizCollision );
-
-            // @DIRTY
-            _vizCollision.axesPtr->debug = true;
-            _vizCollision.meshPtr->debug = true;
-        }
-    }
-
-
-    engine::LIRenderable* TGLVizKinTree::_createMesh( const std::string& type,
-                                                          const TVec3& size,
-                                                          const TVec3& cAmbient,
-                                                          const TVec3& cDiffuse,
-                                                          const TVec3& cSpecular,
-                                                          const std::string& filename )
-    {
-        engine::LIRenderable* _renderable = NULL;
-
-        if ( type == "box" )
-        {
-            _renderable = engine::CMeshBuilder::createBox( size.x,
-                                                           size.y,
-                                                           size.z );
-        }
-        else if ( type == "sphere" )
-        {
-            _renderable = engine::CMeshBuilder::createSphere( size.x );
-        }
-        else if ( type == "capsule" )
-        {
-            _renderable = engine::CMeshBuilder::createCapsule( size.x, size.y );
-        }
-        else if ( type == "cylinder" )
-        {
-            _renderable = engine::CMeshBuilder::createCylinder( size.x, size.y );
-        }
-        else if ( type == "mesh" )
-        {
-            auto _meshFilePath = m_workingDir + filename;
-            _renderable = engine::CMeshBuilder::createModelFromFile( _meshFilePath,
-                                                                     "" );
-            // std::cout << "mesh created: " << filename << std::endl;
-        }
-
-        if ( _renderable )
-        {
-            _setRenderableColor( _renderable, cAmbient, cDiffuse, cSpecular );
-
-            m_scenePtr->addRenderable( _renderable );
-        }
-        else
-        {
-            std::cout << "WARNING> could not create mesh of type: " << type << std::endl;
-            if ( type == "mesh" )
+            if ( _renderable )
             {
-                std::cout << "WARNING> filename of mesh: " << filename << std::endl;
-            }
-        }
+                setRenderableColor( _renderable, 
+                                    DEFAULT_COLLISION_COLOR, 
+                                    DEFAULT_COLLISION_COLOR, 
+                                    DEFAULT_COLLISION_COLOR );
 
-        return _renderable;
-    }
-
-    void TGLVizKinTree::_setRenderableColor( engine::LIRenderable* renderablePtr,
-                                                 const TVec3& cAmbient,
-                                                 const TVec3& cDiffuse,
-                                                 const TVec3& cSpecular )
-    {
-        // and update the color as well
-        if ( renderablePtr->getType() != RENDERABLE_TYPE_MODEL )
-        {
-            renderablePtr->getMaterial()->ambient   = { cAmbient.x, cAmbient.y, cAmbient.z };
-            renderablePtr->getMaterial()->diffuse   = { cDiffuse.x, cDiffuse.y, cDiffuse.z };
-            renderablePtr->getMaterial()->specular  = { cSpecular.x, cSpecular.y, cSpecular.z };
-        }
-        else
-        {
-            auto _children = reinterpret_cast< engine::LModel* >( renderablePtr )->getMeshes();
-            for ( size_t i = 0; i < _children.size(); i++ )
-            {
-                _children[i]->getMaterial()->ambient   = { cAmbient.x, cAmbient.y, cAmbient.z };
-                _children[i]->getMaterial()->diffuse   = { cDiffuse.x, cDiffuse.y, cDiffuse.z };
-                _children[i]->getMaterial()->specular  = { cSpecular.x, cSpecular.y, cSpecular.z };
+                m_scenePtr->addRenderable( std::unique_ptr< engine::CIRenderable >( _renderable ) );
             }
+
+            m_vizCollisions.push_back( std::make_pair( _collision, _renderable ) );
         }
     }
 
     void TGLVizKinTree::update()
     {
-        // update draw state
-        for ( size_t i = 0; i < m_vizVisuals.size(); i++ )
-        {
-            m_vizVisuals[i].meshPtr->setWireframeMode( drawState.drawAsWireframe );
-        }
+        if ( !m_agentPtr )
+            return;
 
-        // update bodies
-        for ( size_t i = 0; i < m_vizBodies.size(); i++ )
-        {
-            m_vizBodies[i].meshPtr->setVisibility( drawState.showBodies );
-            m_vizBodies[i].axesPtr->setVisibility( drawState.drawFrameAxes &&
-                                                    drawState.showBodies );
-            _updateBody( m_vizBodies[i] );
-        }
+        /* update gizmos for bodies, joints, sensors and actuators */
+        for ( auto _body : m_agentPtr->bodies )
+            _updateBodyGizmos( _body );
 
-        // update joints
-        for ( size_t i = 0; i < m_vizJoints.size(); i++ )
-        {
-            m_vizJoints[i].meshPtr->setVisibility( drawState.showJoints );
-            m_vizJoints[i].axesPtr->setVisibility( drawState.drawFrameAxes &&
-                                                    drawState.showJoints );
-            _updateJoint( m_vizJoints[i] );
-        }
+        for ( auto _joint : m_agentPtr->joints )
+            _updateJointGizmos( _joint );
 
-        // update  sensors
-        for ( size_t i = 0; i < m_vizSensors.size(); i++ )
-        {
-            m_vizSensors[i].meshPtr->setVisibility( drawState.showSensors );
-            m_vizSensors[i].axesPtr->setVisibility( drawState.drawFrameAxes &&
-                                                    drawState.showSensors );
-            _updateSensor( m_vizSensors[i] );
-        }
+        for ( auto _actuator : m_agentPtr->actuators )
+            _updateActuatorGizmos( _actuator );
 
-        // update visuals
-        for ( size_t i = 0; i < m_vizVisuals.size(); i++ )
-        {
-            m_vizVisuals[i].meshPtr->setVisibility( drawState.showVisuals );
-            m_vizVisuals[i].axesPtr->setVisibility( drawState.drawFrameAxes &&
-                                                    drawState.showVisuals );
-            _updateVisual( m_vizVisuals[i] );
-        }
+        for ( auto _sensor : m_agentPtr->sensors )
+            _updateSensorGizmos( _sensor );
 
-        // update actuator
-        for ( size_t i = 0; i < m_vizActuators.size(); i++ )
-        {
-            m_vizActuators[i].meshPtr->setVisibility( drawState.showActuators );
-            m_vizActuators[i].axesPtr->setVisibility( drawState.drawFrameAxes &&
-                                                    drawState.showActuators );
-            _updateActuator( m_vizActuators[i] );
-        }
+        /* update visuals (renderable and gizmos) */
+        for ( auto& _pair : m_vizVisuals )
+            _updateVisual( _pair.first, _pair.second );
 
-        // update collision
-        for ( size_t i = 0; i < m_vizCollisions.size(); i++ )
-        {
-            m_vizCollisions[i].meshPtr->setVisibility( drawState.showCollisions );
-            m_vizCollisions[i].axesPtr->setVisibility( drawState.drawFrameAxes &&
-                                                    drawState.showCollisions );
-            _updateCollision( m_vizCollisions[i] );
-        }
+        /* update collision (renderable and gizmos) */
+        for ( auto& _pair : m_vizCollisions )
+            _updateCollision( _pair.first, _pair.second );
     }
 
-    void TGLVizKinTree::_updateBody( TGLVizKinBody& kinBody )
+    void TGLVizKinTree::_updateBodyGizmos( TKinTreeBody* kinBody )
     {
-        // extract body world transform
-        TMat4 _worldTransform = kinBody.bodyPtr->worldTransform;
-        TVec3 _worldPosition = _worldTransform.getPosition();
-        TMat3 _worldRotation = _worldTransform.getRotation();
+        auto _wTransform = fromTMat4( kinBody->worldTransform );
 
-        // convert to engine datatypes
-        engine::LVec3 _position = fromTVec3( _worldPosition );
-        engine::LMat4 _rotation = fromTMat3( _worldRotation );
+        engine::CDebugDrawer::DrawSolidSphere( GIZMO_BODY_SIZE.x, 
+                                               _wTransform,
+                                               { GIZMO_BODY_COLOR.x, 
+                                                 GIZMO_BODY_COLOR.y, 
+                                                 GIZMO_BODY_COLOR.z, 1.0f } );
 
-        // set the world transform of the corresponding renderables
-        kinBody.meshPtr->pos        = _position;
-        kinBody.meshPtr->rotation   = _rotation;
-
-        kinBody.axesPtr->pos        = _position;
-        kinBody.axesPtr->rotation   = _rotation;
+        engine::CDebugDrawer::DrawSolidAxes( AXES_SIZE, _wTransform, 1.0f );
     }
 
-    void TGLVizKinTree::_updateJoint( TGLVizKinJoint& kinJoint )
+    void TGLVizKinTree::_updateJointGizmos( TKinTreeJoint* kinJoint )
     {
-        // extract joint world transform
-        TMat4 _worldTransform = kinJoint.jointPtr->worldTransform;
-        TVec3 _worldPosition = _worldTransform.getPosition();
-        TMat3 _worldRotation = _worldTransform.getRotation();
+        auto _wTransform = fromTMat4( kinJoint->worldTransform );
 
-        // convert to engine datatypes
-        engine::LVec3 _position = fromTVec3( _worldPosition );
-        engine::LMat4 _rotation = fromTMat3( _worldRotation );
+        engine::CDebugDrawer::DrawSolidCylinder( GIZMO_JOINT_SIZE.x,
+                                                 GIZMO_JOINT_SIZE.y,
+                                                 engine::eAxis::Z,
+                                                 _wTransform,
+                                                 { GIZMO_JOINT_COLOR.x,
+                                                   GIZMO_JOINT_COLOR.y,
+                                                   GIZMO_JOINT_COLOR.z, 1.0f } );
 
-        // set the world transform of the corresponding renderables
-        kinJoint.meshPtr->pos        = _position;
-        kinJoint.meshPtr->rotation   = _rotation;
-
-        kinJoint.axesPtr->pos        = _position;
-        kinJoint.axesPtr->rotation   = _rotation;
+        engine::CDebugDrawer::DrawSolidAxes( AXES_SIZE, _wTransform, 1.0f );
     }
 
-    void TGLVizKinTree::_updateSensor( TGLVizKinSensor& kinSensor )
+    void TGLVizKinTree::_updateActuatorGizmos( TKinTreeActuator* kinActuator )
     {
-        // extract sensor world transform
-        TMat4 _worldTransform = kinSensor.sensorPtr->worldTransform;
-        TVec3 _worldPosition = _worldTransform.getPosition();
-        TMat3 _worldRotation = _worldTransform.getRotation();
+        auto _wTransform = fromTMat4( kinActuator->worldTransform );
 
-        // convert to engine datatypes
-        engine::LVec3 _position = fromTVec3( _worldPosition );
-        engine::LMat4 _rotation = fromTMat3( _worldRotation );
+        engine::CDebugDrawer::DrawSolidCylinder( GIZMO_ACTUATOR_SIZE.x,
+                                                 GIZMO_ACTUATOR_SIZE.y,
+                                                 engine::eAxis::Z,
+                                                 _wTransform,
+                                                 { GIZMO_ACTUATOR_COLOR.x,
+                                                   GIZMO_ACTUATOR_COLOR.y,
+                                                   GIZMO_ACTUATOR_COLOR.z, 1.0f } );
 
-        // set the world transform of the corresponding renderables
-        kinSensor.meshPtr->pos        = _position;
-        kinSensor.meshPtr->rotation   = _rotation;
-
-        kinSensor.axesPtr->pos        = _position;
-        kinSensor.axesPtr->rotation   = _rotation;
+        engine::CDebugDrawer::DrawSolidAxes( AXES_SIZE, _wTransform, 1.0f );
     }
 
-    void TGLVizKinTree::_updateVisual( TGLVizKinVisual& kinVisual )
+    void TGLVizKinTree::_updateSensorGizmos( TKinTreeSensor* kinSensor )
     {
-        // extract visual world transform
-        TMat4 _worldTransform = kinVisual.visualPtr->geometry.worldTransform;
-        TVec3 _worldPosition = _worldTransform.getPosition();
-        TMat3 _worldRotation = _worldTransform.getRotation();
+        auto _wTransform = fromTMat4( kinSensor->worldTransform );
 
-        // convert to engine datatypes
-        engine::LVec3 _position = fromTVec3( _worldPosition );
-        engine::LMat4 _rotation = fromTMat3( _worldRotation );
+        engine::CDebugDrawer::DrawSolidBox( { GIZMO_SENSOR_SIZE.x,
+                                              GIZMO_SENSOR_SIZE.y,
+                                              GIZMO_SENSOR_SIZE.z },
+                                            _wTransform,
+                                            { GIZMO_SENSOR_COLOR.x,
+                                              GIZMO_SENSOR_COLOR.y,
+                                              GIZMO_SENSOR_COLOR.z, 1.0f } );
 
-        // set the world transform of the corresponding renderables
-        kinVisual.meshPtr->pos        = _position;
-        kinVisual.meshPtr->rotation   = _rotation;
-
-        kinVisual.axesPtr->pos        = _position;
-        kinVisual.axesPtr->rotation   = _rotation;
-
-//         // and update the color as well
-//         if ( kinVisual.meshPtr->getType() != RENDERABLE_TYPE_MODEL )
-//         {
-//             kinVisual.meshPtr->getMaterial()->ambient.x = kinVisual.visualPtr->material.diffuse.x;
-//             kinVisual.meshPtr->getMaterial()->ambient.y = kinVisual.visualPtr->material.diffuse.y;
-//             kinVisual.meshPtr->getMaterial()->ambient.z = kinVisual.visualPtr->material.diffuse.z;
-// 
-//             kinVisual.meshPtr->getMaterial()->diffuse.x = kinVisual.visualPtr->material.diffuse.x;
-//             kinVisual.meshPtr->getMaterial()->diffuse.y = kinVisual.visualPtr->material.diffuse.y;
-//             kinVisual.meshPtr->getMaterial()->diffuse.z = kinVisual.visualPtr->material.diffuse.z;
-// 
-//             kinVisual.meshPtr->getMaterial()->specular.x = kinVisual.visualPtr->material.specular.x;
-//             kinVisual.meshPtr->getMaterial()->specular.y = kinVisual.visualPtr->material.specular.y;
-//             kinVisual.meshPtr->getMaterial()->specular.z = kinVisual.visualPtr->material.specular.z;
-//         }
-//         else
-//         {
-//             auto _children = reinterpret_cast< engine::LModel* >( kinVisual.meshPtr )->getMeshes();
-//             for ( size_t i = 0; i < _children.size(); i++ )
-//             {
-//                 _children[i]->getMaterial()->ambient.x = kinVisual.visualPtr->material.diffuse.x;
-//                 _children[i]->getMaterial()->ambient.y = kinVisual.visualPtr->material.diffuse.y;
-//                 _children[i]->getMaterial()->ambient.z = kinVisual.visualPtr->material.diffuse.z;
-// 
-//                 _children[i]->getMaterial()->diffuse.x = kinVisual.visualPtr->material.diffuse.x;
-//                 _children[i]->getMaterial()->diffuse.y = kinVisual.visualPtr->material.diffuse.y;
-//                 _children[i]->getMaterial()->diffuse.z = kinVisual.visualPtr->material.diffuse.z;
-// 
-//                 _children[i]->getMaterial()->specular.x = kinVisual.visualPtr->material.specular.x;
-//                 _children[i]->getMaterial()->specular.y = kinVisual.visualPtr->material.specular.y;
-//                 _children[i]->getMaterial()->specular.z = kinVisual.visualPtr->material.specular.z;
-//             }
-//         }
+        engine::CDebugDrawer::DrawSolidAxes( AXES_SIZE, _wTransform, 1.0f );
     }
 
-    void TGLVizKinTree::_updateActuator( TGLVizKinActuator& kinActuator )
+    void TGLVizKinTree::_updateVisual( TKinTreeVisual* kinVisual, engine::CIRenderable* renderable )
     {
-        // extract actuator world transform
-        TMat4 _worldTransform = kinActuator.actuatorPtr->worldTransform;
-        TVec3 _worldPosition = _worldTransform.getPosition();
-        TMat3 _worldRotation = _worldTransform.getRotation();
+        auto _wTransform = fromTMat4( kinVisual->worldTransform );
+        engine::CDebugDrawer::DrawSolidAxes( AXES_SIZE, _wTransform, 1.0f );
 
-        // convert to engine datatypes
-        engine::LVec3 _position = fromTVec3( _worldPosition );
-        engine::LMat4 _rotation = fromTMat3( _worldRotation );
+        if ( !renderable )
+            return;
 
-        // set the world transform of the corresponding renderables
-        kinActuator.meshPtr->pos        = _position;
-        kinActuator.meshPtr->rotation   = _rotation;
-
-        kinActuator.axesPtr->pos        = _position;
-        kinActuator.axesPtr->rotation   = _rotation;
+        renderable->position = fromTVec3( kinVisual->worldTransform.getPosition() );
+        renderable->rotation = fromTMat3( kinVisual->worldTransform.getRotation() );
     }
 
-    void TGLVizKinTree::_updateCollision( TGLVizKinCollision& kinCollision )
+    void TGLVizKinTree::_updateCollision( TKinTreeCollision* kinCollision, engine::CIRenderable* renderable )
     {
-        // extract collision world transform
-        TMat4 _worldTransform = kinCollision.collisionPtr->geometry.worldTransform;
-        TVec3 _worldPosition = _worldTransform.getPosition();
-        TMat3 _worldRotation = _worldTransform.getRotation();
+        auto _wTransform = fromTMat4( kinCollision->worldTransform );
+        engine::CDebugDrawer::DrawSolidAxes( AXES_SIZE, _wTransform, 1.0f );
+        if ( !renderable )
+            return;
 
-        // convert to engine datatypes
-        engine::LVec3 _position = fromTVec3( _worldPosition );
-        engine::LMat4 _rotation = fromTMat3( _worldRotation );
-
-        // set the world transform of the corresponding renderables
-        kinCollision.meshPtr->pos        = _position;
-        kinCollision.meshPtr->rotation   = _rotation;
-
-        kinCollision.axesPtr->pos        = _position;
-        kinCollision.axesPtr->rotation   = _rotation;
-    }
-
-    agent::TAgent* TGLVizKinTree::getKinTreePtr()
-    {
-        return m_agentPtr;
+        renderable->position = fromTVec3( kinCollision->worldTransform.getPosition() );
+        renderable->rotation = fromTMat3( kinCollision->worldTransform.getRotation() );
     }
 
 }

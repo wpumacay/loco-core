@@ -10,23 +10,25 @@
 #include <agent/formats/kintree_format_urdf.h>
 #include <agent/formats/kintree_format_rlsim.h>
 
-// #define UPDATE_TREE_RECURSIVE_DH
-
 namespace tysoc {
 namespace agent {
 
-    /* REGISTERED TYPES OF AGENTS */
-    const std::string AGENT_TYPE_BASE = "base"; // agent with all minimal functionality
+    enum class eModelFormat
+    {
+        NONE = 0,
+        MJCF,   // mujoco file format, in the form of XML files (e.g. humanoid.xml)
+        URDF,   // urdf format (as in ROS and others), in the form of XML files (e.g. laikago.urdf)
+        RLSIM   // format used in TerrainRLSim (see https://github.com/UBCMOCCA/TerrainRLSim) (e.g. raptor3d.json)
+    };
 
-    /* MODEL FORMATS */
-    // no model used (could be custom creation, or something else happened)
-    const std::string MODEL_FORMAT_NONE  = "none";
-    // mujoco file format, in the form of XML files
-    const std::string MODEL_FORMAT_MJCF  = "mjcf"; // (e.g. humanoid.xml)
-    // urdf format (as in ROS and others), in the form of XML files
-    const std::string MODEL_FORMAT_URDF  = "urdf"; // (e.g. laikago.urdf)
-    // format used in TerrainRLSim (see https://github.com/UBCMOCCA/TerrainRLSim)
-    const std::string MODEL_FORMAT_RLSIM = "rlsim"; // (e.g. raptor3d.json)
+    std::string toString( const eModelFormat& format );
+
+    enum class eAgentType
+    {
+        BASE = 0, // @todo: define remaining types of agents (when we make them :/)
+    };
+
+    std::string toString( const eAgentType& type );
 
     /**
     *   Agent definition
@@ -52,75 +54,7 @@ namespace agent {
     class TAgent
     {
 
-        protected :
-
-        /* Unique name identifier for this agent */
-        std::string m_name;
-        /* Type variant of this agent (if extending through inheritance) */
-        std::string m_type;
-        /* Current position of the agent (of the root body) */
-        TVec3 m_position;
-        /* Starting position of the agent (of the root body) */
-        TVec3 m_startPosition;
-        /* Current rotation of the agent, in euler angles zyx (of the root body) */
-        TVec3 m_rotation;
-        /* Starting rotation of the agent, in euler angles zyx (of the root body) */
-        TVec3 m_startRotation;
-        /* Compensation for the zero configuration */
-        TMat4 m_zeroCompensation;
-
-        /* Root body of the kinematic tree */
-        TKinTreeBody* m_rootBodyPtr;
-
-        /* Model format used to create this agent */
-        std::string m_modelFormat;
-
-        /* References to parsed data from all formats */
-        mjcf::GenericElement*   m_modelDataMjcfPtr;
-        urdf::UrdfModel*        m_modelDataUrdfPtr;
-        rlsim::RlsimModel*      m_modelDataRlsimPtr;
-
-        /* Storage with all summary information written by the agent internals */
-        TGenericParams m_summary;
-
-        /* Initializes extra internal of more specific (derived) agents */
-        virtual void _initializeAgentInternal() {}
-        /* Updates extra internals of more specific (derived) agents */
-        virtual void _updateAgentInternal() {}
-        /* Resets extra internals of more specific (derived) agents */
-        virtual void _resetAgentInternal() {}
-
-        /* Updates the state of the internal components of the given body */
-        void _updateBodyComponents( TKinTreeBody* kinTreeBodyPtr );
-        /* Updates the state of the given joint */
-        void _updateJoint( TKinTreeJoint* kinTreeJointPtr );
-        /* Updates the state of the given actuator */
-        void _updateActuator( TKinTreeActuator* kinTreeActuatorPtr );
-        /* Updates the state of the given sensor */
-        void _updateSensor( TKinTreeSensor* kinTreeSensorPtr );
-        /* Updates the state of the given visual */
-        void _updateVisual( TKinTreeVisual* kinTreeVisualPtr );
-        /* Updates the state of the given collider */
-        void _updateCollision( TKinTreeCollision* kinTreeCollisionPtr );
-
-        /* Constructs some defaults sensors, if user did not give any */
-        void _constructDefaultSensors();
-        /* Initializes all world transforms for all bodies to the starting configuration */
-        void _initializeWorldTransforms();
-        /* Initializes a given body, and continues recursively with its children */
-        void _initializeBody( TKinTreeBody* kinTreeBodyPtr );
-
-        void _update_v1();
-
-        void _update_v2();
-
-        /**
-        *   Recursively traverse nodes in the tree to construct ...
-        *   the string representation up to this node.
-        */
-        std::string _strTraverse( TKinTreeBody* kinTreeBodyPtr, size_t depth );
-
-        public :
+    public :
 
         /* Resources of the kinematic tree for array-like access */
         std::vector< TKinTreeBody* >        bodies;        // kinTree bodies
@@ -188,7 +122,7 @@ namespace agent {
         TVec2 getActuatorLimits( int actuatorIndx );
 
         /* Returns the number of dimensions of the action vector */
-        int getActionDim() { return actuators.size(); }
+        int getActionDim() const { return actuators.size(); }
 
         /* Sets the root pointer (recall, external parsers assemble the agent) */
         void setRootBody( TKinTreeBody* rootPtr ) { m_rootBodyPtr = rootPtr; }
@@ -200,43 +134,107 @@ namespace agent {
         void setStartRotation( const TVec3& rotation ) { m_startRotation = rotation; }
 
         /* Returns the current position of the agent (its root body) */
-        TVec3 getPosition() { return m_position; }
+        TVec3 getPosition() const { return m_position; }
 
         /* Returns the starting position of the agent (its root body) */
-        TVec3 getStartPosition() { return m_startPosition; }
+        TVec3 getStartPosition() const { return m_startPosition; }
 
         /* Returns the current rotation of the agent (its root body) */
-        TVec3 getRotation() { return m_rotation; }
+        TVec3 getRotation() const { return m_rotation; }
 
         /* Returns the starting rotation of the agent (its root body) */
-        TVec3 getStartRotation() { return m_startRotation; }
+        TVec3 getStartRotation() const { return m_startRotation; }
 
         /* Returns the root body of the kinematic tree */
-        TKinTreeBody* getRootBody() { return m_rootBodyPtr; }
-
-        /* Returns the model format used to create this agent */
-        std::string getModelFormat() { return m_modelFormat; }
+        TKinTreeBody* getRootBody() const { return m_rootBodyPtr; }
 
         /* Returns the stored reference to the mjcf data used for this model */
-        mjcf::GenericElement* getModelDataMjcf() { return m_modelDataMjcfPtr; }
+        mjcf::GenericElement* getModelDataMjcf() const { return m_modelDataMjcfPtr; }
 
         /* Returns the stored reference to the mjcf data used for this model */
-        urdf::UrdfModel* getModelDataUrdf() { return m_modelDataUrdfPtr; }
+        urdf::UrdfModel* getModelDataUrdf() const { return m_modelDataUrdfPtr; }
 
         /* Returns the stored reference to the mjcf data used for this model */
-        rlsim::RlsimModel* getModelDataRlsim() { return m_modelDataRlsimPtr; }
+        rlsim::RlsimModel* getModelDataRlsim() const { return m_modelDataRlsimPtr; }
 
         /* Returns the unique name of this agent */
-        std::string name() { return m_name; }
+        std::string name() const { return m_name; }
 
         /* Returns the type of agent */
-        std::string type() { return m_type; }
+        eAgentType type() const { return m_type; }
+
+        /* Returns the model format used to create this agent */
+        eModelFormat format() const { return m_modelFormat; }
 
         /* Returns a summary written by internals of this agent */
         TGenericParams& summary() { return m_summary; }
 
         /* Returns a string representation of this agent */
         std::string toString();
+
+    protected :
+
+        /* Initializes extra internal of more specific (derived) agents */
+        virtual void _initializeAgentInternal() {}
+        /* Updates extra internals of more specific (derived) agents */
+        virtual void _updateAgentInternal() {}
+        /* Resets extra internals of more specific (derived) agents */
+        virtual void _resetAgentInternal() {}
+
+        /* Updates the state of the internal components of the given body */
+        void _updateBodyComponents( TKinTreeBody* kinTreeBodyPtr );
+        /* Updates the state of the given joint */
+        void _updateJoint( TKinTreeJoint* kinTreeJointPtr );
+        /* Updates the state of the given actuator */
+        void _updateActuator( TKinTreeActuator* kinTreeActuatorPtr );
+        /* Updates the state of the given sensor */
+        void _updateSensor( TKinTreeSensor* kinTreeSensorPtr );
+        /* Updates the state of the given visual */
+        void _updateVisual( TKinTreeVisual* kinTreeVisualPtr );
+        /* Updates the state of the given collider */
+        void _updateCollision( TKinTreeCollision* kinTreeCollisionPtr );
+
+        /* Constructs some defaults sensors, if user did not give any */
+        void _constructDefaultSensors();
+        /* Initializes all world transforms for all bodies to the starting configuration */
+        void _initializeWorldTransforms();
+        /* Initializes a given body, and continues recursively with its children */
+        void _initializeBody( TKinTreeBody* kinTreeBodyPtr );
+
+        /* Recursively traverse nodes in the tree to construct the string representation up to this node */
+        std::string _strTraverse( TKinTreeBody* kinTreeBodyPtr, size_t depth );
+
+    protected :
+
+        /* Unique name identifier for this agent */
+        std::string m_name;
+        /* Type variant of this agent (if extending through inheritance) */
+        eAgentType m_type;
+        /* Current position of the agent (of the root body) */
+        TVec3 m_position;
+        /* Starting position of the agent (of the root body) */
+        TVec3 m_startPosition;
+        /* Current rotation of the agent, in euler angles zyx (of the root body) */
+        TVec3 m_rotation;
+        /* Starting rotation of the agent, in euler angles zyx (of the root body) */
+        TVec3 m_startRotation;
+        /* Compensation for the zero configuration */
+        TMat4 m_zeroCompensation;
+
+        /* Root body of the kinematic tree */
+        TKinTreeBody* m_rootBodyPtr;
+
+        /* Model format used to create this agent */
+        eModelFormat m_modelFormat;
+
+        /* References to parsed data from all formats */
+        mjcf::GenericElement*   m_modelDataMjcfPtr;
+        urdf::UrdfModel*        m_modelDataUrdfPtr;
+        rlsim::RlsimModel*      m_modelDataRlsimPtr;
+
+        /* Storage with all summary information written by the agent internals */
+        TGenericParams m_summary;
+
     };
 
 }}

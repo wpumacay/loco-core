@@ -61,7 +61,6 @@ tysoc::TBody* createSimpleBody( const std::string& name, const std::string& type
     _visualData.shininess = 50.0f;
 
     _bodyData.dyntype = tysoc::eDynamicsType::DYNAMIC;
-    _bodyData.hasInertia = false;
     _bodyData.collisions.push_back( _collisionData );
     _bodyData.visuals.push_back( _visualData );
 

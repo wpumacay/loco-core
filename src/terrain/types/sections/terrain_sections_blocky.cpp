@@ -51,15 +51,7 @@ namespace terrain {
         m_basePrimitivePtr->pos.y = _py;
         m_basePrimitivePtr->pos.z = _pz;
 
-        m_basePrimitivePtr->rotmat[0] = 1.0f;
-        m_basePrimitivePtr->rotmat[1] = 0.0f;
-        m_basePrimitivePtr->rotmat[2] = 0.0f;
-        m_basePrimitivePtr->rotmat[3] = 0.0f;
-        m_basePrimitivePtr->rotmat[4] = 1.0f;
-        m_basePrimitivePtr->rotmat[5] = 0.0f;
-        m_basePrimitivePtr->rotmat[6] = 0.0f;
-        m_basePrimitivePtr->rotmat[7] = 0.0f;
-        m_basePrimitivePtr->rotmat[8] = 1.0f;
+        m_basePrimitivePtr->rotmat.setIdentity();
 
         // @CHECK: there seems to be a small issue with the platforms
         m_basePrimitivePtr->rbound = 0.5f * std::sqrt( _sx * _sx + _sy * _sy + _sz * _sz );
@@ -87,7 +79,7 @@ namespace terrain {
     {
         // go forward by one spawn section
         m_lastSpawnX = m_currentSpawnX;
-        m_currentSpawnX += _RANDOM( m_params.baseSpacingX * m_params.percentSpacingX.min,
+        m_currentSpawnX += TERRAIN_RANDOM( m_params.baseSpacingX * m_params.percentSpacingX.min,
                                     m_params.baseSpacingX * m_params.percentSpacingX.max );
 
         // create the block data
@@ -110,22 +102,22 @@ namespace terrain {
         _blockPrimitive->useCustomColor = true;
         // compute information for the primitive
         {
-            auto _sx = _RANDOM( m_params.baseWidth * m_params.percentWidth.min,
-                                m_params.baseWidth * m_params.percentWidth.max );
-            auto _sy = _RANDOM( m_params.baseDepth * m_params.percentDepth.min,
-                                m_params.baseDepth * m_params.percentDepth.max );
-            auto _sz = _RANDOM( m_params.baseHeight * m_params.percentHeight.min,
-                                m_params.baseHeight * m_params.percentHeight.max );
+            auto _sx = TERRAIN_RANDOM( m_params.baseWidth * m_params.percentWidth.min,
+                                       m_params.baseWidth * m_params.percentWidth.max );
+            auto _sy = TERRAIN_RANDOM( m_params.baseDepth * m_params.percentDepth.min,
+                                       m_params.baseDepth * m_params.percentDepth.max );
+            auto _sz = TERRAIN_RANDOM( m_params.baseHeight * m_params.percentHeight.min,
+                                       m_params.baseHeight * m_params.percentHeight.max );
 
             auto _px = m_currentSpawnX;
             auto _py = m_startY;
             if ( m_params.usesSides )
             {
-                float _sideSign = ( _RAND() > 0.5f ) ? -1.0f : 1.0f;
+                float _sideSign = ( TERRAIN_RAND() > 0.5f ) ? -1.0f : 1.0f;
                 _py = m_startY + _sideSign * ( 0.5f * m_params.baseDepth - 0.5f * _sy );
             }
-            auto _pz = m_startZ + 0.5f * _sz + _RANDOM( m_params.baseOffsetZ * m_params.percentOffsetZ.min,
-                                                        m_params.baseOffsetZ * m_params.percentOffsetZ.max );
+            auto _pz = m_startZ + 0.5f * _sz + TERRAIN_RANDOM( m_params.baseOffsetZ * m_params.percentOffsetZ.min,
+                                                               m_params.baseOffsetZ * m_params.percentOffsetZ.max );
 
             // base information
             _blockPrimitive->size.x = _sx;
@@ -136,15 +128,7 @@ namespace terrain {
             _blockPrimitive->pos.y = _py;
             _blockPrimitive->pos.z = _pz;
 
-            _blockPrimitive->rotmat[0] = 1.0f;
-            _blockPrimitive->rotmat[1] = 0.0f;
-            _blockPrimitive->rotmat[2] = 0.0f;
-            _blockPrimitive->rotmat[3] = 0.0f;
-            _blockPrimitive->rotmat[4] = 1.0f;
-            _blockPrimitive->rotmat[5] = 0.0f;
-            _blockPrimitive->rotmat[6] = 0.0f;
-            _blockPrimitive->rotmat[7] = 0.0f;
-            _blockPrimitive->rotmat[8] = 1.0f;
+            _blockPrimitive->rotmat.setIdentity();
 
             _blockPrimitive->rbound = 0.5f * std::sqrt( _sx * _sx + _sy * _sy + _sz * _sz );
 

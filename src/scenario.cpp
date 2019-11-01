@@ -13,10 +13,15 @@ namespace tysoc {
         m_mapBodiesByType[ eDynamicsType::STATIC ]      = std::vector< TBody* >();
         m_mapBodiesByType[ eDynamicsType::KINEMATIC ]   = std::vector< TBody* >();
 
-        m_mapAgentsByType[ agent::AGENT_TYPE_BASE ]  = std::vector< agent::TAgent* >();
+        m_mapAgentsByType[ agent::eAgentType::BASE ]  = std::vector< agent::TAgent* >();
 
-        m_mapSensorsByType[ sensor::SENSOR_TYPE_INTRINSICS ]            = std::vector< sensor::TISensor* >();
-        m_mapSensorsByType[ sensor::SENSOR_TYPE_EXTRINSICS_TERRAIN ]    = std::vector< sensor::TISensor* >();
+        m_mapSensorsByType[ eSensorType::PROP_JOINT ] = std::vector< sensor::TISensor* >();
+        m_mapSensorsByType[ eSensorType::PROP_BODY ] = std::vector< sensor::TISensor* >();
+        m_mapSensorsByType[ eSensorType::EXT_HEIGHTFIELD_1D ] = std::vector< sensor::TISensor* >();
+        m_mapSensorsByType[ eSensorType::EXT_HEIGHTFIELD_2D ] = std::vector< sensor::TISensor* >();
+        m_mapSensorsByType[ eSensorType::EXT_CAMERA_RGB ] = std::vector< sensor::TISensor* >();
+        m_mapSensorsByType[ eSensorType::EXT_CAMERA_DEPTH ] = std::vector< sensor::TISensor* >();
+        m_mapSensorsByType[ eSensorType::EXT_CAMERA_SEGMENTATION ] = std::vector< sensor::TISensor* >();
 
         m_mapTerrainGeneratorsByType[ terrain::TERRAIN_TYPE_STATIC ] = std::vector< terrain::TITerrainGenerator* >();
         m_mapTerrainGeneratorsByType[ terrain::TERRAIN_TYPE_PROCEDURAL_SECTIONS_PATH ]   = std::vector< terrain::TITerrainGenerator* >();
@@ -215,26 +220,26 @@ namespace tysoc {
         return std::vector< TBody* >();
     }
 
-    std::vector< agent::TAgent* > TScenario::getAgentsByType( const std::string& type )
+    std::vector< agent::TAgent* > TScenario::getAgentsByType( const agent::eAgentType& type )
     {
         if ( m_mapAgentsByType.find( type ) != m_mapAgentsByType.end() )
         {
             return m_mapAgentsByType[ type ];
         }
 
-        std::cout << "WARNING> tried to get agents of non existent type: " << type << std::endl;
+        std::cout << "WARNING> tried to get agents of non existent type: " << agent::toString( type ) << std::endl;
 
         return std::vector< agent::TAgent* >();
     }
 
-    std::vector< sensor::TISensor* > TScenario::getSensorsByType( const std::string& type )
+    std::vector< sensor::TISensor* > TScenario::getSensorsByType( const eSensorType& type )
     {
         if ( m_mapSensorsByType.find( type ) != m_mapSensorsByType.end() )
         {
             return m_mapSensorsByType[ type ];
         }
 
-        std::cout << "WARNING> tried to get sensors of non existent type: " << type << std::endl;
+        std::cout << "WARNING> tried to get sensors of non existent type: " << tysoc::toString( type ) << std::endl;
 
         return std::vector< sensor::TISensor* >();
     }

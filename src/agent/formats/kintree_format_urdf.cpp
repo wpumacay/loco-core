@@ -41,40 +41,27 @@ namespace agent {
         // grab the first root link
         auto _rootLink = _context.modelDataPtr->rootLinks[0];
         // and start the recursive process
-        auto _rootBodyPtr = _processBodyFromUrdf( _context, _rootLink, NULL );
+        auto _rootBodyPtr = _processBodyFromUrdf( _context, _rootLink, nullptr );
 
         if ( !_rootBodyPtr )
         {
             std::cout << "ERROR> something went wrong while parsing agent: "
-                      << agentPtr->name() << ". Processed root body is NULL" << std::endl;
+                      << agentPtr->name() << ". Processed root body is nullptr" << std::endl;
         }
 
         // make sure we set the root for this agent we are constructing
         _context.agentPtr->setRootBody( _rootBodyPtr );
 
-        // @CHECK
-        // Process actuators ( if not defined in the urdf as xml extensions ...
-        // then we should just create some default actuators as PD controllers )
-
+        // construct some default actuators (in case none given)
         _constructDefaultActuators( _context );
 
         // Set the compensation matrix (fixes orientation mismatch with format)
         _context.agentPtr->setZeroCompensationMatrix( modelDataPtr->zeroCompensation );
 
-        // // @DEBUG: exlude all contacts
-        // for ( size_t i = 0; i < _context.agentPtr->bodies.size(); i++ )
-        // {
-        //     for ( size_t j = 0; j < _context.agentPtr->bodies.size(); j++ )
-        //     {
-        //         _context.agentPtr->exclusionContacts.push_back( std::make_pair( _context.agentPtr->bodies[i]->name,
-        //                                                                         _context.agentPtr->bodies[j]->name ) );
-        //     }
-        // }
-
         // Grab all extra exclusion contacts from the urdf file
         auto _exclusionPairs = _context.modelDataPtr->exclusionPairs;
-        for ( size_t q = 0; q < _exclusionPairs.size(); q++ )
-            _context.agentPtr->exclusionContacts.push_back( _exclusionPairs[q] );
+        for ( auto _exclusionPair : _exclusionPairs )
+            _context.agentPtr->exclusionContacts.push_back( _exclusionPair );
 
         // Finally, initialize the agent
         _context.agentPtr->initialize();
@@ -87,269 +74,201 @@ namespace agent {
                                         TKinTreeBody* parentKinBodyPtr )
     {
         // grab body information
-        auto _kinTreeBodyPtr = new TKinTreeBody();
+        auto _kinBody = new TKinTreeBody();
         // grab the name
-        _kinTreeBodyPtr->name = urdfLinkPtr->name;
+        _kinBody->name = urdfLinkPtr->name;
         // and the relative transform to the parent body
         if ( urdfLinkPtr->parentJoint )
-            _kinTreeBodyPtr->relTransform = urdfLinkPtr->parentJoint->parentLinkToJointTransform;
+            _kinBody->localTransformZero = urdfLinkPtr->parentJoint->parentLinkToJointTransform;
         else
-            _kinTreeBodyPtr->relTransform = TMat4();// just identity (must be root)
+            _kinBody->localTransformZero.setIdentity();
         // and the parent bodyptr as well
-        _kinTreeBodyPtr->parentBodyPtr = parentKinBodyPtr;
+        _kinBody->parentBodyPtr = parentKinBodyPtr;
         // and store it in the bodies buffer
-        context.agentPtr->bodies.push_back( _kinTreeBodyPtr );
+        context.agentPtr->bodies.push_back( _kinBody );
         // and to the bodies map
-        context.agentPtr->bodiesMap[ _kinTreeBodyPtr->name ] = _kinTreeBodyPtr;
+        context.agentPtr->bodiesMap[ _kinBody->name ] = _kinBody;
 
         // grab all urdfvisuals and store them in the body node
-        auto _urdfVisuals = urdfLinkPtr->visuals;
-        for ( size_t i = 0; i < _urdfVisuals.size(); i++ )
+        for ( auto _urdfVisual : urdfLinkPtr->visuals )
         {
             // process the element to create a TKinTreeVisual
-            auto _kinTreeVisualPtr = _processVisualFromUrdf( context, _urdfVisuals[i] );
+            auto _kinVisual = _processVisualFromUrdf( context, _urdfVisual );
             // link this visual to its parent (current body being processed)
-            _kinTreeVisualPtr->parentBodyPtr = _kinTreeBodyPtr;
+            _kinVisual->parentBodyPtr = _kinBody;
             // and add it to the children of the current body being processed
-            _kinTreeBodyPtr->childVisuals.push_back( _kinTreeVisualPtr );
+            _kinBody->visuals.push_back( _kinVisual );
         }
 
         // grab all urdfcollisions and store them in the body node
-        auto _urdfCollisions = urdfLinkPtr->collisions;
-        for ( size_t i = 0; i < _urdfCollisions.size(); i++ )
+        for ( auto _urdfCollision : urdfLinkPtr->collisions )
         {
             // process the element to create a TKinTreeCollision
-            auto _kinTreeCollisionPtr = _processCollisionFromUrdf( context, _urdfCollisions[i] );
+            auto _kinCollision = _processCollisionFromUrdf( context, _urdfCollision );
             // link this collision to its parent (current body being processed)
-            _kinTreeCollisionPtr->parentBodyPtr = _kinTreeBodyPtr;
+            _kinCollision->parentBodyPtr = _kinBody;
             // and add it to the children of the current body being processed
-            _kinTreeBodyPtr->childCollisions.push_back( _kinTreeCollisionPtr );
+            _kinBody->collisions.push_back( _kinCollision );
         }
 
         // create a single joint as dof using the link's parentjoint
         auto _urdfJointPtr = urdfLinkPtr->parentJoint;
         if ( _urdfJointPtr )
         {
-            auto _kinTreeJointPtr = _processJointFromUrdf( context, _urdfJointPtr );
-            _kinTreeJointPtr->parentBodyPtr = _kinTreeBodyPtr;
-            _kinTreeBodyPtr->childJoints.push_back( _kinTreeJointPtr );
+            auto _kinJoint = _processJointFromUrdf( context, _urdfJointPtr );
+            _kinJoint->parentBodyPtr = _kinBody;
+            _kinBody->joints.push_back( _kinJoint );
         }
 
-        // grab the inertial properties (if given, as by default is computed from the geometries)
-        auto _urdfInertia = urdfLinkPtr->inertia;
-        if ( _urdfInertia )
-            _kinTreeBodyPtr->inertiaPtr = _processInertialFromUrdf( context, _urdfInertia );
+        // grab the inertial properties (if given in file. Otherwise, will be computed by engine)
+        _kinBody->inertialData = _processInertialFromUrdf( context, urdfLinkPtr->inertia );
 
-        // @TODO: Add support for sites, as some models may need them (sites ...
+        // @todo: Add support for sites, as some models may need them (sites ...
         // here consists of more abstract objects that can be used to trigger ...
         // special functionality in more complicated environments, like opening ...
         // something if a button is touched, or getting a reward (+/-) if this ...
         // abstract site touches an object)
 
         // grab child bodies (if any) and repeat process
-        auto _urdfChildLinks = urdfLinkPtr->childLinks;
-        for ( size_t i = 0; i < _urdfChildLinks.size(); i++ )
+        for ( auto _urdfChildLink : urdfLinkPtr->children )
         {
-            auto _childKinTreeBodyPtr = _processBodyFromUrdf( context,
-                                                              _urdfChildLinks[i], 
-                                                              _kinTreeBodyPtr );
-            _kinTreeBodyPtr->childBodies.push_back( _childKinTreeBodyPtr );
+            auto _childKinTreeBodyPtr = _processBodyFromUrdf( context, _urdfChildLink, _kinBody );
+            _kinBody->children.push_back( _childKinTreeBodyPtr );
 
             // exclude contact between this body and this child body
             context.agentPtr->exclusionContacts.push_back( std::make_pair( 
-                                                                _kinTreeBodyPtr->name,
+                                                                _kinBody->name,
                                                                 _childKinTreeBodyPtr->name ) );
         }
 
-        return _kinTreeBodyPtr;
+        return _kinBody;
     }
 
     TKinTreeJoint* _processJointFromUrdf( TUrdfParsingContext& context, 
                                           urdf::UrdfJoint* urdfJointPtr )
     {
-        auto _kinTreeJointPtr = new TKinTreeJoint();
-        // grab the name
-        _kinTreeJointPtr->name = urdfJointPtr->name;
-        // and the relative transform to the parent body
-        _kinTreeJointPtr->relTransform = TMat4();
-        // and the type of joint
-        _kinTreeJointPtr->type = urdfJointPtr->type;
-        // and the joint axis
-        _kinTreeJointPtr->axis = urdfJointPtr->localJointAxis;
-        // and the range limits (already in radians, as urdf spec says so)
-        _kinTreeJointPtr->lowerLimit = urdfJointPtr->lowerLimit;
-        _kinTreeJointPtr->upperLimit = urdfJointPtr->upperLimit;
-        // and the joint value clamping flag
-        if ( urdfJointPtr->lowerLimit > urdfJointPtr->upperLimit )
-            _kinTreeJointPtr->limited = false;
-        else
-            _kinTreeJointPtr->limited = true;
-        // and the joint stiffness
-        _kinTreeJointPtr->stiffness = 0.0;
-        // and the joint armature
-        _kinTreeJointPtr->armature = 0.0;
-        // and the joint damping
-        _kinTreeJointPtr->damping = 0.0;
+        auto _kinJointType = toEnumJoint( urdfJointPtr->type );
+        auto _kinJoint = new TKinTreeJoint( _kinJointType );
 
-        // and store it in the joints buffer
-        context.agentPtr->joints.push_back( _kinTreeJointPtr );
-        // and to the joints map
-        context.agentPtr->jointsMap[ _kinTreeJointPtr->name ] = _kinTreeJointPtr;
+        _kinJoint->name = urdfJointPtr->name;
+        // and the relative transform to the parent body (urdf states that both frames coincide)
+        _kinJoint->data.localTransform.setIdentity();
+        _kinJoint->data.axis = urdfJointPtr->localJointAxis;
+        _kinJoint->data.limits = { urdfJointPtr->lowerLimit, urdfJointPtr->upperLimit };
+        _kinJoint->data.stiffness = 0.0;
+        _kinJoint->data.armature = 0.0;
+        _kinJoint->data.damping = 0.0;
+        _kinJoint->data.ref = 0.0;
 
-        // let the joint configure its internal props
-        _kinTreeJointPtr->configure();
+        context.agentPtr->joints.push_back( _kinJoint );
+        context.agentPtr->jointsMap[ _kinJoint->name ] = _kinJoint;
 
-        return _kinTreeJointPtr;
+        return _kinJoint;
     }
 
     TKinTreeVisual* _processVisualFromUrdf( TUrdfParsingContext& context, 
-                                            urdf::UrdfVisual* urdfVisualtPtr )
+                                            const urdf::UrdfVisual& urdfVisual )
     {
-        auto _kinTreeVisualPtr = new TKinTreeVisual();
-        // grab the name
-        _kinTreeVisualPtr->name = urdfVisualtPtr->name;
-        // and the relative transform to the parent body
-        _kinTreeVisualPtr->relTransform = urdfVisualtPtr->localTransform;
-        // and the type of visual/geom
-        _kinTreeVisualPtr->geometry.type = urdfVisualtPtr->geometry->type;
-        // and the mesh filename in case there is any
-        if ( urdfVisualtPtr->geometry->type == "mesh" )
+        auto _kinVisual = new TKinTreeVisual();
+
+        _kinVisual->name = urdfVisual.name;
+        _kinVisual->data.localTransform = urdfVisual.localTransform;
+        _kinVisual->data.type = toEnumShape( urdfVisual.type );
+        // grab the size (transform it from urdf standard to our standard)
+        _extractStandardSize( urdfVisual, _kinVisual->data.size );
+        // material information
+        auto _rgba = urdfVisual.material.color;
+        _kinVisual->data.ambient    = { _rgba.x, _rgba.y, _rgba.z };
+        _kinVisual->data.diffuse    = { _rgba.x, _rgba.y, _rgba.z };
+        _kinVisual->data.specular   = { _rgba.x, _rgba.y, _rgba.z };
+        // grab the mesh resource (either an id or a full path)
+        if ( urdfVisual.type == "mesh" )
         {
-            auto _fileComponents = parsing::split( urdfVisualtPtr->geometry->filename, '.' );
+            auto _fileComponents = parsing::split( urdfVisual.filename, '.' );
             if ( _fileComponents.size() != 2 )
             {
-                std::cout << "WARNING> seems that there is an issue with the " 
-                          << "the mesh's filename: " << urdfVisualtPtr->geometry->filename
-                          << ". It should be of the form NAME.EXTENSION"
-                          << std::endl;
-
-                // Set filename as the geometry->filename
-                _kinTreeVisualPtr->geometry.meshId      = "";
-                _kinTreeVisualPtr->geometry.filename    = urdfVisualtPtr->geometry->filename;
+                std::cout << "WARNING> seems that there is an issue with the the mesh's filename: " 
+                          << urdfVisual.filename << ". It should be of the form NAME.EXTENSION" << std::endl;
+                _kinVisual->data.filename = urdfVisual.filename;
             }
             else
             {
                 auto _meshId = _fileComponents[0];
+                auto& _meshAssetsMap = context.agentPtr->meshAssetsMap;
 
-                if ( context.agentPtr->meshAssetsMap.find( _meshId ) != 
-                     context.agentPtr->meshAssetsMap.end() )
-                {
-                    _kinTreeVisualPtr->geometry.meshId = 
-                            context.agentPtr->meshAssetsMap[ _meshId ]->name;
-
-                    _kinTreeVisualPtr->geometry.filename = 
-                            context.agentPtr->meshAssetsMap[ _meshId ]->file;
-                }
+                if ( _meshAssetsMap.find( _meshId ) != _meshAssetsMap.end() )
+                    _kinVisual->data.filename = _meshAssetsMap[_meshId]->name;
                 else
-                {
-                    _kinTreeVisualPtr->geometry.meshId   = "";
-                    _kinTreeVisualPtr->geometry.filename = _meshId;
-                }
+                    _kinVisual->data.filename = _meshId;
             }
         }
-        // and the visual size
-        _extractStandardSize( urdfVisualtPtr->geometry, 
-                              _kinTreeVisualPtr->geometry.size );
-        _kinTreeVisualPtr->geometry.usesFromto = false;
 
-        // and the material (colors)
-        auto _rgba = urdfVisualtPtr->material->color;
-        _kinTreeVisualPtr->material.diffuse     = { _rgba.x, _rgba.y, _rgba.z };
-        _kinTreeVisualPtr->material.specular    = { _rgba.x, _rgba.y, _rgba.z };
+        context.agentPtr->visuals.push_back( _kinVisual );
+        context.agentPtr->visualsMap[_kinVisual->name] = _kinVisual;
 
-        // and the material name (not used for this format)
-        _kinTreeVisualPtr->material.name = "not-used";
-        // and store it in the visuals buffer
-        context.agentPtr->visuals.push_back( _kinTreeVisualPtr );
-        // and to the visuals map
-        context.agentPtr->visualsMap[ _kinTreeVisualPtr->name ] = _kinTreeVisualPtr;
-
-        return _kinTreeVisualPtr;
+        return _kinVisual;
     }
 
     TKinTreeCollision* _processCollisionFromUrdf( TUrdfParsingContext& context, 
-                                                  urdf::UrdfCollision* urdfCollisionPtr )
+                                                  const urdf::UrdfCollision& urdfCollision )
     {
-        auto _kinTreeCollisionPtr = new TKinTreeCollision();
-        // grab the name
-        _kinTreeCollisionPtr->name = urdfCollisionPtr->name;
-        // and the relative transform to the parent body
-        _kinTreeCollisionPtr->relTransform = urdfCollisionPtr->localTransform;
-        // and the collision/geom shape
-        _kinTreeCollisionPtr->geometry.type = urdfCollisionPtr->geometry->type;
+        auto _kinCollision = new TKinTreeCollision();
+
+        _kinCollision->name = urdfCollision.name;
+        _kinCollision->data.localTransform = urdfCollision.localTransform;
+        _kinCollision->data.type = toEnumShape( urdfCollision.type );
+        // grab the size (transform it from urdf standard to our standard)
+        _extractStandardSize( urdfCollision, _kinCollision->data.size );
+        // collision flags, and friction
+        _kinCollision->data.collisionGroup = 1;
+        _kinCollision->data.collisionMask = 1;
+        _kinCollision->data.friction = { 1.0f, 0.005f, 0.0001f };
+        _kinCollision->data.density = TYSOC_DEFAULT_DENSITY;
         // and the mesh filename in case there is any
-        if ( urdfCollisionPtr->geometry->type == "mesh" )
+        if ( urdfCollision.type == "mesh" )
         {
-            auto _fileComponents = parsing::split( urdfCollisionPtr->geometry->filename, '.' );
+            auto _fileComponents = parsing::split( urdfCollision.filename, '.' );
             if ( _fileComponents.size() != 2 )
             {
-                std::cout << "WARNING> seems that there is an issue with the " 
-                          << "the mesh's filename: " << urdfCollisionPtr->geometry->filename
-                          << std::endl;
-
-                // Set filename as the geometry->filename
-                _kinTreeCollisionPtr->geometry.meshId       = "";
-                _kinTreeCollisionPtr->geometry.filename     = urdfCollisionPtr->geometry->filename;
+                std::cout << "WARNING> seems that there is an issue with the the mesh's filename: " 
+                          << urdfCollision.filename << ". It should be of the form NAME.EXTENSION" << std::endl;
+                _kinCollision->data.filename = urdfCollision.filename;
             }
             else
             {
                 auto _meshId = _fileComponents[0];
+                auto& _meshAssetsMap = context.agentPtr->meshAssetsMap;
 
-                if ( context.agentPtr->meshAssetsMap.find( _meshId ) != 
-                     context.agentPtr->meshAssetsMap.end() )
-                {
-                    _kinTreeCollisionPtr->geometry.meshId = 
-                        context.agentPtr->meshAssetsMap[ _meshId ]->name;
-
-                    _kinTreeCollisionPtr->geometry.filename = 
-                        context.agentPtr->meshAssetsMap[ _meshId ]->file;
-                }
+                if ( _meshAssetsMap.find( _meshId ) != _meshAssetsMap.end() )
+                    _kinCollision->data.filename = _meshAssetsMap[_meshId]->name;
                 else
-                {
-                    _kinTreeCollisionPtr->geometry.meshId   = "";
-                    _kinTreeCollisionPtr->geometry.filename = _meshId;
-                }
+                    _kinCollision->data.filename = _meshId;
             }
         }
 
-        // and the collision/geom size
-        _extractStandardSize( urdfCollisionPtr->geometry, 
-                              _kinTreeCollisionPtr->geometry.size );
-        _kinTreeCollisionPtr->geometry.usesFromto = false;
+        context.agentPtr->collisions.push_back( _kinCollision );
+        context.agentPtr->collisionsMap[_kinCollision->name] = _kinCollision;
 
-        // and the contype collision bitmask
-        _kinTreeCollisionPtr->contype = 1;
-        // and the conaffinity collision bitmask
-        _kinTreeCollisionPtr->conaffinity = 1;
-        // and the condim contact dimensionality
-        _kinTreeCollisionPtr->condim = 3;
-        // and store it in the collisions buffer
-        context.agentPtr->collisions.push_back( _kinTreeCollisionPtr );
-        // and to the collisions map
-        context.agentPtr->collisionsMap[ _kinTreeCollisionPtr->name ] = _kinTreeCollisionPtr;
-
-        return _kinTreeCollisionPtr;
+        return _kinCollision;
     }
 
-    TKinTreeInertia* _processInertialFromUrdf( TUrdfParsingContext& context, 
-                                               urdf::UrdfInertia* urdfInertiaPtr )
+    TInertialData _processInertialFromUrdf( TUrdfParsingContext& context, 
+                                            const urdf::UrdfInertia& urdfInertia )
     {
-        // For this element, check this documentation from ros-urdf
-        // url: http://wiki.ros.org/urdf/XML/link
-        auto _kinTreeInertia = new TKinTreeInertia();
-        // grab the transform of the inertial frame:
-        _kinTreeInertia->relTransform = urdfInertiaPtr->localTransform;
-        // grab the mass as well (required)
-        _kinTreeInertia->mass = urdfInertiaPtr->mass;
-        // and also the inertia matrix
-        _kinTreeInertia->ixx = urdfInertiaPtr->ixx;
-        _kinTreeInertia->iyy = urdfInertiaPtr->iyy;
-        _kinTreeInertia->izz = urdfInertiaPtr->izz;
-        _kinTreeInertia->ixy = urdfInertiaPtr->ixy;
-        _kinTreeInertia->ixz = urdfInertiaPtr->ixz;
-        _kinTreeInertia->iyz = urdfInertiaPtr->iyz;
+        // For this element, check this documentation from ros-urdf: http://wiki.ros.org/urdf/XML/link
+        TInertialData _kinInertial;
+        // grab the transform of the inertial frame
+        _kinInertial.localTransform = urdfInertia.localTransform;
+        // grab the mass and inertia-matrix properties
+        _kinInertial.mass = urdfInertia.mass;
+        _kinInertial.ixx = urdfInertia.ixx;
+        _kinInertial.iyy = urdfInertia.iyy;
+        _kinInertial.izz = urdfInertia.izz;
+        _kinInertial.ixy = urdfInertia.ixy;
+        _kinInertial.ixz = urdfInertia.ixz;
+        _kinInertial.iyz = urdfInertia.iyz;
 
-        return _kinTreeInertia;
+        return _kinInertial;
     }
 
     void _collectAssetsFromLink( TUrdfParsingContext& context, 
@@ -358,29 +277,18 @@ namespace agent {
         if ( !urdfLinkPtr )
             return;
 
-        // grab the visuals buffer (extend from shapes, so might have assets)
-        auto _visuals = urdfLinkPtr->visuals;
-        // grab the collisions buffer as well
-        auto _collisions = urdfLinkPtr->collisions;
-        // and combine them into a single shapes buffer (to avoid repeating code)
-        auto _shapes = std::vector< urdf::UrdfShape* >();
-        for ( size_t i = 0; i < _visuals.size(); i++ )
-            _shapes.push_back( _visuals[i] );
-        for ( size_t i = 0; i < _collisions.size(); i++ )
-            _shapes.push_back( _collisions[i] );
+        // combine visuals and collisions into a single container
+        auto _shapes = std::vector< urdf::UrdfShape >();
+        for ( auto _visual : urdfLinkPtr->visuals )
+            _shapes.push_back( _visual );
+        for ( auto _collision : urdfLinkPtr->collisions )
+            _shapes.push_back( _collision );
 
-        // check for potential mesh assets in the "shapes" buffer
-        for ( size_t i = 0; i < _shapes.size(); i++ )
+        // check for potential mesh assets in the "shapes" container
+        for ( auto _shape : _shapes )
         {
-            // grab the geometry from the shape (visual|collision)
-            auto _geometryPtr = _shapes[i]->geometry;
-
-            // just a sanity check
-            if ( !_geometryPtr )
-                continue;
-
             // if not a mesh, well we're not in bussiness
-            if ( _geometryPtr->type != "mesh" )
+            if ( _shape.type != "mesh" )
                 continue;
 
             // grab the mesh data into a meshasset object
@@ -389,11 +297,11 @@ namespace agent {
             //      FILENAME.EXTENSION
             // Where FILENAME should not include special characters (specially ...
             // '.', as we are spliting the EXTENSION from the FILENAME using '.')
-            auto _fileComponents = parsing::split( _geometryPtr->filename, '.' );
+            auto _fileComponents = parsing::split( _shape.filename, '.' );
             if ( _fileComponents.size() != 2 )
             {
                 std::cout << "WARNING> seems that there is an issue with the " 
-                          << "the mesh's filename: " << _geometryPtr->filename
+                          << "the mesh's filename: " << _shape.filename
                           << std::endl;
 
                 std::cout << "?size: " << _fileComponents.size() << std::endl;
@@ -405,8 +313,8 @@ namespace agent {
             auto _fileExtension     = _fileComponents[1];
 
             _meshAsset->name     = _fileName; // id is the name without extension
-            _meshAsset->file     = _geometryPtr->filename; // filename if full path
-            _meshAsset->scale    = _geometryPtr->size;
+            _meshAsset->file     = _shape.filename; // filename if full path
+            _meshAsset->scale    = _shape.size;
 
             if ( context.agentPtr->meshAssetsMap.find( _meshAsset->name ) ==
                  context.agentPtr->meshAssetsMap.end() )
@@ -418,87 +326,45 @@ namespace agent {
             else
             {
                 delete _meshAsset;
-                _meshAsset = NULL;
+                _meshAsset = nullptr;
             }
         }
 
         // repeat recursively for all child links
-        for ( size_t i = 0; i < urdfLinkPtr->childLinks.size(); i++ )
-        {
-            _collectAssetsFromLink( context, urdfLinkPtr->childLinks[i] );
-        }
+        for ( auto _childLink : urdfLinkPtr->children )
+            _collectAssetsFromLink( context, _childLink );
     }
 
     void _constructDefaultActuators( TUrdfParsingContext& context )
     {
-        for ( size_t q = 0; q < context.agentPtr->joints.size(); q++ )
+        for ( auto _joint : context.agentPtr->joints )
         {
-            if ( context.agentPtr->joints[q]->type == "free" ||
-                 context.agentPtr->joints[q]->type == "fixed" ||
-                 context.agentPtr->joints[q]->type == "world" )
-            {
+            if ( _joint->data.type == eJointType::FREE || 
+                 _joint->data.type == eJointType::FIXED )
                 continue;
-            }
 
             auto _kinTreeActuatorPtr = new TKinTreeActuator();
-            _kinTreeActuatorPtr->name = urdf::computeUrdfName( "actuator",
-                                                               context.agentPtr->joints[q]->name,
-                                                               context.agentPtr->name() );
+            _kinTreeActuatorPtr->name = urdf::computeUrdfName( "actuator", _joint->name, context.agentPtr->name() );
             // set a default "motor" type
-            _kinTreeActuatorPtr->type = "motor";
-            // set a reference to the joint it handles
-            _kinTreeActuatorPtr->jointPtr = context.agentPtr->joints[q];
+            _kinTreeActuatorPtr->data.type = eActuatorType::TORQUE;
             // set some default control props
-            _kinTreeActuatorPtr->minCtrl = -1;
-            _kinTreeActuatorPtr->maxCtrl = 1;
-            _kinTreeActuatorPtr->clampCtrl = true;
-            _kinTreeActuatorPtr->kp = 0.0f;
-            _kinTreeActuatorPtr->kv = 0.0f;
-            _kinTreeActuatorPtr->gear = { 1, { 2.0f } };
+            _kinTreeActuatorPtr->data.limits = { -1.0f, 1.0f };
+            _kinTreeActuatorPtr->data.kp = 0.0f;
+            _kinTreeActuatorPtr->data.kv = 0.0f;
+            _kinTreeActuatorPtr->data.gear = { 1, { 2.0f } };
+            // set a reference to the joint it handles
+            _kinTreeActuatorPtr->jointPtr = _joint;
 
             context.agentPtr->actuators.push_back( _kinTreeActuatorPtr );
             context.agentPtr->actuatorsMap[ _kinTreeActuatorPtr->name ] = _kinTreeActuatorPtr;
         }
     }
 
-    void _extractStandardSize( urdf::UrdfGeometry* urdfGeometryPtr,
+    void _extractStandardSize( const urdf::UrdfShape& urdfShape,
                                TVec3& targetSize )
     {
-        // The sizes are given in standard form for urdf files, but ...
-        // just in case we ran into some funky model definition we're ...
-        // checkint the sizes either way
-
-        auto _gtype = urdfGeometryPtr->type;
-        auto _gsize = urdfGeometryPtr->size;
-
-        if ( _gtype == "plane" )
-        {
-            targetSize.x = _gsize.x;
-            targetSize.y = _gsize.y;
-        }
-        else if ( _gtype == "sphere" )
-        {
-            targetSize.x = _gsize.x;
-        }
-        else if ( _gtype == "capsule" ||
-                  _gtype == "cylinder" )
-        {
-            targetSize.x = _gsize.x;
-            targetSize.y = _gsize.y;
-        }
-        else if ( _gtype == "box" )
-        {
-            targetSize.x = _gsize.x;
-            targetSize.y = _gsize.y;
-            targetSize.z = _gsize.z;
-        }
-        else if ( _gtype == "mesh" )
-        {
-            targetSize.x = _gsize.x;
-            targetSize.y = _gsize.y;
-            targetSize.z = _gsize.z;
-        }
+        /* The sizes are given in standard form for urdf files */
+        targetSize = urdfShape.size;
     }
-
 
 }}

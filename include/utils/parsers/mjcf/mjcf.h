@@ -1,10 +1,8 @@
 
 #pragma once
 
-#include "mjcf_common.h"
-#include "mjcf_elements.h"
-
-#define NAME_PLACEHOLDER_SECTION "###"
+#include <utils/parsers/mjcf/mjcf_common.h>
+#include <utils/parsers/mjcf/mjcf_elements.h>
 
 namespace tysoc {
 namespace mjcf {
