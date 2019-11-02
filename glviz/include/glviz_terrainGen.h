@@ -8,16 +8,16 @@
 #include <utils/CDebugDrawer.h>
 #include <assets/CTextureManager.h>
 
-using namespace tysoc::terrain;
+using namespace engine;
 
 namespace tysoc {
 
     struct TGLTerrainDrawable
     {
-        TVec3                   size;
-        TVec3                   size0;
-        TTerrainPrimitive*      primitive;
-        engine::CIRenderable*   renderable;
+        TVec3               size;
+        TVec3               size0;
+        TTerrainPrimitive*  primitive;
+        CIRenderable*       renderable;
     };
 
     class TGLVizTerrainGenerator
@@ -25,8 +25,8 @@ namespace tysoc {
 
     public :
 
-        TGLVizTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr,
-                                engine::CScene* scenePtr,
+        TGLVizTerrainGenerator( TITerrainGenerator* terrainGeneratorPtr,
+                                CScene* scenePtr,
                                 const std::string& workingDir );
         ~TGLVizTerrainGenerator();
 
@@ -39,9 +39,9 @@ namespace tysoc {
 
     private :
 
-        engine::CScene*         m_scenePtr;
-        TITerrainGenerator*     m_terrainGeneratorPtr;
-        std::string             m_workingDir;
+        CScene*             m_scenePtr;
+        TITerrainGenerator* m_terrainGeneratorPtr;
+        std::string         m_workingDir;
 
         std::vector< TGLTerrainDrawable > m_terrainDrawables;
 

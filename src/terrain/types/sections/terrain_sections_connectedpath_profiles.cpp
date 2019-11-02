@@ -3,7 +3,6 @@
 
 
 namespace tysoc {
-namespace terrain {
 
     TSineProfileGenerator::TSineProfileGenerator( float ampl, 
                                                   float period, 
@@ -160,4 +159,4 @@ namespace terrain {
 
 
     
-}}
+}

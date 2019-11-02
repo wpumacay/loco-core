@@ -6,7 +6,6 @@
 #define PROCEDURAL_TERRAIN_POOL_SIZE 100
 
 namespace tysoc {
-namespace terrain {
 
     const std::string TERRAIN_TYPE_STATIC                       = "static";
     const std::string TERRAIN_TYPE_PROCEDURAL_SECTIONS_PATH     = "proc_sect_path";
@@ -75,4 +74,4 @@ namespace terrain {
         std::vector< TTerrainPrimitive* > getPrimitives() { return m_primitives; }
     };
 
-}}
+}

@@ -1,10 +1,8 @@
-
 #pragma once
 
 #include <sensor/sensor_base.h>
 
 namespace tysoc {
-namespace sensor {
 
     struct TAgentIntrinsicsSensorMeasurement : public TISensorMeasurement
     {
@@ -31,12 +29,12 @@ namespace sensor {
 
         TAgentIntrinsicsSensorMeasurement* m_sensorMeasurement;
 
-        agent::TAgent* m_agentPtr;
+        TAgent* m_agentPtr;
 
         public :
 
         TAgentIntrinsicsSensor( const std::string& name,
-                                agent::TAgent* agentPtr );
+                                TAgent* agentPtr );
         ~TAgentIntrinsicsSensor();
 
         void update() override;
@@ -45,4 +43,4 @@ namespace sensor {
 
     };
 
-}}
+}

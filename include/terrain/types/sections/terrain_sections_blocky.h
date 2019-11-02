@@ -6,8 +6,6 @@
 #define DEFAULT_SECTION_BASE_HEIGHT 0.25f
 
 namespace tysoc {
-namespace terrain {
-
 
     /**
      *   The type of scenarios created here are of the form :
@@ -206,4 +204,4 @@ namespace terrain {
     };
 
 
-}}
+}

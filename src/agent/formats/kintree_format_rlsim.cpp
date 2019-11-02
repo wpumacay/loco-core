@@ -2,7 +2,6 @@
 #include <agent/formats/kintree_format_rlsim.h>
 
 namespace tysoc {
-namespace agent {
 
     void constructAgentFromModel( TAgent* agentPtr,
                                   rlsim::RlsimModel* modelDataPtr )
@@ -157,6 +156,7 @@ namespace agent {
         _kinVisual->data.diffuse  = { _rgba.x, _rgba.y, _rgba.z };
         _kinVisual->data.specular = { _rgba.x, _rgba.y, _rgba.z };
         _kinVisual->data.filename = "";
+        _kinVisual->data.texture  = "img_grid"; // use this texture for all rlsim-model
 
         context.agentPtr->visuals.push_back( _kinVisual );
         context.agentPtr->visualsMap[ _kinVisual->name ] = _kinVisual;
@@ -256,4 +256,4 @@ namespace agent {
         }
     }
 
-}}
+}

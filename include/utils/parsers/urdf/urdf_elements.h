@@ -18,12 +18,14 @@ namespace urdf {
         std::string     name;
         std::string     filename;
         TVec4           color;
+        bool            usesMaterialFromMesh;
 
         UrdfMaterial()
         {
             name        = "undefined";
             filename    = "";
             color       = TYSOC_DEFAULT_RGBA_COLOR;
+            usesMaterialFromMesh = true;
         }
 
         void collectAttribs( tinyxml2::XMLElement* xmlElement );
@@ -162,6 +164,9 @@ namespace urdf {
     struct UrdfModel
     {
         std::string                             name;
+        std::string                             filepath;
+        std::string                             filename;
+        std::string                             folderpath;
         std::map< std::string, UrdfMaterial>    materials;
         std::map< std::string, UrdfLink*>       links;
         std::map< std::string, UrdfJoint*>      joints;

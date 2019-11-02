@@ -103,6 +103,11 @@ namespace urdf {
         // Copy the materials cache into this model
         _urdfModel->materials = UrdfMaterial::MATERIALS;
 
+        // store path references for later usage (when handling meshes)
+        _urdfModel->filepath = modelfile;
+        _urdfModel->filename = tysoc::getFilenameFromFilePath( modelfile );
+        _urdfModel->folderpath = tysoc::getFolderpathFromFilePath( modelfile );
+
         return _urdfModel;
     }
 

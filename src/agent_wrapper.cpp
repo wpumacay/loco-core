@@ -4,7 +4,7 @@
 
 namespace tysoc {
 
-    TAgentWrapper::TAgentWrapper( agent::TAgent* agentPtr,
+    TAgentWrapper::TAgentWrapper( TAgent* agentPtr,
                                   const std::string& workingDir )
     {
         // save a reference to the abstract kintree agent for later usage
@@ -25,19 +25,19 @@ namespace tysoc {
         {
             // and grab the model data for usage in specific backends (if needed)
             auto _modelTemplateType = agentPtr->format();
-            if ( _modelTemplateType == agent::eModelFormat::MJCF )
+            if ( _modelTemplateType == eModelFormat::MJCF )
             {
                 m_mjcfModelTemplatePtr = m_agentPtr->getModelDataMjcf();
                 m_urdfModelTemplatePtr = NULL;
                 m_rlsimModelTemplatePtr = NULL;
             }
-            else if ( _modelTemplateType == agent::eModelFormat::URDF )
+            else if ( _modelTemplateType == eModelFormat::URDF )
             {
                 m_urdfModelTemplatePtr = m_agentPtr->getModelDataUrdf();
                 m_mjcfModelTemplatePtr = NULL;
                 m_rlsimModelTemplatePtr = NULL;
             }
-            else if ( _modelTemplateType == agent::eModelFormat::RLSIM )
+            else if ( _modelTemplateType == eModelFormat::RLSIM )
             {
                 m_rlsimModelTemplatePtr = m_agentPtr->getModelDataRlsim();
                 m_urdfModelTemplatePtr = NULL;
@@ -68,7 +68,7 @@ namespace tysoc {
         return "undefined";
     }
 
-    agent::TAgent* TAgentWrapper::agent()
+    TAgent* TAgentWrapper::agent()
     {
         return m_agentPtr;
     }

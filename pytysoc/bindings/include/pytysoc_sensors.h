@@ -15,7 +15,7 @@ namespace pytysoc
 
         protected :
 
-        tysoc::sensor::TISensor* m_sensorPtr;
+        tysoc::TISensor* m_sensorPtr;
 
         public :
 
@@ -78,7 +78,7 @@ namespace pytysoc
         *
         *   @exposed    Not exposed through python API
         */
-        MeasurementDict _packIntrinsics( tysoc::sensor::TAgentIntrinsicsSensorMeasurement* measurementPtr );
+        MeasurementDict _packIntrinsics( tysoc::TAgentIntrinsicsSensorMeasurement* measurementPtr );
 
         /**
         *   Returns a measurenet dictionary containing the information stored ...
@@ -86,14 +86,14 @@ namespace pytysoc
         *
         *   @exposed    Not exposed through python API
         */
-        // MeasurementDict _packExtrinsicsTerrain( tysoc::sensor::TSectionsTerrainSensorMeasurement* measurementPtr );
+        // MeasurementDict _packExtrinsicsTerrain( tysoc::TSectionsTerrainSensorMeasurement* measurementPtr );
 
         /**
         *   Returns a pointer to the wrapped sensor object
         *
         *   @exposed    Exposed through python API
         */
-        tysoc::sensor::TISensor* ptr();
+        tysoc::TISensor* ptr();
     };
 
     class PySensorIntrinsics : public PySensor

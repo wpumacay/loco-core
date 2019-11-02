@@ -2,7 +2,6 @@
 #include <agent/formats/kintree_format_mjcf.h>
 
 namespace tysoc {
-namespace agent {
 
     void constructAgentFromModel( TAgent* agentPtr,
                                   mjcf::GenericElement* modelDataPtr )
@@ -11,6 +10,8 @@ namespace agent {
         TMjcfParsingContext _context;
         _context.agentPtr = agentPtr;
         _context.modelDataPtr = new mjcf::GenericElement();
+        _context.filepath = modelDataPtr->filepath;
+        _context.folderpath = modelDataPtr->folderpath;
 
         // create a copy of the model data with the names modified appropriately
         mjcf::deepCopy( _context.modelDataPtr, modelDataPtr, nullptr, agentPtr->name() );
@@ -187,15 +188,21 @@ namespace agent {
 
         for ( auto _asset : _assetsElmPtr->children )
         {
-            if ( _asset->etype != "mesh" )
+            if ( _asset->etype == "mesh" )
             {
                 // Grab the mesh asset into a dict for later usage *************
                 auto _meshAsset = new TKinTreeMeshAsset();
 
-                // grab the name of the mesh
-                _meshAsset->name = _asset->getAttributeString( "name" );
                 // and the file resource
-                _meshAsset->file = _asset->getAttributeString( "file" );
+                if ( _asset->hasAttributeString( "file" ) )
+                    _meshAsset->file = _asset->getAttributeString( "file" );
+                else
+                    std::cout << "WARNING> mesh asset doesn't have a valid linked file" << std::endl;
+                // grab the name of the mesh
+                if ( _asset->hasAttributeString( "name" ) )
+                    _meshAsset->name = _asset->getAttributeString( "name" );
+                else
+                    _meshAsset->name = tysoc::getFilenameNoExtensionFromFilePath( _meshAsset->file );
 
                 // as well as the scale (in case there is)
                 _meshAsset->scale = _asset->getAttributeVec3( "scale", 
@@ -215,11 +222,23 @@ namespace agent {
                 }
                 // *************************************************************
             }
+            else if ( _asset->etype == "material" && _asset->hasAttributeString( "name" ) )
+            {
+                auto _material = TGenericParams();
+                if ( _asset->hasAttributeVec4( "rgba" ) )
+                    _material.set( "rgba", _asset->getAttributeVec4( "rgba", TYSOC_DEFAULT_RGBA_COLOR ) );
+                if ( _asset->hasAttributeFloat( "shininess" ) )
+                    _material.set( "shininess", _asset->getAttributeFloat( "shininess", TYSOC_DEFAULT_SHININESS / 128.0f ) * 128.0f );
+                if ( _asset->hasAttributeFloat( "specular" ) )
+                    _material.set( "specular", _asset->getAttributeFloat( "specular", 1.0f ) );
+
+                context.assetsMaterials[_asset->getAttributeString( "name", "" )] = _material;
+            }
             else
             {
                 // Other asset types are not supported yet
                 std::cout << "WARNING> asset of type (" << _asset->etype 
-                          << " isn't supported yet" << std::endl;
+                          << ") isn't supported yet" << std::endl;
             }
         }
     }
@@ -356,7 +375,7 @@ namespace agent {
         // and the type of visual/geom
         _kinVisual->data.type = toEnumShape( _grabString( context, geomElementPtr, "type", "" ) );
         // and the mesh filename in case there is any
-        _kinVisual->data.filename = _grabString( context, geomElementPtr, "mesh", "" );
+        _kinVisual->data.filename = _extractFilename( context, _grabString( context, geomElementPtr, "mesh", "" ) );
         // and the visual/geom size (and check if uses fromto, so we can extract the relative transform)
         TVec3 _posFromFromto; TMat3 _rotFromFromto;
         bool _usesFromto = _extractStandardSize( context, 
@@ -370,13 +389,36 @@ namespace agent {
             _kinVisual->data.localTransform.setRotation( _rotFromFromto );
         }
 
+        auto _rgba = TVec4( TYSOC_DEFAULT_RGBA_COLOR );
+        auto _specular = TVec3( TYSOC_DEFAULT_SPECULAR_COLOR );
+        float _shininess = TYSOC_DEFAULT_SHININESS;
         if ( geomElementPtr->hasAttributeVec4( "rgba" ) )
         {
-            auto _rgba = _grabVec4( context, geomElementPtr, "rgba", TYSOC_DEFAULT_RGBA_COLOR );
-            _kinVisual->data.ambient     = { _rgba.x, _rgba.y, _rgba.z };
-            _kinVisual->data.diffuse     = { _rgba.x, _rgba.y, _rgba.z };
-            _kinVisual->data.specular    = { _rgba.x, _rgba.y, _rgba.z };
+            _rgba = _grabVec4( context, geomElementPtr, "rgba", TYSOC_DEFAULT_RGBA_COLOR );
+            _specular = { _rgba.x, _rgba.y, _rgba.z };
         }
+        else
+        {
+            auto _materialId = _grabString( context, geomElementPtr, "material", "" );
+            if ( _materialId != "" && ( context.assetsMaterials.find( _materialId ) != context.assetsMaterials.end() ) )
+            {
+                if ( context.assetsMaterials[_materialId].hasParam( "rgba" ) )
+                    _rgba = context.assetsMaterials[_materialId].getVec4( "rgba" );
+
+                if ( context.assetsMaterials[_materialId].hasParam( "shininess" ) )
+                    _shininess = context.assetsMaterials[_materialId].getFloat( "shininess" );
+
+                if ( context.assetsMaterials[_materialId].hasParam( "specular" ) )
+                    _specular = { context.assetsMaterials[_materialId].getFloat( "specular" ),
+                                  context.assetsMaterials[_materialId].getFloat( "specular" ),
+                                  context.assetsMaterials[_materialId].getFloat( "specular" ) };
+            }
+        }
+        _kinVisual->data.ambient = { _rgba.x, _rgba.y, _rgba.z };
+        _kinVisual->data.diffuse = { _rgba.x, _rgba.y, _rgba.z };
+        _kinVisual->data.specular = _specular;
+        _kinVisual->data.shininess = _shininess;
+        _kinVisual->data.usesMaterialFromMesh = false; // xml file provides color information
 
         // and store it in the visuals buffer
         context.agentPtr->visuals.push_back( _kinVisual );
@@ -397,7 +439,7 @@ namespace agent {
         // and the collision/geom
         _kinCollision->data.type = toEnumShape( _grabString( context, geomElementPtr, "type", "" ) );
         // and the mesh filename in case there is any (this one is tricky)
-        _kinCollision->data.filename = _grabString( context, geomElementPtr, "mesh", "" );
+        _kinCollision->data.filename = _extractFilename( context, _grabString( context, geomElementPtr, "mesh", "" ) );
         // and the collision/geom size (and check if uses fromto, so we can extract the relative transform)
         TVec3 _posFromFromto;
         TMat3 _rotFromFromto;
@@ -519,6 +561,20 @@ namespace agent {
         context.agentPtr->actuatorsMap[_kinActuator->name] = _kinActuator;
 
         return _kinActuator;
+    }
+
+    std::string _extractFilename( TMjcfParsingContext& context, const std::string& meshStr )
+    {
+        // in case no string found (no mesh resource), just return empty
+        if ( meshStr == "" )
+            return "";
+
+        // if meshStr is found in the assets-map (collected during asset collection), grab the resource from the map
+        if ( context.agentPtr->meshAssetsMap.find( meshStr ) != context.agentPtr->meshAssetsMap.end() )
+            return context.folderpath + context.agentPtr->meshAssetsMap[meshStr]->file;
+
+        // in case not found, then this is the actual filepath
+        return context.folderpath + meshStr;
     }
 
     void _extractTransform( TMjcfParsingContext& context, 
@@ -739,6 +795,15 @@ namespace agent {
             targetSize.x = 2.0f * _hwidth;
             targetSize.y = 2.0f * _hdepth;
             targetSize.z = 2.0f * _hheight;
+        }
+        else if ( _gtype == "mesh" )
+        {
+            auto _gmeshId = _grabString( context, geomElm, "mesh", "" );
+            auto& _meshAssetsMap = context.agentPtr->meshAssetsMap;
+            if ( _gmeshId != "" && ( _meshAssetsMap.find( _gmeshId ) != _meshAssetsMap.end() ) )
+                targetSize = _meshAssetsMap[_gmeshId]->scale;
+            else
+                targetSize = { 1.0f, 1.0f, 1.0f };
         }
 
         return _usesFromto;
@@ -1111,4 +1176,4 @@ namespace agent {
 
         return _hasDefault;
     }
-}}
+}

@@ -2,8 +2,6 @@
 #include <sensor/sensor.h>
 
 namespace tysoc {
-namespace sensor {
-
 
     TISensor::TISensor( const std::string& name )
     {
@@ -16,4 +14,4 @@ namespace sensor {
         TYSOC_LOG( "Base-destroying sensor: " + m_name );
     }
 
-}}
+}

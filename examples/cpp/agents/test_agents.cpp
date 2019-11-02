@@ -9,11 +9,11 @@ static std::string TYSOC_MJCF_TEMPLATES     = std::string( TYSOC_PATH_MJCF_TEMPL
 static std::string TYSOC_URDF_TEMPLATES     = std::string( TYSOC_PATH_URDF_TEMPLATES );
 static std::string TYSOC_RLSIM_TEMPLATES    = std::string( TYSOC_PATH_RLSIM_TEMPLATES );
 
-tysoc::agent::TAgent* createAgent( const std::string& format,
-                                   const std::string& modelName,
-                                   const std::string& agentName,
-                                   const tysoc::TVec3& position,
-                                   const tysoc::TVec3& rotation = tysoc::TVec3() )
+tysoc::TAgent* createAgent( const std::string& format,
+                            const std::string& modelName,
+                            const std::string& agentName,
+                            const tysoc::TVec3& position,
+                            const tysoc::TVec3& rotation = tysoc::TVec3() )
 {
     auto _modelLoader = tysoc::TModelLoader::Create();
 
@@ -21,19 +21,19 @@ tysoc::agent::TAgent* createAgent( const std::string& format,
     {
         auto _modelData = _modelLoader->getUrdfModel( modelName );
 
-        return new tysoc::agent::TAgent( _modelData, agentName, position, rotation );
+        return new tysoc::TAgent( _modelData, agentName, position, rotation );
     }
     else if ( format == "rlsim" )
     {
         auto _modelData = _modelLoader->getRlsimModel( modelName );
         
-        return new tysoc::agent::TAgent( _modelData, agentName, position, rotation );
+        return new tysoc::TAgent( _modelData, agentName, position, rotation );
     }
     else if ( format == "mjcf" )
     {
         auto _modelData = _modelLoader->getMjcfModel( modelName );
         
-        return new tysoc::agent::TAgent( _modelData, agentName, position, rotation );
+        return new tysoc::TAgent( _modelData, agentName, position, rotation );
     }
 
     std::cout << "ERROR> format: " << format << " not supported" << std::endl;
@@ -69,7 +69,7 @@ int main( int argc, const char** argv )
         return 1;
     }
 
-    auto _terrainGenStatic = new tysoc::terrain::TStaticTerrainGenerator( "terrainGen0" );
+    auto _terrainGenStatic = new tysoc::TStaticTerrainGenerator( "terrainGen0" );
     _terrainGenStatic->createPrimitive( "box", 
                                         { 10.0f, 10.0f, 0.1f }, 
                                         { 0.0f, 0.0f, -0.05f },

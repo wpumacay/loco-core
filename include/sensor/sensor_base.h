@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <agent/agent.h>
@@ -6,7 +5,6 @@
 #include <components/data.h>
 
 namespace tysoc {
-namespace sensor {
 
     /**
     * Base sensor measurement
@@ -50,4 +48,4 @@ namespace sensor {
     };
 
     
-}}
+}

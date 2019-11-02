@@ -39,17 +39,17 @@ namespace pytysoc
         auto _type = m_sensorPtr->type();
         auto _measurement = m_sensorPtr->getSensorMeasurement();
 
-        if ( _type == tysoc::sensor::SENSOR_TYPE_INTRINSICS )
-            return _packIntrinsics( (tysoc::sensor::TAgentIntrinsicsSensorMeasurement*) _measurement );
-        // else if ( _type == tysoc::sensor::SENSOR_TYPE_EXTRINSICS_TERRAIN )
-        //     return _packExtrinsicsTerrain( (tysoc::sensor::TSectionsTerrainSensorMeasurement*) _measurement );
+        if ( _type == tysoc::SENSOR_TYPE_INTRINSICS )
+            return _packIntrinsics( (tysoc::TAgentIntrinsicsSensorMeasurement*) _measurement );
+        // else if ( _type == tysoc::SENSOR_TYPE_EXTRINSICS_TERRAIN )
+        //     return _packExtrinsicsTerrain( (tysoc::TSectionsTerrainSensorMeasurement*) _measurement );
 
         std::cout << "WARNING> sensor type: " << _type << " is not supported" << std::endl;
 
         return MeasurementDict();
     }
 
-    MeasurementDict PySensor::_packIntrinsics( tysoc::sensor::TAgentIntrinsicsSensorMeasurement* measurementPtr )
+    MeasurementDict PySensor::_packIntrinsics( tysoc::TAgentIntrinsicsSensorMeasurement* measurementPtr )
     {
         MeasurementDict _result;
 
@@ -62,7 +62,7 @@ namespace pytysoc
         return _result;
     }
 
-    // MeasurementDict PySensor::_packExtrinsicsTerrain( tysoc::sensor::TSectionsTerrainSensorMeasurement* measurementPtr )
+    // MeasurementDict PySensor::_packExtrinsicsTerrain( tysoc::TSectionsTerrainSensorMeasurement* measurementPtr )
     // {
     //     MeasurementDict _result;
     //      
@@ -71,7 +71,7 @@ namespace pytysoc
     //     return _result;
     // }
 
-    tysoc::sensor::TISensor* PySensor::ptr()
+    tysoc::TISensor* PySensor::ptr()
     {
         return m_sensorPtr;
     }
@@ -82,7 +82,7 @@ namespace pytysoc
     {
         if ( pyCoreAgentPtr->ptr() )
         {
-            m_sensorPtr = new tysoc::sensor::TAgentIntrinsicsSensor( name,
+            m_sensorPtr = new tysoc::TAgentIntrinsicsSensor( name,
                                                                      pyCoreAgentPtr->ptr() );
         }
         else

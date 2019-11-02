@@ -53,7 +53,7 @@ namespace tysoc {
         rlsim::RlsimModel* m_rlsimModelTemplatePtr;
 
         // underlying wrapped agent
-        agent::TAgent* m_agentPtr;
+        TAgent* m_agentPtr;
 
         // directory where the assets are
         std::string m_workingDir;
@@ -75,7 +75,7 @@ namespace tysoc {
         *   @param agentPtr     agent to be wrapped
         *   @param workingDir   directory where the assets(meshes,etc) are located
         */
-        TAgentWrapper( agent::TAgent* agentPtr,
+        TAgentWrapper( TAgent* agentPtr,
                        const std::string& workingDir );
 
         /**
@@ -88,7 +88,7 @@ namespace tysoc {
         void setParentSimulation( TISimulation* simulationPtr );
 
         std::string name();
-        agent::TAgent* agent();
+        TAgent* agent();
 
         void initialize();
         void reset();
@@ -98,7 +98,7 @@ namespace tysoc {
 
     };
 
-    typedef TAgentWrapper* FcnCreateAgent( agent::TAgent* agentPtr,
+    typedef TAgentWrapper* FcnCreateAgent( TAgent* agentPtr,
                                            const std::string& workingDir );
 
 }

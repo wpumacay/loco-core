@@ -46,24 +46,24 @@ namespace tysoc
         ScenarioState state();
 
         void addBody( TBody* bodyPtr );
-        void addAgent( agent::TAgent* agent );
-        void addSensor( sensor::TISensor* sensor );
-        void addTerrainGenerator( terrain::TITerrainGenerator* terrainGenerator );
+        void addAgent( TAgent* agent );
+        void addSensor( TISensor* sensor );
+        void addTerrainGenerator( TITerrainGenerator* terrainGenerator );
 
-        std::vector< TBody* >                       getBodies();
-        std::vector< agent::TAgent* >               getAgents();
-        std::vector< sensor::TISensor* >            getSensors();
-        std::vector< terrain::TITerrainGenerator* > getTerrainGenerators();
+        std::vector< TBody* > getBodies();
+        std::vector< TAgent* > getAgents();
+        std::vector< TISensor* > getSensors();
+        std::vector< TITerrainGenerator* > getTerrainGenerators();
 
-        TBody*                          getBodyByName( const std::string& name );
-        agent::TAgent*                  getAgentByName( const std::string& name );
-        sensor::TISensor*               getSensorByName( const std::string& name );
-        terrain::TITerrainGenerator*    getTerrainGeneratorByName( const std::string& name );
+        TBody* getBodyByName( const std::string& name );
+        TAgent* getAgentByName( const std::string& name );
+        TISensor* getSensorByName( const std::string& name );
+        TITerrainGenerator* getTerrainGeneratorByName( const std::string& name );
 
-        std::vector< TBody* >                           getBodiesByType( const eDynamicsType& type );
-        std::vector< agent::TAgent* >                   getAgentsByType( const agent::eAgentType& type );
-        std::vector< sensor::TISensor* >                getSensorsByType( const eSensorType& type );
-        std::vector< terrain::TITerrainGenerator* >     getTerrainGeneratorsByType( const std::string& type );
+        std::vector< TBody* > getBodiesByType( const eDynamicsType& type );
+        std::vector< TAgent* > getAgentsByType( const eAgentType& type );
+        std::vector< TISensor* > getSensorsByType( const eSensorType& type );
+        std::vector< TITerrainGenerator* > getTerrainGeneratorsByType( const std::string& type );
 
         bool hasBody( const std::string& bodyName );
         bool hasAgent( const std::string& agentName );
@@ -77,21 +77,21 @@ namespace tysoc
 
         ScenarioState m_state;
 
-        std::vector< TBody* >                               m_bodies;
-        std::map< std::string, TBody* >                     m_mapBodiesByName;
-        std::map< eDynamicsType, std::vector< TBody* > >    m_mapBodiesByType;
+        std::vector< TBody* > m_bodies;
+        std::map< std::string, TBody* > m_mapBodiesByName;
+        std::map< eDynamicsType, std::vector< TBody* > > m_mapBodiesByType;
 
-        std::vector< agent::TAgent* >                               m_agents;
-        std::map< std::string, agent::TAgent* >                     m_mapAgentsByName;
-        std::map< agent::eAgentType, std::vector< agent::TAgent* > >       m_mapAgentsByType;
+        std::vector< TAgent* > m_agents;
+        std::map< std::string, TAgent* > m_mapAgentsByName;
+        std::map< eAgentType, std::vector< TAgent* > > m_mapAgentsByType;
 
-        std::vector< sensor::TISensor* >                            m_sensors;
-        std::map< std::string, sensor::TISensor* >                  m_mapSensorsByName;
-        std::map< eSensorType, std::vector< sensor::TISensor* > >   m_mapSensorsByType;
+        std::vector< TISensor* > m_sensors;
+        std::map< std::string, TISensor* > m_mapSensorsByName;
+        std::map< eSensorType, std::vector< TISensor* > > m_mapSensorsByType;
 
-        std::vector< terrain::TITerrainGenerator* >                             m_terrainGenerators;
-        std::map< std::string, terrain::TITerrainGenerator* >                   m_mapTerrainGeneratorsByName;
-        std::map< std::string, std::vector< terrain::TITerrainGenerator* > >    m_mapTerrainGeneratorsByType;
+        std::vector< TITerrainGenerator* > m_terrainGenerators;
+        std::map< std::string, TITerrainGenerator* > m_mapTerrainGeneratorsByName;
+        std::map< std::string, std::vector< TITerrainGenerator* > > m_mapTerrainGeneratorsByType;
     };
 
 }

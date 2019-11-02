@@ -1,10 +1,8 @@
-
 #pragma once
 
 #include <sensor/sensor_base.h>
 
 namespace tysoc {
-namespace sensor {
 
     struct TSectionsTerrainSensorMeasurement : public TISensorMeasurement
     {
@@ -61,14 +59,14 @@ namespace sensor {
         //   format 2 : heights with base the position of the agent
         bool m_useComplement;
 
-        agent::TAgent*                          m_agentPtr;
-        terrain::TSectionsTerrainGenerator*     m_terrainGenPtr;
+        TAgent* m_agentPtr;
+        TSectionsTerrainGenerator* m_terrainGenPtr;
 
         public :
 
         TSectionsTerrainSensor( const std::string& name,
-                                terrain::TSectionsTerrainGenerator* terrainGenPtr,
-                                agent::TAgent* agentPtr,
+                                TSectionsTerrainGenerator* terrainGenPtr,
+                                TAgent* agentPtr,
                                 bool useComplement = false );
         ~TSectionsTerrainSensor();
 
@@ -77,4 +75,4 @@ namespace sensor {
         TISensorMeasurement* getSensorMeasurement() override;
     };
 
-}}
+}

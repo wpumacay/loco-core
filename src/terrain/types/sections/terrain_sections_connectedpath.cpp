@@ -1,12 +1,8 @@
 
 #include <terrain/types/sections/terrain_sections_connectedpath.h>
 
-
-
 namespace tysoc {
-namespace terrain {
 
-    
     TPathTerrainGenerator::TPathTerrainGenerator( const std::string& name,
                                                   float startX,
                                                   float startY,
@@ -176,4 +172,4 @@ namespace terrain {
     }
 
 
-}}
+}

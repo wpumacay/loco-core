@@ -7,7 +7,6 @@
 #include <agent/agent_base.h>
 
 namespace tysoc {
-namespace agent {
 
     class TAgent;
 
@@ -52,4 +51,4 @@ namespace agent {
                                const TVec3& srcSize,
                                TVec3& dstSize );
 
-}}
+}

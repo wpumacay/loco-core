@@ -53,25 +53,35 @@ namespace tysoc {
     void TGLVisualizer::_updateInternal()
     {
         // Update terrain visualization wrappers
-        for ( size_t i = 0; i < m_vizTerrainGeneratorWrappers.size(); i++ )
-            m_vizTerrainGeneratorWrappers[i]->update();
+        for ( auto& _vizTerrainGen : m_vizTerrainGeneratorWrappers )
+            _vizTerrainGen->update();
 
         // and also the agent visualization wrappers
-        for ( size_t i = 0; i < m_vizKinTreeWrappers.size(); i++ )
-            m_vizKinTreeWrappers[i]->update();
+        for ( auto& _vizKinTree : m_vizKinTreeWrappers )
+            _vizKinTree->update();
 
         // and the sensor readings (render them directly, seems like ...
         // wrapping them would be wasteful?)
         auto _sensors = m_scenarioPtr->getSensors();
-
-        for ( size_t i = 0; i < _sensors.size(); i++ )
-            _renderSensorReading( _sensors[i] );
+        for ( auto _sensor : _sensors )
+            _renderSensorReading( _sensor );
 
         // and finally request to the rendering engine *****************
 
         engine::CDebugDrawer::DrawLine( { 0.0f, 0.0f, 0.0f }, { 5.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f } );
         engine::CDebugDrawer::DrawLine( { 0.0f, 0.0f, 0.0f }, { 0.0f, 5.0f, 0.0f }, { 0.0f, 1.0f, 0.0f } );
         engine::CDebugDrawer::DrawLine( { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 5.0f }, { 0.0f, 0.0f, 1.0f } );
+
+        if ( engine::CInputManager::CheckSingleKeyPress( ENGINE_KEY_G ) )
+        {
+            ENGINE_TRACE( "Toggling ui state" );
+            m_glApplication->setGuiActive( !m_glApplication->guiActive() );
+        }
+        else if ( engine::CInputManager::CheckSingleKeyPress( ENGINE_KEY_U ) )
+        {
+            ENGINE_TRACE( "Toggling ui-utils state" );
+            m_glApplication->setGuiUtilsActive( !m_glApplication->guiUtilsActive() );
+        }
 
         m_glApplication->update();
         m_glApplication->begin();
@@ -127,12 +137,19 @@ namespace tysoc {
 
     void TGLVisualizer::_setupGlRenderingEngine()
     {
-        m_glApplication = std::unique_ptr< engine::CApplication >( new engine::CApplication() );
+        auto _windowProperties = engine::CWindowProps();
+        _windowProperties.width = 1024;
+        _windowProperties.height = 768;
+        _windowProperties.title = "resizable-application";
+        _windowProperties.clearColor = { 0.6f, 0.659f, 0.690f, 1.0f };
+        _windowProperties.resizable = true;
+
+        m_glApplication = std::unique_ptr< engine::CApplication >( new engine::CApplication( _windowProperties ) );
         m_glScene = m_glApplication->scene();
 
         /* create some lights for the scene ***********************************************************/
         auto _dirlight = new engine::CDirectionalLight( "directional",
-                                                        { 0.4f, 0.4f, 0.4f },
+                                                        { 0.5f, 0.5f, 0.5f },
                                                         { 0.8f, 0.8f, 0.8f },
                                                         { 0.8f, 0.8f, 0.8f },
                                                         { -1.0f, -1.0f, -1.0f } );
@@ -140,7 +157,7 @@ namespace tysoc {
         m_glScene->addLight( std::unique_ptr< engine::CILight >( _dirlight ) );
 
         auto _pointlight = new engine::CPointLight( "point",
-                                                    { 0.4f, 0.4f, 0.4f },
+                                                    { 0.5f, 0.5f, 0.5f },
                                                     { 0.8f, 0.8f, 0.8f },
                                                     { 0.8f, 0.8f, 0.8f },
                                                     { 3.0f, 3.0f, 3.0f },
@@ -197,7 +214,7 @@ namespace tysoc {
         m_glApplication->renderOptions().shadowMapRangeConfig.dirLightPtr = _dirlight;
     }
 
-    void TGLVisualizer::_collectKinTreeAgent( agent::TAgent* agentPtr )
+    void TGLVisualizer::_collectKinTreeAgent( TAgent* agentPtr )
     {
         // create the kintree viz wrapper
         auto _vizKinTreeWrapper = new TGLVizKinTree( agentPtr,
@@ -266,7 +283,7 @@ namespace tysoc {
 
     }
 
-    void TGLVisualizer::_collectTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr )
+    void TGLVisualizer::_collectTerrainGenerator( TITerrainGenerator* terrainGeneratorPtr )
     {
         // create the terrainGenrator viz wrapper
         auto _vizTerrainGeneratorWrapper = new TGLVizTerrainGenerator( terrainGeneratorPtr,
@@ -276,7 +293,7 @@ namespace tysoc {
         m_vizTerrainGeneratorWrappers.push_back( std::unique_ptr< TGLVizTerrainGenerator >( _vizTerrainGeneratorWrapper ) );
     }
 
-    void TGLVisualizer::_renderSensorReading( sensor::TISensor* sensorPtr )
+    void TGLVisualizer::_renderSensorReading( TISensor* sensorPtr )
     {
         auto _measurement = sensorPtr->getSensorMeasurement();
 
@@ -287,7 +304,7 @@ namespace tysoc {
         if ( _measurement->type == eSensorType::EXT_HEIGHTFIELD_1D )
         {
             // draw profile from sensor reading
-            auto _pathMeasurement = reinterpret_cast< sensor::TSectionsTerrainSensorMeasurement* >
+            auto _pathMeasurement = reinterpret_cast< TSectionsTerrainSensorMeasurement* >
                                         ( _measurement );
 
             std::vector< engine::CLine > _lines;
@@ -324,7 +341,7 @@ namespace tysoc {
         }
         else if ( _measurement->type == eSensorType::PROP_JOINT )
         {
-            auto _agentMeasurement = reinterpret_cast< sensor::TAgentIntrinsicsSensorMeasurement* >
+            auto _agentMeasurement = reinterpret_cast< TAgentIntrinsicsSensorMeasurement* >
                                         ( _measurement );
 
             std::vector< engine::CLine > _lines;

@@ -4,7 +4,6 @@
 #include <terrain/terrain_common.h>
 
 namespace tysoc {
-namespace terrain {
 
     struct TProfileGenerator
     {
@@ -61,4 +60,4 @@ namespace terrain {
         float generate( float x ) override;
     };
     
-}}
+}

@@ -139,12 +139,12 @@ namespace tysoc {
         m_simulationPtr = NULL;
     }
 
-    TAgentWrapper* TRuntime::createAgent( agent::TAgent* agentPtr )
+    TAgentWrapper* TRuntime::createAgent( TAgent* agentPtr )
     {
         return m_fcnCreateAgent( agentPtr, m_workingDir );
     }
         
-    TTerrainGenWrapper* TRuntime::createTerrainGen( terrain::TITerrainGenerator* terrainGenPtr )
+    TTerrainGenWrapper* TRuntime::createTerrainGen( TITerrainGenerator* terrainGenPtr )
     {
         return m_fcnCreateTerrainGen( terrainGenPtr, m_workingDir );
     }

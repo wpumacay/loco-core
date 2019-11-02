@@ -16,7 +16,7 @@ namespace pytysoc
 
         protected :
 
-        tysoc::terrain::TITerrainGenerator* m_terrainGenPtr;
+        tysoc::TITerrainGenerator* m_terrainGenPtr;
 
 
         public :
@@ -44,7 +44,7 @@ namespace pytysoc
         */
         std::string name();
 
-        tysoc::terrain::TITerrainGenerator* ptr();
+        tysoc::TITerrainGenerator* ptr();
     };
 
     class PyStaticTerrainGen : public PyTerrainGen

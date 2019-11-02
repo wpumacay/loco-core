@@ -111,6 +111,7 @@ namespace tysoc {
         TVec3       specular;   // specular-color (rgb) of the renderable associated with this shape
         TScalar     shininess;  // shininess-value for the specular-component of the color material
         std::string texture;    // texture id (or filename if not cached)
+        bool        usesMaterialFromMesh; // mesh-loading takes care of material properties
     };
 
     struct TActuatorData

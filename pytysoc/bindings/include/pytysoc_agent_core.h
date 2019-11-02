@@ -15,7 +15,7 @@ namespace pytysoc
 
         private :
 
-        tysoc::agent::TAgent* m_agentPtr;
+        tysoc::TAgent* m_agentPtr;
 
         public :
 
@@ -44,7 +44,7 @@ namespace pytysoc
         *   @param agentPtr         Abstract kintree agent to wrap
         *   @notexposed             Not exposed through python API.
         */
-        PyCoreAgent( tysoc::agent::TAgent* agentPtr );
+        PyCoreAgent( tysoc::TAgent* agentPtr );
 
         /**
         *   Destructor for this wrapper. It only NULLs the references wrapped.
@@ -87,7 +87,7 @@ namespace pytysoc
         *
         *   @notexposed     Not exposed through python API
         */
-        tysoc::agent::TAgent* ptr();
+        tysoc::TAgent* ptr();
 
     };
 

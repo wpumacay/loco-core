@@ -1,12 +1,10 @@
 
 #include <sensor/types/sensor_agent_intrinsics.h>
 
-
 namespace tysoc {
-namespace sensor {
 
         TAgentIntrinsicsSensor::TAgentIntrinsicsSensor( const std::string& name,
-                                                        agent::TAgent* agentPtr )
+                                                        TAgent* agentPtr )
             : TISensor( name )
         {
             m_type                      = eSensorType::PROP_JOINT;
@@ -82,14 +80,14 @@ namespace sensor {
             {
                 if ( _kinSensors[i]->data.type == eSensorType::PROP_JOINT )
                 {
-                    auto _kinJointSensor = reinterpret_cast< agent::TKinTreeJointSensor* >( _kinSensors[i] );
+                    auto _kinJointSensor = reinterpret_cast< TKinTreeJointSensor* >( _kinSensors[i] );
 
                     m_sensorMeasurement->thetas.push_back( _kinJointSensor->theta );
                     m_sensorMeasurement->thetadots.push_back( _kinJointSensor->thetadot );
                 }
                 else if ( _kinSensors[i]->data.type == eSensorType::PROP_BODY )
                 {
-                    auto _kinBodySensor = reinterpret_cast< agent::TKinTreeBodySensor* >( _kinSensors[i] );
+                    auto _kinBodySensor = reinterpret_cast< TKinTreeBodySensor* >( _kinSensors[i] );
 
                     m_sensorMeasurement->bodiesLinVelocities.push_back( _kinBodySensor->linVelocity );
                     m_sensorMeasurement->bodiesLinAccelerations.push_back( _kinBodySensor->linAcceleration );
@@ -147,4 +145,4 @@ namespace sensor {
             return m_sensorMeasurement;
         }
 
-}}
+}

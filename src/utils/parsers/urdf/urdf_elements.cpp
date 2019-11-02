@@ -21,6 +21,8 @@ namespace urdf {
         {
             this->filename  = UrdfMaterial::MATERIALS[ this->name ].filename;
             this->color     = UrdfMaterial::MATERIALS[ this->name ].color;
+
+            usesMaterialFromMesh = false;
         }
         else
         {
@@ -33,6 +35,9 @@ namespace urdf {
             auto _colorElement = xmlElement->FirstChildElement( "color" );
             if ( _colorElement )
                 this->color = xml::safeParseVec4( _colorElement, "rgba" );
+
+            if ( _textureElement || _colorElement )
+                usesMaterialFromMesh = false;
 
             UrdfMaterial::MATERIALS[ this->name ] = *this;
         }

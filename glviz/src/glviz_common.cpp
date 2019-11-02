@@ -45,19 +45,26 @@ namespace tysoc {
         engine::CIRenderable* _renderable = nullptr;
 
         if ( type == eShapeType::BOX )
+        {
             _renderable = engine::CMeshBuilder::createBox( size.x, size.y, size.z );
-
+        }
         else if ( type == eShapeType::SPHERE )
+        {
             _renderable = engine::CMeshBuilder::createSphere( size.x );
-
+        }
         else if ( type == eShapeType::CAPSULE )
+        {
             _renderable = engine::CMeshBuilder::createCapsule( size.x, size.y );
-
+        }
         else if ( type == eShapeType::CYLINDER )
+        {
             _renderable = engine::CMeshBuilder::createCylinder( size.x, size.y );
-
+        }
         else if ( type == eShapeType::MESH )
+        {
             _renderable = engine::CMeshBuilder::createModelFromFile( filename );
+            _renderable->scale = { size.x, size.y, size.z };
+        }
 
         if ( !_renderable )
             ENGINE_WARN( "Could not create renderable of type: {0}", tysoc::toString( type ) );

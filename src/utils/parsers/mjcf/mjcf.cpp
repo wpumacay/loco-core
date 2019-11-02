@@ -40,6 +40,11 @@ namespace mjcf {
         _doc.LoadFile( modelfile.c_str() );
 
         auto _root = _parseGenericElement( MJCF_SCHEMA, _doc.FirstChildElement() );
+        // store path references for later usage (when handling meshes)
+        _root->filepath = modelfile;
+        _root->filename = tysoc::getFilenameFromFilePath( modelfile );
+        _root->folderpath = tysoc::getFolderpathFromFilePath( modelfile );
+
         return _root;
     }
 
@@ -202,7 +207,7 @@ namespace mjcf {
         {
             _res += std::string( TYSOC_PREFIX_CAMERA ) + agentName + std::string( "_" ) + elementName;
         }
-        else if ( type == "mesh" )
+        else if ( type == "mesh" || type == "material" )
         {
             _res += elementName;
         }

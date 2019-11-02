@@ -22,7 +22,7 @@ namespace pytysoc
         return "undefined";
     }
 
-    tysoc::terrain::TITerrainGenerator* PyTerrainGen::ptr()
+    tysoc::TITerrainGenerator* PyTerrainGen::ptr()
     {
         return m_terrainGenPtr;
     }
@@ -30,7 +30,7 @@ namespace pytysoc
     PyStaticTerrainGen::PyStaticTerrainGen( const std::string& name )
         : PyTerrainGen( name )
     {
-        m_terrainGenPtr = new tysoc::terrain::TStaticTerrainGenerator( name );
+        m_terrainGenPtr = new tysoc::TStaticTerrainGenerator( name );
     }
 
     void PyStaticTerrainGen::createPrimitive( const std::string& type,
@@ -44,7 +44,7 @@ namespace pytysoc
         if ( !m_terrainGenPtr )
             return;
 
-        reinterpret_cast< tysoc::terrain::TStaticTerrainGenerator* >( m_terrainGenPtr )
+        reinterpret_cast< tysoc::TStaticTerrainGenerator* >( m_terrainGenPtr )
                         ->createPrimitive( type,
                                            numpyToVec3( size ),
                                            numpyToVec3( position ),

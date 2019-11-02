@@ -5,7 +5,6 @@
 #include <components/data.h>
 
 namespace tysoc {
-namespace agent {
 
     const TVec3 DEFAULT_AMBIENT_COLOR = { 0.7f, 0.5f, 0.3f };
     const TVec3 DEFAULT_DIFFUSE_COLOR = { 0.7f, 0.5f, 0.3f };
@@ -198,4 +197,4 @@ namespace agent {
     std::string toString( TKinTreeSensor* kinTreeSensorPtr );
     std::string toString( TKinTreeActuator* kinTreeActuatorPtr );
 
-}}
+}

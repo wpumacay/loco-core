@@ -32,9 +32,9 @@ namespace tysoc {
 
         TISimulation* createSimulation( TScenario* scenarioPtr = NULL );
 
-        TAgentWrapper* createAgent( agent::TAgent* agentPtr );
+        TAgentWrapper* createAgent( TAgent* agentPtr );
 
-        TTerrainGenWrapper* createTerrainGen( terrain::TITerrainGenerator* terrainGenPtr );
+        TTerrainGenWrapper* createTerrainGen( TITerrainGenerator* terrainGenPtr );
 
         TIVisualizer* createVisualizer( TScenario* scenarioPtr = NULL );
 

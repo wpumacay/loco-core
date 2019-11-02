@@ -2,7 +2,6 @@
 #include <agent/agent_base.h>
 
 namespace tysoc {
-namespace agent {
 
     std::string toString( const eModelFormat& format )
     {
@@ -353,42 +352,42 @@ namespace agent {
 
         _strRep += std::string( "bodies: " ) + std::string( "\n\r" );
         for ( auto _body : bodies )
-            _strRep += agent::toString( _body );
+            _strRep += tysoc::toString( _body );
 
         _strRep += "-----------------------------\n\r";
 
         _strRep += "JOINTS INFO: ----------------\n\r";
         
         for ( auto _joint : joints )
-            _strRep += agent::toString( _joint );
+            _strRep += tysoc::toString( _joint );
 
         _strRep += "-----------------------------\n\r";
 
         _strRep += "COLLISIONS INFO: ------------\n\r";
 
         for ( auto _collision : collisions )
-            _strRep += agent::toString( _collision );
+            _strRep += tysoc::toString( _collision );
 
         _strRep += "-----------------------------\n\r";
 
         _strRep += "VISUALS INFO: ---------------\n\r";
 
         for ( auto _visual : visuals )
-            _strRep += agent::toString( _visual );
+            _strRep += tysoc::toString( _visual );
 
         _strRep += "-----------------------------\n\r";
 
         _strRep += "SENSORS INFO: ---------------\n\r";
 
         for ( auto _sensor : sensors )
-            _strRep += agent::toString( _sensor );
+            _strRep += tysoc::toString( _sensor );
 
         _strRep += "-----------------------------\n\r";
 
         _strRep += "ACTUATORS INFO: -------------\n\r";
 
         for ( auto _actuator : actuators )
-            _strRep += agent::toString( _actuator );
+            _strRep += tysoc::toString( _actuator );
 
         _strRep += "-----------------------------\n\r";
         _strRep += "TREE STRUCTURE: -------------\n\r";
@@ -447,4 +446,4 @@ namespace agent {
         return _strRep;
     }
 
-}}
+}

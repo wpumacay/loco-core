@@ -1,4 +1,3 @@
-
 #pragma once
 
 // mjcf functionality
@@ -7,7 +6,6 @@
 #include <agent/agent_base.h>
 
 namespace tysoc {
-namespace agent {
 
     class TAgent;
 
@@ -22,6 +20,12 @@ namespace agent {
         std::map< std::string, TGenericParams > defaultsNoClass;
         // Storage for the default values related to specific classes (see mjcf format)
         std::map< std::string, std::map< std::string, TGenericParams > > defaultsPerClass;
+        // Storage for material-assets
+        std::map< std::string, TGenericParams > assetsMaterials;
+        // File path used to load the model
+        std::string filepath;
+        // Folder path from where the model was loaded
+        std::string folderpath;
         // Flag to indicate whether or not we are using local coordinates
         bool useLocalCoordinates;
         // Flag to indicate whether or not use degrees or radings for angles
@@ -68,6 +72,8 @@ namespace agent {
     void _extractTransform( TMjcfParsingContext& context, 
                             mjcf::GenericElement* elementPtr, 
                             TMat4& targetTransform );
+
+    std::string _extractFilename( TMjcfParsingContext& context, const std::string& meshStr );
 
     bool _extractStandardSize( TMjcfParsingContext& context,
                                mjcf::GenericElement* geomElm,
@@ -133,4 +139,4 @@ namespace agent {
     bool _hasDefaultAttrib( TMjcfParsingContext& context,
                             mjcf::GenericElement* elementPtr,
                             const std::string& attribId );
-}}
+}

@@ -4,8 +4,6 @@
 #include <terrain/terrain_base.h>
 
 namespace tysoc {
-namespace terrain {
-
 
     class TSectionsTerrainGenerator : public TITerrainGenerator
     {
@@ -42,4 +40,4 @@ namespace terrain {
     };
 
 
-}}
+}

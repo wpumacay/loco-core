@@ -6,7 +6,6 @@
 #define DEFAULT_STATIC_PRIMITIVE_COLOR tysoc::TVec3( 0.2, 0.3, 0.4 )
 
 namespace tysoc {
-namespace terrain {
 
     class TStaticTerrainGenerator : public TITerrainGenerator
     {
@@ -29,4 +28,4 @@ namespace terrain {
 
     };
 
-}}
+}

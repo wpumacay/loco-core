@@ -7,6 +7,5 @@
 #include <agent/formats/kintree_format_rlsim.h>
 
 namespace tysoc {
-namespace agent {
 
-}}
+}

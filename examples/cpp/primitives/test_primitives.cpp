@@ -47,7 +47,7 @@ tysoc::TBody* createSimpleBody( const std::string& name, const std::string& type
     }
     else 
     {
-        return NULL;
+        return nullptr;
     }
 
     _collisionData.density = 1000.0;
@@ -87,7 +87,7 @@ tysoc::TBody* createSimpleBody( const std::string& name, const std::string& type
 
 int main()
 {
-    auto _terrainGenStatic = new tysoc::terrain::TStaticTerrainGenerator( "terrainGen0" );
+    auto _terrainGenStatic = new tysoc::TStaticTerrainGenerator( "terrainGen0" );
     _terrainGenStatic->createPrimitive( "box", 
                                         { 10.0f, 10.0f, 0.2f }, 
                                         { 0.0f, 0.0f, -0.1f },

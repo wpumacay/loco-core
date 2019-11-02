@@ -7,7 +7,6 @@
 #include <agent/agent_base.h>
 
 namespace tysoc {
-namespace agent {
 
     class TAgent;
 
@@ -18,6 +17,10 @@ namespace agent {
         TAgent* agentPtr;
         // Data used to construct the agent
         urdf::UrdfModel* modelDataPtr;
+        // File path used to load the model
+        std::string filepath;
+        // Folder path from where the model was loaded
+        std::string folderpath;
     };
 
     /* Creates an agent from the given urdf model */
@@ -44,12 +47,9 @@ namespace agent {
     TInertialData _processInertialFromUrdf( TUrdfParsingContext& context, 
                                             const urdf::UrdfInertia& urdfInertia );
 
-    void _collectAssetsFromLink( TUrdfParsingContext& context, 
-                                  urdf::UrdfLink* urdfLinkPtr );
-
     void _constructDefaultActuators( TUrdfParsingContext& context );
 
     void _extractStandardSize( const urdf::UrdfShape& urdfShape,
                                TVec3& targetSize );
 
-}}
+}

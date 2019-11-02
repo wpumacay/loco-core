@@ -2,8 +2,6 @@
 #include <agent/formats/kintree_format_urdf.h>
 
 namespace tysoc {
-namespace agent {
-
 
     void constructAgentFromModel( TAgent* agentPtr,
                                   urdf::UrdfModel* modelDataPtr )
@@ -11,12 +9,11 @@ namespace agent {
         TUrdfParsingContext _context;
         _context.agentPtr = agentPtr;
         _context.modelDataPtr = new urdf::UrdfModel();
+        _context.filepath = modelDataPtr->filepath;
+        _context.folderpath = modelDataPtr->folderpath;
 
         // create a copy of the model data with the names modified appropriately
         urdf::deepCopy( _context.modelDataPtr, modelDataPtr, agentPtr->name() );
-
-        // grab some required info before start constructing the kintree
-        _collectAssetsFromLink( _context, _context.modelDataPtr->rootLinks[0] );
 
         /**********************************************************************/
         /*                       KINTREE CONSTRUCTION                         */
@@ -178,29 +175,13 @@ namespace agent {
         _extractStandardSize( urdfVisual, _kinVisual->data.size );
         // material information
         auto _rgba = urdfVisual.material.color;
-        _kinVisual->data.ambient    = { _rgba.x, _rgba.y, _rgba.z };
-        _kinVisual->data.diffuse    = { _rgba.x, _rgba.y, _rgba.z };
-        _kinVisual->data.specular   = { _rgba.x, _rgba.y, _rgba.z };
-        // grab the mesh resource (either an id or a full path)
+        _kinVisual->data.ambient = { _rgba.x, _rgba.y, _rgba.z };
+        _kinVisual->data.diffuse = { _rgba.x, _rgba.y, _rgba.z };
+        _kinVisual->data.specular = { _rgba.x, _rgba.y, _rgba.z };
         if ( urdfVisual.type == "mesh" )
         {
-            auto _fileComponents = parsing::split( urdfVisual.filename, '.' );
-            if ( _fileComponents.size() != 2 )
-            {
-                std::cout << "WARNING> seems that there is an issue with the the mesh's filename: " 
-                          << urdfVisual.filename << ". It should be of the form NAME.EXTENSION" << std::endl;
-                _kinVisual->data.filename = urdfVisual.filename;
-            }
-            else
-            {
-                auto _meshId = _fileComponents[0];
-                auto& _meshAssetsMap = context.agentPtr->meshAssetsMap;
-
-                if ( _meshAssetsMap.find( _meshId ) != _meshAssetsMap.end() )
-                    _kinVisual->data.filename = _meshAssetsMap[_meshId]->name;
-                else
-                    _kinVisual->data.filename = _meshId;
-            }
+            _kinVisual->data.filename = context.folderpath + urdfVisual.filename;
+            _kinVisual->data.usesMaterialFromMesh = urdfVisual.material.usesMaterialFromMesh;
         }
 
         context.agentPtr->visuals.push_back( _kinVisual );
@@ -224,27 +205,8 @@ namespace agent {
         _kinCollision->data.collisionMask = 1;
         _kinCollision->data.friction = { 1.0f, 0.005f, 0.0001f };
         _kinCollision->data.density = TYSOC_DEFAULT_DENSITY;
-        // and the mesh filename in case there is any
         if ( urdfCollision.type == "mesh" )
-        {
-            auto _fileComponents = parsing::split( urdfCollision.filename, '.' );
-            if ( _fileComponents.size() != 2 )
-            {
-                std::cout << "WARNING> seems that there is an issue with the the mesh's filename: " 
-                          << urdfCollision.filename << ". It should be of the form NAME.EXTENSION" << std::endl;
-                _kinCollision->data.filename = urdfCollision.filename;
-            }
-            else
-            {
-                auto _meshId = _fileComponents[0];
-                auto& _meshAssetsMap = context.agentPtr->meshAssetsMap;
-
-                if ( _meshAssetsMap.find( _meshId ) != _meshAssetsMap.end() )
-                    _kinCollision->data.filename = _meshAssetsMap[_meshId]->name;
-                else
-                    _kinCollision->data.filename = _meshId;
-            }
-        }
+            _kinCollision->data.filename = context.folderpath + urdfCollision.filename;
 
         context.agentPtr->collisions.push_back( _kinCollision );
         context.agentPtr->collisionsMap[_kinCollision->name] = _kinCollision;
@@ -269,70 +231,6 @@ namespace agent {
         _kinInertial.iyz = urdfInertia.iyz;
 
         return _kinInertial;
-    }
-
-    void _collectAssetsFromLink( TUrdfParsingContext& context, 
-                                  urdf::UrdfLink* urdfLinkPtr )
-    {
-        if ( !urdfLinkPtr )
-            return;
-
-        // combine visuals and collisions into a single container
-        auto _shapes = std::vector< urdf::UrdfShape >();
-        for ( auto _visual : urdfLinkPtr->visuals )
-            _shapes.push_back( _visual );
-        for ( auto _collision : urdfLinkPtr->collisions )
-            _shapes.push_back( _collision );
-
-        // check for potential mesh assets in the "shapes" container
-        for ( auto _shape : _shapes )
-        {
-            // if not a mesh, well we're not in bussiness
-            if ( _shape.type != "mesh" )
-                continue;
-
-            // grab the mesh data into a meshasset object
-            auto _meshAsset = new TKinTreeMeshAsset();
-            // Please, no weird names. Should just be :
-            //      FILENAME.EXTENSION
-            // Where FILENAME should not include special characters (specially ...
-            // '.', as we are spliting the EXTENSION from the FILENAME using '.')
-            auto _fileComponents = parsing::split( _shape.filename, '.' );
-            if ( _fileComponents.size() != 2 )
-            {
-                std::cout << "WARNING> seems that there is an issue with the " 
-                          << "the mesh's filename: " << _shape.filename
-                          << std::endl;
-
-                std::cout << "?size: " << _fileComponents.size() << std::endl;
-
-                continue;
-            }
-
-            auto _fileName          = _fileComponents[0];
-            auto _fileExtension     = _fileComponents[1];
-
-            _meshAsset->name     = _fileName; // id is the name without extension
-            _meshAsset->file     = _shape.filename; // filename if full path
-            _meshAsset->scale    = _shape.size;
-
-            if ( context.agentPtr->meshAssetsMap.find( _meshAsset->name ) ==
-                 context.agentPtr->meshAssetsMap.end() )
-            {
-                // save in storage for later usage
-                context.agentPtr->meshAssets.push_back( _meshAsset );
-                context.agentPtr->meshAssetsMap[ _meshAsset->name ] = _meshAsset;
-            }
-            else
-            {
-                delete _meshAsset;
-                _meshAsset = nullptr;
-            }
-        }
-
-        // repeat recursively for all child links
-        for ( auto _childLink : urdfLinkPtr->children )
-            _collectAssetsFromLink( context, _childLink );
     }
 
     void _constructDefaultActuators( TUrdfParsingContext& context )
@@ -367,4 +265,4 @@ namespace agent {
         targetSize = urdfShape.size;
     }
 
-}}
+}

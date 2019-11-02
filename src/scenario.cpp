@@ -13,19 +13,19 @@ namespace tysoc {
         m_mapBodiesByType[ eDynamicsType::STATIC ]      = std::vector< TBody* >();
         m_mapBodiesByType[ eDynamicsType::KINEMATIC ]   = std::vector< TBody* >();
 
-        m_mapAgentsByType[ agent::eAgentType::BASE ]  = std::vector< agent::TAgent* >();
+        m_mapAgentsByType[ eAgentType::BASE ]  = std::vector< TAgent* >();
 
-        m_mapSensorsByType[ eSensorType::PROP_JOINT ] = std::vector< sensor::TISensor* >();
-        m_mapSensorsByType[ eSensorType::PROP_BODY ] = std::vector< sensor::TISensor* >();
-        m_mapSensorsByType[ eSensorType::EXT_HEIGHTFIELD_1D ] = std::vector< sensor::TISensor* >();
-        m_mapSensorsByType[ eSensorType::EXT_HEIGHTFIELD_2D ] = std::vector< sensor::TISensor* >();
-        m_mapSensorsByType[ eSensorType::EXT_CAMERA_RGB ] = std::vector< sensor::TISensor* >();
-        m_mapSensorsByType[ eSensorType::EXT_CAMERA_DEPTH ] = std::vector< sensor::TISensor* >();
-        m_mapSensorsByType[ eSensorType::EXT_CAMERA_SEGMENTATION ] = std::vector< sensor::TISensor* >();
+        m_mapSensorsByType[ eSensorType::PROP_JOINT ] = std::vector< TISensor* >();
+        m_mapSensorsByType[ eSensorType::PROP_BODY ] = std::vector< TISensor* >();
+        m_mapSensorsByType[ eSensorType::EXT_HEIGHTFIELD_1D ] = std::vector< TISensor* >();
+        m_mapSensorsByType[ eSensorType::EXT_HEIGHTFIELD_2D ] = std::vector< TISensor* >();
+        m_mapSensorsByType[ eSensorType::EXT_CAMERA_RGB ] = std::vector< TISensor* >();
+        m_mapSensorsByType[ eSensorType::EXT_CAMERA_DEPTH ] = std::vector< TISensor* >();
+        m_mapSensorsByType[ eSensorType::EXT_CAMERA_SEGMENTATION ] = std::vector< TISensor* >();
 
-        m_mapTerrainGeneratorsByType[ terrain::TERRAIN_TYPE_STATIC ] = std::vector< terrain::TITerrainGenerator* >();
-        m_mapTerrainGeneratorsByType[ terrain::TERRAIN_TYPE_PROCEDURAL_SECTIONS_PATH ]   = std::vector< terrain::TITerrainGenerator* >();
-        m_mapTerrainGeneratorsByType[ terrain::TERRAIN_TYPE_PROCEDURAL_SECTIONS_BLOCKS ] = std::vector< terrain::TITerrainGenerator* >();
+        m_mapTerrainGeneratorsByType[ TERRAIN_TYPE_STATIC ] = std::vector< TITerrainGenerator* >();
+        m_mapTerrainGeneratorsByType[ TERRAIN_TYPE_PROCEDURAL_SECTIONS_PATH ]   = std::vector< TITerrainGenerator* >();
+        m_mapTerrainGeneratorsByType[ TERRAIN_TYPE_PROCEDURAL_SECTIONS_BLOCKS ] = std::vector< TITerrainGenerator* >();
     }
     
     
@@ -86,7 +86,7 @@ namespace tysoc {
         m_mapBodiesByType[ bodyPtr->dyntype() ].push_back( bodyPtr );
     }
 
-    void TScenario::addAgent( agent::TAgent* agent )
+    void TScenario::addAgent( TAgent* agent )
     {
         if ( agent )
         {
@@ -96,7 +96,7 @@ namespace tysoc {
         }
     }
 
-    void TScenario::addSensor( sensor::TISensor* sensor )
+    void TScenario::addSensor( TISensor* sensor )
     {
         if ( sensor )
         {
@@ -106,7 +106,7 @@ namespace tysoc {
         }
     }
 
-    void TScenario::addTerrainGenerator( terrain::TITerrainGenerator* terrainGenerator )
+    void TScenario::addTerrainGenerator( TITerrainGenerator* terrainGenerator )
     {
         if ( terrainGenerator )
         {
@@ -151,7 +151,7 @@ namespace tysoc {
         return NULL;
     }
 
-    agent::TAgent* TScenario::getAgentByName( const std::string& name )
+    TAgent* TScenario::getAgentByName( const std::string& name )
     {
         if ( m_mapAgentsByName.find( name ) != m_mapAgentsByName.end() )
         {
@@ -164,7 +164,7 @@ namespace tysoc {
         return NULL;
     }
 
-    sensor::TISensor* TScenario::getSensorByName( const std::string& name )
+    TISensor* TScenario::getSensorByName( const std::string& name )
     {
         if ( m_mapSensorsByName.find( name ) != m_mapSensorsByName.end() )
         {
@@ -177,7 +177,7 @@ namespace tysoc {
         return NULL;
     }
 
-    terrain::TITerrainGenerator* TScenario::getTerrainGeneratorByName( const std::string& name )
+    TITerrainGenerator* TScenario::getTerrainGeneratorByName( const std::string& name )
     {
         if ( m_mapTerrainGeneratorsByName.find( name ) != m_mapTerrainGeneratorsByName.end() )
         {
@@ -190,7 +190,7 @@ namespace tysoc {
         return NULL;
     }
 
-    std::vector< terrain::TITerrainGenerator* > TScenario::getTerrainGenerators()
+    std::vector< TITerrainGenerator* > TScenario::getTerrainGenerators()
     {
         return m_terrainGenerators;
     }
@@ -200,12 +200,12 @@ namespace tysoc {
         return m_bodies;
     }
 
-    std::vector< agent::TAgent* > TScenario::getAgents()
+    std::vector< TAgent* > TScenario::getAgents()
     {
         return m_agents;
     }
 
-    std::vector< sensor::TISensor* > TScenario::getSensors()
+    std::vector< TISensor* > TScenario::getSensors()
     {
         return m_sensors;
     }
@@ -220,19 +220,19 @@ namespace tysoc {
         return std::vector< TBody* >();
     }
 
-    std::vector< agent::TAgent* > TScenario::getAgentsByType( const agent::eAgentType& type )
+    std::vector< TAgent* > TScenario::getAgentsByType( const eAgentType& type )
     {
         if ( m_mapAgentsByType.find( type ) != m_mapAgentsByType.end() )
         {
             return m_mapAgentsByType[ type ];
         }
 
-        std::cout << "WARNING> tried to get agents of non existent type: " << agent::toString( type ) << std::endl;
+        std::cout << "WARNING> tried to get agents of non existent type: " << toString( type ) << std::endl;
 
-        return std::vector< agent::TAgent* >();
+        return std::vector< TAgent* >();
     }
 
-    std::vector< sensor::TISensor* > TScenario::getSensorsByType( const eSensorType& type )
+    std::vector< TISensor* > TScenario::getSensorsByType( const eSensorType& type )
     {
         if ( m_mapSensorsByType.find( type ) != m_mapSensorsByType.end() )
         {
@@ -241,10 +241,10 @@ namespace tysoc {
 
         std::cout << "WARNING> tried to get sensors of non existent type: " << tysoc::toString( type ) << std::endl;
 
-        return std::vector< sensor::TISensor* >();
+        return std::vector< TISensor* >();
     }
 
-    std::vector< terrain::TITerrainGenerator* > TScenario::getTerrainGeneratorsByType( const std::string& type )
+    std::vector< TITerrainGenerator* > TScenario::getTerrainGeneratorsByType( const std::string& type )
     {
         if ( m_mapTerrainGeneratorsByType.find( type ) != m_mapTerrainGeneratorsByType.end() )
         {
@@ -253,7 +253,7 @@ namespace tysoc {
 
         std::cout << "WARNING> tried to get terrain generators of non existent type: " << type << std::endl;
 
-        return std::vector< terrain::TITerrainGenerator* >();
+        return std::vector< TITerrainGenerator* >();
     }
 
     bool TScenario::hasBody( const std::string& bodyName )

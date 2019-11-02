@@ -41,7 +41,7 @@ namespace tysoc {
         protected :
 
         // terrain generator to wrap
-        terrain::TITerrainGenerator* m_terrainGenPtr;
+        TITerrainGenerator* m_terrainGenPtr;
         // directory where the assets are
         std::string m_workingDir;
 
@@ -59,7 +59,7 @@ namespace tysoc {
         *   @param terrainGenPtr    terrain generator to wrap
         *   @param workingDir       directory where the assets(meshes,etc) are located
         */
-        TTerrainGenWrapper( terrain::TITerrainGenerator* terrainGenPtr,
+        TTerrainGenWrapper( TITerrainGenerator* terrainGenPtr,
                             const std::string& workingDir );
 
         /**
@@ -76,10 +76,10 @@ namespace tysoc {
         void postStep();
 
         std::string name();
-        terrain::TITerrainGenerator* terrainGenerator();
+        TITerrainGenerator* terrainGenerator();
     };
 
-    typedef TTerrainGenWrapper* FcnCreateTerrainGen( terrain::TITerrainGenerator* terrainGenPtr,
+    typedef TTerrainGenWrapper* FcnCreateTerrainGen( TITerrainGenerator* terrainGenPtr,
                                                      const std::string& workingDir );
 
 }

@@ -3,7 +3,6 @@
 
 
 namespace tysoc {
-namespace terrain {
 
     TITerrainGenerator::TITerrainGenerator( const std::string& name )
     {
@@ -66,4 +65,4 @@ namespace terrain {
         }
     }
 
-}}
+}

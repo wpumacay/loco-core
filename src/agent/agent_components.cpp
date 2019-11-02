@@ -2,7 +2,6 @@
 #include <agent/agent_components.h>
 
 namespace tysoc {
-namespace agent {
 
     size_t NUM_UNKNOWN_COLLISIONS   = 0;
     size_t NUM_UNKNOWN_VISUALS      = 0;
@@ -34,15 +33,16 @@ namespace agent {
     //------------------------TKinTreeVisual----------------------------------//
     TKinTreeVisual::TKinTreeVisual()
     {
-        name            = "undefined";
-        data.type       = eShapeType::SPHERE;
-        data.size       = { 0.1f, 0.0f, 0.0f };
-        data.ambient    = DEFAULT_AMBIENT_COLOR;
-        data.diffuse    = DEFAULT_DIFFUSE_COLOR;
-        data.specular   = DEFAULT_SPECULAR_COLOR;
-        data.shininess  = DEFAULT_SHININESS;
-        data.texture    = "";
-        parentBodyPtr   = nullptr;
+        name                        = "undefined";
+        data.type                   = eShapeType::SPHERE;
+        data.size                   = { 0.1f, 0.0f, 0.0f };
+        data.ambient                = DEFAULT_AMBIENT_COLOR;
+        data.diffuse                = DEFAULT_DIFFUSE_COLOR;
+        data.specular               = DEFAULT_SPECULAR_COLOR;
+        data.shininess              = DEFAULT_SHININESS;
+        data.texture                = "";
+        data.usesMaterialFromMesh   = true;
+        parentBodyPtr               = nullptr;
     }
 
     //------------------------TKinTreeSensor----------------------------------//
@@ -396,4 +396,4 @@ namespace agent {
         return _strRep;
     }
 
-}}
+}

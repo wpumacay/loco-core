@@ -1,8 +1,6 @@
 
 #include <glviz_terrainGen.h>
 
-using namespace tysoc::terrain;
-
 namespace tysoc {
 
     TGLVizTerrainGenerator::TGLVizTerrainGenerator( TITerrainGenerator* terrainGeneratorPtr,

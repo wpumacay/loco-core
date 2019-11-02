@@ -2,7 +2,6 @@
 #include <terrain/types/static/terrain_static.h>
 
 namespace tysoc {
-namespace terrain {
 
     TStaticTerrainGenerator::TStaticTerrainGenerator( const std::string& name )
         : TITerrainGenerator( name )
@@ -62,6 +61,4 @@ namespace terrain {
         // do nothing
     }
 
-
-
-}}
+}

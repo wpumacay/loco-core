@@ -9,6 +9,8 @@
 
 #include <components/bodies.h>
 
+using namespace engine;
+
 namespace tysoc {
 
     class TGLVisualizer : public TIVisualizer
@@ -21,7 +23,7 @@ namespace tysoc {
         ~TGLVisualizer();
 
         void addBody( TBody* bodyPtr );
-        void addAgent( agent::TAgent* agentPtr );
+        void addAgent( TAgent* agentPtr );
 
     protected :
 
@@ -53,15 +55,15 @@ namespace tysoc {
 
         void _setupGlRenderingEngine();
         void _collectSingleBodies( TBody* bodyPtr );
-        void _collectKinTreeAgent( agent::TAgent* agentPtr );
-        void _collectTerrainGenerator( terrain::TITerrainGenerator* terrainGeneratorPtr );
-        void _renderSensorReading( sensor::TISensor* sensorPtr );
+        void _collectKinTreeAgent( TAgent* agentPtr );
+        void _collectTerrainGenerator( TITerrainGenerator* terrainGeneratorPtr );
+        void _renderSensorReading( TISensor* sensorPtr );
 
     private :
 
         // rendering engine resources
-        engine::CScene* m_glScene;
-        std::unique_ptr< engine::CApplication > m_glApplication;
+        CScene* m_glScene;
+        std::unique_ptr< CApplication > m_glApplication;
         
         // visualization wrappers
         std::vector< std::unique_ptr< TGLVizKinTree > >             m_vizKinTreeWrappers;

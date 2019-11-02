@@ -11,6 +11,9 @@ namespace mjcf {
     struct GenericElement
     {
         std::string                     etype;
+        std::string                     filepath;
+        std::string                     filename;
+        std::string                     folderpath;
         GenericElement*                 parent;
         std::vector< GenericElement* >  children;
 
