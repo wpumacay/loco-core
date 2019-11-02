@@ -8,15 +8,6 @@ namespace tysoc {
     size_t NUM_UNKNOWN_JOINTS       = 0;
     size_t NUM_UNKNOWN_BODIES       = 0;
 
-    //------------------------TKinTreeMeshAsset-------------------------------//
-
-    TKinTreeMeshAsset::TKinTreeMeshAsset()
-    {
-        name    = "undefined";
-        file    = "";
-        scale   = { 1.0, 1.0, 1.0 };
-    }
-
     //------------------------TKinTreeCollision-------------------------------//
     TKinTreeCollision::TKinTreeCollision()
     {

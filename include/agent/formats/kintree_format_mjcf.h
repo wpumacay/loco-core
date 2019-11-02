@@ -20,6 +20,8 @@ namespace tysoc {
         std::map< std::string, TGenericParams > defaultsNoClass;
         // Storage for the default values related to specific classes (see mjcf format)
         std::map< std::string, std::map< std::string, TGenericParams > > defaultsPerClass;
+        // Storage for mesh-assets
+        std::map< std::string, TGenericParams > assetsMeshes;
         // Storage for material-assets
         std::map< std::string, TGenericParams > assetsMaterials;
         // File path used to load the model

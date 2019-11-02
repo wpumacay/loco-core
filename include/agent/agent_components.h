@@ -24,21 +24,6 @@ namespace tysoc {
     struct TKinTreeActuator;
 
     /**
-    *   Mesh asset
-    *   ----------
-    *
-    *   Helper object used store a (name,file) pair
-    */
-    struct TKinTreeMeshAsset
-    {
-        std::string     name;
-        std::string     file;
-        TVec3           scale;
-
-        TKinTreeMeshAsset();
-    };
-
-    /**
     *   Collision component
     *   -------------------
     *

@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <agent/agent_components.h>
@@ -62,7 +61,6 @@ namespace tysoc {
         std::vector< TKinTreeCollision* >   collisions;    // kinTree collisions
         std::vector< TKinTreeActuator* >    actuators;     // kinTree actuators
         std::vector< TKinTreeSensor* >      sensors;       // kinTree actuators
-        std::vector< TKinTreeMeshAsset* >   meshAssets;    // kinTree mesh assets
 
         /* Resources of the kinematic tree, hashed with their names for dict-like access */
         std::map< std::string, TKinTreeBody* >      bodiesMap;     // map of bodies
@@ -71,7 +69,6 @@ namespace tysoc {
         std::map< std::string, TKinTreeCollision* > collisionsMap; // map of collisions
         std::map< std::string, TKinTreeActuator* >  actuatorsMap;  // map of actuators
         std::map< std::string, TKinTreeSensor* >    sensorsMap;    // map of sensors
-        std::map< std::string, TKinTreeMeshAsset* > meshAssetsMap; // map of assets
 
         /* Storage for contacts pairs to be excluded */
         std::vector< std::pair< std::string, std::string > > exclusionContacts;

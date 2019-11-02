@@ -84,14 +84,12 @@ namespace tysoc {
 
         m_rootBodyPtr = nullptr;
 
-        for ( auto _meshAsset : meshAssets ) delete _meshAsset;
         for ( auto _visual : visuals ) delete _visual;
         for ( auto _collision : collisions ) delete _collision;
         for ( auto _sensor : sensors ) delete _sensor;
         for ( auto _joint : joints ) delete _joint;
         for ( auto _body : bodies ) delete _body;
 
-        meshAssets.clear();
         visuals.clear();
         collisions.clear();
         actuators.clear();
@@ -99,7 +97,6 @@ namespace tysoc {
         joints.clear();
         bodies.clear();
 
-        meshAssetsMap.clear();
         visualsMap.clear();
         collisionsMap.clear();
         actuatorsMap.clear();

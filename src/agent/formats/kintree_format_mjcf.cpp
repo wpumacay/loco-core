@@ -191,48 +191,33 @@ namespace tysoc {
             if ( _asset->etype == "mesh" )
             {
                 // Grab the mesh asset into a dict for later usage *************
-                auto _meshAsset = new TKinTreeMeshAsset();
-
-                // and the file resource
+                auto _meshAsset = TGenericParams();
                 if ( _asset->hasAttributeString( "file" ) )
-                    _meshAsset->file = _asset->getAttributeString( "file" );
+                    _meshAsset.set( "file", _asset->getAttributeString( "file", "" ) );
                 else
                     std::cout << "WARNING> mesh asset doesn't have a valid linked file" << std::endl;
-                // grab the name of the mesh
+
                 if ( _asset->hasAttributeString( "name" ) )
-                    _meshAsset->name = _asset->getAttributeString( "name" );
+                    _meshAsset.set( "name", _asset->getAttributeString( "name", "" ) );
                 else
-                    _meshAsset->name = tysoc::getFilenameNoExtensionFromFilePath( _meshAsset->file );
+                    _meshAsset.set( "name", tysoc::getFilenameNoExtensionFromFilePath( _meshAsset.getString( "file", "" ) ) );
 
-                // as well as the scale (in case there is)
-                _meshAsset->scale = _asset->getAttributeVec3( "scale", 
-                                                              { 1.0f, 1.0f, 1.0f } );
+                _meshAsset.set( "scale", _asset->getAttributeVec3( "scale", { 1.0f, 1.0f, 1.0f } ) );
 
-                if ( context.agentPtr->meshAssetsMap.find( _meshAsset->name ) ==
-                     context.agentPtr->meshAssetsMap.end() )
-                {
-                    context.agentPtr->meshAssets.push_back( _meshAsset );
-                    context.agentPtr->meshAssetsMap[ _meshAsset->name ] = _meshAsset;
-                }
-                else
-                {
-                    // delete mesh-assets, as already cached (at least with the same name)
-                    delete _meshAsset;
-                    _meshAsset = nullptr;
-                }
+                context.assetsMeshes[_meshAsset.getString( "name", "" )] = _meshAsset;
                 // *************************************************************
             }
             else if ( _asset->etype == "material" && _asset->hasAttributeString( "name" ) )
             {
-                auto _material = TGenericParams();
+                auto _materialAsset = TGenericParams();
                 if ( _asset->hasAttributeVec4( "rgba" ) )
-                    _material.set( "rgba", _asset->getAttributeVec4( "rgba", TYSOC_DEFAULT_RGBA_COLOR ) );
+                    _materialAsset.set( "rgba", _asset->getAttributeVec4( "rgba", TYSOC_DEFAULT_RGBA_COLOR ) );
                 if ( _asset->hasAttributeFloat( "shininess" ) )
-                    _material.set( "shininess", _asset->getAttributeFloat( "shininess", TYSOC_DEFAULT_SHININESS / 128.0f ) * 128.0f );
+                    _materialAsset.set( "shininess", _asset->getAttributeFloat( "shininess", TYSOC_DEFAULT_SHININESS / 128.0f ) * 128.0f );
                 if ( _asset->hasAttributeFloat( "specular" ) )
-                    _material.set( "specular", _asset->getAttributeFloat( "specular", 1.0f ) );
+                    _materialAsset.set( "specular", _asset->getAttributeFloat( "specular", 1.0f ) );
 
-                context.assetsMaterials[_asset->getAttributeString( "name", "" )] = _material;
+                context.assetsMaterials[_asset->getAttributeString( "name", "" )] = _materialAsset;
             }
             else
             {
@@ -570,8 +555,8 @@ namespace tysoc {
             return "";
 
         // if meshStr is found in the assets-map (collected during asset collection), grab the resource from the map
-        if ( context.agentPtr->meshAssetsMap.find( meshStr ) != context.agentPtr->meshAssetsMap.end() )
-            return context.folderpath + context.agentPtr->meshAssetsMap[meshStr]->file;
+        if ( context.assetsMeshes.find( meshStr ) != context.assetsMeshes.end() )
+            return context.folderpath + context.assetsMeshes[meshStr].getString( "file", "" );
 
         // in case not found, then this is the actual filepath
         return context.folderpath + meshStr;
@@ -799,9 +784,8 @@ namespace tysoc {
         else if ( _gtype == "mesh" )
         {
             auto _gmeshId = _grabString( context, geomElm, "mesh", "" );
-            auto& _meshAssetsMap = context.agentPtr->meshAssetsMap;
-            if ( _gmeshId != "" && ( _meshAssetsMap.find( _gmeshId ) != _meshAssetsMap.end() ) )
-                targetSize = _meshAssetsMap[_gmeshId]->scale;
+            if ( _gmeshId != "" && ( context.assetsMeshes.find( _gmeshId ) != context.assetsMeshes.end() ) )
+                targetSize = context.assetsMeshes[_gmeshId].getVec3( "scale", { 1.0f, 1.0f, 1.0f } );
             else
                 targetSize = { 1.0f, 1.0f, 1.0f };
         }
