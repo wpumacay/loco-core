@@ -202,14 +202,15 @@ namespace tysoc {
 
         /**********************************************************************************************/
 
-        m_glApplication->renderOptions().useShadowMapping = true;
         m_glApplication->renderOptions().useSkybox = true;
+        m_glApplication->renderOptions().useShadowMapping = true;
+        m_glApplication->renderOptions().pcfCount = 2;
         m_glApplication->renderOptions().shadowMapRangeConfig.type = engine::eShadowRangeType::FIXED_USER;
         m_glApplication->renderOptions().shadowMapRangeConfig.worldUp = { 0.0f, 0.0f, 1.0f };
         m_glApplication->renderOptions().shadowMapRangeConfig.cameraPtr = _orbitCamera;
-        m_glApplication->renderOptions().shadowMapRangeConfig.clipSpaceWidth   = 40.0f;
-        m_glApplication->renderOptions().shadowMapRangeConfig.clipSpaceHeight  = 40.0f;
-        m_glApplication->renderOptions().shadowMapRangeConfig.clipSpaceDepth   = 40.0f;
+        m_glApplication->renderOptions().shadowMapRangeConfig.clipSpaceWidth   = 20.0f;
+        m_glApplication->renderOptions().shadowMapRangeConfig.clipSpaceHeight  = 20.0f;
+        m_glApplication->renderOptions().shadowMapRangeConfig.clipSpaceDepth   = 20.0f;
         m_glApplication->renderOptions().shadowMapRangeConfig.dirLightPtr = _dirlight;
     }
 
@@ -238,7 +239,7 @@ namespace tysoc {
             if ( !_collisionDrawable )
                 continue;
 
-            _collisionDrawable->show( true );
+            _collisionDrawable->show( false ); // keep hidden, until the user wants to see it
             _collisionDrawable->wireframe( true );
             _collision->setDrawable( _collisionDrawable );
 

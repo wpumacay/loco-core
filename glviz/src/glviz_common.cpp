@@ -44,7 +44,11 @@ namespace tysoc {
     {
         engine::CIRenderable* _renderable = nullptr;
 
-        if ( type == eShapeType::BOX )
+        if ( type == eShapeType::PLANE )
+        {
+            _renderable = engine::CMeshBuilder::createPlane( size.x, size.y );
+        }
+        else if ( type == eShapeType::BOX )
         {
             _renderable = engine::CMeshBuilder::createBox( size.x, size.y, size.z );
         }
@@ -76,11 +80,15 @@ namespace tysoc {
     {
         engine::CIRenderable* _renderable = nullptr;
 
-        if ( data.type == eShapeType::BOX )
+        if ( data.type == eShapeType::PLANE )
+        {
+            _renderable = engine::CMeshBuilder::createPlane( data.size.x, data.size.y );
+        }
+        else if ( data.type == eShapeType::BOX )
         {
             _renderable = engine::CMeshBuilder::createBox( data.size.x,
-                                                              data.size.y,
-                                                              data.size.z );
+                                                           data.size.y,
+                                                           data.size.z );
         }
         else if ( data.type == eShapeType::SPHERE )
         {

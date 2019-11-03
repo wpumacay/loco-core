@@ -222,6 +222,12 @@ namespace tysoc {
             return;
 
         m_renderablePtr->setVisibility( visible );
+        if ( m_renderablePtr->type() == engine::eRenderableType::MODEL )
+        {
+            auto _submeshes = dynamic_cast< engine::CModel* >( m_renderablePtr )->meshes();
+            for ( auto _submesh : _submeshes )
+                _submesh->setVisibility( visible );
+        }
     }
 
     void TGLDrawable::wireframe( bool wireframe )
@@ -230,6 +236,13 @@ namespace tysoc {
             return;
 
         m_renderablePtr->setWireframe( wireframe );
+        if ( m_renderablePtr->type() == engine::eRenderableType::MODEL )
+        {
+            auto _submeshes = dynamic_cast< engine::CModel* >( m_renderablePtr )->meshes();
+            for ( auto _submesh : _submeshes )
+                _submesh->setWireframe( wireframe );
+        }
+
     }
 
     bool TGLDrawable::isVisible()

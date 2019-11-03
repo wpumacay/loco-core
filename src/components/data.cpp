@@ -78,12 +78,12 @@ namespace tysoc {
 
     eJointType toEnumJoint( const std::string& type )
     {
-        if ( type == "free" || type == "floating" || type == "world" || type == "none" ) return eJointType::FREE;
+        if ( type == "free" || type == "floating" || type == "none" ) return eJointType::FREE;
         if ( type == "hinge" || type == "revolute" || type == "continuous" ) return eJointType::REVOLUTE;
         if ( type == "slide" || type == "prismatic" ) return eJointType::PRISMATIC;
         if ( type == "ball" || type == "spherical" ) return eJointType::SPHERICAL;
+        if ( type == "fixed" || type == "world" ) return eJointType::FIXED;
         if ( type == "planar" ) return eJointType::PLANAR;
-        if ( type == "fixed" ) return eJointType::FIXED;
 
         std::cout << "ERROR> not supported joint type: " << type << std::endl;
 
