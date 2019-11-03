@@ -29,12 +29,10 @@ namespace pytysoc
         *
         *   @param dlpathSim    The physics backend to be used for this runtime
         *   @param dlpathViz    The rendering backend to be used for this runtime
-        *   @param workingDir   The working directory where to read assets and write temp. data
         *   @exposed            Exposed through python API
         */
         PyRuntime( const std::string& dlpathSim,
-                   const std::string& dlpathViz,
-                   const std::string& workingDir );
+                   const std::string& dlpathViz );
 
         /**
         *   Destructor for this wrapper. It deletes the wrapped runtime, as there ...

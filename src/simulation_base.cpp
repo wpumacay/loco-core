@@ -3,13 +3,11 @@
 
 namespace tysoc {
 
-    TISimulation::TISimulation( TScenario* scenarioPtr,
-                                const std::string& workingDir )
+    TISimulation::TISimulation( TScenario* scenarioPtr )
     {
         m_runtimeType = "none";
         m_scenarioPtr = scenarioPtr;
-        m_workingDir  = workingDir;
-        m_visualizerPtr = NULL;
+        m_visualizerPtr = nullptr;
 
         m_isRunning = false;
         m_isDebugDrawingActive = false;
@@ -17,8 +15,8 @@ namespace tysoc {
 
     TISimulation::~TISimulation()
     {
-        m_visualizerPtr = NULL;
-        m_scenarioPtr = NULL;
+        m_visualizerPtr = nullptr;
+        m_scenarioPtr = nullptr;
 
         for ( size_t q = 0; q < m_agentWrappers.size(); q++ )
             delete m_agentWrappers[q];

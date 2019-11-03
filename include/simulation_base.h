@@ -59,9 +59,6 @@ namespace tysoc {
         /* A reference to the scenario being instantiated */
         TScenario* m_scenarioPtr;
 
-        /* Directory where the resources are being read|written */
-        std::string m_workingDir;
-
         /* Agent wrappers instantiated for the high-level agents in the  scenario */
         std::vector< TAgentWrapper* > m_agentWrappers;
 
@@ -104,8 +101,7 @@ namespace tysoc {
         public :
 
         /* Creates a simulation that instantiates the given scenario in a specific backend*/
-        TISimulation( TScenario* scenarioPtr,
-                      const std::string& workingDir );
+        TISimulation( TScenario* scenarioPtr );
 
         /* Releases low-level backend resources and wrappers created to instantiate the given ascenario */
         virtual ~TISimulation();
@@ -138,7 +134,6 @@ namespace tysoc {
 
     // Function pointers definitions for loading backend-specific functionality
 
-    typedef TISimulation* FcnCreateSim( TScenario* scenarioPtr, 
-                                        const std::string& workingDir );
+    typedef TISimulation* FcnCreateSim( TScenario* scenarioPtr );
 
 }

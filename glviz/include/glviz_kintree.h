@@ -47,8 +47,7 @@ namespace tysoc {
     public :
 
         TGLVizKinTree( TAgent* agentPtr,
-                       CScene* scenePtr,
-                       const std::string& workingDir );
+                       CScene* scenePtr );
         ~TGLVizKinTree();
 
         void update();
@@ -69,9 +68,8 @@ namespace tysoc {
 
     private :
 
-        CScene*     m_scenePtr;
-        TAgent*     m_agentPtr;
-        std::string m_workingDir;
+        CScene* m_scenePtr;
+        TAgent* m_agentPtr;
 
         std::vector< std::pair< TKinTreeVisual*, CIRenderable* > >      m_vizVisuals;
         std::vector< std::pair< TKinTreeCollision*, CIRenderable* > >   m_vizCollisions;
@@ -82,6 +80,11 @@ namespace tysoc {
         std::unordered_map< std::string, float > m_vizJointsGizmoSizes;
         std::unordered_map< std::string, float > m_vizActuatorsGizmoSizes;
         std::unordered_map< std::string, float > m_vizSensorsGizmoSizes;
+
+        bool m_drawBodyGizmos;
+        bool m_drawJointGizmos;
+        bool m_drawActuatorGizmos;
+        bool m_drawSensorGizmos;
     };
 
 }

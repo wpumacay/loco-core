@@ -26,8 +26,7 @@ namespace tysoc {
     public :
 
         TGLVizTerrainGenerator( TITerrainGenerator* terrainGeneratorPtr,
-                                CScene* scenePtr,
-                                const std::string& workingDir );
+                                CScene* scenePtr );
         ~TGLVizTerrainGenerator();
 
         void update();
@@ -41,7 +40,6 @@ namespace tysoc {
 
         CScene*             m_scenePtr;
         TITerrainGenerator* m_terrainGeneratorPtr;
-        std::string         m_workingDir;
 
         std::vector< TGLTerrainDrawable > m_terrainDrawables;
 

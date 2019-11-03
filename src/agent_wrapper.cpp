@@ -4,22 +4,19 @@
 
 namespace tysoc {
 
-    TAgentWrapper::TAgentWrapper( TAgent* agentPtr,
-                                  const std::string& workingDir )
+    TAgentWrapper::TAgentWrapper( TAgent* agentPtr )
     {
         // save a reference to the abstract kintree agent for later usage
         m_agentPtr = agentPtr;
-        // and the path to the assets directory
-        m_workingDir = workingDir;
-        // and set to NULL (default) the parent simulation
-        m_simulationPtr = NULL;
+        // and set to nullptr (default) the parent simulation
+        m_simulationPtr = nullptr;
 
         if ( !agentPtr )
         {
             std::cout << "ERROR> passed null reference to kintreeagent" << std::endl;
-            m_mjcfModelTemplatePtr = NULL;
-            m_urdfModelTemplatePtr = NULL;
-            m_rlsimModelTemplatePtr = NULL;
+            m_mjcfModelTemplatePtr = nullptr;
+            m_urdfModelTemplatePtr = nullptr;
+            m_rlsimModelTemplatePtr = nullptr;
         }
         else
         {
@@ -28,31 +25,31 @@ namespace tysoc {
             if ( _modelTemplateType == eModelFormat::MJCF )
             {
                 m_mjcfModelTemplatePtr = m_agentPtr->getModelDataMjcf();
-                m_urdfModelTemplatePtr = NULL;
-                m_rlsimModelTemplatePtr = NULL;
+                m_urdfModelTemplatePtr = nullptr;
+                m_rlsimModelTemplatePtr = nullptr;
             }
             else if ( _modelTemplateType == eModelFormat::URDF )
             {
                 m_urdfModelTemplatePtr = m_agentPtr->getModelDataUrdf();
-                m_mjcfModelTemplatePtr = NULL;
-                m_rlsimModelTemplatePtr = NULL;
+                m_mjcfModelTemplatePtr = nullptr;
+                m_rlsimModelTemplatePtr = nullptr;
             }
             else if ( _modelTemplateType == eModelFormat::RLSIM )
             {
                 m_rlsimModelTemplatePtr = m_agentPtr->getModelDataRlsim();
-                m_urdfModelTemplatePtr = NULL;
-                m_mjcfModelTemplatePtr = NULL;
+                m_urdfModelTemplatePtr = nullptr;
+                m_mjcfModelTemplatePtr = nullptr;
             }
         }
     }
 
     TAgentWrapper::~TAgentWrapper()
     {
-        m_simulationPtr = NULL;
-        m_agentPtr = NULL;
-        m_mjcfModelTemplatePtr = NULL;
-        m_urdfModelTemplatePtr = NULL;
-        m_rlsimModelTemplatePtr = NULL;
+        m_simulationPtr = nullptr;
+        m_agentPtr = nullptr;
+        m_mjcfModelTemplatePtr = nullptr;
+        m_urdfModelTemplatePtr = nullptr;
+        m_rlsimModelTemplatePtr = nullptr;
     }
 
     void TAgentWrapper::setParentSimulation( TISimulation* simulationPtr )

@@ -4,9 +4,8 @@
 
 namespace tysoc {
 
-    TGLVisualizer::TGLVisualizer( TScenario* scenarioPtr,
-                                  const std::string& workingDir )
-        : TIVisualizer( scenarioPtr, workingDir )
+    TGLVisualizer::TGLVisualizer( TScenario* scenarioPtr )
+        : TIVisualizer( scenarioPtr )
     {
         m_glScene        = nullptr;
         m_glApplication  = nullptr;
@@ -171,8 +170,8 @@ namespace tysoc {
         _cameraProjData.height = 10.0f;
 
         auto _orbitCamera = new engine::COrbitCamera( "orbit",
-                                                      { 0.0f, 0.0f, 3.0f },
-                                                      { 0.0f, 0.0f, 0.0f },
+                                                      { 3.0f, 3.0f, 3.0f },
+                                                      { 0.0f, 0.0f, 1.0f },
                                                       engine::eAxis::Z,
                                                       _cameraProjData,
                                                       m_glApplication->window()->width(),
@@ -186,7 +185,7 @@ namespace tysoc {
         
         auto _fpsCamera = new engine::CFpsCamera( "fps",
                                                   { 3.0f, 3.0f, 3.0f },
-                                                  { 0.0f, 0.0f, 0.0f },
+                                                  { 0.0f, 0.0f, 1.0f },
                                                   engine::eAxis::Z,
                                                   _cameraProjData,
                                                   _cameraSensitivity,
@@ -218,8 +217,7 @@ namespace tysoc {
     {
         // create the kintree viz wrapper
         auto _vizKinTreeWrapper = new TGLVizKinTree( agentPtr,
-                                                     m_glScene,
-                                                     m_workingDir );
+                                                     m_glScene );
         // and add it to the buffer of kintree vizs
         m_vizKinTreeWrappers.push_back( std::unique_ptr< TGLVizKinTree >( _vizKinTreeWrapper ) );
     }
@@ -287,8 +285,7 @@ namespace tysoc {
     {
         // create the terrainGenrator viz wrapper
         auto _vizTerrainGeneratorWrapper = new TGLVizTerrainGenerator( terrainGeneratorPtr,
-                                                                       m_glScene,
-                                                                       m_workingDir );
+                                                                       m_glScene );
         // and add it to the buffer of terrainGenerator vizs
         m_vizTerrainGeneratorWrappers.push_back( std::unique_ptr< TGLVizTerrainGenerator >( _vizTerrainGeneratorWrapper ) );
     }
@@ -384,10 +381,9 @@ namespace tysoc {
         return engine::CInputManager::CheckSingleKeyPress( keyCode );
     }
 
-    extern "C" TIVisualizer* visualizer_createVisualizer( TScenario* scenarioPtr,
-                                                          const std::string& workingDir )
+    extern "C" TIVisualizer* visualizer_createVisualizer( TScenario* scenarioPtr )
     {
-        return new TGLVisualizer( scenarioPtr, workingDir );
+        return new TGLVisualizer( scenarioPtr );
     }
 
 }

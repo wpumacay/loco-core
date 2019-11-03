@@ -52,8 +52,7 @@ namespace tysoc {
 
     public :
 
-        TIVisualizer( TScenario* scenarioPtr,
-                      const std::string& workingDir );
+        TIVisualizer( TScenario* scenarioPtr );
         ~TIVisualizer();
 
         void setSimulation( TISimulation* simulationPtr );
@@ -119,11 +118,9 @@ namespace tysoc {
         std::map< std::string, TIVizCamera* >   m_cameras;
         std::map< std::string, TIVizLight* >    m_lights;
 
-        std::string m_workingDir;
     };
 
 
-    typedef TIVisualizer* FcnCreateViz( TScenario* scenarioPtr,
-                                        const std::string& workingDir );
+    typedef TIVisualizer* FcnCreateViz( TScenario* scenarioPtr );
 
 }

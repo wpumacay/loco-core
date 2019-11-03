@@ -12,12 +12,15 @@ namespace tysoc {
     ***************************************************************************/
 
     TGLVizKinTree::TGLVizKinTree( TAgent* agentPtr,
-                                  CScene* scenePtr,
-                                  const std::string& workingDir )
+                                  CScene* scenePtr )
     {
         m_scenePtr      = scenePtr;
         m_agentPtr      = agentPtr;
-        m_workingDir    = workingDir;
+
+        m_drawBodyGizmos = false;
+        m_drawJointGizmos = false;
+        m_drawActuatorGizmos = false;
+        m_drawSensorGizmos = false;
 
         if ( !m_agentPtr )
         {
@@ -189,16 +192,20 @@ namespace tysoc {
 
         /* update gizmos for bodies, joints, sensors and actuators */
         for ( auto _body : m_agentPtr->bodies )
-            _updateBodyGizmos( _body );
+            if ( m_drawBodyGizmos )
+                _updateBodyGizmos( _body );
 
         for ( auto _joint : m_agentPtr->joints )
-            _updateJointGizmos( _joint );
+            if ( m_drawJointGizmos )
+                _updateJointGizmos( _joint );
 
         for ( auto _actuator : m_agentPtr->actuators )
-            _updateActuatorGizmos( _actuator );
+            if ( m_drawActuatorGizmos )
+                _updateActuatorGizmos( _actuator );
 
         for ( auto _sensor : m_agentPtr->sensors )
-            _updateSensorGizmos( _sensor );
+            if ( m_drawSensorGizmos )
+                _updateSensorGizmos( _sensor );
 
         /* update visuals (renderable and gizmos) */
         for ( auto& _pair : m_vizVisuals )

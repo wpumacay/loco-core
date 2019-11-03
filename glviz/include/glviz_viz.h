@@ -18,8 +18,7 @@ namespace tysoc {
 
     public :
 
-        TGLVisualizer( TScenario* scenarioPtr,
-                       const std::string& workingDir );
+        TGLVisualizer( TScenario* scenarioPtr );
         ~TGLVisualizer();
 
         void addBody( TBody* bodyPtr );
@@ -71,7 +70,6 @@ namespace tysoc {
 
     };
 
-    extern "C" TIVisualizer* visualizer_createVisualizer( TScenario* scenarioPtr,
-                                                          const std::string& workingDir );
+    extern "C" TIVisualizer* visualizer_createVisualizer( TScenario* scenarioPtr );
 
 }

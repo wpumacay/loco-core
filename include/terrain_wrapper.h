@@ -38,29 +38,15 @@ namespace tysoc {
     */
     class TTerrainGenWrapper
     {
-        protected :
 
-        // terrain generator to wrap
-        TITerrainGenerator* m_terrainGenPtr;
-        // directory where the assets are
-        std::string m_workingDir;
-
-        virtual void _initializeInternal() = 0;
-        virtual void _resetInternal() = 0;
-
-        virtual void _preStepInternal() = 0;
-        virtual void _postStepInternal() = 0;
-
-        public :
+    public :
 
         /**
         *   Creates a terraingen wrapper for a given terrain generator
         *
         *   @param terrainGenPtr    terrain generator to wrap
-        *   @param workingDir       directory where the assets(meshes,etc) are located
         */
-        TTerrainGenWrapper( TITerrainGenerator* terrainGenPtr,
-                            const std::string& workingDir );
+        TTerrainGenWrapper( TITerrainGenerator* terrainGenPtr );
 
         /**
         *   Destroy wrapping functionality by removing all wrapping data, ...
@@ -77,9 +63,21 @@ namespace tysoc {
 
         std::string name();
         TITerrainGenerator* terrainGenerator();
+
+    protected :
+
+        virtual void _initializeInternal() = 0;
+        virtual void _resetInternal() = 0;
+
+        virtual void _preStepInternal() = 0;
+        virtual void _postStepInternal() = 0;
+
+    protected :
+
+        // terrain generator to wrap
+        TITerrainGenerator* m_terrainGenPtr;
     };
 
-    typedef TTerrainGenWrapper* FcnCreateTerrainGen( TITerrainGenerator* terrainGenPtr,
-                                                     const std::string& workingDir );
+    typedef TTerrainGenWrapper* FcnCreateTerrainGen( TITerrainGenerator* terrainGenPtr );
 
 }

@@ -377,27 +377,26 @@ namespace tysoc {
         auto _rgba = TVec4( TYSOC_DEFAULT_RGBA_COLOR );
         auto _specular = TVec3( TYSOC_DEFAULT_SPECULAR_COLOR );
         float _shininess = TYSOC_DEFAULT_SHININESS;
-        if ( geomElementPtr->hasAttributeVec4( "rgba" ) )
+        auto _materialId = _grabString( context, geomElementPtr, "material", "" );
+        if ( !geomElementPtr->hasAttributeVec4( "rgba" ) && ( _materialId != "" ) &&
+             ( context.assetsMaterials.find( _materialId ) != context.assetsMaterials.end() ) )
         {
-            _rgba = _grabVec4( context, geomElementPtr, "rgba", TYSOC_DEFAULT_RGBA_COLOR );
-            _specular = { _rgba.x, _rgba.y, _rgba.z };
+            if ( context.assetsMaterials[_materialId].hasParam( "rgba" ) )
+                _rgba = context.assetsMaterials[_materialId].getVec4( "rgba" );
+
+            if ( context.assetsMaterials[_materialId].hasParam( "shininess" ) )
+                _shininess = context.assetsMaterials[_materialId].getFloat( "shininess" );
+
+            if ( context.assetsMaterials[_materialId].hasParam( "specular" ) )
+            _specular = { context.assetsMaterials[_materialId].getFloat( "specular" ),
+                          context.assetsMaterials[_materialId].getFloat( "specular" ),
+                          context.assetsMaterials[_materialId].getFloat( "specular" ) };
         }
         else
         {
-            auto _materialId = _grabString( context, geomElementPtr, "material", "" );
-            if ( _materialId != "" && ( context.assetsMaterials.find( _materialId ) != context.assetsMaterials.end() ) )
-            {
-                if ( context.assetsMaterials[_materialId].hasParam( "rgba" ) )
-                    _rgba = context.assetsMaterials[_materialId].getVec4( "rgba" );
-
-                if ( context.assetsMaterials[_materialId].hasParam( "shininess" ) )
-                    _shininess = context.assetsMaterials[_materialId].getFloat( "shininess" );
-
-                if ( context.assetsMaterials[_materialId].hasParam( "specular" ) )
-                    _specular = { context.assetsMaterials[_materialId].getFloat( "specular" ),
-                                  context.assetsMaterials[_materialId].getFloat( "specular" ),
-                                  context.assetsMaterials[_materialId].getFloat( "specular" ) };
-            }
+            _rgba = _grabVec4( context, geomElementPtr, "rgba", TYSOC_DEFAULT_RGBA_COLOR );
+            _specular = { _rgba.x, _rgba.y, _rgba.z };
+            
         }
         _kinVisual->data.ambient = { _rgba.x, _rgba.y, _rgba.z };
         _kinVisual->data.diffuse = { _rgba.x, _rgba.y, _rgba.z };

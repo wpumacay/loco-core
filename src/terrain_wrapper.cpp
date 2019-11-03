@@ -4,16 +4,14 @@
 
 namespace tysoc {
 
-    TTerrainGenWrapper::TTerrainGenWrapper( TITerrainGenerator* terrainGenPtr,
-                                            const std::string& workingDir )
+    TTerrainGenWrapper::TTerrainGenWrapper( TITerrainGenerator* terrainGenPtr )
     {
         m_terrainGenPtr = terrainGenPtr;
-        m_workingDir    = workingDir;
     }
         
     TTerrainGenWrapper::~TTerrainGenWrapper()
     {
-        m_terrainGenPtr = NULL;
+        m_terrainGenPtr = nullptr;
     }
 
     void TTerrainGenWrapper::initialize()

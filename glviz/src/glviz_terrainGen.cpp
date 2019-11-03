@@ -4,12 +4,10 @@
 namespace tysoc {
 
     TGLVizTerrainGenerator::TGLVizTerrainGenerator( TITerrainGenerator* terrainGeneratorPtr,
-                                                    engine::CScene* scenePtr,
-                                                    const std::string& workingDir )
+                                                    engine::CScene* scenePtr )
     {
         m_scenePtr              = scenePtr;
         m_terrainGeneratorPtr   = terrainGeneratorPtr;
-        m_workingDir            = workingDir;
 
         _collectTerrainPrimitives();
     }

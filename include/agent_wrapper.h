@@ -55,9 +55,6 @@ namespace tysoc {
         // underlying wrapped agent
         TAgent* m_agentPtr;
 
-        // directory where the assets are
-        std::string m_workingDir;
-
         // parent simulation
         TISimulation* m_simulationPtr;
 
@@ -73,10 +70,8 @@ namespace tysoc {
         *   Creates a agent wrapper for a given agent
         *
         *   @param agentPtr     agent to be wrapped
-        *   @param workingDir   directory where the assets(meshes,etc) are located
         */
-        TAgentWrapper( TAgent* agentPtr,
-                       const std::string& workingDir );
+        TAgentWrapper( TAgent* agentPtr );
 
         /**
         *   Destroy wrapping functionality by removing all wrapping data, ...
@@ -98,7 +93,6 @@ namespace tysoc {
 
     };
 
-    typedef TAgentWrapper* FcnCreateAgent( TAgent* agentPtr,
-                                           const std::string& workingDir );
+    typedef TAgentWrapper* FcnCreateAgent( TAgent* agentPtr );
 
 }

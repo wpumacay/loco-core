@@ -4,8 +4,7 @@
 namespace tysoc {
 
     TRuntime::TRuntime( const std::string& dlpathSim,
-                        const std::string& dlpathViz,
-                        const std::string& workingDir )
+                        const std::string& dlpathViz )
     {
         m_fcnCreateSim = NULL;
         m_fcnCreateAgent = NULL;
@@ -20,8 +19,6 @@ namespace tysoc {
 
         m_visualizerPtr = NULL;
         m_simulationPtr = NULL;
-
-        m_workingDir = workingDir;
 
         _loadLibraryFcns();
     }
@@ -123,7 +120,7 @@ namespace tysoc {
         if ( m_simulationPtr )
             delete m_simulationPtr;
         
-        m_simulationPtr = m_fcnCreateSim( scenarioPtr, m_workingDir );
+        m_simulationPtr = m_fcnCreateSim( scenarioPtr );
 
         if ( m_visualizerPtr )
             m_simulationPtr->setVisualizer( m_visualizerPtr );
@@ -141,12 +138,12 @@ namespace tysoc {
 
     TAgentWrapper* TRuntime::createAgent( TAgent* agentPtr )
     {
-        return m_fcnCreateAgent( agentPtr, m_workingDir );
+        return m_fcnCreateAgent( agentPtr );
     }
         
     TTerrainGenWrapper* TRuntime::createTerrainGen( TITerrainGenerator* terrainGenPtr )
     {
-        return m_fcnCreateTerrainGen( terrainGenPtr, m_workingDir );
+        return m_fcnCreateTerrainGen( terrainGenPtr );
     }
 
     TIVisualizer* TRuntime::createVisualizer( TScenario* scenarioPtr )
@@ -157,7 +154,7 @@ namespace tysoc {
         if ( m_visualizerPtr )
             delete m_visualizerPtr;
 
-        m_visualizerPtr = m_fcnCreateViz( scenarioPtr, m_workingDir );
+        m_visualizerPtr = m_fcnCreateViz( scenarioPtr );
 
         if ( m_simulationPtr )
         {
@@ -176,9 +173,4 @@ namespace tysoc {
         m_visualizerPtr = NULL;
     }
 
-    std::string TRuntime::workingDir()
-    {
-        return m_workingDir;
-    }
-    
 }

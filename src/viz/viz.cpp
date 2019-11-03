@@ -5,11 +5,9 @@
 namespace tysoc {
 
 
-    TIVisualizer::TIVisualizer( TScenario* scenarioPtr,
-                                const std::string& workingDir )
+    TIVisualizer::TIVisualizer( TScenario* scenarioPtr )
     {
         m_scenarioPtr   = scenarioPtr;
-        m_workingDir    = workingDir;
         m_simulationPtr = nullptr;
     }
 
