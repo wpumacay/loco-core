@@ -126,14 +126,10 @@ namespace mjcf {
                             const std::string& targetType )
     {
         if ( !elementPtr->hasAttributeString( attribName ) )
-        {
             return;
-        }
 
         auto _oldName = elementPtr->getAttributeString( attribName );
-        elementPtr->setAttributeString( attribName, computeMjcfName( targetType,
-                                                                     _oldName,
-                                                                     agentName ) );
+        elementPtr->setAttributeString( attribName, computeMjcfName( targetType, _oldName, agentName ) );
     }
 
     void deepCopy( GenericElement* target, 
@@ -160,6 +156,8 @@ namespace mjcf {
             replaceNameFields( target, agentName, "objname", "body" );
             replaceNameFields( target, agentName, "body1", "body" );
             replaceNameFields( target, agentName, "body2", "body" );
+            replaceNameFields( target, agentName, "geom1", "geom" );
+            replaceNameFields( target, agentName, "geom2", "geom" );
         }
 
         for ( size_t i = 0; i < source->children.size(); i++ )
@@ -177,49 +175,17 @@ namespace mjcf {
                                  const std::string& elementName, 
                                  const std::string& agentName )
     {
-        std::string _res;
+        if ( type == "body" ) return std::string( TYSOC_PREFIX_BODY ) + agentName + std::string( "_" ) + elementName;
+        if ( type == "joint" ) return std::string( TYSOC_PREFIX_JOINT ) + agentName + std::string( "_" ) + elementName;
+        if ( type == "geom" ) return std::string( TYSOC_PREFIX_GEOM ) + agentName + std::string( "_" ) + elementName;
+        if ( type == "site" ) return std::string( TYSOC_PREFIX_SITE ) + agentName + std::string( "_" ) + elementName;
+        if ( type == "sensor" ) return std::string( TYSOC_PREFIX_SENSOR ) + agentName + std::string( "_" ) + elementName;
+        if ( type == "camera" ) return std::string( TYSOC_PREFIX_CAMERA ) + agentName + std::string( "_" ) + elementName;
+        if ( type == "mesh" || type == "material" ) return elementName;
+        if ( type == "actuator" || type == "motor" || type == "position" || type == "velocity" )
+            return std::string( TYSOC_PREFIX_ACTUATOR ) + agentName + std::string( "_" ) + elementName;
 
-        if ( type == "body" )
-        {
-            _res += std::string( TYSOC_PREFIX_BODY ) + agentName + std::string( "_" ) + elementName;
-        }
-        else if ( type == "joint" )
-        {
-            _res += std::string( TYSOC_PREFIX_JOINT ) + agentName + std::string( "_" ) + elementName;
-        }
-        else if ( type == "geom" )
-        {
-            _res += std::string( TYSOC_PREFIX_GEOM ) + agentName + std::string( "_" ) + elementName;
-        }
-        else if ( type == "site" )
-        {
-            _res += std::string( TYSOC_PREFIX_SITE ) + agentName + std::string( "_" ) + elementName;
-        }
-        else if ( type == "actuator" || type == "motor" || type == "position" || type == "velocity" )
-        {
-            _res += std::string( TYSOC_PREFIX_ACTUATOR ) + agentName + std::string( "_" ) + elementName;
-        }
-        else if ( type == "sensor" )
-        {
-            _res += std::string( TYSOC_PREFIX_SENSOR ) + agentName + std::string( "_" ) + elementName;
-        }
-        else if ( type == "camera" )
-        {
-            _res += std::string( TYSOC_PREFIX_CAMERA ) + agentName + std::string( "_" ) + elementName;
-        }
-        else if ( type == "mesh" || type == "material" )
-        {
-            _res += elementName;
-        }
-//         else
-//         {
-//             std::cout << "WARNING> not supported mjc type: " 
-//                       << type << " for mjcname generation" << std::endl;
-// 
-//             _res += elementName;
-//         }
-
-        return _res;
+        return elementName;
     }
 
 }}

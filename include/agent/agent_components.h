@@ -12,10 +12,10 @@ namespace tysoc {
     const float DEFAULT_SHININESS = 32.0f;
 
     /* Keep track of how many misconfigured elements we have */
-    extern size_t NUM_UNKNOWN_COLLISIONS;   // Counter for unknown collision
-    extern size_t NUM_UNKNOWN_VISUALS;      // Counter for unknown visuals
-    extern size_t NUM_UNKNOWN_JOINTS;       // Counter for unknown joints
-    extern size_t NUM_UNKNOWN_BODIES;       // Counter for unknown bodies
+    extern size_t NUM_UNNAMED_COLLISIONS;   // Counter for unnamed collision
+    extern size_t NUM_UNNAMED_VISUALS;      // Counter for unnamed visuals
+    extern size_t NUM_UNNAMED_JOINTS;       // Counter for unnamed joints
+    extern size_t NUM_UNNAMED_BODIES;       // Counter for unnamed bodies
 
     struct TKinTreeBody;
     struct TKinTreeJoint;

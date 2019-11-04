@@ -3,8 +3,8 @@
 
 namespace tysoc {
 
-    void constructAgentFromModel( TAgent* agentPtr,
-                                  mjcf::GenericElement* modelDataPtr )
+    mjcf::GenericElement* constructAgentFromModel( TAgent* agentPtr,
+                                                   mjcf::GenericElement* modelDataPtr )
     {
         // Create and initialize the context
         TMjcfParsingContext _context;
@@ -71,6 +71,8 @@ namespace tysoc {
         _context.agentPtr->initialize();
 
         /**********************************************************************/
+
+        return _context.modelDataPtr;
     }
 
     void _collectDefaults( TMjcfParsingContext& context )
@@ -235,7 +237,10 @@ namespace tysoc {
         // grab body information
         auto _kinBody = new TKinTreeBody();
         // grab the name
-        _kinBody->name = bodyElementPtr->getAttributeString( "name" );
+        if ( bodyElementPtr->hasAttributeString( "name" ) )
+            _kinBody->name = bodyElementPtr->getAttributeString( "name" );
+        else
+            _kinBody->name = mjcf::computeMjcfName( "body", std::string( "body:" ) + std::to_string( tysoc::NUM_UNNAMED_BODIES++ ), context.agentPtr->name() );
         // and the relative transform to the parent body (zero-configuration | rest-configuration)
         _extractTransform( context, bodyElementPtr, _kinBody->localTransformZero );
         // and the parent bodyptr as well
@@ -307,7 +312,10 @@ namespace tysoc {
         auto _kinTreeJointPtr = new TKinTreeJoint( _kinTreeJointType );
 
         // grab the name
-        _kinTreeJointPtr->name = jointElementPtr->getAttributeString( "name" );
+        if ( jointElementPtr->hasAttributeString( "name" ) )
+            _kinTreeJointPtr->name = jointElementPtr->getAttributeString( "name" );
+        else
+            _kinTreeJointPtr->name = mjcf::computeMjcfName( "joint", std::string( "joint:" ) + std::to_string( tysoc::NUM_UNNAMED_JOINTS++ ), context.agentPtr->name() );
         // and the relative transform to the owner body
         _extractTransform( context, jointElementPtr, _kinTreeJointPtr->data.localTransform );
         // and the joint axis
@@ -354,7 +362,10 @@ namespace tysoc {
     {
         auto _kinVisual = new TKinTreeVisual();
         // grab the name
-        _kinVisual->name = geomElementPtr->getAttributeString( "name" );
+        if ( geomElementPtr->hasAttributeString( "name" ) )
+            _kinVisual->name = geomElementPtr->getAttributeString( "name" );
+        else
+            _kinVisual->name = mjcf::computeMjcfName( "geom", std::string( "visual:" ) + std::to_string( tysoc::NUM_UNNAMED_VISUALS++ ), context.agentPtr->name() );
         // and the relative transform to the parent body
         _extractTransform( context, geomElementPtr, _kinVisual->data.localTransform );
         // and the type of visual/geom
@@ -417,7 +428,10 @@ namespace tysoc {
     {
         auto _kinCollision = new TKinTreeCollision();
         // grab the name
-        _kinCollision->name = geomElementPtr->getAttributeString( "name" );
+        if ( geomElementPtr->hasAttributeString( "name" ) )
+            _kinCollision->name = geomElementPtr->getAttributeString( "name" );
+        else
+            _kinCollision->name = mjcf::computeMjcfName( "geom", std::string( "collision:" ) + std::to_string( tysoc::NUM_UNNAMED_COLLISIONS++ ), context.agentPtr->name() );
         // and the relative transform to the parent body
         _extractTransform( context, geomElementPtr, _kinCollision->data.localTransform );
         // and the collision/geom

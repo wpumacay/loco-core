@@ -100,8 +100,20 @@ namespace tysoc {
 
                 m_scenePtr->addRenderable( std::unique_ptr< CIRenderable >( _renderable ) );
                 // keep it visible until required, and also in wireframe-mode
-                _renderable->setVisibility( true );
-                _renderable->setWireframe( true );
+                if ( _renderable->type() != engine::eRenderableType::MODEL )
+                {
+                    _renderable->setVisibility( false );
+                    _renderable->setWireframe( true );
+                }
+                else
+                {
+                    auto _submeshes = dynamic_cast< engine::CModel* >( _renderable )->meshes();
+                    for ( auto _submesh : _submeshes )
+                    {
+                        _submesh->setVisibility( false );
+                        _submesh->setWireframe( true );
+                    }
+                }
 
                 // save size for gizmos of parent as well
                 if ( _collision->parentBodyPtr )

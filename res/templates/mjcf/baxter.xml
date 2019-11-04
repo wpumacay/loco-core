@@ -62,10 +62,10 @@
 		<exclude body1="left_upper_shoulder" body2="left_upper_elbow"/>
 		<exclude body1="left_lower_shoulder" body2="torso"/>
 		
-		<exclude body1="collision_head_link_1" body2="torso"/>
-		<exclude body1="collision_head_link_2" body2="torso"/>
-		<exclude body1="r_gripper_r_finger" body2="r_gripper_l_finger"/>
-		<exclude body1="l_gripper_r_finger" body2="l_gripper_l_finger"/>
+		<!--<exclude body1="collision_head_link_1" body2="torso"/>-->
+		<!--<exclude body1="collision_head_link_2" body2="torso"/>-->
+		<!--<exclude body1="r_gripper_r_finger" body2="r_gripper_l_finger"/>-->
+		<!--<exclude body1="l_gripper_r_finger" body2="l_gripper_l_finger"/>-->
     </contact>
 	
     <worldbody>

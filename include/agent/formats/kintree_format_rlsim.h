@@ -25,8 +25,8 @@ namespace tysoc {
     };
 
     /* Creates an agent from the given rlsim model */
-    void constructAgentFromModel( TAgent* agentPtr,
-                                  rlsim::RlsimModel* modelDataPtr );
+    rlsim::RlsimModel* constructAgentFromModel( TAgent* agentPtr,
+                                                rlsim::RlsimModel* modelDataPtr );
 
     /*************************************************************
     *   Helpers used to construct the components of the kintree  *

@@ -269,8 +269,11 @@ namespace urdf {
         auto _limitElement = xmlElement->FirstChildElement( "limit" );
         if ( _limitElement )
         {
-            this->lowerLimit    = xml::safeParseFloat( _limitElement, "lower", -45. );
-            this->upperLimit    = xml::safeParseFloat( _limitElement, "upper", 45. );
+            if ( this->type != "continuous" )
+            {
+                this->lowerLimit    = xml::safeParseFloat( _limitElement, "lower", -45. );
+                this->upperLimit    = xml::safeParseFloat( _limitElement, "upper", 45. );
+            }
             this->effortLimit   = xml::safeParseFloat( _limitElement, "effort" );
             this->velocityLimit = xml::safeParseFloat( _limitElement, "velocityLimit" );
         }

@@ -3,8 +3,8 @@
 
 namespace tysoc {
 
-    void constructAgentFromModel( TAgent* agentPtr,
-                                  rlsim::RlsimModel* modelDataPtr )
+    rlsim::RlsimModel* constructAgentFromModel( TAgent* agentPtr,
+                                                rlsim::RlsimModel* modelDataPtr )
     {
         TRlsimParsingContext _context;
         _context.agentPtr = agentPtr;
@@ -39,6 +39,8 @@ namespace tysoc {
         _context.agentPtr->initialize();
 
         /**********************************************************************/
+
+        return _context.modelDataPtr;
     }
 
     TKinTreeBody* _processNode( TRlsimParsingContext& context, 

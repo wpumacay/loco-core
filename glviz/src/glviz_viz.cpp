@@ -239,7 +239,7 @@ namespace tysoc {
             if ( !_collisionDrawable )
                 continue;
 
-            _collisionDrawable->show( true ); // keep hidden, until the user wants to see it
+            _collisionDrawable->show( false ); // keep hidden, until the user wants to see it
             _collisionDrawable->wireframe( true );
             _collision->setDrawable( _collisionDrawable );
 

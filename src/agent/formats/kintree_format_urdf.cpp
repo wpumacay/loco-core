@@ -3,8 +3,8 @@
 
 namespace tysoc {
 
-    void constructAgentFromModel( TAgent* agentPtr,
-                                  urdf::UrdfModel* modelDataPtr )
+    urdf::UrdfModel* constructAgentFromModel( TAgent* agentPtr,
+                                              urdf::UrdfModel* modelDataPtr )
     {
         TUrdfParsingContext _context;
         _context.agentPtr = agentPtr;
@@ -64,6 +64,8 @@ namespace tysoc {
         _context.agentPtr->initialize();
 
         /**********************************************************************/
+
+        return _context.modelDataPtr;
     }
 
     TKinTreeBody* _processBodyFromUrdf( TUrdfParsingContext& context, 

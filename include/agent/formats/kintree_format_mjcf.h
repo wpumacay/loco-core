@@ -35,8 +35,8 @@ namespace tysoc {
     };
 
     /* Creates an agent from the given mjcf model */
-    void constructAgentFromModel( TAgent* agentPtr,
-                                  mjcf::GenericElement* modelDataPtr );
+    mjcf::GenericElement* constructAgentFromModel( TAgent* agentPtr,
+                                                   mjcf::GenericElement* modelDataPtr );
 
     /*************************************************************
     *   Helpers used to construct the components of the kintree  *

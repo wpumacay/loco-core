@@ -48,10 +48,8 @@ namespace tysoc {
                     const TVec3& rotation  ) : TAgent( name, position, rotation )
     {
         // use mjcf-format helpers to construct the kintree for this agent
-        constructAgentFromModel( this, modelDataPtr );
-
         m_modelFormat = eModelFormat::MJCF;
-        m_modelDataMjcfPtr = modelDataPtr;
+        m_modelDataMjcfPtr = constructAgentFromModel( this, modelDataPtr );
     }
 
     TAgent::TAgent( urdf::UrdfModel* modelDataPtr,
@@ -60,10 +58,8 @@ namespace tysoc {
                     const TVec3& rotation  ) : TAgent( name, position, rotation )
     {
         // use urdf-format helpers to construct the kintree for this agent
-        constructAgentFromModel( this, modelDataPtr );
-
         m_modelFormat = eModelFormat::URDF;
-        m_modelDataUrdfPtr = modelDataPtr;
+        m_modelDataUrdfPtr = constructAgentFromModel( this, modelDataPtr );
     }
 
     TAgent::TAgent( rlsim::RlsimModel* modelDataPtr,
@@ -72,10 +68,8 @@ namespace tysoc {
                     const TVec3& rotation  ) : TAgent( name, position, rotation )
     {
         // use rlsim-format helpers to construct the kintree for this agent
-        constructAgentFromModel( this, modelDataPtr );
-
         m_modelFormat = eModelFormat::RLSIM;
-        m_modelDataRlsimPtr = modelDataPtr;
+        m_modelDataRlsimPtr = constructAgentFromModel( this, modelDataPtr );
     }
 
     TAgent::~TAgent()
@@ -83,6 +77,9 @@ namespace tysoc {
         TYSOC_LOG( "Destroying agent: " + m_name );
 
         m_rootBodyPtr = nullptr;
+        m_modelDataMjcfPtr = nullptr;
+        m_modelDataUrdfPtr = nullptr;
+        m_modelDataRlsimPtr = nullptr;
 
         for ( auto _visual : visuals ) delete _visual;
         for ( auto _collision : collisions ) delete _collision;

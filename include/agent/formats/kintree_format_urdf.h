@@ -24,8 +24,8 @@ namespace tysoc {
     };
 
     /* Creates an agent from the given urdf model */
-    void constructAgentFromModel( TAgent* agentPtr,
-                                  urdf::UrdfModel* modelDataPtr );
+    urdf::UrdfModel* constructAgentFromModel( TAgent* agentPtr,
+                                              urdf::UrdfModel* modelDataPtr );
 
     /*************************************************************
     *   Helpers used to construct the components of the kintree  *

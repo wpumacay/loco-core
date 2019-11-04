@@ -3,10 +3,10 @@
 
 namespace tysoc {
 
-    size_t NUM_UNKNOWN_COLLISIONS   = 0;
-    size_t NUM_UNKNOWN_VISUALS      = 0;
-    size_t NUM_UNKNOWN_JOINTS       = 0;
-    size_t NUM_UNKNOWN_BODIES       = 0;
+    size_t NUM_UNNAMED_COLLISIONS   = 0;
+    size_t NUM_UNNAMED_VISUALS      = 0;
+    size_t NUM_UNNAMED_JOINTS       = 0;
+    size_t NUM_UNNAMED_BODIES       = 0;
 
     //------------------------TKinTreeCollision-------------------------------//
     TKinTreeCollision::TKinTreeCollision()
