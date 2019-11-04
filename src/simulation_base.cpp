@@ -18,17 +18,17 @@ namespace tysoc {
         m_visualizerPtr = nullptr;
         m_scenarioPtr = nullptr;
 
-        for ( size_t q = 0; q < m_agentWrappers.size(); q++ )
-            delete m_agentWrappers[q];
+        for ( auto _agentAdapter : m_agentWrappers )
+            delete _agentAdapter;
 
-        for ( size_t q = 0; q < m_terrainGenWrappers.size(); q++ )
-            delete m_terrainGenWrappers[q];
+        for ( auto _terrainGenAdapter : m_terrainGenWrappers )
+            delete _terrainGenAdapter;
 
-        for ( size_t q = 0; q < m_collisionAdapters.size(); q++ )
-            delete m_collisionAdapters[q];
+        for ( auto _collisionAdapter : m_collisionAdapters )
+            delete _collisionAdapter;
 
-        for ( size_t q = 0; q < m_bodyAdapters.size(); q++ )
-            delete m_bodyAdapters[q];
+        for ( auto _bodyAdapter : m_bodyAdapters )
+            delete _bodyAdapter;
 
         m_agentWrappers.clear();
         m_terrainGenWrappers.clear();
@@ -38,12 +38,12 @@ namespace tysoc {
 
     bool TISimulation::initialize()
     {
-        // build all resources required before assembling them in the init-internal stage
-        for ( size_t i = 0; i < m_collisionAdapters.size(); i++ )
-            m_collisionAdapters[i]->build();
-        
-        for ( size_t i = 0; i < m_bodyAdapters.size(); i++ )
-            m_bodyAdapters[i]->build();
+        /* build all resources required before assembling them in the init-internal stage */
+        for ( auto _agentAdapter : m_agentWrappers )
+            _agentAdapter->build();
+
+        for ( auto _bodyAdapter : m_bodyAdapters )
+            _bodyAdapter->build();
 
         // initialize the simulation in a backend-specific way, by assembling and creating extra low-level resources
         m_isRunning = _initializeInternal();
@@ -71,20 +71,20 @@ namespace tysoc {
     void TISimulation::_preStep()
     {
         // hey agent-wrapper, make sure you set any low-level data from the user-data, like ctrls, etc.
-        for ( size_t i = 0; i < m_agentWrappers.size(); i++ )
-            m_agentWrappers[i]->preStep();
+        for ( auto _agentAdapter : m_agentWrappers )
+            _agentAdapter->preStep();
 
         // the same for you terrain-generators, perhaps the user wanted to move your internal things around
-        for ( size_t i = 0; i < m_terrainGenWrappers.size(); i++ )
-            m_terrainGenWrappers[i]->preStep();
+        for ( auto _terrainGenAdapter : m_terrainGenWrappers )
+            _terrainGenAdapter->preStep();
 
         // @TODO: Change API names to pre-step and post-step (check if required)
-        for ( size_t i = 0; i < m_collisionAdapters.size(); i++ )
-            m_collisionAdapters[i]->update();
+        for ( auto _collisionAdapter : m_collisionAdapters )
+            _collisionAdapter->update();
 
         // @TODO: Change API names to pre-step and post-step (check if required)
-        for ( size_t i = 0; i < m_bodyAdapters.size(); i++ )
-            m_bodyAdapters[i]->update();
+        for ( auto _bodyAdapter : m_bodyAdapters )
+            _bodyAdapter->update();
 
         // delegate any extra backend-specifics (set any low-level info, etc.)
         _preStepInternal();
@@ -93,12 +93,12 @@ namespace tysoc {
     void TISimulation::_postStep()
     {
         // agent-wrapper, please, grab any information that you might need for the abstract resources
-        for ( size_t i = 0; i < m_agentWrappers.size(); i++ )
-            m_agentWrappers[i]->postStep();
+        for ( auto _agentAdapter : m_agentWrappers )
+            _agentAdapter->postStep();
 
         // you too terrain-generator, grab any info you might need to move|create|delete terrain sections, etc.
-        for ( size_t i = 0; i < m_terrainGenWrappers.size(); i++ )
-            m_terrainGenWrappers[i]->postStep();
+        for ( auto _terrainGenAdapter : m_terrainGenWrappers )
+            _terrainGenAdapter->postStep();
 
         // and in case some extra stuff(low-level state) needs to be grabbed, just grab it here
         _postStepInternal();
@@ -107,20 +107,20 @@ namespace tysoc {
     void TISimulation::reset()
     {
         // hey wrapper, do your thing and reset your internal configuration, pretty please :D
-        for ( size_t i = 0; i < m_agentWrappers.size(); i++ )
-            m_agentWrappers[i]->reset();
+        for ( auto _agentAdapter : m_agentWrappers )
+            _agentAdapter->reset();
 
         // you too terrain-gen, reset the resources to some initial position from a initial distirbution
-        for ( size_t i = 0; i < m_terrainGenWrappers.size(); i++ )
-            m_terrainGenWrappers[i]->reset();
+        for ( auto _terrainGenAdapter : m_terrainGenWrappers )
+            _terrainGenAdapter->reset();
 
         // reset the collision adapters as well
-        for ( size_t q = 0; q < m_collisionAdapters.size(); q++ )
-            m_collisionAdapters[q]->reset();
+        for ( auto _collisionAdapter : m_collisionAdapters )
+            _collisionAdapter->reset();
 
         // and don't forget the body adapters
-        for ( size_t q = 0; q < m_bodyAdapters.size(); q++ )
-            m_bodyAdapters[q]->reset();
+        for ( auto _bodyAdapter : m_bodyAdapters )
+            _bodyAdapter->reset();
 
         // and in case something was missing, reset any other resources that might need specific resets
         _resetInternal();

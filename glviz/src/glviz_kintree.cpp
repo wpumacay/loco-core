@@ -100,7 +100,7 @@ namespace tysoc {
 
                 m_scenePtr->addRenderable( std::unique_ptr< CIRenderable >( _renderable ) );
                 // keep it visible until required, and also in wireframe-mode
-                _renderable->setVisibility( false );
+                _renderable->setVisibility( true );
                 _renderable->setWireframe( true );
 
                 // save size for gizmos of parent as well

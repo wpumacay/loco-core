@@ -7,7 +7,7 @@
   <!--<option timestep="0.002" iterations="50" tolerance="1e-10" solver="Newton" jacobian="dense" cone="pyramidal" integrator="RK4"/>-->
   <!--<option timestep="0.005" iterations="10" tolerance="1e-10" solver="Newton" jacobian="auto" cone="pyramidal" integrator="RK4"/>-->
   <!--<option timestep="0.01" integrator="RK4"/>-->
-  <size njmax="10000" nconmax="4000"/>
+  <size njmax="10000" nconmax="40000"/>
 
   <statistic extent="2" center="0 0 1"/>
 

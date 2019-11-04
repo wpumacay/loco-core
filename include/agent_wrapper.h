@@ -43,28 +43,7 @@ namespace tysoc {
     class TAgentWrapper
     {
 
-        protected :
-
-        // mjcf resource: a copy of the mjcf model passed for construction
-        mjcf::GenericElement* m_mjcfModelTemplatePtr;
-        // urdf resource: a reference to the cached urdf model passed for construction
-        urdf::UrdfModel* m_urdfModelTemplatePtr;
-        // rlsim resource: a copy of the rlsim model passed for construction
-        rlsim::RlsimModel* m_rlsimModelTemplatePtr;
-
-        // underlying wrapped agent
-        TAgent* m_agentPtr;
-
-        // parent simulation
-        TISimulation* m_simulationPtr;
-
-        virtual void _initializeInternal() = 0;
-        virtual void _resetInternal() = 0;
-
-        virtual void _preStepInternal() = 0;
-        virtual void _postStepInternal() = 0;
-
-        public :
+    public :
 
         /**
         *   Creates a agent wrapper for a given agent
@@ -85,11 +64,36 @@ namespace tysoc {
         std::string name();
         TAgent* agent();
 
+        virtual void build() = 0;
+
         void initialize();
         void reset();
 
         void preStep();
         void postStep();
+
+    protected :
+
+        virtual void _initializeInternal() = 0;
+        virtual void _resetInternal() = 0;
+
+        virtual void _preStepInternal() = 0;
+        virtual void _postStepInternal() = 0;
+
+    protected :
+
+        // mjcf resource: a copy of the mjcf model passed for construction
+        mjcf::GenericElement* m_mjcfModelTemplatePtr;
+        // urdf resource: a reference to the cached urdf model passed for construction
+        urdf::UrdfModel* m_urdfModelTemplatePtr;
+        // rlsim resource: a copy of the rlsim model passed for construction
+        rlsim::RlsimModel* m_rlsimModelTemplatePtr;
+
+        // underlying wrapped agent
+        TAgent* m_agentPtr;
+
+        // parent simulation
+        TISimulation* m_simulationPtr;
 
     };
 
