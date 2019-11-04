@@ -127,9 +127,9 @@ namespace tysoc {
             data.nqvel = 3;
             // qpos and qvel set to "zero" by default
             //       qx  qy  qz  qw   --unused--
-            qpos0 = { 0., 0., 0., 1., 0., 0., 0. }; // zero-quaternion
+            qpos0 = { 0., 0., 0., 1. }; // zero-quaternion
             //       ex  ey  ez  ---unused---
-            qvel0 = { 0., 0., 0., 0., 0., 0. }; // zero velocity
+            qvel0 = { 0., 0., 0. }; // zero velocity
         }
         else if ( type == eJointType::FREE )
         {
