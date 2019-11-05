@@ -246,12 +246,12 @@ namespace tysoc {
             auto _kinTreeActuatorPtr = new TKinTreeActuator();
             _kinTreeActuatorPtr->name = urdf::computeUrdfName( "actuator", _joint->name, context.agentPtr->name() );
             // set a default "motor" type
-            _kinTreeActuatorPtr->data.type = eActuatorType::TORQUE;
+            _kinTreeActuatorPtr->data.type = eActuatorType::PD_CONTROLLER;
             // set some default control props
             _kinTreeActuatorPtr->data.limits = { -1.0f, 1.0f };
-            _kinTreeActuatorPtr->data.kp = 0.0f;
-            _kinTreeActuatorPtr->data.kv = 0.0f;
-            _kinTreeActuatorPtr->data.gear = { 1, { 2.0f } };
+            _kinTreeActuatorPtr->data.kp = 40.0f;
+            _kinTreeActuatorPtr->data.kv = 1.0f;
+            _kinTreeActuatorPtr->data.gear = { 1, { 1.0f } };
             // set a reference to the joint it handles
             _kinTreeActuatorPtr->jointPtr = _joint;
 

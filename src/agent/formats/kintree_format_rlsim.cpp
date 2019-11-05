@@ -205,10 +205,10 @@ namespace tysoc {
             auto _kinTreeActuatorPtr = new TKinTreeActuator();
             _kinTreeActuatorPtr->name = rlsim::computeName( "actuator", _kinJoint->name, context.agentPtr->name() );
             _kinTreeActuatorPtr->jointPtr = _kinJoint; // set a reference to the joint it handles
-            _kinTreeActuatorPtr->data.type = eActuatorType::TORQUE;
+            _kinTreeActuatorPtr->data.type = eActuatorType::PD_CONTROLLER;
             _kinTreeActuatorPtr->data.limits = { -1.0f, 1.0f };
-            _kinTreeActuatorPtr->data.kp = 0.0f;
-            _kinTreeActuatorPtr->data.kv = 0.0f;
+            _kinTreeActuatorPtr->data.kp = 50.0f;
+            _kinTreeActuatorPtr->data.kv = 1.0f;
 
             if ( _rlsimJointPtr->torqueLimit > 0. )
             {

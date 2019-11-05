@@ -120,6 +120,7 @@ namespace tysoc
 
         _submenuTreeAgentQpos( agent->joints );
         _submenuTreeAgentQvel( agent->joints );
+        _submenuTreeAgentActuators( agent->actuators );
     }
 
     void TGLScenarioUtilsLayer::_submenuTreeAgentQpos( const std::vector< TKinTreeJoint* >& joints )
@@ -176,7 +177,27 @@ namespace tysoc
 
     void TGLScenarioUtilsLayer::_submenuTreeAgentQvel( const std::vector< TKinTreeJoint* >& joints )
     {
+        // @todo: add plots of qvels
+    }
 
+    void TGLScenarioUtilsLayer::_submenuTreeAgentActuators( const std::vector< TKinTreeActuator* >& actuators )
+    {
+        if ( ImGui::TreeNode( "Agent actuators" ) )
+        {
+            bool _clearAll = ImGui::Button( "Clear-All-Controls" );
+            for ( auto _kinActuator : actuators )
+            {
+                if ( _kinActuator->data.limits.x < _kinActuator->data.limits.y )
+                    ImGui::SliderFloat( _kinActuator->name.c_str(), &_kinActuator->ctrlValue, _kinActuator->data.limits.x, _kinActuator->data.limits.y );
+                else
+                    ImGui::DragFloat( _kinActuator->name.c_str(), &_kinActuator->ctrlValue, 0.001f );
+
+                if ( _clearAll )
+                    _kinActuator->ctrlValue = 0.0f;
+            }
+
+            ImGui::TreePop();
+        }
     }
 
     void TGLScenarioUtilsLayer::_submenuScenarioTerrainGens()
