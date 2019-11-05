@@ -101,6 +101,9 @@ namespace tysoc {
         data.nqpos      = 0;
         data.nqvel      = 0;
         parentBodyPtr   = nullptr;
+        userControlled  = false; // by default the simulation handles its qvalues
+        qpos = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+        qvel = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 
         if ( type == eJointType::REVOLUTE )
         {

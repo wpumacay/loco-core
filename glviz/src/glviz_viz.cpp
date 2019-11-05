@@ -1,7 +1,6 @@
 
 #include <glviz_viz.h>
 
-
 namespace tysoc {
 
     TGLVisualizer::TGLVisualizer( TScenario* scenarioPtr )
@@ -9,12 +8,14 @@ namespace tysoc {
     {
         m_glScene        = nullptr;
         m_glApplication  = nullptr;
+        m_guiScenarioLayer = nullptr;
     }
 
     TGLVisualizer::~TGLVisualizer()
     {
         m_glScene        = nullptr;
         m_glApplication  = nullptr;
+        m_guiScenarioLayer = nullptr;
 
         m_vizKinTreeWrappers.clear();
         m_vizTerrainGeneratorWrappers.clear();
@@ -45,6 +46,11 @@ namespace tysoc {
         auto _agents = m_scenarioPtr->getAgents();
         for ( size_t i = 0; i < _agents.size(); i++ )
             _collectKinTreeAgent( _agents[i] );
+
+        // add ui layer to control the elements of the scenario
+        m_guiScenarioLayer = new TGLScenarioUtilsLayer( "Scenario-layer",
+                                                        m_scenarioPtr );
+        m_glApplication->addGuiLayer( std::unique_ptr< engine::CImGuiLayer >( m_guiScenarioLayer ) );
 
         return true;
     }

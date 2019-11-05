@@ -150,6 +150,7 @@ namespace tysoc {
         std::array< TScalar, TYSOC_MAX_NUM_QVEL >   qvel;           // Generalized speeds or the "degrees of freedom"
         std::array< TScalar, TYSOC_MAX_NUM_QPOS >   qpos0;          // Initial value for the generalized coordinates
         std::array< TScalar, TYSOC_MAX_NUM_QVEL >   qvel0;          // Initial value for the generalized speeds or the "degrees of freedom"
+        bool                                        userControlled; // Flags used to indicate whether the simulation or the user can write to the q-values
         TKinTreeBody*                               parentBodyPtr;  // Parent body
         TMat4                                       worldTransform; // Transform in world-space
 

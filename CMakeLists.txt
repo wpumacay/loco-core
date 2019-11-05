@@ -3,7 +3,7 @@ cmake_minimum_required( VERSION 3.0.0 )
 project( tysoc )
 
 set( CMAKE_CXX_STANDARD 11 )
-set( CMAKE_CXX_FLAGS "-g ${CMAKE_CXX_FLAGS}" )
+set( CMAKE_CXX_FLAGS "-g -Wno-format-security ${CMAKE_CXX_FLAGS}" )
 
 # Add the cmake folder so the FindSphinx module is found
 set( CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} )

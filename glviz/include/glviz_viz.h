@@ -6,6 +6,7 @@
 #include <glviz_kintree.h>
 #include <glviz_terrainGen.h>
 #include <glviz_drawable.h>
+#include <glviz_ui.h>
 
 #include <components/bodies.h>
 
@@ -63,7 +64,8 @@ namespace tysoc {
         // rendering engine resources
         CScene* m_glScene;
         std::unique_ptr< CApplication > m_glApplication;
-        
+        TGLScenarioUtilsLayer* m_guiScenarioLayer;
+
         // visualization wrappers
         std::vector< std::unique_ptr< TGLVizKinTree > >             m_vizKinTreeWrappers;
         std::vector< std::unique_ptr< TGLVizTerrainGenerator > >    m_vizTerrainGeneratorWrappers;
