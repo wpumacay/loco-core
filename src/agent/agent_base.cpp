@@ -188,6 +188,7 @@ namespace tysoc {
             auto _kinTreeJointSensor = new TKinTreeJointSensor();
             // set joint parent name (used for indexing during construction)
             _kinTreeJointSensor->jointName = _joint->name;
+            _kinTreeJointSensor->jointPtr = _joint;
             // set an appropiate name for later debugging
             _kinTreeJointSensor->name = std::string( "sensor_" ) + m_name + "_" + _joint->name;
 
@@ -200,8 +201,9 @@ namespace tysoc {
             auto _kinTreeBodySensor = new TKinTreeBodySensor();
             // set body parent name (used for indexing during construction)
             _kinTreeBodySensor->bodyName = _body->name;
+            _kinTreeBodySensor->bodyPtr = _body;
             // set an appropiate name for later debugging
-            _kinTreeBodySensor->name = std::string( "sensor" ) + m_name + "_" + _body->name;
+            _kinTreeBodySensor->name = std::string( "sensor_" ) + m_name + "_" + _body->name;
 
             sensors.push_back( _kinTreeBodySensor );
         }

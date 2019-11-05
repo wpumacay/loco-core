@@ -121,6 +121,7 @@ namespace tysoc
         _submenuTreeAgentQpos( agent->joints );
         _submenuTreeAgentQvel( agent->joints );
         _submenuTreeAgentActuators( agent->actuators );
+        _submenuTreeAgentSensors( agent->sensors );
     }
 
     void TGLScenarioUtilsLayer::_submenuTreeAgentQpos( const std::vector< TKinTreeJoint* >& joints )
@@ -194,6 +195,32 @@ namespace tysoc
 
                 if ( _clearAll )
                     _kinActuator->ctrlValue = 0.0f;
+            }
+
+            ImGui::TreePop();
+        }
+    }
+
+    void TGLScenarioUtilsLayer::_submenuTreeAgentSensors( const std::vector< TKinTreeSensor* >& sensors )
+    {
+        if ( ImGui::TreeNode( "Agent sensors" ) )
+        {
+            for ( auto _kinSensor : sensors )
+            {
+                if ( _kinSensor->data.type == eSensorType::PROP_JOINT )
+                {
+                    auto _kinJointSensor = dynamic_cast< TKinTreeJointSensor* >( _kinSensor );
+                    ImGui::Text( "Joint-angle   : %.3f", _kinJointSensor->theta );
+                    ImGui::Text( "Joint-speed   : %.3f", _kinJointSensor->thetadot );
+                }
+                else if ( _kinSensor->data.type == eSensorType::PROP_BODY )
+                {
+                    auto _kinBodySensor = dynamic_cast< TKinTreeBodySensor* >( _kinSensor );
+                    ImGui::Text( "Body-linvel   : %s", TVec3::toString( _kinBodySensor->linVelocity ).c_str() );
+                    ImGui::Text( "Body-linacc   : %s", TVec3::toString( _kinBodySensor->linAcceleration ).c_str() );
+                    ImGui::Text( "Body-comforce : %s", TVec3::toString( _kinBodySensor->comForce ).c_str() );
+                    ImGui::Text( "Body-comtorque: %s", TVec3::toString( _kinBodySensor->comTorque ).c_str() );
+                }
             }
 
             ImGui::TreePop();

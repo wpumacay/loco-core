@@ -56,6 +56,7 @@ namespace tysoc
         void _submenuTreeAgentQpos( const std::vector< TKinTreeJoint* >& joints );
         void _submenuTreeAgentQvel( const std::vector< TKinTreeJoint* >& joints );
         void _submenuTreeAgentActuators( const std::vector< TKinTreeActuator* >& actuators );
+        void _submenuTreeAgentSensors( const std::vector< TKinTreeSensor* >& sensors );
 
     private :
 
