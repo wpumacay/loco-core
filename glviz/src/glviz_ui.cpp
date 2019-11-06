@@ -5,16 +5,19 @@ namespace tysoc
 {
 
     TGLScenarioUtilsLayer::TGLScenarioUtilsLayer( const std::string& name,
+                                                  TGLVisualizer* visualizer,
                                                   TScenario* scenario )
         : engine::CImGuiLayer( name )
     {
         m_scenario = scenario;
+        m_visualizer = visualizer;
         m_wantsToCaptureMouse = false;
     }
 
     TGLScenarioUtilsLayer::~TGLScenarioUtilsLayer()
     {
         m_scenario = nullptr;
+        m_visualizer = nullptr;
     }
 
     void TGLScenarioUtilsLayer::update()
@@ -43,7 +46,73 @@ namespace tysoc
 
     void TGLScenarioUtilsLayer::_menuGeneral()
     {
+        /* @debug *********************************************/
+        ImGui::Begin( "Sim-general" );
 
+        bool _useSensorReadings = m_visualizer->useSensorReadings();
+        bool _useSensorReadingRgb = m_visualizer->useSensorReadingRgb();
+        bool _useSensorReadingDepth = m_visualizer->useSensorReadingDepth();
+        bool _useSensorReadingSemantic = m_visualizer->useSensorReadingSemantic();
+        ImGui::Checkbox( "Use sensor readings", &_useSensorReadings );
+        ImGui::Checkbox( "Use sensor reading - rgb", &_useSensorReadingRgb );
+        ImGui::Checkbox( "Use sensor reading - depth", &_useSensorReadingDepth );
+        ImGui::Checkbox( "Use sensor reading - semantic", &_useSensorReadingSemantic );
+        m_visualizer->setSensorsEnabled( _useSensorReadings );
+        m_visualizer->setSensorRgbEnabled( _useSensorReadingRgb );
+        m_visualizer->setSensorDepthEnabled( _useSensorReadingDepth );
+        m_visualizer->setSensorSemanticEnabled( _useSensorReadingSemantic );
+
+        ImGui::End();
+
+        if ( _useSensorReadings && _useSensorReadingRgb )
+        {
+            auto _fboRgb = m_visualizer->fboRgb();
+            if ( _fboRgb )
+            {
+                auto _textureAttachment = _fboRgb->getTextureAttachment( "color_attachment" );
+                ImGui::Begin( "rgb-view" );
+
+                ImGui::Image( (void*)(intptr_t) _textureAttachment->openglId(),
+                              ImVec2( _textureAttachment->width() / 5.0f, 
+                                      _textureAttachment->height() / 5.0f ),
+                              { 0.0f, 1.0f }, { 1.0f, 0.0f } );
+                ImGui::End();
+            }
+        }
+
+        if ( _useSensorReadings && _useSensorReadingDepth )
+        {
+            auto _fboDepth = m_visualizer->fboDepth();
+            if ( _fboDepth )
+            {
+                auto _textureAttachment = _fboDepth->getTextureAttachment( "color_attachment" );
+                ImGui::Begin( "depth-view" );
+
+                ImGui::Image( (void*)(intptr_t) _textureAttachment->openglId(),
+                              ImVec2( _textureAttachment->width() / 5.0f, 
+                                      _textureAttachment->height() / 5.0f ),
+                              { 0.0f, 1.0f }, { 1.0f, 0.0f } );
+                ImGui::End();
+            }
+        }
+
+        if ( _useSensorReadings && _useSensorReadingSemantic )
+        {
+            auto _fboSemantic = m_visualizer->fboSemantic();
+            if ( _fboSemantic )
+            {
+                auto _textureAttachment = _fboSemantic->getTextureAttachment( "color_attachment" );
+                ImGui::Begin( "semantic-view" );
+
+                ImGui::Image( (void*)(intptr_t) _textureAttachment->openglId(),
+                              ImVec2( _textureAttachment->width() / 5.0f, 
+                                      _textureAttachment->height() / 5.0f ),
+                              { 0.0f, 1.0f }, { 1.0f, 0.0f } );
+                ImGui::End();
+            }
+        }
+
+        /* @debug *********************************************/
     }
 
     void TGLScenarioUtilsLayer::_menuScenario()

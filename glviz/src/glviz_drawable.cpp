@@ -135,6 +135,25 @@ namespace tysoc {
         }
     }
 
+    void TGLDrawable::setTexture( const std::string& name )
+    {
+        if ( !engine::CTextureManager::HasCachedTexture( name ) )
+            return;
+
+        auto _texture = engine::CTextureManager::GetCachedTexture( name );
+
+        if ( m_renderablePtr->type() == engine::eRenderableType::MESH )
+        {
+            m_renderablePtr->material()->setAlbedoMap( _texture );
+        }
+        else if ( m_renderablePtr->type() == engine::eRenderableType::MODEL )
+        {
+            auto _submeshes = dynamic_cast< engine::CModel* >( m_renderablePtr )->meshes();
+            for ( auto _submesh : _submeshes )
+                _submesh->material()->setAlbedoMap( _texture );
+        }
+    }
+
     void TGLDrawable::changeSize( const tysoc::TVec3& newSize )
     {
         m_size = newSize;

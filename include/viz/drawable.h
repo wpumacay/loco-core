@@ -29,6 +29,8 @@ namespace tysoc {
 
         virtual void setShininess( const TScalar& shininess ) = 0;
 
+        virtual void setTexture( const std::string& textureName ) = 0;
+
         virtual void changeSize( const TVec3& newSize ) = 0;
 
         virtual void changeElevationData( const std::vector< float >& heightData ) = 0;

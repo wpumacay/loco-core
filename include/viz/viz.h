@@ -1,4 +1,3 @@
-
 #pragma once
 
 // scenario functionality
@@ -35,15 +34,13 @@ namespace tysoc {
         unsigned int    width;
         unsigned int    height;
         unsigned int    channels;
-        unsigned int    textureID;
 
         TIVizTexture()
         {
-            data        = NULL;
+            data        = nullptr;
             width       = 0;
             height      = 0;
             channels    = 0;
-            textureID   = 0;
         }
     };
 
@@ -57,11 +54,20 @@ namespace tysoc {
 
         void setSimulation( TISimulation* simulationPtr );
         void setScenario( TScenario* scenarioPtr );
+        void setSensorsEnabled( bool enable );
+        void setSensorRgbEnabled( bool enable );
+        void setSensorDepthEnabled( bool enable );
+        void setSensorSemanticEnabled( bool enable );
+        void setSensorsView( const TVec3& position, const TVec3& target );
 
         bool initialize();
         void update();
         // void reset(); // @TODO: should add this functionality when links change sizes
         bool isActive();
+        bool useSensorReadings();
+        bool useSensorReadingRgb();
+        bool useSensorReadingDepth();
+        bool useSensorReadingSemantic();
 
         // Debug drawing helpers
         void drawLine( const TVec3& start, const TVec3& end, const TVec3& color );
@@ -77,7 +83,8 @@ namespace tysoc {
         void changeToCamera( const std::string& name );
         void grabCameraFrame( const std::string& name,
                               TIVizTexture& rgbTexture,
-                              TIVizTexture& depthTexture );
+                              TIVizTexture& depthTexture,
+                              TIVizTexture& semanticTexture );
 
         void addLight( const std::string& name,
                        const std::string& type,
@@ -103,7 +110,8 @@ namespace tysoc {
         virtual void _changeToCameraInternal( TIVizCamera* cameraPtr ) = 0;
         virtual void _grabCameraFrameInternal( TIVizCamera* cameraPtr,
                                                TIVizTexture& rgbTexture,
-                                               TIVizTexture& depthTexture ) = 0;
+                                               TIVizTexture& depthTexture,
+                                               TIVizTexture& semanticTexture ) = 0;
 
         virtual TIVizLight* _createLightInternal( const std::string& name,
                                                   const std::string& type,
@@ -118,6 +126,13 @@ namespace tysoc {
         std::map< std::string, TIVizCamera* >   m_cameras;
         std::map< std::string, TIVizLight* >    m_lights;
 
+        bool m_useSensorReadings;
+        bool m_useSensorReadingRgb;
+        bool m_useSensorReadingDepth;
+        bool m_useSensorReadingSemantic;
+
+        TVec3 m_sensorViewPosition;
+        TVec3 m_sensorViewTarget;
     };
 
 

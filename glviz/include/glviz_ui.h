@@ -5,6 +5,7 @@
 #include <glviz_kintree.h>
 #include <glviz_terrainGen.h>
 #include <glviz_drawable.h>
+#include <glviz_viz.h>
 
 #include <components/bodies.h>
 
@@ -27,12 +28,15 @@
 namespace tysoc
 {
 
+    class TGLVisualizer;
+
     class TGLScenarioUtilsLayer : public engine::CImGuiLayer
     {
 
     public :
 
         TGLScenarioUtilsLayer( const std::string& name,
+                               TGLVisualizer* visualizer,
                                TScenario* scenario );
         ~TGLScenarioUtilsLayer();
 
@@ -61,6 +65,7 @@ namespace tysoc
     private :
 
         TScenario* m_scenario;
+        TGLVisualizer* m_visualizer;
 
         bool m_wantsToCaptureMouse;
     };

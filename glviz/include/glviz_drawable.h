@@ -27,6 +27,8 @@ namespace tysoc {
 
         void setShininess( const TScalar& shininess ) override;
 
+        void setTexture( const std::string& textureName ) override;
+
         void changeSize( const tysoc::TVec3& newSize ) override;
 
         void changeElevationData( const std::vector< float >& heightData ) override;

@@ -9,6 +9,10 @@ namespace tysoc {
     {
         m_scenarioPtr   = scenarioPtr;
         m_simulationPtr = nullptr;
+        m_useSensorReadings = false;
+        m_useSensorReadingRgb = false;
+        m_useSensorReadingDepth = false;
+        m_useSensorReadingSemantic = false;
     }
 
     TIVisualizer::~TIVisualizer()
@@ -27,6 +31,32 @@ namespace tysoc {
         m_simulationPtr = simulationPtr;
     }
 
+    void TIVisualizer::setSensorsEnabled( bool enable )
+    {
+        m_useSensorReadings = enable;
+    }
+
+    void TIVisualizer::setSensorRgbEnabled( bool enable )
+    {
+        m_useSensorReadingRgb = enable;
+    }
+
+    void TIVisualizer::setSensorDepthEnabled( bool enable )
+    {
+        m_useSensorReadingDepth = enable;
+    }
+
+    void TIVisualizer::setSensorSemanticEnabled( bool enable )
+    {
+        m_useSensorReadingSemantic = enable;
+    }
+
+    void TIVisualizer::setSensorsView( const TVec3& position, const TVec3& target )
+    {
+        m_sensorViewPosition = position;
+        m_sensorViewTarget = target;
+    }
+
     bool TIVisualizer::initialize()
     {
         return _initializeInternal();
@@ -40,6 +70,26 @@ namespace tysoc {
     bool TIVisualizer::isActive()
     {
         return _isActiveInternal();
+    }
+
+    bool TIVisualizer::useSensorReadings()
+    {
+        return m_useSensorReadings;
+    }
+
+    bool TIVisualizer::useSensorReadingRgb()
+    {
+        return m_useSensorReadingRgb;
+    }
+
+    bool TIVisualizer::useSensorReadingDepth()
+    {
+        return m_useSensorReadingDepth;
+    }
+
+    bool TIVisualizer::useSensorReadingSemantic()
+    {
+        return m_useSensorReadingSemantic;
     }
 
     void TIVisualizer::drawLine( const TVec3& start, const TVec3& end, const TVec3& color )
@@ -84,7 +134,8 @@ namespace tysoc {
 
     void TIVisualizer::grabCameraFrame( const std::string& name,
                                         TIVizTexture& rgbTexture,
-                                        TIVizTexture& depthTexture )
+                                        TIVizTexture& depthTexture,
+                                        TIVizTexture& semanticTexture )
     {
         if ( m_cameras.find( name ) == m_cameras.end() )
         {
@@ -92,7 +143,7 @@ namespace tysoc {
             return;
         }
 
-        _grabCameraFrameInternal( m_cameras[ name ], rgbTexture, depthTexture );
+        _grabCameraFrameInternal( m_cameras[ name ], rgbTexture, depthTexture, semanticTexture );
     }
 
     void TIVisualizer::addLight( const std::string& name,

@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <viz/viz.h>
@@ -14,6 +13,8 @@ using namespace engine;
 
 namespace tysoc {
 
+    class TGLScenarioUtilsLayer;
+
     class TGLVisualizer : public TIVisualizer
     {
 
@@ -24,6 +25,10 @@ namespace tysoc {
 
         void addBody( TBody* bodyPtr );
         void addAgent( TAgent* agentPtr );
+
+        engine::CFrameBuffer* fboRgb() const { return m_targetFrameRgb.get(); }
+        engine::CFrameBuffer* fboDepth() const { return m_targetFrameDepth.get(); }
+        engine::CFrameBuffer* fboSemantic() const { return m_targetFrameSemantic.get(); };
 
     protected :
 
@@ -45,7 +50,8 @@ namespace tysoc {
         void _changeToCameraInternal( TIVizCamera* cameraPtr ) override;
         void _grabCameraFrameInternal( TIVizCamera* cameraPtr,
                                        TIVizTexture& rgbTexture,
-                                       TIVizTexture& depthTexture ) override;
+                                       TIVizTexture& depthTexture,
+                                       TIVizTexture& semanticTexture ) override;
 
         TIVizLight* _createLightInternal( const std::string& name,
                                           const std::string& type,
@@ -54,17 +60,30 @@ namespace tysoc {
     private :
 
         void _setupGlRenderingEngine();
+        void _setupGlRenderTargets();
         void _collectSingleBodies( TBody* bodyPtr );
         void _collectKinTreeAgent( TAgent* agentPtr );
         void _collectTerrainGenerator( TITerrainGenerator* terrainGeneratorPtr );
         void _renderSensorReading( TISensor* sensorPtr );
+        void _collectCustomTargets();
+        void _readPixels( CFrameBuffer* fbuffer, TIVizTexture& texture );
 
     private :
 
         // rendering engine resources
         CScene* m_glScene;
+        CICamera* m_glSensorCamera;
         std::unique_ptr< CApplication > m_glApplication;
         TGLScenarioUtilsLayer* m_guiScenarioLayer;
+
+        // render targets used to grab frame data
+        std::unique_ptr< CFrameBuffer > m_targetFrameRgb;
+        std::unique_ptr< CFrameBuffer > m_targetFrameDepth;
+        std::unique_ptr< CFrameBuffer > m_targetFrameSemantic;
+        // render options used to generate the targets
+        engine::CRenderOptions m_renderOptionsTargetRgb;
+        engine::CRenderOptions m_renderOptionsTargetDepth;
+        engine::CRenderOptions m_renderOptionsTargetSemantic;
 
         // visualization wrappers
         std::vector< std::unique_ptr< TGLVizKinTree > >             m_vizKinTreeWrappers;

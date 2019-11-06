@@ -49,8 +49,80 @@ namespace tysoc {
 
         // add ui layer to control the elements of the scenario
         m_guiScenarioLayer = new TGLScenarioUtilsLayer( "Scenario-layer",
+                                                        this,
                                                         m_scenarioPtr );
         m_glApplication->addGuiLayer( std::unique_ptr< engine::CImGuiLayer >( m_guiScenarioLayer ) );
+
+        /* create custom render-targets to recover frame data */
+        _setupGlRenderTargets();
+
+        /* configure render options for our custom targets */
+        m_renderOptionsTargetRgb.mode = engine::eRenderMode::NORMAL;
+        m_renderOptionsTargetRgb.useFrustumCulling = true;
+        m_renderOptionsTargetRgb.cullingGeom = engine::eCullingGeom::BOUNDING_BOX;
+        m_renderOptionsTargetRgb.useFaceCulling = false;
+        m_renderOptionsTargetRgb.useBlending = false;
+        m_renderOptionsTargetRgb.useFog = false;
+        m_renderOptionsTargetRgb.useSkybox = true;
+        m_renderOptionsTargetRgb.useShadowMapping = true;
+        m_renderOptionsTargetRgb.redrawShadowMap = true;
+        m_renderOptionsTargetRgb.viewportWidth = m_glApplication->window()->width();
+        m_renderOptionsTargetRgb.viewportHeight = m_glApplication->window()->height();
+        m_renderOptionsTargetRgb.cameraPtr = m_glApplication->scene()->currentCamera();
+        m_renderOptionsTargetRgb.lightPtr = m_glScene->mainLight();
+        m_renderOptionsTargetRgb.shadowMapPtr = m_glApplication->renderer()->shadowMap();
+        m_renderOptionsTargetRgb.fogPtr = nullptr;
+        m_renderOptionsTargetRgb.skyboxPtr = m_glScene->skybox();
+        m_renderOptionsTargetRgb.renderTargetPtr = m_targetFrameRgb.get();
+        m_renderOptionsTargetRgb.shadowMapRangeConfig.type = engine::eShadowRangeType::FIXED_USER;
+        m_renderOptionsTargetRgb.shadowMapRangeConfig.worldUp = { 0.0f, 0.0f, 1.0f };
+        m_renderOptionsTargetRgb.shadowMapRangeConfig.cameraPtr = m_glApplication->scene()->currentCamera();
+
+        auto _light = m_glApplication->scene()->mainLight();
+        auto _lightType = _light->type();
+
+        if ( _lightType == eLightType::DIRECTIONAL )
+            m_renderOptionsTargetRgb.shadowMapRangeConfig.dirLightPtr = dynamic_cast< CDirectionalLight* >( _light );
+        else if ( _lightType == eLightType::POINT )
+            m_renderOptionsTargetRgb.shadowMapRangeConfig.pointLightPtr = dynamic_cast< CPointLight* >( _light );
+        else if ( _lightType == eLightType::SPOT )
+            m_renderOptionsTargetRgb.shadowMapRangeConfig.spotLightPtr = dynamic_cast< CSpotLight* >( _light );
+
+        m_renderOptionsTargetDepth.mode = engine::eRenderMode::DEPTH_ONLY;
+        m_renderOptionsTargetDepth.useFrustumCulling = true;
+        m_renderOptionsTargetDepth.cullingGeom = engine::eCullingGeom::BOUNDING_BOX;
+        m_renderOptionsTargetDepth.useFaceCulling = false;
+        m_renderOptionsTargetDepth.useBlending = false;
+        m_renderOptionsTargetDepth.useFog = false;
+        m_renderOptionsTargetDepth.useSkybox = false;
+        m_renderOptionsTargetDepth.useShadowMapping = false;
+        m_renderOptionsTargetDepth.redrawShadowMap = false;
+        m_renderOptionsTargetDepth.viewportWidth = m_glApplication->window()->width();
+        m_renderOptionsTargetDepth.viewportHeight = m_glApplication->window()->height();
+        m_renderOptionsTargetDepth.cameraPtr = m_glApplication->scene()->currentCamera();
+        m_renderOptionsTargetDepth.lightPtr = nullptr;
+        m_renderOptionsTargetDepth.shadowMapPtr = nullptr;
+        m_renderOptionsTargetDepth.renderTargetPtr = m_targetFrameDepth.get();
+        m_renderOptionsTargetDepth.depthViewZmin = 0.0f;
+        m_renderOptionsTargetDepth.depthViewZmax = 20.0f;
+        m_renderOptionsTargetDepth.depthViewZminColor = { 1.0f, 1.0f, 1.0f };
+        m_renderOptionsTargetDepth.depthViewZmaxColor = { 0.0f, 0.0f, 0.0f };
+
+        m_renderOptionsTargetSemantic.mode = engine::eRenderMode::SEMANTIC_ONLY;
+        m_renderOptionsTargetSemantic.useFrustumCulling = true;
+        m_renderOptionsTargetSemantic.cullingGeom = engine::eCullingGeom::BOUNDING_BOX;
+        m_renderOptionsTargetSemantic.useFaceCulling = false;
+        m_renderOptionsTargetSemantic.useBlending = false;
+        m_renderOptionsTargetSemantic.useFog = false;
+        m_renderOptionsTargetSemantic.useSkybox = false;
+        m_renderOptionsTargetSemantic.useShadowMapping = false;
+        m_renderOptionsTargetSemantic.redrawShadowMap = false;
+        m_renderOptionsTargetSemantic.viewportWidth = m_glApplication->window()->width();
+        m_renderOptionsTargetSemantic.viewportHeight = m_glApplication->window()->height();
+        m_renderOptionsTargetSemantic.cameraPtr = m_glApplication->scene()->currentCamera();
+        m_renderOptionsTargetSemantic.lightPtr = nullptr;
+        m_renderOptionsTargetSemantic.shadowMapPtr = nullptr;
+        m_renderOptionsTargetSemantic.renderTargetPtr = m_targetFrameSemantic.get();
 
         return true;
     }
@@ -93,7 +165,64 @@ namespace tysoc {
         m_glApplication->render();
         m_glApplication->end();
 
+        _collectCustomTargets();
+
         // *************************************************************
+    }
+
+    void TGLVisualizer::_collectCustomTargets()
+    {
+        if ( !m_useSensorReadings )
+            return;
+
+        auto _camera = m_glApplication->scene()->currentCamera();
+        if ( ( TVec3::length( m_sensorViewPosition ) > TYSOC_FLOAT_EPSILON ||
+               TVec3::length( m_sensorViewTarget ) > TYSOC_FLOAT_EPSILON ) &&
+             TVec3::length( m_sensorViewTarget - m_sensorViewPosition ) > TYSOC_FLOAT_EPSILON )
+        {
+            m_glSensorCamera->setPosition( fromTVec3( m_sensorViewPosition ) );
+            m_glSensorCamera->setTargetPoint( fromTVec3( m_sensorViewTarget ) );
+            _camera = m_glSensorCamera;
+        }
+
+        if ( m_useSensorReadingRgb && m_targetFrameRgb )
+        {
+            m_renderOptionsTargetRgb.cameraPtr = _camera;
+            m_renderOptionsTargetRgb.lightPtr = m_glScene->mainLight();
+            m_renderOptionsTargetRgb.shadowMapRangeConfig.cameraPtr = m_glApplication->scene()->currentCamera();
+
+            auto _light = m_glApplication->scene()->mainLight();
+            auto _lightType = _light->type();
+
+            if ( _lightType == eLightType::DIRECTIONAL )
+                m_renderOptionsTargetRgb.shadowMapRangeConfig.dirLightPtr = dynamic_cast< CDirectionalLight* >( _light );
+            else if ( _lightType == eLightType::POINT )
+                m_renderOptionsTargetRgb.shadowMapRangeConfig.pointLightPtr = dynamic_cast< CPointLight* >( _light );
+            else if ( _lightType == eLightType::SPOT )
+                m_renderOptionsTargetRgb.shadowMapRangeConfig.spotLightPtr = dynamic_cast< CSpotLight* >( _light );
+
+            m_glApplication->renderer()->begin( m_renderOptionsTargetRgb );
+            m_glApplication->renderer()->submit( m_glApplication->scene()->renderables() );
+            m_glApplication->renderer()->render();
+        }
+
+        if ( m_useSensorReadingDepth && m_targetFrameDepth )
+        {
+            m_renderOptionsTargetDepth.cameraPtr = _camera;
+
+            m_glApplication->renderer()->begin( m_renderOptionsTargetDepth );
+            m_glApplication->renderer()->submit( m_glApplication->scene()->renderables() );
+            m_glApplication->renderer()->render();
+        }
+
+        if ( m_useSensorReadingSemantic && m_targetFrameSemantic )
+        {
+            m_renderOptionsTargetSemantic.cameraPtr = _camera;
+
+            m_glApplication->renderer()->begin( m_renderOptionsTargetSemantic );
+            m_glApplication->renderer()->submit( m_glApplication->scene()->renderables() );
+            m_glApplication->renderer()->render();
+        }
     }
 
     bool TGLVisualizer::_isActiveInternal()
@@ -127,9 +256,41 @@ namespace tysoc {
 
     void TGLVisualizer::_grabCameraFrameInternal( TIVizCamera* cameraPtr,
                                                   TIVizTexture& rgbTexture,
-                                                  TIVizTexture& depthTexture )
+                                                  TIVizTexture& depthTexture,
+                                                  TIVizTexture& semanticTexture )
     {
-        // @TODO|@WIP
+        // @todo: move cameraptr to another configuration method (camera configuration)
+        //        prior to making the render call, because we're doing the render-call 
+        //        somewhere else to avoid repetition
+
+        if ( m_useSensorReadingRgb )
+            _readPixels( m_targetFrameRgb.get(), rgbTexture );
+
+        if ( m_useSensorReadingDepth )
+            _readPixels( m_targetFrameDepth.get(), depthTexture );
+
+        if ( m_useSensorReadingSemantic )
+            _readPixels( m_targetFrameSemantic.get(), semanticTexture );
+    }
+
+    void TGLVisualizer::_readPixels( CFrameBuffer* fbuffer, TIVizTexture& texture )
+    {
+        auto _colorAttachment = fbuffer->getTextureAttachment( "color_attachment" );
+        auto _colorAttachmentConfig = fbuffer->getConfigAttachment( "color_attachment" );
+    
+        auto _width = _colorAttachmentConfig.width;
+        auto _height = _colorAttachmentConfig.height;
+    
+        engine::uint8* _buffer = new engine::uint8[3 * _width * _height];
+    
+        fbuffer->bind();
+        glReadPixels( 0, 0, _width, _height, GL_RGB, GL_UNSIGNED_BYTE, _buffer );
+        fbuffer->unbind();
+
+        texture.data = _buffer;
+        texture.width = _width;
+        texture.height = _height;
+        texture.channels = 3;
     }
 
     TIVizLight* TGLVisualizer::_createLightInternal( const std::string& name,
@@ -206,6 +367,14 @@ namespace tysoc {
 
         m_glScene->addSkybox( std::unique_ptr< engine::CSkybox >( _skybox ) );
 
+        /* create a camera used for custom-targets ****************************************************/
+
+        m_glSensorCamera = new engine::CFixedCamera( "fixed-sensor",
+                                                     { 3.0f, 3.0f, 3.0f },
+                                                     { 0.0f, 0.0f, 0.0f },
+                                                     engine::eAxis::Z,
+                                                     _cameraProjData );
+
         /**********************************************************************************************/
 
         m_glApplication->renderOptions().useSkybox = true;
@@ -214,10 +383,45 @@ namespace tysoc {
         m_glApplication->renderOptions().shadowMapRangeConfig.type = engine::eShadowRangeType::FIXED_USER;
         m_glApplication->renderOptions().shadowMapRangeConfig.worldUp = { 0.0f, 0.0f, 1.0f };
         m_glApplication->renderOptions().shadowMapRangeConfig.cameraPtr = _orbitCamera;
-        m_glApplication->renderOptions().shadowMapRangeConfig.clipSpaceWidth   = 20.0f;
-        m_glApplication->renderOptions().shadowMapRangeConfig.clipSpaceHeight  = 20.0f;
-        m_glApplication->renderOptions().shadowMapRangeConfig.clipSpaceDepth   = 20.0f;
         m_glApplication->renderOptions().shadowMapRangeConfig.dirLightPtr = _dirlight;
+    }
+
+    void TGLVisualizer::_setupGlRenderTargets()
+    {
+        engine::CAttachmentConfig _fbColorConfig;
+        _fbColorConfig.name                 = "color_attachment";
+        _fbColorConfig.attachment           = engine::eFboAttachment::COLOR;
+        _fbColorConfig.width                = m_glApplication->window()->width();
+        _fbColorConfig.height               = m_glApplication->window()->height();
+        _fbColorConfig.texInternalFormat    = engine::eTextureFormat::RGB;
+        _fbColorConfig.texFormat            = engine::eTextureFormat::RGB;
+        _fbColorConfig.texPixelDataType     = engine::ePixelDataType::UINT_8;
+        _fbColorConfig.texWrapU             = engine::eTextureWrap::REPEAT;
+        _fbColorConfig.texWrapV             = engine::eTextureWrap::REPEAT;
+    
+        engine::CAttachmentConfig _fbDepthConfig;
+        _fbDepthConfig.name                 = "depth_attachment";
+        _fbDepthConfig.attachment           = engine::eFboAttachment::DEPTH;
+        _fbDepthConfig.width                = m_glApplication->window()->width();
+        _fbDepthConfig.height               = m_glApplication->window()->height();
+        _fbDepthConfig.texInternalFormat    = engine::eTextureFormat::DEPTH;
+        _fbDepthConfig.texFormat            = engine::eTextureFormat::DEPTH;
+        _fbDepthConfig.texPixelDataType     = engine::ePixelDataType::UINT_32;
+        _fbDepthConfig.texWrapU             = engine::eTextureWrap::REPEAT;
+        _fbDepthConfig.texWrapV             = engine::eTextureWrap::REPEAT;
+    
+        m_targetFrameRgb = std::unique_ptr< engine::CFrameBuffer >( new engine::CFrameBuffer() );
+        m_targetFrameDepth = std::unique_ptr< engine::CFrameBuffer >( new engine::CFrameBuffer() );
+        m_targetFrameSemantic = std::unique_ptr< engine::CFrameBuffer >( new engine::CFrameBuffer() );
+
+        m_targetFrameRgb->addAttachment( _fbColorConfig );
+        m_targetFrameRgb->addAttachment( _fbDepthConfig );
+
+        m_targetFrameDepth->addAttachment( _fbColorConfig );
+        m_targetFrameDepth->addAttachment( _fbDepthConfig );
+
+        m_targetFrameSemantic->addAttachment( _fbColorConfig );
+        m_targetFrameSemantic->addAttachment( _fbDepthConfig );
     }
 
     void TGLVisualizer::_collectKinTreeAgent( TAgent* agentPtr )
@@ -271,9 +475,7 @@ namespace tysoc {
             _visualDrawable->setDiffuseColor( _visual->data().diffuse );
             _visualDrawable->setSpecularColor( _visual->data().specular );
             _visualDrawable->setShininess( _visual->data().shininess );
-
-            // @todo: allow grabbing texture from id in visual-data
-            // ...
+            _visualDrawable->setTexture( _visual->data().texture );
 
             _visualDrawable->show( true );
             _visualDrawable->wireframe( false );
