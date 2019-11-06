@@ -3,6 +3,17 @@
 
 namespace tysoc {
 
+    TMat4 toTMat4( const engine::CMat4& mat )
+    {
+        TMat4 _res;
+
+        for ( size_t i = 0; i < 4; i++ )
+            for ( size_t j = 0; j < 4; j++ )
+                _res.buff[i + 4 * j] = mat.buff[i + 4 * j];
+
+        return _res;
+    }
+
     engine::CMat4 fromTMat4( const TMat4& mat )
     {
         engine::CMat4 _res;

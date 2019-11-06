@@ -12,6 +12,8 @@
 
 namespace tysoc {
 
+    TMat4 toTMat4( const engine::CMat4& mat );
+
     engine::CMat4 fromTMat4( const TMat4& mat );
     engine::CMat4 fromTMat3( const TMat3& mat );
     engine::CVec3 fromTVec3( const TVec3& vec );

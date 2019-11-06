@@ -58,7 +58,7 @@ namespace tysoc {
 
         /* configure render options for our custom targets */
         m_renderOptionsTargetRgb.mode = engine::eRenderMode::NORMAL;
-        m_renderOptionsTargetRgb.useFrustumCulling = true;
+        m_renderOptionsTargetRgb.useFrustumCulling = false;
         m_renderOptionsTargetRgb.cullingGeom = engine::eCullingGeom::BOUNDING_BOX;
         m_renderOptionsTargetRgb.useFaceCulling = false;
         m_renderOptionsTargetRgb.useBlending = false;
@@ -176,13 +176,18 @@ namespace tysoc {
             return;
 
         auto _camera = m_glApplication->scene()->currentCamera();
-        if ( ( TVec3::length( m_sensorViewPosition ) > TYSOC_FLOAT_EPSILON ||
-               TVec3::length( m_sensorViewTarget ) > TYSOC_FLOAT_EPSILON ) &&
-             TVec3::length( m_sensorViewTarget - m_sensorViewPosition ) > TYSOC_FLOAT_EPSILON )
+        if ( m_sensorUsesPositionAndTarget )
         {
             m_glSensorCamera->setPosition( fromTVec3( m_sensorViewPosition ) );
             m_glSensorCamera->setTargetPoint( fromTVec3( m_sensorViewTarget ) );
             _camera = m_glSensorCamera;
+        }
+        else if ( m_sensorUsesTransform )
+        {
+            m_glSensorCamera->setCameraTransform( fromTMat4( m_sensorViewTransform ) );
+            _camera = m_glSensorCamera;
+
+            _drawCameraInternal( toTMat4( m_glSensorCamera->matView() ), { 0.1f, 0.4f, 0.9f } );
         }
 
         if ( m_useSensorReadingRgb && m_targetFrameRgb )
@@ -238,6 +243,14 @@ namespace tysoc {
     void TGLVisualizer::_drawAABBInternal( const TVec3& aabbMin, const TVec3& aabbMax, const TMat4& aabbWorldTransform, const TVec3& color )
     {
         engine::CDebugDrawer::DrawAABB( fromTVec3( aabbMin ), fromTVec3( aabbMax ), fromTMat4( aabbWorldTransform ), fromTVec3( color ) );
+    }
+
+    void TGLVisualizer::_drawCameraInternal( const TMat4& viewMatrix, const TVec3& color )
+    {
+        engine::CDebugDrawer::DrawClipVolume( engine::CMat4::perspective( 45.0f, 
+                                                                          m_glApplication->window()->aspect(), 
+                                                                          0.01f, 0.2f ) * fromTMat4( viewMatrix ), 
+                                              fromTVec3( color ) );
     }
 
     TIVizCamera* TGLVisualizer::_createCameraInternal( const std::string& name,
@@ -374,6 +387,8 @@ namespace tysoc {
                                                      { 0.0f, 0.0f, 0.0f },
                                                      engine::eAxis::Z,
                                                      _cameraProjData );
+
+        m_glScene->addCamera( std::unique_ptr< engine::CICamera >( m_glSensorCamera ) );
 
         /**********************************************************************************************/
 

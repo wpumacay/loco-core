@@ -13,6 +13,9 @@ namespace tysoc {
         m_useSensorReadingRgb = false;
         m_useSensorReadingDepth = false;
         m_useSensorReadingSemantic = false;
+
+        m_sensorUsesPositionAndTarget = false;
+        m_sensorUsesTransform = false;
     }
 
     TIVisualizer::~TIVisualizer()
@@ -53,8 +56,19 @@ namespace tysoc {
 
     void TIVisualizer::setSensorsView( const TVec3& position, const TVec3& target )
     {
+        m_sensorUsesPositionAndTarget = true;
+        m_sensorUsesTransform = false;
+
         m_sensorViewPosition = position;
         m_sensorViewTarget = target;
+    }
+
+    void TIVisualizer::setSensorsView( const TMat4& transform )
+    {
+        m_sensorUsesPositionAndTarget = false;
+        m_sensorUsesTransform = true;
+
+        m_sensorViewTransform = transform;
     }
 
     bool TIVisualizer::initialize()
@@ -100,6 +114,11 @@ namespace tysoc {
     void TIVisualizer::drawAABB( const TVec3& aabbMin, const TVec3& aabbMax, const TMat4& aabbWorldTransform, const TVec3& color )
     {
         _drawAABBInternal( aabbMin, aabbMax, aabbWorldTransform, color );
+    }
+
+    void TIVisualizer::drawCamera( const TMat4& cameraTransform, const TVec3& color )
+    {
+        _drawCameraInternal( cameraTransform, color );
     }
 
     void TIVisualizer::addCamera( const std::string& name, 
