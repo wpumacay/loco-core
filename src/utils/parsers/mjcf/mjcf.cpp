@@ -188,4 +188,32 @@ namespace mjcf {
         return elementName;
     }
 
+    std::string stripMjcPrefix( const std::string& type,
+                                const std::string& elementName,
+                                const std::string& agentName )
+    {
+        if ( type != "body" && type != "joint" && type != "geom" && type != "site" &&
+             type != "sensor" && type != "camera" && type != "actuator" && 
+             type != "motor" && type != "position" && type != "velocity" ) 
+            return elementName;
+
+        std::string _prefix = "";
+        if ( type == "body" ) _prefix = std::string( TYSOC_PREFIX_BODY ) + agentName + "_";
+        else if ( type == "joint" ) _prefix = std::string( TYSOC_PREFIX_JOINT ) + agentName + "_";
+        else if ( type == "geom" ) _prefix = std::string( TYSOC_PREFIX_GEOM ) + agentName + "_";
+        else if ( type == "site" ) _prefix = std::string( TYSOC_PREFIX_SITE ) + agentName + "_";
+        else if ( type == "sensor" ) _prefix = std::string( TYSOC_PREFIX_SENSOR ) + agentName + "_";
+        else if ( type == "camera" ) _prefix = std::string( TYSOC_PREFIX_CAMERA ) + agentName + "_";
+        else if ( type == "actuator" ) _prefix = std::string( TYSOC_PREFIX_ACTUATOR ) + agentName + "_";
+        else if ( type == "motor" ) _prefix = std::string( TYSOC_PREFIX_ACTUATOR ) + agentName + "_";
+        else if ( type == "position" ) _prefix = std::string( TYSOC_PREFIX_ACTUATOR ) + agentName + "_";
+        else if ( type == "velocity" ) _prefix = std::string( TYSOC_PREFIX_ACTUATOR ) + agentName + "_";
+
+        auto _startIndex = elementName.find( _prefix );
+        if ( _startIndex == -1 )
+            return elementName;
+
+        return elementName.substr( _startIndex + _prefix.size() );
+    }
+
 }}

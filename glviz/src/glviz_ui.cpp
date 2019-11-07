@@ -187,20 +187,21 @@ namespace tysoc
         ImGui::TextColored( { 0.2f, 0.4f, 0.8f, 1.0f }, "Summary: " );
         ImGui::Text( _infoSummary.c_str() );
 
-        _submenuTreeAgentQpos( agent->joints );
-        _submenuTreeAgentQvel( agent->joints );
-        _submenuTreeAgentActuators( agent->actuators );
-        _submenuTreeAgentSensors( agent->sensors );
+        _submenuTreeAgentQpos( agent, refresh );
+        _submenuTreeAgentQvel( agent, refresh );
+        _submenuTreeAgentActuators( agent, refresh );
+        _submenuTreeAgentSensors( agent, refresh );
     }
 
-    void TGLScenarioUtilsLayer::_submenuTreeAgentQpos( const std::vector< TKinTreeJoint* >& joints )
+    void TGLScenarioUtilsLayer::_submenuTreeAgentQpos( TAgent* agent, bool refresh )
     {
         if ( ImGui::TreeNode( "Agent qpos" ) )
         {
             size_t _jointIndex = 0;
-            for ( auto _kinJoint : joints )
+            for ( auto _kinJoint : agent->joints )
             {
-                ImGui::TextColored( { 0.2f, 0.4f, 0.8f, 1.0f }, ( tysoc::toString( _kinJoint->data.type ) + "-joint: " + _kinJoint->name ).c_str() );
+                auto _jointNameStripped = mjcf::stripMjcPrefix( "joint", _kinJoint->name, agent->name() );
+                ImGui::TextColored( { 0.2f, 0.4f, 0.8f, 1.0f }, ( tysoc::toString( _kinJoint->data.type ) + "-joint: " + _jointNameStripped ).c_str() );
                 ImGui::Checkbox( ( "kj(" + std::to_string( _jointIndex ) + ").userControlled" ).c_str() , &_kinJoint->userControlled );
                 if ( _kinJoint->data.type == eJointType::FREE )
                 {
@@ -245,22 +246,24 @@ namespace tysoc
         }
     }
 
-    void TGLScenarioUtilsLayer::_submenuTreeAgentQvel( const std::vector< TKinTreeJoint* >& joints )
+    void TGLScenarioUtilsLayer::_submenuTreeAgentQvel( TAgent* agent, bool refresh )
     {
         // @todo: add plots of qvels
     }
 
-    void TGLScenarioUtilsLayer::_submenuTreeAgentActuators( const std::vector< TKinTreeActuator* >& actuators )
+    void TGLScenarioUtilsLayer::_submenuTreeAgentActuators( TAgent* agent, bool refresh )
     {
         if ( ImGui::TreeNode( "Agent actuators" ) )
         {
             bool _clearAll = ImGui::Button( "Clear-All-Controls" );
-            for ( auto _kinActuator : actuators )
+            for ( auto _kinActuator : agent->actuators )
             {
+                auto _actuatorNameStripped = mjcf::stripMjcPrefix( "actuator", _kinActuator->name, agent->name() );
+
                 if ( _kinActuator->data.limits.x < _kinActuator->data.limits.y )
-                    ImGui::SliderFloat( _kinActuator->name.c_str(), &_kinActuator->ctrlValue, _kinActuator->data.limits.x, _kinActuator->data.limits.y );
+                    ImGui::SliderFloat( _actuatorNameStripped.c_str(), &_kinActuator->ctrlValue, _kinActuator->data.limits.x, _kinActuator->data.limits.y );
                 else
-                    ImGui::DragFloat( _kinActuator->name.c_str(), &_kinActuator->ctrlValue, 0.001f );
+                    ImGui::DragFloat( _actuatorNameStripped.c_str(), &_kinActuator->ctrlValue, 0.001f );
 
                 if ( _clearAll )
                     _kinActuator->ctrlValue = 0.0f;
@@ -270,17 +273,49 @@ namespace tysoc
         }
     }
 
-    void TGLScenarioUtilsLayer::_submenuTreeAgentSensors( const std::vector< TKinTreeSensor* >& sensors )
+    void TGLScenarioUtilsLayer::_submenuTreeAgentSensors( TAgent* agent, bool refresh )
     {
         if ( ImGui::TreeNode( "Agent sensors" ) )
         {
-            for ( auto _kinSensor : sensors )
+            static int s_index = 0;
+            if ( refresh ) s_index = 0;
+            for ( auto _kinSensor : agent->sensors )
             {
                 if ( _kinSensor->data.type == eSensorType::PROP_JOINT )
                 {
+                    auto _jointNameStripped = mjcf::stripMjcPrefix( "joint",
+                                                                    mjcf::stripMjcPrefix( "sensor", _kinSensor->name, agent->name() ),
+                                                                    agent->name() );
                     auto _kinJointSensor = dynamic_cast< TKinTreeJointSensor* >( _kinSensor );
                     ImGui::Text( "Joint-angle   : %.3f", _kinJointSensor->theta );
                     ImGui::Text( "Joint-speed   : %.3f", _kinJointSensor->thetadot );
+
+                    static std::unordered_map< std::string, std::array< float, VIZ_PLOT_BUFFER_SIZE > > s_theta_vals;
+                    static std::unordered_map< std::string, std::array< float, VIZ_PLOT_BUFFER_SIZE > > s_thetadot_vals;
+                    if ( s_theta_vals.find( _jointNameStripped ) == s_theta_vals.end() ) s_theta_vals[_jointNameStripped] = std::array< float, VIZ_PLOT_BUFFER_SIZE >();
+                    if ( s_thetadot_vals.find( _jointNameStripped ) == s_thetadot_vals.end() ) s_thetadot_vals[_jointNameStripped] = std::array< float, VIZ_PLOT_BUFFER_SIZE >();
+                    if ( refresh )
+                    {
+                        if ( s_theta_vals.find( _jointNameStripped ) != s_theta_vals.end() ) s_theta_vals[_jointNameStripped].fill( 0.0f );
+                        if ( s_thetadot_vals.find( _jointNameStripped ) != s_thetadot_vals.end() ) s_thetadot_vals[_jointNameStripped].fill( 0.0f );
+                    }
+
+                    s_theta_vals[_jointNameStripped][s_index] = _kinJointSensor->theta;
+                    s_thetadot_vals[_jointNameStripped][s_index] = _kinJointSensor->thetadot;
+
+                    ImGui::PlotLines( ( "joint-angle(" + _jointNameStripped + ")" ).c_str(),
+                                      s_theta_vals[_jointNameStripped].data(),
+                                      VIZ_PLOT_BUFFER_SIZE,
+                                      s_index,
+                                      ( "current: " + std::to_string( s_theta_vals[_jointNameStripped][s_index] ) ).c_str(),
+                                      -3.1415, 3.1415, ImVec2( 0, 80 ) );
+
+                    ImGui::PlotLines( ( "joint-wspeed(" + _jointNameStripped + ")" ).c_str(),
+                                      s_thetadot_vals[_jointNameStripped].data(),
+                                      VIZ_PLOT_BUFFER_SIZE,
+                                      s_index,
+                                      ( "current: " + std::to_string( s_thetadot_vals[_jointNameStripped][s_index] ) ).c_str(),
+                                      -10.0f, 10.0f, ImVec2( 0, 80 ) );
                 }
                 else if ( _kinSensor->data.type == eSensorType::PROP_BODY )
                 {
@@ -292,6 +327,7 @@ namespace tysoc
                 }
             }
 
+            s_index = ( s_index + 1 ) % VIZ_PLOT_BUFFER_SIZE;
             ImGui::TreePop();
         }
     }

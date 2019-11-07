@@ -65,9 +65,10 @@ namespace tysoc {
         m_renderOptionsTargetRgb.useFog = false;
         m_renderOptionsTargetRgb.useSkybox = true;
         m_renderOptionsTargetRgb.useShadowMapping = true;
-        m_renderOptionsTargetRgb.redrawShadowMap = true;
-        m_renderOptionsTargetRgb.viewportWidth = m_glApplication->window()->width();
-        m_renderOptionsTargetRgb.viewportHeight = m_glApplication->window()->height();
+        m_renderOptionsTargetRgb.pcfCount = 0;
+        m_renderOptionsTargetRgb.redrawShadowMap = false;
+        m_renderOptionsTargetRgb.viewportWidth = m_glApplication->window()->width() / 2.0f;
+        m_renderOptionsTargetRgb.viewportHeight = m_glApplication->window()->height() / 2.0f;
         m_renderOptionsTargetRgb.cameraPtr = m_glApplication->scene()->currentCamera();
         m_renderOptionsTargetRgb.lightPtr = m_glScene->mainLight();
         m_renderOptionsTargetRgb.shadowMapPtr = m_glApplication->renderer()->shadowMap();
@@ -97,8 +98,8 @@ namespace tysoc {
         m_renderOptionsTargetDepth.useSkybox = false;
         m_renderOptionsTargetDepth.useShadowMapping = false;
         m_renderOptionsTargetDepth.redrawShadowMap = false;
-        m_renderOptionsTargetDepth.viewportWidth = m_glApplication->window()->width();
-        m_renderOptionsTargetDepth.viewportHeight = m_glApplication->window()->height();
+        m_renderOptionsTargetDepth.viewportWidth = m_glApplication->window()->width() / 2.0f;
+        m_renderOptionsTargetDepth.viewportHeight = m_glApplication->window()->height() / 2.0f;
         m_renderOptionsTargetDepth.cameraPtr = m_glApplication->scene()->currentCamera();
         m_renderOptionsTargetDepth.lightPtr = nullptr;
         m_renderOptionsTargetDepth.shadowMapPtr = nullptr;
@@ -117,8 +118,8 @@ namespace tysoc {
         m_renderOptionsTargetSemantic.useSkybox = false;
         m_renderOptionsTargetSemantic.useShadowMapping = false;
         m_renderOptionsTargetSemantic.redrawShadowMap = false;
-        m_renderOptionsTargetSemantic.viewportWidth = m_glApplication->window()->width();
-        m_renderOptionsTargetSemantic.viewportHeight = m_glApplication->window()->height();
+        m_renderOptionsTargetSemantic.viewportWidth = m_glApplication->window()->width() / 2.0f;
+        m_renderOptionsTargetSemantic.viewportHeight = m_glApplication->window()->height() / 2.0f;
         m_renderOptionsTargetSemantic.cameraPtr = m_glApplication->scene()->currentCamera();
         m_renderOptionsTargetSemantic.lightPtr = nullptr;
         m_renderOptionsTargetSemantic.shadowMapPtr = nullptr;
@@ -394,7 +395,7 @@ namespace tysoc {
 
         m_glApplication->renderOptions().useSkybox = true;
         m_glApplication->renderOptions().useShadowMapping = true;
-        m_glApplication->renderOptions().pcfCount = 2;
+        m_glApplication->renderOptions().pcfCount = 0;
         m_glApplication->renderOptions().shadowMapRangeConfig.type = engine::eShadowRangeType::FIXED_USER;
         m_glApplication->renderOptions().shadowMapRangeConfig.worldUp = { 0.0f, 0.0f, 1.0f };
         m_glApplication->renderOptions().shadowMapRangeConfig.cameraPtr = _orbitCamera;
@@ -406,8 +407,8 @@ namespace tysoc {
         engine::CAttachmentConfig _fbColorConfig;
         _fbColorConfig.name                 = "color_attachment";
         _fbColorConfig.attachment           = engine::eFboAttachment::COLOR;
-        _fbColorConfig.width                = m_glApplication->window()->width();
-        _fbColorConfig.height               = m_glApplication->window()->height();
+        _fbColorConfig.width                = m_glApplication->window()->width() / 2.0f;
+        _fbColorConfig.height               = m_glApplication->window()->height() / 2.0f;
         _fbColorConfig.texInternalFormat    = engine::eTextureFormat::RGB;
         _fbColorConfig.texFormat            = engine::eTextureFormat::RGB;
         _fbColorConfig.texPixelDataType     = engine::ePixelDataType::UINT_8;
@@ -417,8 +418,8 @@ namespace tysoc {
         engine::CAttachmentConfig _fbDepthConfig;
         _fbDepthConfig.name                 = "depth_attachment";
         _fbDepthConfig.attachment           = engine::eFboAttachment::DEPTH;
-        _fbDepthConfig.width                = m_glApplication->window()->width();
-        _fbDepthConfig.height               = m_glApplication->window()->height();
+        _fbDepthConfig.width                = m_glApplication->window()->width() / 2.0f;
+        _fbDepthConfig.height               = m_glApplication->window()->height() / 2.0f;
         _fbDepthConfig.texInternalFormat    = engine::eTextureFormat::DEPTH;
         _fbDepthConfig.texFormat            = engine::eTextureFormat::DEPTH;
         _fbDepthConfig.texPixelDataType     = engine::ePixelDataType::UINT_32;

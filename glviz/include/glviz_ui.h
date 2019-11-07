@@ -28,6 +28,8 @@
 namespace tysoc
 {
 
+    const int VIZ_PLOT_BUFFER_SIZE = 100;
+
     class TGLVisualizer;
 
     class TGLScenarioUtilsLayer : public engine::CImGuiLayer
@@ -57,10 +59,10 @@ namespace tysoc
         void _submenuAgent( TAgent* agent, bool refresh );
         void _submenuTerrainGen( TITerrainGenerator* terrainGen, bool refresh );
 
-        void _submenuTreeAgentQpos( const std::vector< TKinTreeJoint* >& joints );
-        void _submenuTreeAgentQvel( const std::vector< TKinTreeJoint* >& joints );
-        void _submenuTreeAgentActuators( const std::vector< TKinTreeActuator* >& actuators );
-        void _submenuTreeAgentSensors( const std::vector< TKinTreeSensor* >& sensors );
+        void _submenuTreeAgentQpos( TAgent* agent, bool refresh );
+        void _submenuTreeAgentQvel( TAgent* agent, bool refresh );
+        void _submenuTreeAgentActuators( TAgent* agent, bool refresh );
+        void _submenuTreeAgentSensors( TAgent* agent, bool refresh );
 
     private :
 

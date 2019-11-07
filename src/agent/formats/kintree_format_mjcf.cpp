@@ -525,7 +525,11 @@ namespace tysoc {
         _kinActuator->name = actuatorElementPtr->getAttributeString( "name" );
         // check in case the user forgot to set the name of the actuator (use joint name as default)
         if ( _kinActuator->name == "" )
-            _kinActuator->name = actuatorElementPtr->getAttributeString( "joint" );
+            _kinActuator->name = mjcf::computeMjcfName( "actuator", 
+                                                        mjcf::stripMjcPrefix( "joint", 
+                                                                              actuatorElementPtr->getAttributeString( "joint" ), 
+                                                                              context.agentPtr->name() ),
+                                                        context.agentPtr->name() );
         // and the type of actuator
         _kinActuator->data.type = toEnumActuator( actuatorElementPtr->etype );
         // and a reference to the joint it controls (@todo: add support for other 3 types of transmissions)

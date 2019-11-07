@@ -92,4 +92,14 @@ namespace mjcf {
     std::string computeMjcfName( const std::string& type, 
                                  const std::string& elementName, 
                                  const std::string& agentName );
+
+    /**
+    * @brief                Removes custom prefix created from function above
+    * @param type           Type element type used to compute the prefix
+    * @param elementName    The name of the element including the prefix
+    * @param agentName      The name of the agent used to compute the prefix
+    */
+    std::string stripMjcPrefix( const std::string& type,
+                                const std::string& elementName,
+                                const std::string& agentName );
 }}
