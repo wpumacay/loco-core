@@ -42,6 +42,13 @@ namespace tysoc {
         m_vizCollisions.clear();
     }
 
+    void TGLVizKinTree::setMaskId( int maskId )
+    {
+        for ( auto& _vizpair : m_vizVisuals )
+            if (_vizpair.second )
+                _vizpair.second->setMaskId( maskId );
+    }
+
     void TGLVizKinTree::_collectKinVisuals()
     {
         for ( auto _visual : m_agentPtr->visuals )

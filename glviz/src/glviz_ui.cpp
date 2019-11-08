@@ -73,8 +73,8 @@ namespace tysoc
                 ImGui::Begin( "rgb-view" );
 
                 ImGui::Image( (void*)(intptr_t) _textureAttachment->openglId(),
-                              ImVec2( _textureAttachment->width() / 5.0f, 
-                                      _textureAttachment->height() / 5.0f ),
+                              ImVec2( _textureAttachment->width() / 2.0f, 
+                                      _textureAttachment->height() / 2.0f ),
                               { 0.0f, 1.0f }, { 1.0f, 0.0f } );
                 ImGui::End();
             }
@@ -89,8 +89,8 @@ namespace tysoc
                 ImGui::Begin( "depth-view" );
 
                 ImGui::Image( (void*)(intptr_t) _textureAttachment->openglId(),
-                              ImVec2( _textureAttachment->width() / 5.0f, 
-                                      _textureAttachment->height() / 5.0f ),
+                              ImVec2( _textureAttachment->width() / 2.0f, 
+                                      _textureAttachment->height() / 2.0f ),
                               { 0.0f, 1.0f }, { 1.0f, 0.0f } );
                 ImGui::End();
             }
@@ -105,8 +105,8 @@ namespace tysoc
                 ImGui::Begin( "semantic-view" );
 
                 ImGui::Image( (void*)(intptr_t) _textureAttachment->openglId(),
-                              ImVec2( _textureAttachment->width() / 5.0f, 
-                                      _textureAttachment->height() / 5.0f ),
+                              ImVec2( _textureAttachment->width() / 2.0f, 
+                                      _textureAttachment->height() / 2.0f ),
                               { 0.0f, 1.0f }, { 1.0f, 0.0f } );
                 ImGui::End();
             }
@@ -277,12 +277,15 @@ namespace tysoc
     {
         if ( ImGui::TreeNode( "Agent sensors" ) )
         {
-            static int s_index = 0;
-            if ( refresh ) s_index = 0;
-            for ( auto _kinSensor : agent->sensors )
+            if ( ImGui::TreeNode( "Joint-sensors" ) )
             {
-                if ( _kinSensor->data.type == eSensorType::PROP_JOINT )
+                static int s_index = 0;
+                if ( refresh ) s_index = 0;
+                for ( auto _kinSensor : agent->sensors )
                 {
+                    if ( _kinSensor->data.type != eSensorType::PROP_JOINT )
+                        continue;
+
                     auto _jointNameStripped = mjcf::stripMjcPrefix( "joint",
                                                                     mjcf::stripMjcPrefix( "sensor", _kinSensor->name, agent->name() ),
                                                                     agent->name() );
@@ -315,8 +318,18 @@ namespace tysoc
                                       ( "current: " + std::to_string( s_thetadot_vals[_jointNameStripped][s_index] ) ).c_str(),
                                       -10.0f, 10.0f, ImVec2( 0, 80 ) );
                 }
-                else if ( _kinSensor->data.type == eSensorType::PROP_BODY )
+
+                s_index = ( s_index + 1 ) % VIZ_PLOT_BUFFER_SIZE;
+                ImGui::TreePop();
+            }
+
+            if ( ImGui::TreeNode( "Body-sensors" ) )
+            {
+                for ( auto _kinSensor : agent->sensors )
                 {
+                    if ( _kinSensor->data.type != eSensorType::PROP_BODY )
+                        continue;
+
                     auto _bodyNameStripped = mjcf::stripMjcPrefix( "body",
                                                                     mjcf::stripMjcPrefix( "sensor", _kinSensor->name, agent->name() ),
                                                                     agent->name() );
@@ -327,10 +340,9 @@ namespace tysoc
                     ImGui::Text( ( "body-comforce(" + _bodyNameStripped + ")  : %s" ).c_str(), TVec3::toString( _kinBodySensor->comForce ).c_str() );
                     ImGui::Text( ( "body-comtorque(" + _bodyNameStripped + ") : %s" ).c_str(), TVec3::toString( _kinBodySensor->comTorque ).c_str() );
                 }
+            
+                ImGui::TreePop();
             }
-
-            s_index = ( s_index + 1 ) % VIZ_PLOT_BUFFER_SIZE;
-            ImGui::TreePop();
         }
     }
 

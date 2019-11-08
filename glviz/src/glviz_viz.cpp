@@ -9,6 +9,12 @@ namespace tysoc {
         m_glScene        = nullptr;
         m_glApplication  = nullptr;
         m_guiScenarioLayer = nullptr;
+
+        // @demo: enable sensor readings by default
+        m_useSensorReadings = true;
+        m_useSensorReadingRgb = true;
+        m_useSensorReadingDepth = true;
+        m_useSensorReadingSemantic = true;
     }
 
     TGLVisualizer::~TGLVisualizer()
@@ -45,7 +51,10 @@ namespace tysoc {
         // Create visualization wrappers for the agents
         auto _agents = m_scenarioPtr->getAgents();
         for ( size_t i = 0; i < _agents.size(); i++ )
+        {
             _collectKinTreeAgent( _agents[i] );
+            m_vizKinTreeWrappers.back()->setMaskId( 1000 + i );
+        }
 
         // add ui layer to control the elements of the scenario
         m_guiScenarioLayer = new TGLScenarioUtilsLayer( "Scenario-layer",
@@ -475,8 +484,7 @@ namespace tysoc {
     void TGLVisualizer::_collectKinTreeAgent( TAgent* agentPtr )
     {
         // create the kintree viz wrapper
-        auto _vizKinTreeWrapper = new TGLVizKinTree( agentPtr,
-                                                     m_glScene );
+        auto _vizKinTreeWrapper = new TGLVizKinTree( agentPtr, m_glScene );
         // and add it to the buffer of kintree vizs
         m_vizKinTreeWrappers.push_back( std::unique_ptr< TGLVizKinTree >( _vizKinTreeWrapper ) );
     }

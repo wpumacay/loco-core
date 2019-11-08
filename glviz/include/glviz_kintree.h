@@ -50,6 +50,7 @@ namespace tysoc {
                        CScene* scenePtr );
         ~TGLVizKinTree();
 
+        void setMaskId( int maskId );
         void update();
 
     private :
