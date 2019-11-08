@@ -17,6 +17,7 @@ namespace tysoc {
     engine::CMat4 fromTMat4( const TMat4& mat );
     engine::CMat4 fromTMat3( const TMat3& mat );
     engine::CVec3 fromTVec3( const TVec3& vec );
+    engine::CVec4 fromTVec4( const TVec4& vec );
 
     engine::CIRenderable* createRenderable( const eShapeType& type,
                                             const TVec3& size,

@@ -254,6 +254,38 @@ namespace tysoc {
                                               fromTVec3( color ) );
     }
 
+    void TGLVisualizer::_drawSolidCylinderInternalX( float radius, float height, const TMat4& transform, const TVec4& color )
+    {
+        engine::CDebugDrawer::DrawSolidCylinder( radius, height, engine::eAxis::X, fromTMat4( transform ), fromTVec4( color ) );
+    }
+
+    void TGLVisualizer::_drawSolidCylinderInternalY( float radius, float height, const TMat4& transform, const TVec4& color )
+    {
+        engine::CDebugDrawer::DrawSolidCylinder( radius, height, engine::eAxis::Y, fromTMat4( transform ), fromTVec4( color ) );
+    }
+
+    void TGLVisualizer::_drawSolidCylinderInternalZ( float radius, float height, const TMat4& transform, const TVec4& color )
+    {
+        engine::CDebugDrawer::DrawSolidCylinder( radius, height, engine::eAxis::Z, fromTMat4( transform ), fromTVec4( color ) );
+    }
+
+    void TGLVisualizer::_drawSolidArrowInternalX( float length, const TMat4& transform, const TVec4& color)
+    {
+        engine::CDebugDrawer::DrawSolidArrow( length, engine::eAxis::X, fromTMat4( transform ), fromTVec4( color ) );
+    }
+
+
+    void TGLVisualizer::_drawSolidArrowInternalY( float length, const TMat4& transform, const TVec4& color)
+    {
+        engine::CDebugDrawer::DrawSolidArrow( length, engine::eAxis::Y, fromTMat4( transform ), fromTVec4( color ) );
+    }
+
+
+    void TGLVisualizer::_drawSolidArrowInternalZ( float length, const TMat4& transform, const TVec4& color)
+    {
+        engine::CDebugDrawer::DrawSolidArrow( length, engine::eAxis::Z, fromTMat4( transform ), fromTVec4( color ) );
+    }
+
     TIVizCamera* TGLVisualizer::_createCameraInternal( const std::string& name,
                                                            const std::string& type,
                                                            const TVec3& pos,

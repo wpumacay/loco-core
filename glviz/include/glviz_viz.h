@@ -39,6 +39,12 @@ namespace tysoc {
         void _drawLineInternal( const TVec3& start, const TVec3& end, const TVec3& color ) override;
         void _drawAABBInternal( const TVec3& aabbMin, const TVec3& aabbMax, const TMat4& aabbWorldTransform, const TVec3& color ) override;
         void _drawCameraInternal( const TMat4& cameraTransform, const TVec3& color ) override;
+        void _drawSolidCylinderInternalX( float radius, float height, const TMat4& transform, const TVec4& color ) override;
+        void _drawSolidCylinderInternalY( float radius, float height, const TMat4& transform, const TVec4& color ) override;
+        void _drawSolidCylinderInternalZ( float radius, float height, const TMat4& transform, const TVec4& color ) override;
+        void _drawSolidArrowInternalX( float length, const TMat4& transform, const TVec4& color) override;
+        void _drawSolidArrowInternalY( float length, const TMat4& transform, const TVec4& color) override;
+        void _drawSolidArrowInternalZ( float length, const TMat4& transform, const TVec4& color) override;
 
         int _remapKeyInternal( int keyCode ) override;
         bool _isKeyDownInternal( int keyCode ) override;

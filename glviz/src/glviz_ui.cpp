@@ -287,8 +287,6 @@ namespace tysoc
                                                                     mjcf::stripMjcPrefix( "sensor", _kinSensor->name, agent->name() ),
                                                                     agent->name() );
                     auto _kinJointSensor = dynamic_cast< TKinTreeJointSensor* >( _kinSensor );
-                    ImGui::Text( "Joint-angle   : %.3f", _kinJointSensor->theta );
-                    ImGui::Text( "Joint-speed   : %.3f", _kinJointSensor->thetadot );
 
                     static std::unordered_map< std::string, std::array< float, VIZ_PLOT_BUFFER_SIZE > > s_theta_vals;
                     static std::unordered_map< std::string, std::array< float, VIZ_PLOT_BUFFER_SIZE > > s_thetadot_vals;
@@ -319,11 +317,15 @@ namespace tysoc
                 }
                 else if ( _kinSensor->data.type == eSensorType::PROP_BODY )
                 {
+                    auto _bodyNameStripped = mjcf::stripMjcPrefix( "body",
+                                                                    mjcf::stripMjcPrefix( "sensor", _kinSensor->name, agent->name() ),
+                                                                    agent->name() );
                     auto _kinBodySensor = dynamic_cast< TKinTreeBodySensor* >( _kinSensor );
-                    ImGui::Text( "Body-linvel   : %s", TVec3::toString( _kinBodySensor->linVelocity ).c_str() );
-                    ImGui::Text( "Body-linacc   : %s", TVec3::toString( _kinBodySensor->linAcceleration ).c_str() );
-                    ImGui::Text( "Body-comforce : %s", TVec3::toString( _kinBodySensor->comForce ).c_str() );
-                    ImGui::Text( "Body-comtorque: %s", TVec3::toString( _kinBodySensor->comTorque ).c_str() );
+
+                    ImGui::Text( ( "body-linvel(" + _bodyNameStripped + ")    : %s" ).c_str(), TVec3::toString( _kinBodySensor->linVelocity ).c_str() );
+                    ImGui::Text( ( "body-linacc(" + _bodyNameStripped + ")    : %s" ).c_str(), TVec3::toString( _kinBodySensor->linAcceleration ).c_str() );
+                    ImGui::Text( ( "body-comforce(" + _bodyNameStripped + ")  : %s" ).c_str(), TVec3::toString( _kinBodySensor->comForce ).c_str() );
+                    ImGui::Text( ( "body-comtorque(" + _bodyNameStripped + ") : %s" ).c_str(), TVec3::toString( _kinBodySensor->comTorque ).c_str() );
                 }
             }
 

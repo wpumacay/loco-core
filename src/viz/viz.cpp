@@ -121,6 +121,36 @@ namespace tysoc {
         _drawCameraInternal( cameraTransform, color );
     }
 
+    void TIVisualizer::drawSolidCylinderX( float radius, float height, const TMat4& transform, const TVec4& color )
+    {
+        _drawSolidCylinderInternalX( radius, height, transform, color );
+    }
+
+    void TIVisualizer::drawSolidCylinderY( float radius, float height, const TMat4& transform, const TVec4& color )
+    {
+        _drawSolidCylinderInternalY( radius, height, transform, color );
+    }
+
+    void TIVisualizer::drawSolidCylinderZ( float radius, float height, const TMat4& transform, const TVec4& color )
+    {
+        _drawSolidCylinderInternalZ( radius, height, transform, color );
+    }
+
+    void TIVisualizer::drawSolidArrowX( float length, const TMat4& transform, const TVec4& color)
+    {
+        _drawSolidArrowInternalX( length, transform, color );
+    }
+
+    void TIVisualizer::drawSolidArrowY( float length, const TMat4& transform, const TVec4& color)
+    {
+        _drawSolidArrowInternalY( length, transform, color );
+    }
+
+    void TIVisualizer::drawSolidArrowZ( float length, const TMat4& transform, const TVec4& color)
+    {
+        _drawSolidArrowInternalZ( length, transform, color );
+    }
+
     void TIVisualizer::addCamera( const std::string& name, 
                                   const std::string& type,
                                   const TVec3& pos,

@@ -74,6 +74,12 @@ namespace tysoc {
         void drawLine( const TVec3& start, const TVec3& end, const TVec3& color );
         void drawAABB( const TVec3& aabbMin, const TVec3& aabbMax, const TMat4& aabbWorldTransform, const TVec3& color );
         void drawCamera( const TMat4& cameraTransform, const TVec3& color );
+        void drawSolidCylinderX( float radius, float height, const TMat4& transform, const TVec4& color );
+        void drawSolidCylinderY( float radius, float height, const TMat4& transform, const TVec4& color );
+        void drawSolidCylinderZ( float radius, float height, const TMat4& transform, const TVec4& color );
+        void drawSolidArrowX( float length, const TMat4& transform, const TVec4& color);
+        void drawSolidArrowY( float length, const TMat4& transform, const TVec4& color);
+        void drawSolidArrowZ( float length, const TMat4& transform, const TVec4& color);
 
         bool isKeyDown( int keyCode );
         bool checkSingleKeyPress( int keyCode );
@@ -101,6 +107,12 @@ namespace tysoc {
         virtual void _drawLineInternal( const TVec3& start, const TVec3& end, const TVec3& color ) = 0;
         virtual void _drawAABBInternal( const TVec3& aabbMin, const TVec3& aabbMax, const TMat4& aabbWorldTransform, const TVec3& color ) = 0;
         virtual void _drawCameraInternal( const TMat4& cameraTransform, const TVec3& color ) = 0;
+        virtual void _drawSolidCylinderInternalX( float radius, float height, const TMat4& transform, const TVec4& color ) = 0;
+        virtual void _drawSolidCylinderInternalY( float radius, float height, const TMat4& transform, const TVec4& color ) = 0;
+        virtual void _drawSolidCylinderInternalZ( float radius, float height, const TMat4& transform, const TVec4& color ) = 0;
+        virtual void _drawSolidArrowInternalX( float length, const TMat4& transform, const TVec4& color) = 0;
+        virtual void _drawSolidArrowInternalY( float length, const TMat4& transform, const TVec4& color) = 0;
+        virtual void _drawSolidArrowInternalZ( float length, const TMat4& transform, const TVec4& color) = 0;
 
         virtual int _remapKeyInternal( int keyCode ) = 0;
         virtual bool _isKeyDownInternal( int keyCode ) = 0;

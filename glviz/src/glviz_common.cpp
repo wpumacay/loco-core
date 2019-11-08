@@ -49,6 +49,11 @@ namespace tysoc {
         return { vec.x, vec.y, vec.z };
     }
 
+    engine::CVec4 fromTVec4( const TVec4& vec )
+    {
+        return { vec.x, vec.y, vec.z, vec.w };
+    }
+
     engine::CIRenderable* createRenderable( const eShapeType& type,
                                             const TVec3& size,
                                             const std::string& filename )
