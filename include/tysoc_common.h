@@ -18,6 +18,8 @@
 
 typedef float TScalar;
 
+#define TYSOC_DEMO // used to activate some functionality used for demos
+
 #define TRANDOM( a, b ) ( a + ( b - a ) * ( rand() / ( float )RAND_MAX ) )
 
 #define BUFF_MAX_SIZE 10

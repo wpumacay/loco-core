@@ -150,9 +150,7 @@ namespace tysoc {
     void TBlockyTerrainGenerator::_initializeSection()
     {
         if ( m_params.usesBase )
-        {
             _createBase();
-        }
 
         // reload starting X position
         m_currentSpawnX = m_startX;
@@ -160,7 +158,9 @@ namespace tysoc {
         // create some sections in front
         for ( size_t i = 0; i < PROCEDURAL_TERRAIN_POOL_SIZE; i++ )
         {
-            _createBlock();
+            auto _dx = m_generatorInfo->trackingpoint.x - m_lastSpawnX;
+            if ( _dx > 0 )
+                _createBlock();
         }
     }
 
@@ -175,11 +175,8 @@ namespace tysoc {
         }
 
         auto _dx = ( m_generatorInfo->trackingpoint.x - m_lastSpawnX );
-        if ( _dx > 0 )
-        {
-            // create the section with this new position
+        if ( _dx > 0 ) 
             _createBlock();
-        }
     }
 
     float TBlockyTerrainGenerator::_computeProfile1D( float x, float y )

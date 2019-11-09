@@ -10,11 +10,12 @@ namespace tysoc {
         m_glApplication  = nullptr;
         m_guiScenarioLayer = nullptr;
 
-        // @demo: enable sensor readings by default
+    #ifdef TYSOC_DEMO
         m_useSensorReadings = true;
         m_useSensorReadingRgb = true;
         m_useSensorReadingDepth = true;
         m_useSensorReadingSemantic = true;
+    #endif
     }
 
     TGLVisualizer::~TGLVisualizer()
@@ -349,8 +350,8 @@ namespace tysoc {
     }
 
     TIVizLight* TGLVisualizer::_createLightInternal( const std::string& name,
-                                                         const std::string& type,
-                                                         const TVec3& pos )
+                                                     const std::string& type,
+                                                     const TVec3& pos )
     {
         // @TODO|@WIP
         return nullptr;
@@ -365,7 +366,20 @@ namespace tysoc {
         _windowProperties.clearColor = { 0.6f, 0.659f, 0.690f, 1.0f };
         _windowProperties.resizable = true;
 
-        m_glApplication = std::unique_ptr< engine::CApplication >( new engine::CApplication( _windowProperties ) );
+        auto _imguiProperties = engine::CImGuiProps();
+    #ifdef TYSOC_DEMO
+        _imguiProperties.useDockingSpace = true;
+        _imguiProperties.useDockingSpacePassthrough = true;
+        _imguiProperties.useAutosaveLayout = false;
+        _imguiProperties.fileLayout = std::string( TYSOC_PATH_RESOURCES ) + "app_gui_layout.ini";
+    #else
+        _imguiProperties.useDockingSpace = false;
+        _imguiProperties.useDockingSpacePassthrough = false;
+        _imguiProperties.useAutosaveLayout = true;
+        _imguiProperties.fileLayout = "";
+    #endif
+
+        m_glApplication = std::unique_ptr< engine::CApplication >( new engine::CApplication( _windowProperties, _imguiProperties ) );
         m_glScene = m_glApplication->scene();
 
         /* create some lights for the scene ***********************************************************/
@@ -435,6 +449,7 @@ namespace tysoc {
         /**********************************************************************************************/
 
         m_glApplication->renderOptions().useSkybox = true;
+        m_glApplication->renderOptions().useBlending = true;
         m_glApplication->renderOptions().useShadowMapping = true;
         m_glApplication->renderOptions().pcfCount = 0;
         m_glApplication->renderOptions().shadowMapRangeConfig.type = engine::eShadowRangeType::FIXED_USER;
