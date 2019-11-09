@@ -24,7 +24,7 @@ git clone https://github.com/gabime/spdlog.git ext/spdlog
 
 # rendering engine for visualizer
 echo "==> Cloning wpumacay/cat1 @ github - master branch"
-git clone --branch=v0.2.0 https://github.com/wpumacay/cat1.git ext/cat1
+git clone https://github.com/wpumacay/cat1.git ext/cat1
 
 # used for generating pytysoc|python bindings
 echo "==> Cloning pybind/pybind11 @ github - master branch"

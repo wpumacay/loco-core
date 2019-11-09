@@ -94,7 +94,6 @@ namespace pytysoc
     struct PyBodyData : public tysoc::TBodyData
     {
         void setDynType( const tysoc::eDynamicsType& dyntype );
-        void setHasInertia( const bool& hasInertia );
         void setMass( const TScalar& mass );
         void setInertia( py::array_t<TScalar>& inertia );
         void setInertialFrame( py::array_t<TScalar>& inertialFrame );
@@ -179,7 +178,6 @@ namespace pytysoc
     py::class_<pytysoc::PyBodyData>(m, "PyBodyData") \
             .def( py::init<>() ) \
             .def_property( "dyntype", &pytysoc::PyBodyData::getDynType, &pytysoc::PyBodyData::setDynType ) \
-            .def_property( "hasInertia", &pytysoc::PyBodyData::getHasInertia, &pytysoc::PyBodyData::setHasInertia ) \
             .def_property( "mass", &pytysoc::PyBodyData::getMass, &pytysoc::PyBodyData::setMass ) \
             .def_property( "inertia", &pytysoc::PyBodyData::getInertia, &pytysoc::PyBodyData::setInertia ) \
             .def_property( "inertialFrame", &pytysoc::PyBodyData::getInertialFrame, &pytysoc::PyBodyData::setInertialFrame ) \

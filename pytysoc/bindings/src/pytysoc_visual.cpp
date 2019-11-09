@@ -216,8 +216,7 @@ namespace pytysoc
 
         _data.type = m_visualPtr->data().type;
         _data.size = m_visualPtr->data().size;
-        _data.localPos = m_visualPtr->data().localPos;
-        _data.localRot = m_visualPtr->data().localRot;
+        _data.localTransform = m_visualPtr->data().localTransform;
         _data.filename = m_visualPtr->data().filename;
         _data.ambient = m_visualPtr->data().ambient;
         _data.diffuse = m_visualPtr->data().diffuse;

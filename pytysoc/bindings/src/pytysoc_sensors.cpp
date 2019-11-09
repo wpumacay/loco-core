@@ -26,7 +26,7 @@ namespace pytysoc
     std::string PySensor::type()
     {
         if ( m_sensorPtr )
-            return m_sensorPtr->type();
+            return tysoc::toString( m_sensorPtr->type() );
 
         return "undefined";
     }
@@ -36,15 +36,15 @@ namespace pytysoc
         if ( !m_sensorPtr )
             return MeasurementDict();
 
-        auto _type = m_sensorPtr->type();
-        auto _measurement = m_sensorPtr->getSensorMeasurement();
-
-        if ( _type == tysoc::SENSOR_TYPE_INTRINSICS )
-            return _packIntrinsics( (tysoc::TAgentIntrinsicsSensorMeasurement*) _measurement );
-        // else if ( _type == tysoc::SENSOR_TYPE_EXTRINSICS_TERRAIN )
-        //     return _packExtrinsicsTerrain( (tysoc::TSectionsTerrainSensorMeasurement*) _measurement );
-
-        std::cout << "WARNING> sensor type: " << _type << " is not supported" << std::endl;
+////         auto _type = m_sensorPtr->type();
+////         auto _measurement = m_sensorPtr->getSensorMeasurement();
+//// 
+////         if ( _type == tysoc::SENSOR_TYPE_INTRINSICS )
+////             return _packIntrinsics( (tysoc::TAgentIntrinsicsSensorMeasurement*) _measurement );
+////         // else if ( _type == tysoc::SENSOR_TYPE_EXTRINSICS_TERRAIN )
+////         //     return _packExtrinsicsTerrain( (tysoc::TSectionsTerrainSensorMeasurement*) _measurement );
+//// 
+////         std::cout << "WARNING> sensor type: " << _type << " is not supported" << std::endl;
 
         return MeasurementDict();
     }
@@ -53,11 +53,11 @@ namespace pytysoc
     {
         MeasurementDict _result;
 
-        _result["jointspos"] = vecArrayToNumpy( measurementPtr->thetas );
-        _result["jointsvel"] = vecArrayToNumpy( measurementPtr->thetadots );
-        _result["bodiesrelpos"] = vecArrayToNumpy( measurementPtr->bodiesRelativePosition );
-        _result["bodieslinvel"] = vecArrayVec3ToNumpy( measurementPtr->bodiesLinVelocities );
-        _result["bodieslinacc"] = vecArrayVec3ToNumpy( measurementPtr->bodiesLinAccelerations );
+////         _result["jointspos"] = vecArrayToNumpy( measurementPtr->thetas );
+////         _result["jointsvel"] = vecArrayToNumpy( measurementPtr->thetadots );
+////         _result["bodiesrelpos"] = vecArrayToNumpy( measurementPtr->bodiesRelativePosition );
+////         _result["bodieslinvel"] = vecArrayVec3ToNumpy( measurementPtr->bodiesLinVelocities );
+////         _result["bodieslinacc"] = vecArrayVec3ToNumpy( measurementPtr->bodiesLinAccelerations );
 
         return _result;
     }
@@ -80,16 +80,16 @@ namespace pytysoc
                                             PyCoreAgent* pyCoreAgentPtr )
         : PySensor( name )
     {
-        if ( pyCoreAgentPtr->ptr() )
-        {
-            m_sensorPtr = new tysoc::TAgentIntrinsicsSensor( name,
-                                                                     pyCoreAgentPtr->ptr() );
-        }
-        else
-        {
-            std::cout << "WARNING> Sensor wrapper for agent-intrinsic sensor" 
-                      << "has been given an agent wrapper with no kintree-agent object" << std::endl;
-        }
+////         if ( pyCoreAgentPtr->ptr() )
+////         {
+////             m_sensorPtr = new tysoc::TAgentIntrinsicsSensor( name,
+////                                                                      pyCoreAgentPtr->ptr() );
+////         }
+////         else
+////         {
+////             std::cout << "WARNING> Sensor wrapper for agent-intrinsic sensor" 
+////                       << "has been given an agent wrapper with no kintree-agent object" << std::endl;
+////         }
     }
 
 }

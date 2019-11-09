@@ -18,12 +18,11 @@ def initialize() :
                                      PATHS.TEMPLATES_RLSIM_DIR )
 
 def createRuntime( physicsBackend = '', 
-                   renderingBackend = '',
-                   workingDir = PATHS.WORKING_DIR ) :
+                   renderingBackend = '' ) :
     print( 'LOG> renderingBackend: ', renderingBackend )
     print( 'LOG> physicsBackend', physicsBackend )
     ## ipdb.set_trace()
-    return tysoc_bindings.PyRuntime( physicsBackend, renderingBackend, workingDir )
+    return tysoc_bindings.PyRuntime( physicsBackend, renderingBackend )
 
 def createAgent( agentName = 'agent_0', 
                  modelName = 'humanoid', 

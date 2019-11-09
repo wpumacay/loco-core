@@ -82,12 +82,12 @@ namespace pytysoc
 
     void PyShapeData::setLocalPos( py::array_t<TScalar>& localPos )
     {
-        this->localPos = numpyToVec3( localPos );
+        this->localTransform.setPosition( numpyToVec3( localPos ) );
     }
 
     void PyShapeData::setLocalRot( py::array_t<TScalar>& localRot )
     {
-        this->localRot = tysoc::TMat3::fromEuler( numpyToVec3( localRot ) );
+        this->localTransform.setRotation( numpyToVec3( localRot ) );
     }
 
     void PyShapeData::setFilename( const std::string& filename )
@@ -112,12 +112,12 @@ namespace pytysoc
 
     py::array_t<TScalar> PyShapeData::getLocalPos()
     {
-        return vec3ToNumpy( this->localPos );
+        return vec3ToNumpy( this->localTransform.getPosition() );
     }
 
     py::array_t<TScalar> PyShapeData::getLocalRot()
     {
-        return vec3ToNumpy( tysoc::TMat3::toEuler( this->localRot ) );
+        return vec3ToNumpy( this->localTransform.getRotEuler() );
     }
 
     std::string PyShapeData::getFilename()
@@ -135,8 +135,7 @@ namespace pytysoc
         PyShapeData _pydata;
         _pydata.type = data.type;
         _pydata.size = data.size;
-        _pydata.localPos = data.localPos;
-        _pydata.localRot = data.localRot;
+        _pydata.localTransform = data.localTransform;
         _pydata.filename = data.filename;
 
         return _pydata;
@@ -147,8 +146,7 @@ namespace pytysoc
         tysoc::TShapeData _data;
         _data.type = pydata.type;
         _data.size = pydata.size;
-        _data.localPos = pydata.localPos;
-        _data.localRot = pydata.localRot;
+        _data.localTransform = pydata.localTransform;
         _data.filename = pydata.filename;
 
         return _data;
@@ -172,12 +170,12 @@ namespace pytysoc
 
     void PyCollisionData::setLocalPos( py::array_t<TScalar>& localPos )
     {
-        this->localPos = numpyToVec3( localPos );
+        this->localTransform.setPosition( numpyToVec3( localPos ) );
     }
 
     void PyCollisionData::setLocalRot( py::array_t<TScalar>& localRot )
     {
-        this->localRot = tysoc::TMat3::fromEuler( numpyToVec3( localRot ) );
+        this->localTransform.setRotation( numpyToVec3( localRot ) );
     }
 
     void PyCollisionData::setFilename( const std::string& filename )
@@ -202,12 +200,12 @@ namespace pytysoc
 
     py::array_t<TScalar> PyCollisionData::getLocalPos()
     {
-        return vec3ToNumpy( this->localPos );
+        return vec3ToNumpy( this->localTransform.getPosition() );
     }
 
     py::array_t<TScalar> PyCollisionData::getLocalRot()
     {
-        return vec3ToNumpy( tysoc::TMat3::toEuler( this->localRot ) );
+        return vec3ToNumpy( this->localTransform.getRotEuler() );
     }
 
     std::string PyCollisionData::getFilename()
@@ -225,8 +223,7 @@ namespace pytysoc
         PyCollisionData _pydata;
         _pydata.type = data.type;
         _pydata.size = data.size;
-        _pydata.localPos = data.localPos;
-        _pydata.localRot = data.localRot;
+        _pydata.localTransform = data.localTransform;
         _pydata.filename = data.filename;
         _pydata.hdata = data.hdata;
         _pydata.collisionGroup = data.collisionGroup;
@@ -242,8 +239,7 @@ namespace pytysoc
         tysoc::TCollisionData _data;
         _data.type = pydata.type;
         _data.size = pydata.size;
-        _data.localPos = pydata.localPos;
-        _data.localRot = pydata.localRot;
+        _data.localTransform = pydata.localTransform;
         _data.filename = pydata.filename;
         _data.collisionGroup = pydata.collisionGroup;
         _data.collisionMask = pydata.collisionMask;
@@ -272,12 +268,12 @@ namespace pytysoc
 
     void PyVisualData::setLocalPos( py::array_t<TScalar>& localPos )
     {
-        this->localPos = numpyToVec3( localPos );
+        this->localTransform.setPosition( numpyToVec3( localPos ) );
     }
 
     void PyVisualData::setLocalRot( py::array_t<TScalar>& localRot )
     {
-        this->localRot = tysoc::TMat3::fromEuler( numpyToVec3( localRot ) );
+        this->localTransform.setRotation( numpyToVec3( localRot ) );
     }
 
     void PyVisualData::setFilename( const std::string& filename )
@@ -322,12 +318,12 @@ namespace pytysoc
 
     py::array_t<TScalar> PyVisualData::getLocalPos()
     {
-        return vec3ToNumpy( this->localPos );
+        return vec3ToNumpy( this->localTransform.getPosition() );
     }
 
     py::array_t<TScalar> PyVisualData::getLocalRot()
     {
-        return vec3ToNumpy( tysoc::TMat3::toEuler( this->localRot ) );
+        return vec3ToNumpy( this->localTransform.getRotEuler() );
     }
 
     std::string PyVisualData::getFilename()
@@ -365,8 +361,7 @@ namespace pytysoc
         PyVisualData _pydata;
         _pydata.type = data.type;
         _pydata.size = data.size;
-        _pydata.localPos = data.localPos;
-        _pydata.localRot = data.localRot;
+        _pydata.localTransform = data.localTransform;
         _pydata.filename = data.filename;
         _pydata.hdata = data.hdata;
         _pydata.ambient = data.ambient;
@@ -382,8 +377,7 @@ namespace pytysoc
         tysoc::TVisualData _data;
         _data.type = pydata.type;
         _data.size = pydata.size;
-        _data.localPos = pydata.localPos;
-        _data.localRot = pydata.localRot;
+        _data.localTransform = pydata.localTransform;
         _data.filename = pydata.filename;
         _data.hdata = pydata.hdata;
         _data.ambient = pydata.ambient;
@@ -405,14 +399,9 @@ namespace pytysoc
         this->dyntype = dyntype;
     }
 
-    void PyBodyData::setHasInertia( const bool& hasInertia )
-    {
-        this->hasInertia = hasInertia;
-    }
-
     void PyBodyData::setMass( const TScalar& mass )
     {
-        this->mass = mass;
+        this->inertialData.mass = mass;
     }
 
     void PyBodyData::setInertia( py::array_t<TScalar>& inertia )
@@ -426,13 +415,17 @@ namespace pytysoc
             return;
         }
 
-        for ( size_t i = 0; i < 6; i++ )
-            this->inertia[i] = _stlVecInertia[i];
+        this->inertialData.ixx = _stlVecInertia[0];
+        this->inertialData.iyy = _stlVecInertia[1];
+        this->inertialData.izz = _stlVecInertia[2];
+        this->inertialData.ixy = _stlVecInertia[3];
+        this->inertialData.ixz = _stlVecInertia[4];
+        this->inertialData.iyz = _stlVecInertia[5];
     }
 
     void PyBodyData::setInertialFrame( py::array_t<TScalar>& inertialFrame )
     {
-        this->inertialFrame = numpyToMat4( inertialFrame );
+        this->inertialData.localTransform = numpyToMat4( inertialFrame );
     }
 
     tysoc::eDynamicsType PyBodyData::getDynType()
@@ -440,28 +433,23 @@ namespace pytysoc
         return this->dyntype;
     }
 
-    bool PyBodyData::getHasInertia()
-    {
-        return this->hasInertia;
-    }
-
     TScalar PyBodyData::getMass()
     {
-        return this->mass;
+        return this->inertialData.mass;
     }
 
     py::array_t<TScalar> PyBodyData::getInertia()
     {
-        std::vector<TScalar> _stlVecInertia;
-        for ( size_t i = 0; i < 6; i++ )
-            _stlVecInertia.push_back( this->inertia[i] );
+        std::vector<TScalar> _stlVecInertia = { this->inertialData.ixx, this->inertialData.iyy,
+                                                this->inertialData.izz, this->inertialData.ixy,
+                                                this->inertialData.ixz, this->inertialData.iyz };
 
         return vecArrayToNumpy( _stlVecInertia );
     }
 
     py::array_t<TScalar> PyBodyData::getInertialFrame()
     {
-        return mat4ToNumpy( this->inertialFrame );
+        return mat4ToNumpy( this->inertialData.localTransform );
     }
 
     void PyBodyData::addCollision( PyCollisionData pyCollision )
@@ -496,10 +484,7 @@ namespace pytysoc
     {
         PyBodyData _pydata;
         _pydata.dyntype = data.dyntype;
-        _pydata.hasInertia = data.hasInertia;
-        _pydata.mass = data.mass;
-        _pydata.inertia = data.inertia;
-        _pydata.inertialFrame = data.inertialFrame;
+        _pydata.inertialData = data.inertialData;
         _pydata.collisions = data.collisions;
         _pydata.visuals = data.visuals;
 
@@ -510,10 +495,7 @@ namespace pytysoc
     {
         tysoc::TBodyData _data;
         _data.dyntype = pydata.dyntype;
-        _data.hasInertia = pydata.hasInertia;
-        _data.mass = pydata.mass;
-        _data.inertia = pydata.inertia;
-        _data.inertialFrame = pydata.inertialFrame;
+        _data.inertialData = pydata.inertialData;
         _data.collisions = pydata.collisions;
         _data.visuals = pydata.visuals;
 

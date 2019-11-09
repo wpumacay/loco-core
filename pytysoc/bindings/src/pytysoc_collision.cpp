@@ -181,8 +181,7 @@ namespace pytysoc
 
         _data.type = m_collisionPtr->data().type;
         _data.size = m_collisionPtr->data().size;
-        _data.localPos = m_collisionPtr->data().localPos;
-        _data.localRot = m_collisionPtr->data().localRot;
+        _data.localTransform = m_collisionPtr->data().localTransform;
         _data.filename = m_collisionPtr->data().filename;
 
         return _data;

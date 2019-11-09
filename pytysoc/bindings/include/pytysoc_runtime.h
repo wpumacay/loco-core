@@ -67,6 +67,6 @@ namespace pytysoc
 
 #define PYTYSOC_RUNTIME_BINDINGS(m) \
     py::class_<pytysoc::PyRuntime>( m, "PyRuntime" ) \
-        .def( py::init<const std::string&, const std::string&, const std::string& >() ) \
+        .def( py::init<const std::string&, const std::string& >() ) \
         .def( "createSimulation", &pytysoc::PyRuntime::createSimulation, py::return_value_policy::reference ) \
         .def( "createVisualizer", &pytysoc::PyRuntime::createVisualizer, py::return_value_policy::reference );

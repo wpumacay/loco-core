@@ -33,8 +33,7 @@ _scenario.addTerrainGen( _terrainGen )
 # physics backend and initializes some internals (mjData* and mjModel) which ...
 # are needed for the visualizer as well :() . Will check later to initialze this ...
 # structures if no simulation is given, which should work Ok.
-_runtime = pytysoc.createRuntime( renderingBackend = pytysoc.BACKENDS.RENDERING.GLVIZ,
-                                  workingDir = pytysoc.PATHS.WORKING_DIR )
+_runtime = pytysoc.createRuntime( renderingBackend = pytysoc.BACKENDS.RENDERING.GLVIZ )
 
 _visualizer = _runtime.createVisualizer( _scenario )
 _visualizer.initialize()

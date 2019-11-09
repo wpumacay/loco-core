@@ -29,8 +29,7 @@ _scenario.addAgent( _biped )
 # can choose between GLVIZ and MJCVIZ rendering backends, as long as MUJOCO is ...
 # enabled as physics backend (need some internals from mujoco to be intialized)
 _runtime = pytysoc.createRuntime( physicsBackend = pytysoc.BACKENDS.PHYSICS.MUJOCO,
-                                  renderingBackend = pytysoc.BACKENDS.RENDERING.GLVIZ,
-                                  workingDir = pytysoc.PATHS.WORKING_DIR )
+                                  renderingBackend = pytysoc.BACKENDS.RENDERING.GLVIZ )
 
 _simulation = _runtime.createSimulation( _scenario )
 _simulation.initialize()
