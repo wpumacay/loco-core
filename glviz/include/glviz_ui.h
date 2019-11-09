@@ -49,6 +49,7 @@ namespace tysoc
     private :
 
         void _menuGeneral();
+        void _menuDemo();
         void _menuScenario();
 
         void _submenuScenarioPrimitives();

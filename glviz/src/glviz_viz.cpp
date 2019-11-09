@@ -367,7 +367,7 @@ namespace tysoc {
         _windowProperties.resizable = true;
 
         auto _imguiProperties = engine::CImGuiProps();
-    #ifdef TYSOC_DEMO
+    #ifdef TYSOC_DEMO_NONE
         _imguiProperties.useDockingSpace = true;
         _imguiProperties.useDockingSpacePassthrough = true;
         _imguiProperties.useAutosaveLayout = false;

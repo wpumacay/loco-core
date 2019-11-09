@@ -29,6 +29,7 @@ namespace tysoc
     {
         m_wantsToCaptureMouse = false;
 
+        _menuDemo();
         _menuGeneral();
         _menuScenario();
 
@@ -42,6 +43,21 @@ namespace tysoc
             return m_wantsToCaptureMouse;
 
         return false;
+    }
+
+    void TGLScenarioUtilsLayer::_menuDemo()
+    {
+    #ifdef TYSOC_DEMO
+        ImGui::Begin( "Sim-Demo" );
+
+        ImGui::Checkbox( "Use camera sensors", &DEMO_OPTIONS.useDemoCameraSensors );
+        ImGui::Checkbox( "Use contact manager", &DEMO_OPTIONS.useDemoContactManager );
+        ImGui::Checkbox( "USe debug draws", &DEMO_OPTIONS.useDemoDebugDraws );
+
+        engine::CDebugDrawer::SetEnabled( DEMO_OPTIONS.useDemoDebugDraws );
+
+        ImGui::End();
+    #endif
     }
 
     void TGLScenarioUtilsLayer::_menuGeneral()
@@ -64,7 +80,7 @@ namespace tysoc
 
         ImGui::End();
 
-        if ( _useSensorReadings && _useSensorReadingRgb )
+        if ( _useSensorReadings && _useSensorReadingRgb && DEMO_OPTIONS.useDemoCameraSensors )
         {
             auto _fboRgb = m_visualizer->fboRgb();
             if ( _fboRgb )
@@ -80,7 +96,7 @@ namespace tysoc
             }
         }
 
-        if ( _useSensorReadings && _useSensorReadingDepth )
+        if ( _useSensorReadings && _useSensorReadingDepth && DEMO_OPTIONS.useDemoCameraSensors )
         {
             auto _fboDepth = m_visualizer->fboDepth();
             if ( _fboDepth )
@@ -96,7 +112,7 @@ namespace tysoc
             }
         }
 
-        if ( _useSensorReadings && _useSensorReadingSemantic )
+        if ( _useSensorReadings && _useSensorReadingSemantic && DEMO_OPTIONS.useDemoCameraSensors )
         {
             auto _fboSemantic = m_visualizer->fboSemantic();
             if ( _fboSemantic )

@@ -20,6 +20,21 @@ typedef float TScalar;
 
 #define TYSOC_DEMO // used to activate some functionality used for demos
 
+#ifdef TYSOC_DEMO
+
+struct TMjcDemoOptions
+{
+    bool useDemoCameraSensors;
+    bool useDemoContactManager;
+    bool useDemoDebugDraws;
+
+    TMjcDemoOptions();
+};
+
+extern TMjcDemoOptions DEMO_OPTIONS;
+
+#endif
+
 #define TRANDOM( a, b ) ( a + ( b - a ) * ( rand() / ( float )RAND_MAX ) )
 
 #define BUFF_MAX_SIZE 10
