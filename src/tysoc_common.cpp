@@ -7,6 +7,7 @@ TMjcDemoOptions::TMjcDemoOptions()
 {
     useDemoCameraSensors = true;
     useDemoContactManager = true;
+    useDemoDebugDraws = true;
 }
 
 TMjcDemoOptions DEMO_OPTIONS = TMjcDemoOptions();

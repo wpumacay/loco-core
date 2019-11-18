@@ -203,6 +203,9 @@ namespace tysoc
         ImGui::TextColored( { 0.2f, 0.4f, 0.8f, 1.0f }, "Summary: " );
         ImGui::Text( _infoSummary.c_str() );
 
+        //// bool _wireframe = agent->
+        //// ImGui::Checkbox( "Wireframe", agent-> )
+
         _submenuTreeAgentQpos( agent, refresh );
         _submenuTreeAgentQvel( agent, refresh );
         _submenuTreeAgentActuators( agent, refresh );

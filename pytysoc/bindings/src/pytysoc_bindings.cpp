@@ -50,6 +50,7 @@ PYBIND11_MODULE( tysoc_bindings, m )
     PYTYSOC_SCENARIO_BINDINGS( m )
     // visualizer bindings
     PYTYSOC_VISUALIZER_BINDINGS( m )
+    PYTYSOC_VISUALIZER_KEYCODES( m )
     // simulation bindings
     PYTYSOC_SIMULATION_BINDINGS( m )
     // runtime bindings
