@@ -102,6 +102,14 @@ namespace tysoc {
         int     collisionMask;
         TVec3   friction;
         TScalar density;
+
+        TCollisionData()
+        {
+            collisionGroup = 1;
+            collisionMask = 1;
+            friction = { 1., 0.005, 0.0001 };
+            density = TYSOC_DEFAULT_DENSITY;
+        }
     };
 
     struct TVisualData : public TShapeData
@@ -140,6 +148,17 @@ namespace tysoc {
         TScalar     iyz;
         TScalar     izz;
         TMat4       localTransform;     // relative transform w.r.t. owner (body) of the inertial frame
+
+        TInertialData()
+        {
+            mass = 0.0f;
+            ixx = 0.0f;
+            ixy = 0.0f;
+            ixz = 0.0f;
+            iyy = 0.0f;
+            iyz = 0.0f;
+            izz = 0.0f;
+        }
     };
 
     struct TBodyData
@@ -149,6 +168,11 @@ namespace tysoc {
         TMat4                           localTransformZero; // relative transform at zero-configuration of this body w.r.t. parent body
         std::vector< TCollisionData >   collisions;     // collisions owned by this body
         std::vector< TVisualData >      visuals;        // visuals owned by this body
+
+        TBodyData()
+        {
+            dyntype = eDynamicsType::STATIC;
+        }
     };
 
     TScalar computeVolumeFromShape( const TShapeData& shapeData );

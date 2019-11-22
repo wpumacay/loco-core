@@ -665,6 +665,26 @@ namespace tysoc
         return _res;
     }
 
+    TVec3 operator+ ( const TVec3& vec1, const TVec3& vec2 )
+    {
+        return { vec1.x + vec2.x, vec1.y + vec2.y, vec1.z + vec2.z };
+    }
+
+    TVec3 operator- ( const TVec3& vec1, const TVec3& vec2 )
+    {
+        return { vec1.x - vec2.x, vec1.y - vec2.y, vec1.z - vec2.z };
+    }
+
+    TVec3 operator* ( const TVec3& vec1, const TVec3& vec2 )
+    {
+        return { vec1.x * vec2.x, vec1.y * vec2.y, vec1.z * vec2.z };
+    }
+
+    TVec3 operator/ ( const TVec3& vec1, const TVec3& vec2 )
+    {
+        return { vec1.x / vec2.x, vec1.y / vec2.y, vec1.z / vec2.z };
+    }
+
     TVec3 operator* ( const TMat3& mat, const TVec3& vec )
     {
         TVec3 _res;
@@ -705,6 +725,16 @@ namespace tysoc
             return false;
 
         return true;
+    }
+
+    bool operator!= ( const TVec3& vec1, const TVec3& vec2 )
+    {
+        return !(vec1 == vec2);
+    }
+
+    bool operator!= ( const TVec4& vec1, const TVec4& vec2 )
+    {
+        return !(vec1 == vec2);
     }
 
     TScalar rad2degrees( const TScalar& rads )

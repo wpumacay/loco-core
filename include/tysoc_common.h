@@ -236,9 +236,16 @@ namespace tysoc
         static std::string toString( const TMat4& v );
     };
 
+    TVec3 operator+ ( const TVec3& vec1, const TVec3& vec2 ); // element-wise addition
+    TVec3 operator- ( const TVec3& vec1, const TVec3& vec2 ); // element-wise substraction
+    TVec3 operator* ( const TVec3& vec1, const TVec3& vec2 ); // element-wise product
+    TVec3 operator/ ( const TVec3& vec1, const TVec3& vec2 ); // element-wise division
+
     TVec3 operator* ( const TMat3& mat, const TVec3& vec );
     bool operator== ( const TVec3& vec1, const TVec3& vec2 );
     bool operator== ( const TVec4& vec1, const TVec4& vec2 );
+    bool operator!= ( const TVec3& vec1, const TVec3& vec2 );
+    bool operator!= ( const TVec4& vec1, const TVec4& vec2 );
 
     template< class T >
     struct TSize

@@ -39,13 +39,16 @@ namespace tysoc {
     bool TISimulation::initialize()
     {
         /* build all resources required before assembling them in the init-internal stage */
-        for ( auto _agentAdapter : m_agentWrappers )
-            _agentAdapter->build();
+        for ( auto _collisionAdapter : m_collisionAdapters )
+            _collisionAdapter->build();
 
         for ( auto _bodyAdapter : m_bodyAdapters )
             _bodyAdapter->build();
 
-        // initialize the simulation in a backend-specific way, by assembling and creating extra low-level resources
+        for ( auto _agentAdapter : m_agentWrappers )
+            _agentAdapter->build();
+
+        /* backend-specific initialization: assemble resources and create extra low-level resources */
         m_isRunning = _initializeInternal();
 
         return m_isRunning;
