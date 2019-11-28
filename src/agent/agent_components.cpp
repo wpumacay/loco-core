@@ -153,8 +153,7 @@ namespace tysoc {
         }
         else
         {
-            std::cout << "ERROR> Joint with name: " << name << " has not supported type: " 
-                      << tysoc::toString( type ) << std::endl;
+            TYSOC_CORE_ERROR( "Joint \"{0}\" has unsupported type \"{1}\"", name, tysoc::toString( type ) );
         }
     }
 

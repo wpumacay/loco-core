@@ -24,7 +24,7 @@ namespace tysoc {
 
     TSectionsTerrainSensor::~TSectionsTerrainSensor()
     {
-        TYSOC_LOG( "Destroying(SectionsTerrain) sensor: " + m_name );
+        TYSOC_CORE_TRACE( "Destroying(SectionsTerrain) sensor: ", m_name );
 
         m_terrainGenPtr = NULL;
         m_agentPtr = NULL;

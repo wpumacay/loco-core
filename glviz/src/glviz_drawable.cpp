@@ -198,9 +198,7 @@ namespace tysoc {
         }
         else if ( m_type == eShapeType::HFIELD )
         {
-            // not allowed, use changeElevationData instead
-            std::cout << "WARNING> tried changing the scale of the drawable for a hfield. Should "
-                      << "change the elevation data instead" << std::endl;
+            TYSOC_CORE_WARN( "Hfield shapes don't support changing the scale. Change the elevation data instead" );
         }
 
         if ( !m_renderablePtr )
@@ -213,17 +211,19 @@ namespace tysoc {
     {
         if ( m_data.type != eShapeType::HFIELD )
         {
-            std::cout << "WARNING> tried changing gldrawable's elevation data, even though "
-                      << "its not a hfield shape" << std::endl;
+            TYSOC_CORE_WARN( "Method changeElevationData expectes hfield shape, but {0} was given", tysoc::toString( m_data.type ) );
             return;
         }
 
         if( ( m_data.hdata.nWidthSamples * m_data.hdata.nDepthSamples ) != heightData.size() )
         {
-            std::cout << "WARNING> number of elements in internal and given elevation buffers does not match" << std::endl;
-            std::cout << "nx-samples    : " << m_data.hdata.nWidthSamples << std::endl;
-            std::cout << "ny-samples    : " << m_data.hdata.nDepthSamples << std::endl;
-            std::cout << "hdata.size()  : " << heightData.size() << std::endl;
+            TYSOC_CORE_WARN( "Number of elements in internal and given elevation buffers don't match.\n\r\
+                              nx-samples    : {0}\n\r\
+                              ny-samples    : {1}\n\r\
+                              hdata.size()  : {2}", 
+                              m_data.hdata.nWidthSamples, 
+                              m_data.hdata.nDepthSamples, 
+                              heightData.size() );
             return;
         }
 

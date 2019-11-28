@@ -12,6 +12,7 @@ namespace tysoc {
         _context.modelDataPtr = new mjcf::GenericElement();
         _context.filepath = modelDataPtr->filepath;
         _context.folderpath = modelDataPtr->folderpath;
+        _context.filename = modelDataPtr->filename;
 
         // create a copy of the model data with the names modified appropriately
         mjcf::deepCopy( _context.modelDataPtr, modelDataPtr, nullptr, agentPtr->name() );
@@ -29,35 +30,28 @@ namespace tysoc {
                                                             "worldbody" );
 
         if ( !_worldBodyElmPtr )
-        {
-            std::cout << "ERROR> something went wrong while parsing agent: "
-                      << agentPtr->name() << ". Model data doesn't have [worldbody]" << std::endl;
-        }
+            TYSOC_CORE_ERROR( "Parser-mjcf {0} >> Something went wrong while parsing agent: {1}. \
+                               Model data doesn't have 'worldbody' xml-element", _context.filename, agentPtr->name() );
 
         auto _rootBodyElmPtr = mjcf::findFirstChildByType( _worldBodyElmPtr, 
                                                            "body" );
 
         if ( !_rootBodyElmPtr )
-        {
-            std::cout << "ERROR> something went wrong while parsing agent: "
-                      << agentPtr->name() << ". Model data doesn't have a root [body]" << std::endl;
-        }
+            TYSOC_CORE_ERROR( "Parser-mjcf {0} >> Something went wrong while parsing agent: {1}. \
+                               Model data doesn't have a root 'body' xml-element", _context.filename, agentPtr->name() );
 
         // start recursive processing of all kintree components, starting at root
         auto _rootBodyPtr = _processBodyFromMjcf( _context, _rootBodyElmPtr, nullptr );
 
         if ( !_rootBodyPtr )
-        {
-            std::cout << "ERROR> something went wrong while parsing agent: "
-                      << agentPtr->name() << ". Processed root body is nullptr" << std::endl;
-        }
+            TYSOC_CORE_ERROR( "Parser-mjcf {0} >> Something went wrong while parsing agent: {1}. \
+                               Processed root body is \"nullptr\"", _context.filename, agentPtr->name() );
 
         // make sure we set the root for this agent we are constructing
         _context.agentPtr->setRootBody( _rootBodyPtr );
 
         // grab the actuators. Sensors are just copied, and the joint sensors are created as needed
-        auto _actuatorsElmPtr = mjcf::findFirstChildByType( _context.modelDataPtr, 
-                                                            "actuator" );
+        auto _actuatorsElmPtr = mjcf::findFirstChildByType( _context.modelDataPtr, "actuator" );
 
         // create the actual actuator
         if ( _actuatorsElmPtr )
@@ -197,7 +191,7 @@ namespace tysoc {
                 if ( _asset->hasAttributeString( "file" ) )
                     _meshAsset.set( "file", _asset->getAttributeString( "file", "" ) );
                 else
-                    std::cout << "WARNING> mesh asset doesn't have a valid linked file" << std::endl;
+                    TYSOC_CORE_WARN( "Parser-mjcf {0} >> Mesh asset doesn't have a valid linked file", context.filename );
 
                 if ( _asset->hasAttributeString( "name" ) )
                     _meshAsset.set( "name", _asset->getAttributeString( "name", "" ) );
@@ -224,8 +218,7 @@ namespace tysoc {
             else
             {
                 // Other asset types are not supported yet
-                std::cout << "WARNING> asset of type (" << _asset->etype 
-                          << ") isn't supported yet" << std::endl;
+                TYSOC_CORE_WARN( "Parser-mjcf {0} >> asset of type \"{1}\" isn't supported yet", context.filename, _asset->etype );
             }
         }
     }
@@ -510,8 +503,7 @@ namespace tysoc {
         else
         {
             // Must have one inertia matrix definition given by one of the previous elements
-            std::cout << "ERROR> no inertia-matrix given in mjcf model "
-                      << "for agent with name: " << context.agentPtr->name() << std::endl;
+            TYSOC_CORE_ERROR( "Parser-mjcf {0} >> No inertia-matrix given in mjcf model for agent with name: {1}", context.filename, context.agentPtr->name() );
         }
 
         return _kinInertial;
@@ -540,8 +532,8 @@ namespace tysoc {
         }
         else
         {
-            std::cout << "WARNING> actuator with name: " << _kinActuator->name << " "
-                      << "using a non existent joint: " << _jointName << std::endl;
+            TYSOC_CORE_WARN( "Parser-mjcf {0} >> Actuator \"{1}\" is linked to a non-existent \
+                              joint called {2}", context.filename, _kinActuator->name, _jointName );
 
             _kinActuator->jointPtr = nullptr;
         }
@@ -663,7 +655,7 @@ namespace tysoc {
             if ( _gsize.ndim == 0 )
             {
                 // This is weird, but just in case make some default dimensions
-                std::cout << "WARNING> the plane " <<  _gname << " has no size :/" << std::endl;
+                TYSOC_CORE_WARN( "Parser-mjcf {0} >> plane \"{1}\" has no size property", context.filename, _gname );
                 _width = 3.0f;
                 _depth = 3.0f;
             }
@@ -690,7 +682,7 @@ namespace tysoc {
             if ( _gsize.ndim == 0 )
             {
                 // This is weird, but just in case make some default dimenions
-                std::cout << "WARNING> the sphere " << _gname  << " has no size :/" << std::endl;
+                TYSOC_CORE_WARN( "Parser-mjcf {0} >> sphere \"{1}\" has no size property", context.filename, _gname );
                 _radius = 0.1f;
             }
             else if ( _gsize.ndim == 1 )
@@ -701,7 +693,7 @@ namespace tysoc {
             {
                 // just in case, if someone passed more parameters than needed
                 // it's like ... "thanks, but no thanks xD", so just use the first two
-                std::cout << "WARNING> the sphere "<< _gname << " has more parameters than needed" << std::endl;
+                TYSOC_CORE_WARN( "Parser-mjcf {0} >> sphere \"{1}\" has more parameters than needed", context.filename, _gname );
                 _radius = _gsize.buff[0];
             }
 
@@ -742,7 +734,7 @@ namespace tysoc {
                 }
                 else
                 {
-                    std::cout << "WARNING> the capsule/cylinder " << _gname << " has wrong size dim for fromto" << std::endl;
+                    TYSOC_CORE_WARN( "Parser-mjcf {0} >> capsule/cylinder \"{1}\" has wrong size-dim for from-to specification", context.filename, _gname );
                     _radius = 0.25f * _length;
                 }
 
@@ -769,7 +761,7 @@ namespace tysoc {
                 else
                 {
                     // default, just in case passed less than (radius,length)
-                    std::cout << "WARNING> the capsule/cylinder " << _gname << " has wrong size dim" << std::endl;
+                    TYSOC_CORE_WARN( "Parser-mjcf {0} >> capsule/cylinder \"{1}\" has wrong size-dim for normal specification", context.filename, _gname );
                     _radius = 0.05f;
                     _length = 0.1f;
                 }
@@ -790,7 +782,7 @@ namespace tysoc {
             }
             else
             {
-                std::cout << "WARNING> the box " << _gname << " has wrong dims for creation" << std::endl;
+                TYSOC_CORE_WARN( "Parser-mjcf {0} >> box \"{1}\" has wrong size-dim", context.filename, _gname );
                 _hwidth = _hdepth = _hheight = 0.1f;
             }
 

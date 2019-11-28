@@ -91,13 +91,14 @@ file( GLOB_RECURSE TYSOC_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" )
 # External dependencies
 set( TYSOC_SOURCES 
      ${TYSOC_SOURCES}
-     "ext/tinyxml2/tinyxml2.cpp" )
+     "${CMAKE_CURRENT_SOURCE_DIR}/ext/tinyxml2/tinyxml2.cpp" )
 
 # Main includes
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include/" )
 # External dependencies
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/ext/tinyxml2" )
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/ext/json" )
+include_directories( "${CMAKE_SOURCE_DIR}/ext/spdlog/include" )
 
 add_library( tysocCore SHARED
              ${TYSOC_SOURCES} )

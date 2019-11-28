@@ -29,13 +29,13 @@ namespace tysoc {
 
         void step();
 
-        TISimulation* createSimulation( TScenario* scenarioPtr = NULL );
+        TISimulation* createSimulation( TScenario* scenarioPtr = nullptr );
 
         TAgentWrapper* createAgent( TAgent* agentPtr );
 
         TTerrainGenWrapper* createTerrainGen( TITerrainGenerator* terrainGenPtr );
 
-        TIVisualizer* createVisualizer( TScenario* scenarioPtr = NULL );
+        TIVisualizer* createVisualizer( TScenario* scenarioPtr = nullptr );
 
         void destroySimulation();
 
@@ -53,11 +53,11 @@ namespace tysoc {
             auto _fcnPtr = ( FunctionTypePtr ) dlsym( m_libraryHandleSim, fcnName.c_str() );
             if ( !_fcnPtr )
             {
-                std::cout << "ERROR> while loading simulation-symbol: " << dlerror() << std::endl;
-                return NULL;
+                TYSOC_CORE_ERROR( "Couldn't load simulation-symbol: {0}. Error message: {1}", fcnName, dlerror() );
+                return nullptr;
             }
 
-            std::cout << "INFO> successfully loaded simulation-symbol: " << fcnName << std::endl;
+            TYSOC_CORE_INFO( "Successfully loaded simulation-symbol: {0}", fcnName );
             return _fcnPtr;
         }
 
@@ -68,11 +68,11 @@ namespace tysoc {
             auto _fcnPtr = ( FunctionTypePtr ) dlsym( m_libraryHandleViz, fcnName.c_str() );
             if ( !_fcnPtr )
             {
-                std::cout << "ERROR> while loading visualization-symbol: " << dlerror() << std::endl;
-                return NULL;
+                TYSOC_CORE_ERROR( "Couldn't load visualization-symbol: {0}. Error message: {1}", fcnName, dlerror() );
+                return nullptr;
             }
 
-            std::cout << "INFO> successfully loaded visualization-symbol: " << fcnName << std::endl;
+            TYSOC_CORE_INFO( "Successfully loaded visualization-symbol: {0}", fcnName );
             return _fcnPtr;
         }
 

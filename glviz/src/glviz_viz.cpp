@@ -32,7 +32,7 @@ namespace tysoc {
     {
         if ( !m_scenarioPtr )
         {
-            std::cout << "ERROR> scenario reference is nullptr" << std::endl;
+            TYSOC_CORE_ERROR( "Scenario reference is nullptr" );
             return false;
         }
 

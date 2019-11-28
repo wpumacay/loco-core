@@ -28,6 +28,8 @@ namespace tysoc {
         std::string filepath;
         // Folder path from where the model was loaded
         std::string folderpath;
+        // File name, without folder path
+        std::string filename;
         // Flag to indicate whether or not we are using local coordinates
         bool useLocalCoordinates;
         // Flag to indicate whether or not use degrees or radings for angles

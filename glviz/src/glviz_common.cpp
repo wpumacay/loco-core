@@ -239,9 +239,7 @@ namespace tysoc {
         }
         else if ( type == eShapeType::HFIELD )
         {
-            // not allowed, use changeElevationData instead
-            std::cout << "WARNING> tried changing the scale of the drawable for a hfield. Should "
-                      << "change the elevation data instead" << std::endl;
+            TYSOC_CORE_WARN( "Hfield shapes don't support changing the scale. Change the elevation data instead" );
         }
     }
 

@@ -31,7 +31,7 @@ namespace tysoc {
     
     TScenario::~TScenario()
     {
-        TYSOC_LOG( "Destroying scenario" );
+        TYSOC_CORE_INFO( "Destroying scenario" );
 
         m_state = FINISHED;
 

@@ -11,7 +11,7 @@ namespace tysoc {
 
     TISensor::~TISensor()
     {
-        TYSOC_LOG( "Base-destroying sensor: " + m_name );
+        TYSOC_CORE_TRACE( "Base-destroying sensor: {0}", m_name );
     }
 
 }

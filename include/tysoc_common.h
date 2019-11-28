@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <iostream>
@@ -14,6 +13,7 @@
 #include <map>
 #include <set>
 
+#include <tysoc_logger.h>
 #include <tysoc_config.h>
 
 typedef float TScalar;
@@ -90,38 +90,6 @@ extern TMjcDemoOptions DEMO_OPTIONS;
 
 #ifndef TYSOC_PATH_MESHES_DIR
     #define TYSOC_PATH_MESHES_DIR "../../res/meshes/"
-#endif
-
-// Log levels consist of the following:
-//  * level 0: nothing at all
-//  * level 1: only errors
-//  * level 2: errors and warns
-//  * level 3: errors, warns and infos
-//  * level 4: everything
-#define TYSOC_LOG_LEVEL 4
-
-#if TYSOC_LOG_LEVEL > 3
-    void TYSOC_LOG( const std::string& msg );
-#else
-    #define TYSOC_LOG( msg ) {}
-#endif
-
-#if TYSOC_LOG_LEVEL > 2
-    void TYSOC_INFO( const std::string& msg );
-#else
-    #define TYSOC_INFO( msg ) {}
-#endif
-
-#if TYSOC_LOG_LEVEL > 1
-    void TYSOC_WARN( const std::string& msg );
-#else
-    #define TYSOC_WARN( msg ) {}
-#endif
-
-#if TYSOC_LOG_LEVEL > 0
-    void TYSOC_ERROR( const std::string& msg );
-#else
-    #define TYSOC_ERROR( msg ) {}
 #endif
 
 #define BIT(x) (1 << x)
