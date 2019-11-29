@@ -30,8 +30,8 @@ namespace mjcf {
     {
         if ( !MJCF_SCHEMA )
         {
-            std::cout << "INFO> creating mjcf schema: " << MJCF_SCHEMA_PATH << std::endl;
             // load the schema to be used with the mjcf helper
+            TYSOC_CORE_TRACE( "Parser-mjcf >>> loading mjcf xml-schema from path: {0}", MJCF_SCHEMA_PATH );
             MJCF_SCHEMA = new mjcf::Schema();
             MJCF_SCHEMA->load( MJCF_SCHEMA_PATH );
         }

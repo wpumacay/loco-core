@@ -4,8 +4,8 @@
 namespace tysoc
 {
 
-    std::shared_ptr<spdlog::logger> TLogger::s_CoreLogger;
-    std::shared_ptr<spdlog::logger> TLogger::s_ClientLogger;
+    std::shared_ptr<spdlog::logger> TLogger::s_CoreLogger = nullptr;
+    std::shared_ptr<spdlog::logger> TLogger::s_ClientLogger = nullptr;
 
     void TLogger::Init()
     {
