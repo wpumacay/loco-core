@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <tysoc_logger.h>
 #include <simulation_base.h>
 #include <viz/viz.h>
 
