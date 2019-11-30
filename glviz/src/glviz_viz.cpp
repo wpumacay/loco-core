@@ -525,7 +525,8 @@ namespace tysoc {
             _collision->setDrawable( _collisionDrawable );
 
             // scene keeps ownership of gl-renderable resource, drawable keeps only a reference
-            m_glScene->addRenderable( std::unique_ptr< engine::CIRenderable >( _collisionDrawable->renderable() ) );
+            if ( _collisionDrawable->renderable() )
+                m_glScene->addRenderable( std::unique_ptr< engine::CIRenderable >( _collisionDrawable->renderable() ) );
 
             // @todo: keep ownership by using unique_ptr in viz.h
             m_vizDrawables.push_back( _collisionDrawable );
@@ -553,7 +554,8 @@ namespace tysoc {
             _visual->setDrawable( _visualDrawable );
 
             // scene keeps ownership of gl-renderable resource, drawable keeps only a reference
-            m_glScene->addRenderable( std::unique_ptr< engine::CIRenderable >( _visualDrawable->renderable() ) );
+            if ( _visualDrawable->renderable() )
+                m_glScene->addRenderable( std::unique_ptr< engine::CIRenderable >( _visualDrawable->renderable() ) );
 
             // @todo: keep ownership by using unique_ptr in viz.h
             m_vizDrawables.push_back( _visualDrawable );

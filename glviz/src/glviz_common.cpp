@@ -123,7 +123,8 @@ namespace tysoc {
         else if ( data.type == eShapeType::MESH )
         {
             _renderable = engine::CMeshBuilder::createModelFromFile( data.filename );
-            _renderable->scale = { data.size.x, data.size.y, data.size.z };
+            if ( _renderable )
+                _renderable->scale = { data.size.x, data.size.y, data.size.z };
         }
         else if ( data.type == eShapeType::HFIELD )
         {
