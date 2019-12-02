@@ -176,5 +176,5 @@ namespace tysoc {
     };
 
     TScalar computeVolumeFromShape( const TShapeData& shapeData );
-
+    std::pair<TVec3, TVec3> computeMeshAABB( const std::string& filename );
 }

@@ -120,6 +120,10 @@ namespace tysoc {
         {
             _volume = ( shapeData.size.x * shapeData.size.y * shapeData.size.z );
         }
+        else if ( shapeData.type == eShapeType::PLANE )
+        {
+            _volume = 0.0f; // planes are only static|kinematic
+        }
         else if ( shapeData.type == eShapeType::SPHERE )
         {
             _volume = ( 4.0f / 3.0f ) * TYSOC_PI * ( shapeData.size.x * shapeData.size.x * shapeData.size.x );
@@ -139,12 +143,90 @@ namespace tysoc {
             _volume = ( TYSOC_PI * _capsuleRadius * _capsuleRadius ) * _capsuleHeight +
                       ( 4.0f / 3.0f ) * ( TYSOC_PI * _capsuleRadius * _capsuleRadius * _capsuleRadius );
         }
+        else if ( shapeData.type == eShapeType::ELLIPSOID )
+        {
+            _volume = ( 4.0f / 3.0f ) * TYSOC_PI * ( shapeData.size.x * shapeData.size.y * shapeData.size.z );
+        }
+        else if ( shapeData.type == eShapeType::MESH )
+        {
+            std::pair<TVec3, TVec3> _aabb = computeMeshAABB( shapeData.filename );
+            _volume = std::abs( ( _aabb.second.x - _aabb.first.x ) * 
+                                ( _aabb.second.y - _aabb.first.y ) * 
+                                ( _aabb.second.z - _aabb.first.z ) );
+        }
+        else if ( shapeData.type == eShapeType::HFIELD )
+        {
+            _volume = 0.0f; // heightfields are only static|kinematic
+        }
         else
         {
-            std::cout << "WARNING> unsupported type: " << tysoc::toString( shapeData.type ) << " for volume computation" << std::endl;
+            TYSOC_CORE_WARN( "Unsupported type \"{0}\" for volume computation", tysoc::toString( shapeData.type ) );
         }
 
         return _volume;
+    }
+
+    std::pair<TVec3, TVec3> computeMeshAABB( const std::string& filename )
+    {
+        static std::unordered_map<std::string, std::pair< TVec3, TVec3 >> _cachedBounds;
+        if ( _cachedBounds.find( filename ) != _cachedBounds.end() )
+            return _cachedBounds[filename];
+
+        /* load mesh vertices to compute the aabb (adapted from DART's MeshShape::loadMesh method) */
+
+        // hint loader to remove points and lines
+        aiPropertyStore* _propertyStore = aiCreatePropertyStore();
+        aiSetImportPropertyInteger( _propertyStore, 
+                                    AI_CONFIG_PP_SBP_REMOVE, 
+                                    aiPrimitiveType_POINT | aiPrimitiveType_LINE );
+
+        // load mesh with some extra properties
+        const aiScene* _sceneMesh = aiImportFileExWithProperties( filename.c_str(),
+                                                                  aiProcess_GenNormals | aiProcess_Triangulate |
+                                                                    aiProcess_JoinIdenticalVertices |
+                                                                    aiProcess_SortByPType | aiProcess_OptimizeMeshes |
+                                                                    aiProcess_PreTransformVertices,
+                                                                  nullptr,
+                                                                  _propertyStore );
+        aiReleasePropertyStore( _propertyStore );
+
+        if ( !_sceneMesh )
+        {
+            TYSOC_CORE_ERROR( "Couldn't load mesh {0}, while trying to compute aabb for volume-computation", filename );
+            _cachedBounds[filename] = { TVec3( 0.0f, 0.0f, 0.0f ), TVec3( 0.1f, 0.1f, 0.1f ) };
+            return _cachedBounds[filename];
+        }
+
+        // compute min-max extensions by traversing all vertices
+        TVec3 _aabbMin, _aabbMax;
+        for ( int i = 0; i < _sceneMesh->mNumMeshes; i++ )
+        {
+            for ( int j = 0; j < _sceneMesh->mMeshes[i]->mNumFaces; j++ )
+            {
+                for ( int k = 0; k < 3; k++ )
+                {
+                    const aiVector3D& _vertex = 
+                            _sceneMesh->mMeshes[i]->mVertices[_sceneMesh->mMeshes[i]->mFaces[j].mIndices[k]];
+
+                    if ( i == 0 && j == 0 && k == 0 )
+                    {
+                        _aabbMin = _aabbMax = { _vertex.x, _vertex.y, _vertex.z };
+                        continue;
+                    }
+
+                    _aabbMin.x = std::min( (float)_vertex.x, _aabbMin.x );
+                    _aabbMin.y = std::min( (float)_vertex.y, _aabbMin.y );
+                    _aabbMin.z = std::min( (float)_vertex.z, _aabbMin.z );
+
+                    _aabbMax.x = std::max( (float)_vertex.x, _aabbMax.x );
+                    _aabbMax.y = std::max( (float)_vertex.y, _aabbMax.y );
+                    _aabbMax.z = std::max( (float)_vertex.z, _aabbMax.z );
+                }
+            }
+        }
+
+        _cachedBounds[filename] = { _aabbMin, _aabbMax };
+        return _cachedBounds[filename];
     }
 
 }

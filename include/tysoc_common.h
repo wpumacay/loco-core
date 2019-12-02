@@ -16,6 +16,11 @@
 #include <tysoc_logger.h>
 #include <tysoc_config.h>
 
+// Assimp helper functionality
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
 typedef float TScalar;
 
 #define TYSOC_DEMO // used to activate some functionality used for demos

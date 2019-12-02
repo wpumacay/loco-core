@@ -86,6 +86,9 @@ if ( TYSOCCORE_IS_MASTER_PROJECT )
     add_subdirectory( ext )
 endif()
 
+# Assimp: required for some mesh-computations. (use same version as in cat1-viz)
+find_package( ASSIMP REQUIRED )
+
 # Main Sources
 file( GLOB_RECURSE TYSOC_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" )
 # External dependencies
@@ -100,10 +103,24 @@ include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/ext/tinyxml2" )
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/ext/json" )
 include_directories( "${CMAKE_SOURCE_DIR}/ext/spdlog/include" )
 
+# Enable/disable tcmalloc as a core dependency
+option( TYSOC_USE_TCMALLOC "Set when 'tcmalloc' is required (raisim requirement)" OFF )
+
 add_library( tysocCore SHARED
              ${TYSOC_SOURCES} )
-target_link_libraries( tysocCore
-                       dl )
+if ( TYSOC_USE_TCMALLOC )
+    message( "TYSOCCORE> Using tcmalloc along build" )
+    target_link_libraries( tysocCore
+                           assimp
+                           spdlog
+                           tcmalloc
+                           dl )
+else ()
+    target_link_libraries( tysocCore
+                           assimp
+                           spdlog
+                           dl )
+endif ()
 
 # Configure glviz
 add_subdirectory( glviz )
