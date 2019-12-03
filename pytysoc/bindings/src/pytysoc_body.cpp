@@ -16,22 +16,22 @@ namespace pytysoc
                                       numpyToVec3( xyz ),
                                       tysoc::TMat3::fromEuler( numpyToVec3( rpy ) ) );
 
-        auto _collisions = m_bodyPtr->collisions();
-        for ( size_t i = 0; i < _collisions.size(); i++ )
+        auto _collision = m_bodyPtr->collision();
+        if ( _collision )
         {
-            auto _pyCollision = new PyCollision( _collisions[i] );
-            // @TODO: setting parent again (twice). Okish so far, but should change it later to avoid any issues
+            auto _pyCollision = new PyCollision( _collision );
+            // @todo: setting parent again (twice). Okish so far, but should change it later to avoid any issues
             _pyCollision->setParentBody( this );
-            m_pyCollisions.push_back( _pyCollision );
+            m_pyCollision = _pyCollision;
         }
 
-        auto _visuals = m_bodyPtr->visuals();
-        for ( size_t i = 0; i < _visuals.size(); i++ )
+        auto _visual = m_bodyPtr->visual();
+        if ( _visual )
         {
-            auto _pyVisual = new PyVisual( _visuals[i] );
+            auto _pyVisual = new PyVisual( _visual );
             // @TODO: setting parent again (twice). Okish so far, but should change it later to avoid any issues
             _pyVisual->setParentBody( this );
-            m_pyVisuals.push_back( _pyVisual );
+            m_pyVisual = _pyVisual;
         }
     }
 
@@ -39,53 +39,50 @@ namespace pytysoc
     {
         m_bodyPtr = bodyPtr;
 
-        auto _collisions = m_bodyPtr->collisions();
-        for ( size_t i = 0; i < _collisions.size(); i++ )
+        auto _collision = m_bodyPtr->collision();
+        if ( _collision )
         {
-            auto _pyCollision = new PyCollision( _collisions[i] );
+            auto _pyCollision = new PyCollision( _collision );
             // @TODO: setting parent again (twice). Okish so far, but should change it later to avoid any issues
             _pyCollision->setParentBody( this );
-            m_pyCollisions.push_back( _pyCollision );
+            m_pyCollision = _pyCollision;
         }
 
-        auto _visuals = m_bodyPtr->visuals();
-        for ( size_t i = 0; i < _visuals.size(); i++ )
+        auto _visual = m_bodyPtr->visual();
+        if ( _visual )
         {
-            auto _pyVisual = new PyVisual( _visuals[i] );
+            auto _pyVisual = new PyVisual( _visual );
             // @TODO: setting parent again (twice). Okish so far, but should change it later to avoid any issues
             _pyVisual->setParentBody( this );
-            m_pyVisuals.push_back( _pyVisual );
+            m_pyVisual = _pyVisual;
         }
     }
 
     PyBody::~PyBody()
     {
-        for ( size_t i = 0; i < m_pyCollisions.size(); i++ )
-            delete m_pyCollisions[i];
+        if ( m_pyCollision )
+            delete m_pyCollision;
 
-        for ( size_t i = 0; i < m_pyVisuals.size(); i++ )
-            delete m_pyVisuals[i];
+        if ( m_pyVisual )
+            delete m_pyVisual;
 
-        m_pyCollisions.clear();
-        m_pyVisuals.clear();
-
-        m_bodyPtr = NULL;
+        m_bodyPtr = nullptr;
     }
 
-    void PyBody::addCollision( PyCollision* pyCollisionPtr )
+    void PyBody::setCollision( PyCollision* pyCollisionPtr )
     {
-        assert( m_bodyPtr );
+        TYSOC_CORE_ASSERT( m_bodyPtr, "PyBody setCollision >>> wrapper contains null reference to a body" );
 
-        m_pyCollisions.push_back( pyCollisionPtr );
-        m_bodyPtr->addCollision( pyCollisionPtr->ptr() );
+        m_pyCollision = pyCollisionPtr;
+        m_bodyPtr->setCollision( std::unique_ptr< tysoc::TCollision >( pyCollisionPtr->ptr() ) );
     }
 
-    void PyBody::addVisual( PyVisual* pyVisualPtr )
+    void PyBody::setVisual( PyVisual* pyVisualPtr )
     {
-        assert( m_bodyPtr );
+        TYSOC_CORE_ASSERT( m_bodyPtr, "PyBody setCollision >>> wrapper contains null reference to a body" );
 
-        m_pyVisuals.push_back( pyVisualPtr );
-        m_bodyPtr->addVisual( pyVisualPtr->ptr() );
+        m_pyVisual = pyVisualPtr;
+        m_bodyPtr->setVisual( std::unique_ptr< tysoc::TVisual >( pyVisualPtr->ptr() ) );
     }
 
     void PyBody::setPosition( py::array_t<TScalar>& position )

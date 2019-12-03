@@ -234,7 +234,7 @@ namespace pytysoc
         return _pydata;
     }
 
-    tysoc::TCollisionData toTCollisionData( const PyCollisionData& pydata )
+    tysoc::TCollisionData toCppCollisionData( const PyCollisionData& pydata )
     {
         tysoc::TCollisionData _data;
         _data.type = pydata.type;
@@ -372,7 +372,7 @@ namespace pytysoc
         return _pydata;
     }
 
-    tysoc::TVisualData toTVisualData( const PyVisualData& pydata )
+    tysoc::TVisualData toCppVisualData( const PyVisualData& pydata )
     {
         tysoc::TVisualData _data;
         _data.type = pydata.type;
@@ -452,32 +452,24 @@ namespace pytysoc
         return mat4ToNumpy( this->inertialData.localTransform );
     }
 
-    void PyBodyData::addCollision( PyCollisionData pyCollision )
+    void PyBodyData::setCollision( PyCollisionData pyCollision )
     {
-        collisions.push_back( toTCollisionData( pyCollision ) );
+        collision = toCppCollisionData( pyCollision );
     }
 
-    void PyBodyData::addVisual( PyVisualData pyVisual )
+    void PyBodyData::setVisual( PyVisualData pyVisual )
     {
-        visuals.push_back( toTVisualData( pyVisual ) );
+        visual = toCppVisualData( pyVisual );
     }
 
-    std::vector< PyCollisionData > PyBodyData::getCollisions()
+    PyCollisionData PyBodyData::getCollision()
     {
-        std::vector< PyCollisionData > _pycols;
-        for ( size_t i = 0; i < collisions.size(); i++ )
-            _pycols.push_back( toPyCollisionData( collisions[i] ) );
-
-        return _pycols;
+        return toPyCollisionData( collision );
     }
 
-    std::vector< PyVisualData > PyBodyData::getVisuals()
+    PyVisualData PyBodyData::getVisual()
     {
-        std::vector< PyVisualData > _pyvisuals;
-        for ( size_t i = 0; i < visuals.size(); i++ )
-            _pyvisuals.push_back( toPyVisualData( visuals[i] ) );
-        
-        return _pyvisuals;
+        return toPyVisualData( visual );
     }
 
     PyBodyData toPyBodyData( const tysoc::TBodyData& data )
@@ -485,8 +477,8 @@ namespace pytysoc
         PyBodyData _pydata;
         _pydata.dyntype = data.dyntype;
         _pydata.inertialData = data.inertialData;
-        _pydata.collisions = data.collisions;
-        _pydata.visuals = data.visuals;
+        _pydata.collision = data.collision;
+        _pydata.visual = data.visual;
 
         return _pydata;
     }
@@ -496,8 +488,8 @@ namespace pytysoc
         tysoc::TBodyData _data;
         _data.dyntype = pydata.dyntype;
         _data.inertialData = pydata.inertialData;
-        _data.collisions = pydata.collisions;
-        _data.visuals = pydata.visuals;
+        _data.collision = pydata.collision;
+        _data.visual = pydata.visual;
 
         return _data;
     }

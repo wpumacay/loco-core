@@ -167,7 +167,7 @@ namespace tysoc {
         if ( !_camera )
             return;
 
-        m_cameras[ name ] = _camera;
+        m_cameras[ name ] = std::unique_ptr< TIVizCamera >( _camera );
     }
 
     void TIVisualizer::changeToCamera( const std::string& name )
@@ -178,7 +178,7 @@ namespace tysoc {
             return;
         }
 
-        _changeToCameraInternal( m_cameras[ name ] );
+        _changeToCameraInternal( m_cameras[ name ].get() );
     }
 
     void TIVisualizer::grabCameraFrame( const std::string& name,
@@ -192,7 +192,7 @@ namespace tysoc {
             return;
         }
 
-        _grabCameraFrameInternal( m_cameras[ name ], rgbTexture, depthTexture, semanticTexture );
+        _grabCameraFrameInternal( m_cameras[ name ].get(), rgbTexture, depthTexture, semanticTexture );
     }
 
     void TIVisualizer::addLight( const std::string& name,
@@ -209,7 +209,7 @@ namespace tysoc {
         if ( !_light )
             return;
 
-        m_lights[ name ] = _light;
+        m_lights[ name ] = std::unique_ptr< TIVizLight >( _light );
     }
 
     bool TIVisualizer::isKeyDown( int keyCode )

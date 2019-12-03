@@ -509,56 +509,50 @@ namespace tysoc {
         if ( !bodyPtr )
             return;
 
-        auto _collisions = bodyPtr->collisions();
-        for ( auto _collision : _collisions )
+        auto _collision = bodyPtr->collision();
+        if ( _collision )
         {
-            if ( !_collision )
-                continue;
-
             auto _collisionDrawable = new TGLDrawable( _collision->data() );
 
-            if ( !_collisionDrawable )
-                continue;
+            if ( _collisionDrawable )
+            {
+                _collisionDrawable->show( false ); // keep hidden, until the user wants to see it
+                _collisionDrawable->wireframe( true );
+                _collision->setDrawable( _collisionDrawable );
 
-            _collisionDrawable->show( false ); // keep hidden, until the user wants to see it
-            _collisionDrawable->wireframe( true );
-            _collision->setDrawable( _collisionDrawable );
+                // scene keeps ownership of gl-renderable resource, drawable keeps only a reference
+                if ( _collisionDrawable->renderable() )
+                    m_glScene->addRenderable( std::unique_ptr< engine::CIRenderable >( _collisionDrawable->renderable() ) );
 
-            // scene keeps ownership of gl-renderable resource, drawable keeps only a reference
-            if ( _collisionDrawable->renderable() )
-                m_glScene->addRenderable( std::unique_ptr< engine::CIRenderable >( _collisionDrawable->renderable() ) );
-
-            // @todo: keep ownership by using unique_ptr in viz.h
-            m_vizDrawables.push_back( _collisionDrawable );
+                // @todo: keep ownership by using unique_ptr in viz.h
+                m_vizDrawables.push_back( std::unique_ptr< TGLDrawable >( _collisionDrawable ) );
+            }
         }
 
-        auto _visuals = bodyPtr->visuals();
-        for ( auto _visual : _visuals )
+        auto _visual = bodyPtr->visual();
+        if ( _visual )
         {
-            if ( !_visual )
-                continue;
-
             auto _visualDrawable = new TGLDrawable( _visual->data() );
 
-            if ( !_visualDrawable )
-                continue;
+            if ( _visualDrawable )
+            {
+                _visualDrawable->setAmbientColor( _visual->data().ambient );
+                _visualDrawable->setDiffuseColor( _visual->data().diffuse );
+                _visualDrawable->setSpecularColor( _visual->data().specular );
+                _visualDrawable->setShininess( _visual->data().shininess );
+                _visualDrawable->setTexture( _visual->data().texture );
 
-            _visualDrawable->setAmbientColor( _visual->data().ambient );
-            _visualDrawable->setDiffuseColor( _visual->data().diffuse );
-            _visualDrawable->setSpecularColor( _visual->data().specular );
-            _visualDrawable->setShininess( _visual->data().shininess );
-            _visualDrawable->setTexture( _visual->data().texture );
+                _visualDrawable->show( true );
+                _visualDrawable->wireframe( false );
+                _visual->setDrawable( _visualDrawable );
 
-            _visualDrawable->show( true );
-            _visualDrawable->wireframe( false );
-            _visual->setDrawable( _visualDrawable );
+                // scene keeps ownership of gl-renderable resource, drawable keeps only a reference
+                if ( _visualDrawable->renderable() )
+                    m_glScene->addRenderable( std::unique_ptr< engine::CIRenderable >( _visualDrawable->renderable() ) );
 
-            // scene keeps ownership of gl-renderable resource, drawable keeps only a reference
-            if ( _visualDrawable->renderable() )
-                m_glScene->addRenderable( std::unique_ptr< engine::CIRenderable >( _visualDrawable->renderable() ) );
-
-            // @todo: keep ownership by using unique_ptr in viz.h
-            m_vizDrawables.push_back( _visualDrawable );
+                // visualizer keeps ownership of the adapter
+                m_vizDrawables.push_back( std::unique_ptr< TGLDrawable >( _visualDrawable ) );
+            }
         }
 
     }

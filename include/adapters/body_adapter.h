@@ -1,6 +1,6 @@
 #pragma once
 
-#include <components/bodies.h>
+#include <components/body.h>
 
 namespace tysoc {
 

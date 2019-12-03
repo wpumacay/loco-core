@@ -3,7 +3,7 @@
 #include <tysoc_common.h>
 
 #include <components/data.h>
-#include <components/bodies.h>
+#include <components/body.h>
 
 #include <viz/drawable.h>
 

@@ -7,7 +7,7 @@
 #include <glviz_drawable.h>
 #include <glviz_ui.h>
 
-#include <components/bodies.h>
+#include <components/body.h>
 
 using namespace engine;
 

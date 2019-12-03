@@ -68,8 +68,8 @@ tysoc::TBody* createHfield( const std::string& name, const tysoc::TVec3& positio
 
     tysoc::TBodyData _bodyData;
     _bodyData.dyntype = tysoc::eDynamicsType::STATIC;
-    _bodyData.collisions.push_back( _collisionData );
-    _bodyData.visuals.push_back( _visualData );
+    _bodyData.collision = _collisionData;
+    _bodyData.visual = _visualData;
 
     return new tysoc::TBody( name, _bodyData, position, tysoc::TMat3() );;
 }
@@ -138,8 +138,8 @@ tysoc::TBody* createSimpleBody( const std::string& name, const std::string& type
     _visualData.shininess = 50.0f;
 
     _bodyData.dyntype = tysoc::eDynamicsType::DYNAMIC;
-    _bodyData.collisions.push_back( _collisionData );
-    _bodyData.visuals.push_back( _visualData );
+    _bodyData.collision = _collisionData;
+    _bodyData.visual = _visualData;
 
     // choose a random position
     tysoc::TVec3 _position;

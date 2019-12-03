@@ -61,7 +61,7 @@ namespace pytysoc
     };
 
     PyCollisionData toPyCollisionData( const tysoc::TCollisionData& data );
-    tysoc::TCollisionData toTCollisionData( const PyCollisionData& pydata );
+    tysoc::TCollisionData toCppCollisionData( const PyCollisionData& pydata );
 
     struct PyVisualData : public tysoc::TVisualData
     {
@@ -89,7 +89,7 @@ namespace pytysoc
     };
 
     PyVisualData toPyVisualData( const tysoc::TVisualData& data );
-    tysoc::TVisualData toTVisualData( const PyVisualData& pydata );
+    tysoc::TVisualData toCppVisualData( const PyVisualData& pydata );
 
     struct PyBodyData : public tysoc::TBodyData
     {
@@ -104,14 +104,11 @@ namespace pytysoc
         py::array_t<TScalar> getInertia();
         py::array_t<TScalar> getInertialFrame();
 
-        void addCollision( PyCollisionData collision );
-        void addVisual( PyVisualData visual );
+        void setCollision( PyCollisionData collision );
+        void setVisual( PyVisualData visual );
 
-        std::vector< PyCollisionData > getCollisions();
-        std::vector< PyVisualData > getVisuals();
-
-        std::vector< PyCollisionData > pyCollisions;
-        std::vector< PyVisualData > pyVisuals;
+        PyCollisionData getCollision();
+        PyVisualData getVisual();
     };
 
     PyBodyData toPyBodyData( const tysoc::TBodyData& data );
@@ -181,7 +178,5 @@ namespace pytysoc
             .def_property( "mass", &pytysoc::PyBodyData::getMass, &pytysoc::PyBodyData::setMass ) \
             .def_property( "inertia", &pytysoc::PyBodyData::getInertia, &pytysoc::PyBodyData::setInertia ) \
             .def_property( "inertialFrame", &pytysoc::PyBodyData::getInertialFrame, &pytysoc::PyBodyData::setInertialFrame ) \
-            .def( "addCollision", &pytysoc::PyBodyData::addCollision ) \
-            .def( "addVisual", &pytysoc::PyBodyData::addVisual ) \
-            .def( "getCollisions", &pytysoc::PyBodyData::getCollisions ) \
-            .def( "getVisuals", &pytysoc::PyBodyData::getVisuals );
+            .def_property( "collision", &pytysoc::PyBodyData::getCollision, &pytysoc::PyBodyData::setCollision ) \
+            .def_property( "visual", &pytysoc::PyBodyData::getVisual, &pytysoc::PyBodyData::setVisual );

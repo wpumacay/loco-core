@@ -7,7 +7,7 @@
 #include <glviz_drawable.h>
 #include <glviz_viz.h>
 
-#include <components/bodies.h>
+#include <components/body.h>
 
 #define GLVIZ_IMGUI_COMBO_CONSTRUCT( combo_name, current_name_str, vect_container ) \
         if ( ImGui::BeginCombo( combo_name, current_name_str.c_str() ) )            \

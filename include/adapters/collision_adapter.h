@@ -1,6 +1,6 @@
 #pragma once
 
-#include <components/collisions.h>
+#include <components/collision.h>
 
 namespace tysoc {
 

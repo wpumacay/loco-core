@@ -1,64 +1,50 @@
 
-#include <components/collisions.h>
+#include <components/collision.h>
 
 namespace tysoc {
 
-    TCollision::TCollision( const std::string& name,
-                            const TCollisionData& collisionData )
+    TVisual::TVisual( const std::string& name,
+                      const TVisualData& visualData )
     {
         m_name = name;
-        m_data = collisionData;
+        m_data = visualData;
 
         m_parentBodyPtr = nullptr;
-        m_collisionImplPtr = nullptr;
         m_drawableImplPtr = nullptr;
     }
 
-    TCollision::~TCollision()
+    TVisual::~TVisual()
     {
         if ( m_drawableImplPtr )
             delete m_drawableImplPtr;
 
-        if ( m_collisionImplPtr )
-            delete m_collisionImplPtr;
-
         m_drawableImplPtr = nullptr;
-        m_collisionImplPtr = nullptr;
     }
 
-    void TCollision::setParentBody( TBody* parentBodyPtr )
+    void TVisual::setParentBody( TBody* parentBodyPtr )
     {
         m_parentBodyPtr = parentBodyPtr;
     }
 
-    void TCollision::setAdapter( TICollisionAdapter* collisionImplPtr )
-    {
-        // if a previous adapter is present, release its resources
-        if ( m_collisionImplPtr )
-            delete m_collisionImplPtr;
-
-        m_collisionImplPtr = collisionImplPtr;
-    }
-
-    void TCollision::setDrawable( TIDrawable* drawablePtr )
+    void TVisual::setDrawable( TIDrawable* drawablePtr )
     {
         // change the reference to our new shiny drawable
         m_drawableImplPtr = drawablePtr;
     }
 
-    void TCollision::show( bool visible )
+    void TVisual::show( bool visible )
     {
         if ( m_drawableImplPtr )
             m_drawableImplPtr->show( visible );
     }
 
-    void TCollision::wireframe( bool wireframe )
+    void TVisual::wireframe( bool wireframe )
     {
         if ( m_drawableImplPtr )
             m_drawableImplPtr->wireframe( wireframe );
     }
 
-    bool TCollision::isVisible()
+    bool TVisual::isVisible()
     {
         if ( !m_drawableImplPtr )
             return false;
@@ -66,7 +52,7 @@ namespace tysoc {
         return m_drawableImplPtr->isVisible();
     }
 
-    bool TCollision::isWireframe()
+    bool TVisual::isWireframe()
     {
         if ( !m_drawableImplPtr )
             return false;
@@ -74,12 +60,8 @@ namespace tysoc {
         return m_drawableImplPtr->isWireframe();
     }
 
-    void TCollision::update()
+    void TVisual::update()
     {
-        // update internal stuff that might be required in the backend
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->update();
-
         // update our own transform using the world-transform from the parent
         assert( m_parentBodyPtr != nullptr );
         m_tf = m_parentBodyPtr->tf() * m_localTf;
@@ -91,50 +73,37 @@ namespace tysoc {
             m_drawableImplPtr->setWorldTransform( m_tf );
     }
 
-    void TCollision::reset()
+    void TVisual::reset()
     {
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->reset();
+        // do nothing for now
     }
 
-    void TCollision::setLocalPosition( const TVec3& localPosition )
+    void TVisual::setLocalPosition( const TVec3& localPosition )
     {
         m_localPos = localPosition;
         m_localTf.setPosition( m_localPos );
-
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->setLocalPosition( m_localPos );
     }
 
-    void TCollision::setLocalRotation( const TMat3& localRotation )
+    void TVisual::setLocalRotation( const TMat3& localRotation )
     {
         m_localRot = localRotation;
         m_localTf.setRotation( m_localRot );
-
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->setLocalRotation( m_localRot );
     }
 
-    void TCollision::setLocalQuat( const TVec4& localQuaternion )
+    void TVisual::setLocalQuat( const TVec4& localQuaternion )
     {
         m_localRot = TMat3::fromQuaternion( localQuaternion );
         m_localTf.setRotation( m_localRot );
-
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->setLocalRotation( m_localRot );
     }
 
-    void TCollision::setLocalTransform( const TMat4& localTransform )
+    void TVisual::setLocalTransform( const TMat4& localTransform )
     {
         m_localTf = localTransform;
         m_localPos = m_localTf.getPosition();
         m_localRot = m_localTf.getRotation();
-
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->setLocalTransform( m_localTf );
     }
 
-    void TCollision::changeSize( const TVec3& newSize )
+    void TVisual::changeSize( const TVec3& newSize )
     {
         if ( m_data.type == eShapeType::MESH )
         {
@@ -154,19 +123,15 @@ namespace tysoc {
             return;
         }
 
-        // change the collision-data size property
+        // change the visual-data size property
         m_data.size = newSize;
 
-        // tell the backend resource to change the size internally
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->changeSize( newSize );
-
-        // tell the rendering resource to change the size internally
+        // set the new size of the drawable resource
         if ( m_drawableImplPtr )
             m_drawableImplPtr->changeSize( newSize );
     }
 
-    void TCollision::changeElevationData( const std::vector< float >& heightData )
+    void TVisual::changeElevationData( const std::vector< float >& heightData )
     {
         if ( m_data.type != eShapeType::HFIELD )
         {
@@ -187,12 +152,39 @@ namespace tysoc {
         // change the internal elevation data
         m_data.hdata.heightData = heightData;
 
-        // tell the backend resource to change the elevation data internally
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->changeElevationData( heightData );
-
-        // tell the rendering resource to change the elevation data internally
+        // set the new elevation data of the drawable resource
         if ( m_drawableImplPtr )
             m_drawableImplPtr->changeElevationData( heightData );
     }
+
+    void TVisual::changeColor( const TVec3& newFullColor )
+    {
+        if ( m_drawableImplPtr )
+            m_drawableImplPtr->setColor( newFullColor );
+    }
+
+    void TVisual::changeAmbientColor( const TVec3& newAmbientColor )
+    {
+        if ( m_drawableImplPtr )
+            m_drawableImplPtr->setAmbientColor( newAmbientColor );
+    }
+
+    void TVisual::changeDiffuseColor( const TVec3& newDiffuseColor )
+    {
+        if ( m_drawableImplPtr )
+            m_drawableImplPtr->setDiffuseColor( newDiffuseColor );
+    }
+
+    void TVisual::changeSpecularColor( const TVec3& newSpecularColor )
+    {
+        if ( m_drawableImplPtr )
+            m_drawableImplPtr->setSpecularColor( newSpecularColor );
+    }
+
+    void TVisual::changeShininess( const TScalar& shininess )
+    {
+        if ( m_drawableImplPtr )
+            m_drawableImplPtr->setShininess( shininess );
+    }
+
 }

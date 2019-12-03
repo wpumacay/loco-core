@@ -5,7 +5,7 @@
 #include <pytysoc_data.h>
 #include <pytysoc_body.h>
 
-#include <components/collisions.h>
+#include <components/collision.h>
 
 namespace py = pybind11;
 

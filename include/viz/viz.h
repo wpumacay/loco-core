@@ -134,12 +134,15 @@ namespace tysoc {
 
     protected :
 
-        TScenario*    m_scenarioPtr;
+        TScenario* m_scenarioPtr;
         TISimulation* m_simulationPtr;
 
-        std::vector< TIDrawable* >              m_vizDrawables;
-        std::map< std::string, TIVizCamera* >   m_cameras;
-        std::map< std::string, TIVizLight* >    m_lights;
+        /* drawable adapters (keep ownership) */
+        std::vector< std::unique_ptr< TIDrawable > > m_vizDrawables;
+        /* camera adapters (keep ownership) */
+        std::map< std::string, std::unique_ptr< TIVizCamera > > m_cameras;
+        /* light adapters (keepp ownership) */
+        std::map< std::string, std::unique_ptr< TIVizLight > > m_lights;
 
         bool m_useSensorReadings;
         bool m_useSensorReadingRgb;

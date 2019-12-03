@@ -2,8 +2,8 @@
 
 #include <tysoc_common.h>
 #include <components/data.h>
-#include <components/bodies.h>
-#include <components/joints.h>
+#include <components/body.h>
+#include <components/joint.h>
 
 namespace tysoc 
 {

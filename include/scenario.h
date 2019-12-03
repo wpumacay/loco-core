@@ -5,7 +5,7 @@
 #include <terrain/terrain.h>
 #include <sensor/sensor.h>
 
-#include <components/bodies.h>
+#include <components/body.h>
 
 namespace tysoc
 {

@@ -5,7 +5,7 @@
 #include <pytysoc_data.h>
 #include <pytysoc_body.h>
 
-#include <components/visuals.h>
+#include <components/visual.h>
 
 namespace py = pybind11;
 

@@ -3,8 +3,8 @@
 #include <tysoc_common.h>
 
 #include <components/data.h>
-#include <components/collisions.h>
-#include <components/visuals.h>
+#include <components/collision.h>
+#include <components/visual.h>
 
 #include <adapters/body_adapter.h>
 
@@ -28,9 +28,9 @@ namespace tysoc {
 
         void setAdapter( TIBodyAdapter* bodyImpl );
 
-        void addCollision( TCollision* collision );
+        void setCollision( std::unique_ptr< TCollision > collisionObj );
 
-        void addVisual( TVisual* visual );
+        void setVisual( std::unique_ptr< TVisual > visualObj );
 
         void update();
 
@@ -68,15 +68,15 @@ namespace tysoc {
 
         TMat4 tf0() { return m_tf0; }
 
-        std::vector< TVisual* > visuals() { return m_visuals; }
+        TVisual* visual() { return m_visual.get(); }
 
-        std::vector< TCollision* > collisions() { return m_collisions; }
+        TCollision* collision() { return m_collision.get(); }
 
         eDynamicsType dyntype() { return m_data.dyntype; }
 
         TBodyData data() { return m_data; }
 
-        TIBodyAdapter* adapter() { return m_bodyImpl; }
+        TIBodyAdapter* adapter() { return m_bodyImplRef; }
 
     protected :
 
@@ -100,30 +100,14 @@ namespace tysoc {
         /* data of this body object */
         TBodyData m_data;
 
-        /* Adapter-object that gives access to the low-level API for a specific backend */
-        TIBodyAdapter* m_bodyImpl;
+        /* Adapter-object that gives access to the low-level API for a specific backend (reference only, as simulation owns it) */
+        TIBodyAdapter* m_bodyImplRef;
 
-        /* Vector-containers to store visuals and collisions owned by this body */
-        std::vector< TVisual* >     m_visuals;
-        std::vector< TCollision* >  m_collisions;
+        /* Single collider (collision object) of this body */
+        std::unique_ptr< TCollision > m_collision;
 
-        /* Dictionary-containers to store visuals and collisions owned by this body */
-        std::map< std::string, TVisual* >       m_visualsMap;
-        std::map< std::string, TCollision* >    m_collisionsMap;
+        /* Single visual (viewer object) of this body */
+        std::unique_ptr< TVisual > m_visual;
     };
 
 }
-
-
-// // example usage (when joint adapters are implemented (again, as I had them in another impl :/))
-// 
-// _doorBase = TBody();
-// // ... configure door base geometry and collider
-// 
-// _doorMovable = TBody()
-// // ... configure door movable part geometry and collider
-// 
-// _doorMovJoint = TJoint()
-// // ... configure transforms and other settings for movable door joint
-// 
-// _doorBase.addBody( _doorMovable, _doorMovJoint )

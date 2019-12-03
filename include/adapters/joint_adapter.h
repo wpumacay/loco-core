@@ -1,6 +1,6 @@
 #pragma once
 
-#include <components/joints.h>
+#include <components/joint.h>
 
 namespace tysoc {
 

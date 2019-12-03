@@ -163,11 +163,11 @@ namespace tysoc {
 
     struct TBodyData
     {
-        eDynamicsType                   dyntype;        // dynamics type used to instantiate either static, kinematic or dynamic bodies
-        TInertialData                   inertialData;   // inertial properties of this body
-        TMat4                           localTransformZero; // relative transform at zero-configuration of this body w.r.t. parent body
-        std::vector< TCollisionData >   collisions;     // collisions owned by this body
-        std::vector< TVisualData >      visuals;        // visuals owned by this body
+        eDynamicsType   dyntype;            // dynamics type used to instantiate either static, kinematic or dynamic bodies
+        TInertialData   inertialData;       // inertial properties of this body
+        TMat4           localTransformZero; // relative transform at zero-configuration of this body w.r.t. parent body
+        TCollisionData  collision;          // collisions owned by this body
+        TVisualData     visual;             // visuals owned by this body
 
         TBodyData()
         {

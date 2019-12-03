@@ -6,7 +6,7 @@
 #include <pytysoc_collision.h>
 #include <pytysoc_visual.h>
 
-#include <components/bodies.h>
+#include <components/body.h>
 
 namespace py = pybind11;
 
@@ -21,67 +21,93 @@ namespace pytysoc
 
     public :
 
+        /* @exposed */
         PyBody( const std::string& name,
                 const PyBodyData& data,
                 py::array_t<TScalar>& xyz,
                 py::array_t<TScalar>& rpy );
 
+        /* @notexposed */
         PyBody( tysoc::TBody* bodyPtr );
 
+        /* @notexposed */
         ~PyBody();
 
-        void addCollision( PyCollision* pyCollisionPtr );
+        /* @exposed */
+        void setCollision( PyCollision* pyCollisionPtr );
 
-        void addVisual( PyVisual* pyVisualPtr );
+        /* @exposed */
+        void setVisual( PyVisual* pyVisualPtr );
 
+        /* @exposed */
         void setPosition( py::array_t<TScalar>& position );
 
+        /* @exposed */
         void setRotation( py::array_t<TScalar>& rotation );
 
+        /* @exposed */
         void setEuler( py::array_t<TScalar>& rpy );
 
+        /* @exposed */
         void setQuaternion( py::array_t<TScalar>& quat );
 
+        /* @exposed */
         void setTransform( py::array_t<TScalar>& transform );
 
+        /* @exposed */
         std::string name();
 
+        /* @exposed */
         py::array_t<TScalar> pos();
 
+        /* @exposed */
         py::array_t<TScalar> rot();
 
+        /* @exposed */
         py::array_t<TScalar> quat();
 
+        /* @exposed */
         py::array_t<TScalar> euler();
 
+        /* @exposed */
         py::array_t<TScalar> tf();
 
+        /* @exposed */
         py::array_t<TScalar> pos0();
 
+        /* @exposed */
         py::array_t<TScalar> rot0();
 
+        /* @exposed */
         py::array_t<TScalar> quat0();
 
+        /* @exposed */
         py::array_t<TScalar> euler0();
 
+        /* @exposed */
         py::array_t<TScalar> tf0();
 
+        /* @exposed */
         tysoc::eDynamicsType dyntype();
 
+        /* @exposed */
         PyBodyData data();
 
-        std::vector< PyVisual* > visuals() { return m_pyVisuals; }
+        /* @exposed */
+        PyVisual* visual() { return m_pyVisual; }
 
-        std::vector< PyCollision* > collisions() { return m_pyCollisions; }
+        /* @exposed */
+        PyCollision* collision() { return m_pyCollision; }
 
+        /* @notexposed */
         tysoc::TBody* ptr() { return m_bodyPtr; }
 
     private :
 
         tysoc::TBody* m_bodyPtr;
 
-        std::vector< PyCollision* > m_pyCollisions;
-        std::vector< PyVisual* > m_pyVisuals;
+        PyCollision* m_pyCollision;
+        PyVisual* m_pyVisual;
 
     };
 
@@ -98,7 +124,7 @@ namespace pytysoc
         .def_property_readonly( "dyntype", &pytysoc::PyBody::dyntype ) \
         .def_property_readonly( "name", &pytysoc::PyBody::name ) \
         .def_property_readonly( "data", &pytysoc::PyBody::data ) \
-        .def( "addVisual", &pytysoc::PyBody::addVisual ) \
-        .def( "addCollision", &pytysoc::PyBody::addCollision ) \
-        .def( "visuals", &pytysoc::PyBody::visuals ) \
-        .def( "collisions", &pytysoc::PyBody::collisions );
+        .def( "setVisual", &pytysoc::PyBody::setVisual ) \
+        .def( "setCollision", &pytysoc::PyBody::setCollision ) \
+        .def( "visual", &pytysoc::PyBody::visual ) \
+        .def( "collision", &pytysoc::PyBody::collision );
