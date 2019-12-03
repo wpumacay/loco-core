@@ -150,9 +150,9 @@ namespace tysoc {
         else if ( shapeData.type == eShapeType::MESH )
         {
             std::pair<TVec3, TVec3> _aabb = computeMeshAABB( shapeData.filename );
-            _volume = std::abs( ( _aabb.second.x - _aabb.first.x ) * 
-                                ( _aabb.second.y - _aabb.first.y ) * 
-                                ( _aabb.second.z - _aabb.first.z ) );
+            _volume = std::abs( ( _aabb.second.x - _aabb.first.x ) * shapeData.size.x *
+                                ( _aabb.second.y - _aabb.first.y ) * shapeData.size.y *
+                                ( _aabb.second.z - _aabb.first.z ) * shapeData.size.z );
         }
         else if ( shapeData.type == eShapeType::HFIELD )
         {
