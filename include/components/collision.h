@@ -81,6 +81,8 @@ namespace tysoc {
 
         TCollisionData data() { return m_data; }
 
+        TCollisionData& dataRef() { return m_data; }
+
         TBody* parent() { return m_parentBodyPtr; }
 
         TICollisionAdapter* adapter() { return m_collisionImplPtr; }
