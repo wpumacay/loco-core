@@ -103,24 +103,13 @@ include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/ext/tinyxml2" )
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/ext/json" )
 include_directories( "${CMAKE_SOURCE_DIR}/ext/spdlog/include" )
 
-# Enable/disable tcmalloc as a core dependency
-option( TYSOC_USE_TCMALLOC "Set when 'tcmalloc' is required (raisim requirement)" OFF )
-
 add_library( tysocCore SHARED
              ${TYSOC_SOURCES} )
-if ( TYSOC_USE_TCMALLOC )
-    message( "TYSOCCORE> Using tcmalloc along build" )
-    target_link_libraries( tysocCore
-                           assimp
-                           spdlog
-                           tcmalloc
-                           dl )
-else ()
-    target_link_libraries( tysocCore
-                           assimp
-                           spdlog
-                           dl )
-endif ()
+
+target_link_libraries( tysocCore
+                       assimp
+                       spdlog
+                       dl )
 
 # Configure glviz
 add_subdirectory( glviz )
