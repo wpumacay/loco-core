@@ -14,90 +14,184 @@ namespace tysoc {
     class TVisual;
     class TIBodyAdapter;
 
-    class TBody
+    /**
+    *   Body object interface, defining base functionality for any body-type
+    *
+    *   This class provides an interface|specification of the minimum functionality
+    *   and resources required by bodies in the framework, namely the following three 
+    *   types (which implement this interface):
+    *
+    *       > Single-body: defines bodies that for primitives that can lay around in
+    *                      the scenario. These are used as obstacles, simple parts of
+    *                      terrain, and primitives for terrain generation.
+    *       > Compound-body: defines bodies that can be connected to form chains (compounds) by
+    *                        using joints to link them, whose degrees of freedom can be set 
+    *                        according to the user. Use these to create doors, conveyors, etc.
+    *       > Kintree-body: defines bodies that are used to create agents (kinematic trees) used
+    *                       for locomotion tasks. This comes in handy to separate some internal
+    *                       backend APIs that provide both Minimal Coordinates (usually through a 
+    *                       Featherstone implementation) and Maximal Coordinates (usually using
+    *                       recursive Newton-Euler).
+    *
+    *   Notes:
+    *       - We're still unsure about the way we're handling this hierarchy is the correct way
+    *         to do the job. So far, all functionality is baked into this single interface, and
+    *         disabled|extended according to the class-type used.
+    *       - We're open to suggestions, this seems to work, but it's not elegant to just place
+    *         everything under the same interface, even though some objects don't actually fully
+    *         use nor expose this functionality
+    */
+    class TIBody
     {
 
     public :
         
-        TBody( const std::string& name,
-               const TBodyData& data,
-               const TVec3& position,
-               const TMat3& rotation );
+        TIBody( const std::string& name,
+                const TBodyData& data );
 
-        virtual ~TBody();
+        virtual ~TIBody();
 
-        void setAdapter( TIBodyAdapter* bodyImpl );
+        void setAdapter( TIBodyAdapter* bodyImplRef );
 
         void setCollision( std::unique_ptr< TCollision > collisionObj );
 
         void setVisual( std::unique_ptr< TVisual > visualObj );
 
-        void update();
+        virtual void update();
 
-        void reset();
+        virtual void reset();
 
-        void setPosition( const TVec3& position );
+        /*******************************************************************************
+        * World-space setters: use these to set the world-space pose of the body in 
+        * question. Implementation varies among body types in the following way:
+        *
+        *   > single-body: works normally (sets world pose)
+        *   > compound-body: works normally if root-body, and does nothing otherwise
+        *   > kintree-body: disabled, to allow access only through kintree-api
+        *******************************************************************************/
 
-        void setRotation( const TMat3& rotation );
+        virtual void setPosition( const TVec3& position );
 
-        void setEuler( const TVec3& euler );
+        virtual void setRotation( const TMat3& rotation );
 
-        void setQuaternion( const TVec4& quat );
+        virtual void setEuler( const TVec3& euler );
 
-        void setTransform( const TMat4& transform );
+        virtual void setQuaternion( const TVec4& quat );
+
+        virtual void setTransform( const TMat4& transform );
+
+        /*******************************************************************************
+        * Local-space setters: use these to set the relative pose of the body in question 
+        * w.r.t. a parent body. Implementation varies among body types in the following way:
+        *
+        *   > single-body: disabled, as single primitives have no parent
+        *   > compound-body: works normally (sets local pose w.r.t. parent body)
+        *   > kintree-body: disabled, to allow access only through kintree-api
+        *******************************************************************************/
+
+        virtual void setLocalPosition( const TVec3& localPosition );
+
+        virtual void setLocalRotation( const TMat3& localRotation );
+
+        virtual void setLocalEuler( const TVec3& localEuler );
+
+        virtual void setLocalQuaternion( const TVec4& localQuat );
+
+        virtual void setLocalTransform( const TMat4& localTransform );
+
+        /*************************************************************
+        *                      World-space getters                   *
+        *************************************************************/
+
+        TVec3 pos() const { return m_pos; }
+
+        TMat3 rot() const { return m_rot; }
+
+        TVec4 quat() const { return m_tf.getRotQuaternion(); }
+
+        TVec3 euler() const { return m_tf.getRotEuler(); }
+
+        TMat4 tf() const { return m_tf; }
+
+        TVec3 pos0() const { return m_pos0; }
+
+        TMat3 rot0() const { return m_rot0; }
+
+        TVec4 quat0() const { return m_tf0.getRotQuaternion(); }
+
+        TVec3 euler0() const { return m_tf0.getRotEuler(); }
+
+        TMat4 tf0() const { return m_tf0; }
+
+        /*************************************************************
+        *                      Local-space getters                   *
+        *************************************************************/
+
+        TVec3 localPos() const { return m_localPos; }
+
+        TMat3 localRot() const { return m_localRot; }
+
+        TVec4 localQuat() const { return m_localTf.getRotQuaternion(); }
+
+        TVec3 localEuler() const { return m_localTf.getRotEuler(); }
+
+        TMat4 localTf() const { return m_localTf; }
+
+        TVec3 localPos0() const { return m_localPos0; }
+
+        TMat3 localRot0() const { return m_localRot0; }
+
+        TVec4 localQuat0() const { return m_localTf0.getRotQuaternion(); }
+
+        TVec3 localEuler0() const { return m_localTf0.getRotEuler(); }
+
+        TMat4 localTf0() const { return m_localTf0; }
 
         std::string name() { return m_name; }
 
-        TVec3 pos() { return m_pos; }
-
-        TMat3 rot() { return m_rot; }
-
-        TVec4 quat() { return m_tf.getRotQuaternion(); }
-
-        TVec3 euler() { return m_tf.getRotEuler(); }
-
-        TMat4 tf() { return m_tf; }
-
-        TVec3 pos0() { return m_pos0; }
-
-        TMat3 rot0() { return m_rot0; }
-
-        TVec4 quat0() { return m_tf0.getRotQuaternion(); }
-
-        TVec3 euler0() { return m_tf0.getRotEuler(); }
-
-        TMat4 tf0() { return m_tf0; }
+        eClassType classType() { return m_classType; }
 
         TVisual* visual() { return m_visual.get(); }
 
         TCollision* collision() { return m_collision.get(); }
 
-        eDynamicsType dyntype() { return m_data.dyntype; }
-
-        TBodyData data() { return m_data; }
-
         TIBodyAdapter* adapter() { return m_bodyImplRef; }
+
+        TBodyData data() const { return m_data; }
+
+        TBodyData& dataRef() { return m_data; }
+
+        eDynamicsType dyntype() const { return m_data.dyntype; }
 
     protected :
 
         /* unique name identifier */
         std::string m_name;
 
-        /* position in world space */
+        /* type of body (single|compound|kintree) */
+        eClassType m_classType;
+
+        /* initial and current position in world-space */
+        TVec3 m_pos0;
         TVec3 m_pos;
-        /* orientation in world space */
+        /* initial and current orientation in world-space */
+        TMat3 m_rot0;
         TMat3 m_rot; 
-        /* transform in world space */
+        /* initial and current transform in world-space */
+        TMat4 m_tf0;
         TMat4 m_tf;
 
-        /* starting position of the body in world-space */
-        TVec3 m_pos0;
-        /* starting orientation of the body in world-space */
-        TMat3 m_rot0;
-        /* starting transform of the body in world-space */
-        TMat4 m_tf0;
+        /* initial and current position in local-space */
+        TVec3 m_localPos0;
+        TVec3 m_localPos;
+        /* initial and current orientation in local-space */
+        TMat3 m_localRot0;
+        TMat3 m_localRot; 
+        /* initial and current transform in local-space */
+        TMat4 m_localTf0;
+        TMat4 m_localTf;
 
-        /* data of this body object */
+        /* properties of this object */
         TBodyData m_data;
 
         /* Adapter-object that gives access to the low-level API for a specific backend (reference only, as simulation owns it) */

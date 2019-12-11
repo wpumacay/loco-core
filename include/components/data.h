@@ -54,11 +54,20 @@ namespace tysoc {
         PD_CONTROLLER
     };
 
+    enum class eBodyClassType
+    {
+        NONE = 0,
+        SINGLE_BODY,
+        COMPOUND_BODY,
+        KINEMATIC_TREE_BODY
+    };
+
     std::string toString( const eShapeType& type );
     std::string toString( const eJointType& type );
     std::string toString( const eDynamicsType& type );
     std::string toString( const eSensorType& type );
     std::string toString( const eActuatorType& type );
+    std::string toString( const eBodyClassType& type );
 
     eShapeType toEnumShape( const std::string& shape );
     eJointType toEnumJoint( const std::string& type );

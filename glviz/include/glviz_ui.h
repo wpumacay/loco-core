@@ -56,7 +56,7 @@ namespace tysoc
         void _submenuScenarioAgents();
         void _submenuScenarioTerrainGens();
 
-        void _submenuPrimitive( TBody* body, bool refresh );
+        void _submenuPrimitive( TIBody* body, bool refresh );
         void _submenuAgent( TAgent* agent, bool refresh );
         void _submenuTerrainGen( TITerrainGenerator* terrainGen, bool refresh );
 

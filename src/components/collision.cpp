@@ -9,92 +9,92 @@ namespace tysoc {
         m_name = name;
         m_data = collisionData;
 
-        m_parentBodyPtr = nullptr;
-        m_collisionImplPtr = nullptr;
-        m_drawableImplPtr = nullptr;
+        m_parentBodyRef = nullptr;
+        m_collisionImplRef = nullptr;
+        m_drawableImplRef = nullptr;
     }
 
     TCollision::~TCollision()
     {
-        if ( m_drawableImplPtr )
-            delete m_drawableImplPtr;
+        if ( m_drawableImplRef )
+            delete m_drawableImplRef;
 
-        if ( m_collisionImplPtr )
-            delete m_collisionImplPtr;
+        if ( m_collisionImplRef )
+            delete m_collisionImplRef;
 
-        m_drawableImplPtr = nullptr;
-        m_collisionImplPtr = nullptr;
+        m_drawableImplRef = nullptr;
+        m_collisionImplRef = nullptr;
     }
 
-    void TCollision::setParentBody( TBody* parentBodyPtr )
+    void TCollision::setParentBody( TIBody* parentBodyRef )
     {
-        m_parentBodyPtr = parentBodyPtr;
+        m_parentBodyRef = parentBodyRef;
     }
 
-    void TCollision::setAdapter( TICollisionAdapter* collisionImplPtr )
+    void TCollision::setAdapter( TICollisionAdapter* collisionImplRef )
     {
         // if a previous adapter is present, release its resources
-        if ( m_collisionImplPtr )
-            delete m_collisionImplPtr;
+        if ( m_collisionImplRef )
+            delete m_collisionImplRef;
 
-        m_collisionImplPtr = collisionImplPtr;
+        m_collisionImplRef = collisionImplRef;
     }
 
     void TCollision::setDrawable( TIDrawable* drawablePtr )
     {
         // change the reference to our new shiny drawable
-        m_drawableImplPtr = drawablePtr;
+        m_drawableImplRef = drawablePtr;
     }
 
     void TCollision::show( bool visible )
     {
-        if ( m_drawableImplPtr )
-            m_drawableImplPtr->show( visible );
+        if ( m_drawableImplRef )
+            m_drawableImplRef->show( visible );
     }
 
     void TCollision::wireframe( bool wireframe )
     {
-        if ( m_drawableImplPtr )
-            m_drawableImplPtr->wireframe( wireframe );
+        if ( m_drawableImplRef )
+            m_drawableImplRef->wireframe( wireframe );
     }
 
     bool TCollision::isVisible()
     {
-        if ( !m_drawableImplPtr )
+        if ( !m_drawableImplRef )
             return false;
 
-        return m_drawableImplPtr->isVisible();
+        return m_drawableImplRef->isVisible();
     }
 
     bool TCollision::isWireframe()
     {
-        if ( !m_drawableImplPtr )
+        if ( !m_drawableImplRef )
             return false;
 
-        return m_drawableImplPtr->isWireframe();
+        return m_drawableImplRef->isWireframe();
     }
 
     void TCollision::update()
     {
         // update internal stuff that might be required in the backend
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->update();
+        if ( m_collisionImplRef )
+            m_collisionImplRef->update();
 
         // update our own transform using the world-transform from the parent
-        assert( m_parentBodyPtr != nullptr );
-        m_tf = m_parentBodyPtr->tf() * m_localTf;
+        assert( m_parentBodyRef != nullptr );
+        m_tf = m_parentBodyRef->tf() * m_localTf;
         m_pos = m_tf.getPosition();
         m_rot = m_tf.getRotation();
 
         // set the transform of the renderable to be our own world-transform
-        if ( m_drawableImplPtr )
-            m_drawableImplPtr->setWorldTransform( m_tf );
+        if ( m_drawableImplRef )
+            m_drawableImplRef->setWorldTransform( m_tf );
     }
 
     void TCollision::reset()
     {
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->reset();
+        if ( m_collisionImplRef )
+            m_collisionImplRef->reset();
     }
 
     void TCollision::setLocalPosition( const TVec3& localPosition )
@@ -102,8 +102,8 @@ namespace tysoc {
         m_localPos = localPosition;
         m_localTf.setPosition( m_localPos );
 
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->setLocalPosition( m_localPos );
+        if ( m_collisionImplRef )
+            m_collisionImplRef->setLocalPosition( m_localPos );
     }
 
     void TCollision::setLocalRotation( const TMat3& localRotation )
@@ -111,8 +111,8 @@ namespace tysoc {
         m_localRot = localRotation;
         m_localTf.setRotation( m_localRot );
 
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->setLocalRotation( m_localRot );
+        if ( m_collisionImplRef )
+            m_collisionImplRef->setLocalRotation( m_localRot );
     }
 
     void TCollision::setLocalQuat( const TVec4& localQuaternion )
@@ -120,8 +120,8 @@ namespace tysoc {
         m_localRot = TMat3::fromQuaternion( localQuaternion );
         m_localTf.setRotation( m_localRot );
 
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->setLocalRotation( m_localRot );
+        if ( m_collisionImplRef )
+            m_collisionImplRef->setLocalRotation( m_localRot );
     }
 
     void TCollision::setLocalTransform( const TMat4& localTransform )
@@ -130,8 +130,8 @@ namespace tysoc {
         m_localPos = m_localTf.getPosition();
         m_localRot = m_localTf.getRotation();
 
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->setLocalTransform( m_localTf );
+        if ( m_collisionImplRef )
+            m_collisionImplRef->setLocalTransform( m_localTf );
     }
 
     void TCollision::changeSize( const TVec3& newSize )
@@ -158,12 +158,12 @@ namespace tysoc {
         m_data.size = newSize;
 
         // tell the backend resource to change the size internally
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->changeSize( newSize );
+        if ( m_collisionImplRef )
+            m_collisionImplRef->changeSize( newSize );
 
         // tell the rendering resource to change the size internally
-        if ( m_drawableImplPtr )
-            m_drawableImplPtr->changeSize( newSize );
+        if ( m_drawableImplRef )
+            m_drawableImplRef->changeSize( newSize );
     }
 
     void TCollision::changeElevationData( const std::vector< float >& heightData )
@@ -188,11 +188,11 @@ namespace tysoc {
         m_data.hdata.heightData = heightData;
 
         // tell the backend resource to change the elevation data internally
-        if ( m_collisionImplPtr )
-            m_collisionImplPtr->changeElevationData( heightData );
+        if ( m_collisionImplRef )
+            m_collisionImplRef->changeElevationData( heightData );
 
         // tell the rendering resource to change the elevation data internally
-        if ( m_drawableImplPtr )
-            m_drawableImplPtr->changeElevationData( heightData );
+        if ( m_drawableImplRef )
+            m_drawableImplRef->changeElevationData( heightData );
     }
 }

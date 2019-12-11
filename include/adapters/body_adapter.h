@@ -4,14 +4,14 @@
 
 namespace tysoc {
 
-    class TBody;
+    class TIBody;
 
     class TIBodyAdapter
     {
 
     public :
 
-        TIBodyAdapter( TBody* bodyPtr ) { m_bodyPtr = bodyPtr; }
+        TIBodyAdapter( TIBody* bodyRef ) { m_bodyRef = bodyRef; }
 
         virtual ~TIBodyAdapter() {}
 
@@ -20,6 +20,13 @@ namespace tysoc {
         virtual void reset() = 0;
 
         virtual void update() = 0;
+
+        // @todo: required for backend to handle dynamic deletion (when detached from a TIBody)
+        virtual void detach() {}
+
+        /************************************************************
+        *                 World-space functionality                 *
+        ************************************************************/
 
         virtual void setPosition( const TVec3& position ) = 0;
 
@@ -33,14 +40,30 @@ namespace tysoc {
 
         virtual void getTransform( TMat4& dstTransform ) = 0;
 
-        TBody* body() { return m_bodyPtr; }
+        /***********************************************************
+        *                 Local-space functionality                *
+        ***********************************************************/
+
+        virtual void setLocalPosition( const TVec3& position ) = 0;
+
+        virtual void setLocalRotation( const TMat3& rotation ) = 0;
+
+        virtual void setLocalTransform( const TMat4& transform ) = 0;
+
+        virtual void getLocalPosition( TVec3& dstPosition ) = 0;
+
+        virtual void getLocalRotation( TMat3& dstRotation ) = 0;
+
+        virtual void getLocalTransform( TMat4& dstTransform ) = 0;
+
+        TIBody* body() const { return m_bodyRef; }
 
     protected :
 
-        TBody* m_bodyPtr;
+        TIBody* m_bodyRef;
     };
 
     /* dl-function to be loaded from the backend support */
-    typedef TIBodyAdapter* FcnCreateBodyAdapter( TBody* bodyPtr );
+    typedef TIBodyAdapter* FcnCreateBodyAdapter( TIBody* bodyRef );
 
 }

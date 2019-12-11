@@ -6,38 +6,40 @@
 #include <pytysoc_collision.h>
 #include <pytysoc_visual.h>
 
-#include <components/body.h>
+#include <primitives/single_body.h>
 
 namespace py = pybind11;
 
 namespace pytysoc
 {
 
+    // @todo: change usage of raw-pointers to unique_ptrs or shared_ptrs (check pybind constraints)
+
     class PyCollision;
     class PyVisual;
 
-    class PyBody
+    class PySingleBody
     {
 
     public :
 
         /* @exposed */
-        PyBody( const std::string& name,
-                const PyBodyData& data,
-                py::array_t<TScalar>& xyz,
-                py::array_t<TScalar>& rpy );
+        PySingleBody( const std::string& name,
+                      const PyBodyData& data,
+                      py::array_t<TScalar>& xyz,
+                      py::array_t<TScalar>& rpy );
 
         /* @notexposed */
-        PyBody( tysoc::TBody* bodyPtr );
+        PySingleBody( tysoc::TSingleBody* bodyObj );
 
         /* @notexposed */
-        ~PyBody();
+        ~PySingleBody();
 
         /* @exposed */
-        void setCollision( PyCollision* pyCollisionPtr );
+        void setCollision( PyCollision* pyCollisionObj );
 
         /* @exposed */
-        void setVisual( PyVisual* pyVisualPtr );
+        void setVisual( PyVisual* pyVisualObj );
 
         /* @exposed */
         void setPosition( py::array_t<TScalar>& position );
@@ -100,31 +102,30 @@ namespace pytysoc
         PyCollision* collision() { return m_pyCollision; }
 
         /* @notexposed */
-        tysoc::TBody* ptr() { return m_bodyPtr; }
+        tysoc::TSingleBody* ptr() { return m_body; }
 
     private :
 
-        tysoc::TBody* m_bodyPtr;
+        tysoc::TSingleBody* m_body;
 
         PyCollision* m_pyCollision;
         PyVisual* m_pyVisual;
-
     };
 
 }
 
 #define PYTYSOC_BODY_BINDINGS(m) \
-    py::class_<pytysoc::PyBody>(m, "PyBody") \
+    py::class_<pytysoc::PySingleBody>(m, "PySingleBody") \
         .def( py::init<const std::string&, const pytysoc::PyBodyData&, py::array_t<TScalar>&, py::array_t<TScalar>&>() ) \
-        .def_property( "pos", &pytysoc::PyBody::pos, &pytysoc::PyBody::setPosition ) \
-        .def_property( "rot", &pytysoc::PyBody::rot, &pytysoc::PyBody::setRotation ) \
-        .def_property( "quat", &pytysoc::PyBody::quat, &pytysoc::PyBody::setEuler ) \
-        .def_property( "euler", &pytysoc::PyBody::euler, &pytysoc::PyBody::setQuaternion ) \
-        .def_property( "tf", &pytysoc::PyBody::tf, &pytysoc::PyBody::setTransform ) \
-        .def_property_readonly( "dyntype", &pytysoc::PyBody::dyntype ) \
-        .def_property_readonly( "name", &pytysoc::PyBody::name ) \
-        .def_property_readonly( "data", &pytysoc::PyBody::data ) \
-        .def( "setVisual", &pytysoc::PyBody::setVisual ) \
-        .def( "setCollision", &pytysoc::PyBody::setCollision ) \
-        .def( "visual", &pytysoc::PyBody::visual ) \
-        .def( "collision", &pytysoc::PyBody::collision );
+        .def_property( "pos", &pytysoc::PySingleBody::pos, &pytysoc::PySingleBody::setPosition ) \
+        .def_property( "rot", &pytysoc::PySingleBody::rot, &pytysoc::PySingleBody::setRotation ) \
+        .def_property( "quat", &pytysoc::PySingleBody::quat, &pytysoc::PySingleBody::setEuler ) \
+        .def_property( "euler", &pytysoc::PySingleBody::euler, &pytysoc::PySingleBody::setQuaternion ) \
+        .def_property( "tf", &pytysoc::PySingleBody::tf, &pytysoc::PySingleBody::setTransform ) \
+        .def_property_readonly( "dyntype", &pytysoc::PySingleBody::dyntype ) \
+        .def_property_readonly( "name", &pytysoc::PySingleBody::name ) \
+        .def_property_readonly( "data", &pytysoc::PySingleBody::data ) \
+        .def( "setVisual", &pytysoc::PySingleBody::setVisual ) \
+        .def( "setCollision", &pytysoc::PySingleBody::setCollision ) \
+        .def( "visual", &pytysoc::PySingleBody::visual ) \
+        .def( "collision", &pytysoc::PySingleBody::collision );

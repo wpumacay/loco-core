@@ -10,7 +10,7 @@
 
 namespace tysoc {
 
-    class TBody;
+    class TIBody;
     class TICollisionAdapter;
 
     class TCollision
@@ -23,11 +23,11 @@ namespace tysoc {
 
         ~TCollision();
 
-        void setParentBody( TBody* parentBodyPtr );
+        void setParentBody( TIBody* parentBodyRef );
 
-        void setAdapter( TICollisionAdapter* collisionImplPtr );
+        void setAdapter( TICollisionAdapter* collisionImplRef );
 
-        void setDrawable( TIDrawable* drawableImplPtr );
+        void setDrawable( TIDrawable* drawableImplRef );
 
         void show( bool visible );
 
@@ -83,9 +83,9 @@ namespace tysoc {
 
         TCollisionData& dataRef() { return m_data; }
 
-        TBody* parent() { return m_parentBodyPtr; }
+        TIBody* parent() { return m_parentBodyRef; }
 
-        TICollisionAdapter* adapter() { return m_collisionImplPtr; }
+        TICollisionAdapter* adapter() { return m_collisionImplRef; }
 
     protected :
 
@@ -107,16 +107,16 @@ namespace tysoc {
         TMat4 m_tf;
 
         /* reference to the parent-body of this collision object */
-        TBody* m_parentBodyPtr;
+        TIBody* m_parentBodyRef;
 
         /* construction data of this collision object */
         TCollisionData m_data;
 
         /* reference to the drawable resource used for visualization */
-        TIDrawable* m_drawableImplPtr;
+        TIDrawable* m_drawableImplRef;
 
         /* Adapter object that gives access to the low-level API for a specific backend */
-        TICollisionAdapter* m_collisionImplPtr;
+        TICollisionAdapter* m_collisionImplRef;
     };
 
 }

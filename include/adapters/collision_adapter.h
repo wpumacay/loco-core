@@ -20,6 +20,9 @@ namespace tysoc {
 
         virtual void update() = 0;
 
+        // @todo: required for backend to handle dynamic deletion (when detached from a TCollision)
+        virtual void detach() {}
+
         virtual void setLocalPosition( const TVec3& position ) = 0;
 
         virtual void setLocalRotation( const TMat3& rotation ) = 0;

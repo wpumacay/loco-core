@@ -60,6 +60,16 @@ namespace tysoc {
         return "undefined";
     }
 
+    std::string toString( const eBodyClassType& type )
+    {
+        if ( type == eBodyClassType::NONE ) return "none";
+        if ( type == eBodyClassType::SINGLE_BODY ) return "single_body";
+        if ( type == eBodyClassType::COMPOUND_BODY ) return "compound_body";
+        if ( type == eBodyClassType::KINEMATIC_TREE_BODY ) return "kinematic_tree_body";
+
+        return "undefined";
+    }
+
     eShapeType toEnumShape( const std::string& shape )
     {
         if ( shape == "box" ) return eShapeType::BOX;

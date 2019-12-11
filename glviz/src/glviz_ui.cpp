@@ -162,7 +162,7 @@ namespace tysoc
             _submenuPrimitive( m_scenario->getBodyByName( _currentBodyName ), _refresh );
     }
 
-    void TGLScenarioUtilsLayer::_submenuPrimitive( TBody* body, bool refresh )
+    void TGLScenarioUtilsLayer::_submenuPrimitive( TIBody* body, bool refresh )
     {
         if ( !body )
             return;

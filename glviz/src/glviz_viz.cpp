@@ -504,7 +504,7 @@ namespace tysoc {
         m_vizKinTreeWrappers.push_back( std::unique_ptr< TGLVizKinTree >( _vizKinTreeWrapper ) );
     }
 
-    void TGLVisualizer::_collectSingleBodies( TBody* bodyPtr )
+    void TGLVisualizer::_collectSingleBodies( TIBody* bodyPtr )
     {
         if ( !bodyPtr )
             return;

@@ -23,7 +23,7 @@ namespace tysoc {
         TGLVisualizer( TScenario* scenarioPtr );
         ~TGLVisualizer();
 
-        void addBody( TBody* bodyPtr );
+        void addBody( TIBody* bodyPtr );
         void addAgent( TAgent* agentPtr );
 
         engine::CFrameBuffer* fboRgb() const { return m_targetFrameRgb.get(); }
@@ -68,7 +68,7 @@ namespace tysoc {
 
         void _setupGlRenderingEngine();
         void _setupGlRenderTargets();
-        void _collectSingleBodies( TBody* bodyPtr );
+        void _collectSingleBodies( TIBody* bodyPtr );
         void _collectKinTreeAgent( TAgent* agentPtr );
         void _collectTerrainGenerator( TITerrainGenerator* terrainGeneratorPtr );
         void _renderSensorReading( TISensor* sensorPtr );

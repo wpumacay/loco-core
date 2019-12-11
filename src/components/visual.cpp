@@ -9,73 +9,77 @@ namespace tysoc {
         m_name = name;
         m_data = visualData;
 
-        m_parentBodyPtr = nullptr;
-        m_drawableImplPtr = nullptr;
+        m_parentBodyRef = nullptr;
+        m_drawableImplRef = nullptr;
     }
 
     TVisual::~TVisual()
     {
-        if ( m_drawableImplPtr )
-            delete m_drawableImplPtr;
-
-        m_drawableImplPtr = nullptr;
+        /* clear references (owners are in charge or releasing them) */
+        m_parentBodyRef = nullptr;
+        m_drawableImplRef = nullptr;
     }
 
-    void TVisual::setParentBody( TBody* parentBodyPtr )
+    void TVisual::setParentBody( TIBody* parentBodyRef )
     {
-        m_parentBodyPtr = parentBodyPtr;
+        /* keep a reference to the parent body */
+        m_parentBodyRef = parentBodyRef;
     }
 
-    void TVisual::setDrawable( TIDrawable* drawablePtr )
+    void TVisual::setDrawable( TIDrawable* drawableImplRef )
     {
-        // change the reference to our new shiny drawable
-        m_drawableImplPtr = drawablePtr;
+        /* notify the backend that the current adapter is ready for deletion */
+        if ( m_drawableImplRef )
+            m_drawableImplRef->detach();
+
+        /* keep the reference to the new drawable */
+        m_drawableImplRef = drawableImplRef;
     }
 
     void TVisual::show( bool visible )
     {
-        if ( m_drawableImplPtr )
-            m_drawableImplPtr->show( visible );
+        if ( m_drawableImplRef )
+            m_drawableImplRef->show( visible );
     }
 
     void TVisual::wireframe( bool wireframe )
     {
-        if ( m_drawableImplPtr )
-            m_drawableImplPtr->wireframe( wireframe );
+        if ( m_drawableImplRef )
+            m_drawableImplRef->wireframe( wireframe );
     }
 
     bool TVisual::isVisible()
     {
-        if ( !m_drawableImplPtr )
+        if ( !m_drawableImplRef )
             return false;
 
-        return m_drawableImplPtr->isVisible();
+        return m_drawableImplRef->isVisible();
     }
 
     bool TVisual::isWireframe()
     {
-        if ( !m_drawableImplPtr )
+        if ( !m_drawableImplRef )
             return false;
 
-        return m_drawableImplPtr->isWireframe();
+        return m_drawableImplRef->isWireframe();
     }
 
     void TVisual::update()
     {
         // update our own transform using the world-transform from the parent
-        assert( m_parentBodyPtr != nullptr );
-        m_tf = m_parentBodyPtr->tf() * m_localTf;
+        assert( m_parentBodyRef != nullptr );
+        m_tf = m_parentBodyRef->tf() * m_localTf;
         m_pos = m_tf.getPosition();
         m_rot = m_tf.getRotation();
 
         // set the transform of the renderable to be our own world-transform
-        if ( m_drawableImplPtr )
-            m_drawableImplPtr->setWorldTransform( m_tf );
+        if ( m_drawableImplRef )
+            m_drawableImplRef->setWorldTransform( m_tf );
     }
 
     void TVisual::reset()
     {
-        // do nothing for now
+        // nothing required for now
     }
 
     void TVisual::setLocalPosition( const TVec3& localPosition )
@@ -127,8 +131,8 @@ namespace tysoc {
         m_data.size = newSize;
 
         // set the new size of the drawable resource
-        if ( m_drawableImplPtr )
-            m_drawableImplPtr->changeSize( newSize );
+        if ( m_drawableImplRef )
+            m_drawableImplRef->changeSize( newSize );
     }
 
     void TVisual::changeElevationData( const std::vector< float >& heightData )
@@ -153,38 +157,38 @@ namespace tysoc {
         m_data.hdata.heightData = heightData;
 
         // set the new elevation data of the drawable resource
-        if ( m_drawableImplPtr )
-            m_drawableImplPtr->changeElevationData( heightData );
+        if ( m_drawableImplRef )
+            m_drawableImplRef->changeElevationData( heightData );
     }
 
     void TVisual::changeColor( const TVec3& newFullColor )
     {
-        if ( m_drawableImplPtr )
-            m_drawableImplPtr->setColor( newFullColor );
+        if ( m_drawableImplRef )
+            m_drawableImplRef->setColor( newFullColor );
     }
 
     void TVisual::changeAmbientColor( const TVec3& newAmbientColor )
     {
-        if ( m_drawableImplPtr )
-            m_drawableImplPtr->setAmbientColor( newAmbientColor );
+        if ( m_drawableImplRef )
+            m_drawableImplRef->setAmbientColor( newAmbientColor );
     }
 
     void TVisual::changeDiffuseColor( const TVec3& newDiffuseColor )
     {
-        if ( m_drawableImplPtr )
-            m_drawableImplPtr->setDiffuseColor( newDiffuseColor );
+        if ( m_drawableImplRef )
+            m_drawableImplRef->setDiffuseColor( newDiffuseColor );
     }
 
     void TVisual::changeSpecularColor( const TVec3& newSpecularColor )
     {
-        if ( m_drawableImplPtr )
-            m_drawableImplPtr->setSpecularColor( newSpecularColor );
+        if ( m_drawableImplRef )
+            m_drawableImplRef->setSpecularColor( newSpecularColor );
     }
 
     void TVisual::changeShininess( const TScalar& shininess )
     {
-        if ( m_drawableImplPtr )
-            m_drawableImplPtr->setShininess( shininess );
+        if ( m_drawableImplRef )
+            m_drawableImplRef->setShininess( shininess );
     }
 
 }

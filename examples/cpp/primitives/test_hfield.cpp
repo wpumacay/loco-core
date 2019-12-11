@@ -12,7 +12,7 @@ std::uniform_real_distribution<double>  g_randomUniformDistribution = std::unifo
 #define NUM_CAPSULES 5
 #define NUM_MESHES 5
 
-tysoc::TBody* createHfield( const std::string& name, const tysoc::TVec3& position )
+tysoc::TSingleBody* createHfield( const std::string& name, const tysoc::TVec3& position )
 {
     const int nxSamples = 100;
     const int nySamples = 100;
@@ -71,10 +71,10 @@ tysoc::TBody* createHfield( const std::string& name, const tysoc::TVec3& positio
     _bodyData.collision = _collisionData;
     _bodyData.visual = _visualData;
 
-    return new tysoc::TBody( name, _bodyData, position, tysoc::TMat3() );;
+    return new tysoc::TSingleBody( name, _bodyData, position, tysoc::TMat3() );;
 }
 
-tysoc::TBody* createSimpleBody( const std::string& name, const std::string& type )
+tysoc::TSingleBody* createSimpleBody( const std::string& name, const std::string& type )
 {
     tysoc::TCollisionData _collisionData;
     tysoc::TVisualData _visualData;
@@ -154,10 +154,10 @@ tysoc::TBody* createSimpleBody( const std::string& name, const std::string& type
     _rotation.z = TYSOC_PI * g_randomUniformDistribution( g_randomGenerator ) / 4.;
 
     // create the abstract body
-    auto _bodyPtr = new tysoc::TBody( name, 
-                                      _bodyData, 
-                                      _position, 
-                                      tysoc::TMat3::fromEuler( _rotation ) );
+    auto _bodyPtr = new tysoc::TSingleBody( name, 
+                                            _bodyData, 
+                                            _position, 
+                                            tysoc::TMat3::fromEuler( _rotation ) );
 
     return _bodyPtr;
 }

@@ -39,6 +39,9 @@ namespace tysoc {
 
         virtual void wireframe( bool wireframe ) = 0;
 
+        // @todo: required for backend to handle dynamic deletion (when detached from a TVisual)
+        virtual void detach() {}
+
         virtual bool isVisible() = 0;
 
         virtual bool isWireframe() = 0;

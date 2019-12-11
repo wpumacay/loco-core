@@ -9,21 +9,21 @@
 
 namespace tysoc {
 
-    class TBody;
+    class TIBody;
 
     class TVisual
     {
 
-        public :
+    public :
 
         TVisual( const std::string& name,
                  const TVisualData& visualData );
 
         ~TVisual();
 
-        void setParentBody( TBody* parentBodyPtr );
+        void setParentBody( TIBody* parentBodyRef );
 
-        void setDrawable( TIDrawable* drawablePtr );
+        void setDrawable( TIDrawable* drawableImplRef );
 
         void show( bool visible );
 
@@ -87,7 +87,7 @@ namespace tysoc {
 
         TVisualData data() { return m_data; }
 
-        protected :
+    protected :
 
         /* unique name identifier */
         std::string m_name;
@@ -107,13 +107,13 @@ namespace tysoc {
         TMat4 m_tf;
 
         /* reference to the parent-body of this collision object */
-        TBody* m_parentBodyPtr;
+        TIBody* m_parentBodyRef;
 
         /* construction data of this visual object */
         TVisualData m_data;
 
         /* reference to the drawable resource used for visualization */
-        TIDrawable* m_drawableImplPtr;
+        TIDrawable* m_drawableImplRef;
     };
 
 }
