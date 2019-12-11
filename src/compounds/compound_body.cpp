@@ -5,17 +5,16 @@ namespace tysoc {
 
     TCompoundBody::TCompoundBody( const std::string& name,
                                   const TBodyData& data,
+                                  const TJointData& jointData,
                                   TCompoundBody* parentRef,
-                                  const TJointData& joint,
                                   const TVec3& localPosition,
                                   const TMat3& localRotation )
         : TIBody( name, data )
     {
         /* keep a reference to the parent */
+        m_parentRef = parentRef;
         if ( !parentRef )
             TYSOC_CORE_ERROR( "Compound body >>> created child compound-body without a parent-reference" );
-        else
-            m_parentRef = parentRef;
 
         /* create and keep ownership of the joint */
         m_joint = std::unique_ptr< TJoint >( new TJoint( m_name + "_joint", jointData ) );
@@ -55,8 +54,8 @@ namespace tysoc {
         m_joint->setOwnerParent( nullptr );
 
         /* configure initial and current world-space pose */
-        m_pos = m_pos0 = localPosition;
-        m_rot = m_rot0 = localRotation;
+        m_pos = m_pos0 = position;
+        m_rot = m_rot0 = rotation;
         m_tf.setPosition( m_pos );
         m_tf.setRotation( m_rot );
         m_tf0.setPosition( m_pos0 );
@@ -71,7 +70,7 @@ namespace tysoc {
     TCompoundBody::TCompoundBody( const std::string& name,
                                   const TBodyData& data,
                                   const TVec3& position,
-                                  const TVec3& rotation,
+                                  const TMat3& rotation,
                                   const eDynamicsType& dyntype )
         : TIBody( name, data )
     {
@@ -87,8 +86,8 @@ namespace tysoc {
         m_joint->setOwnerParent( nullptr );
 
         /* configure initial and current world-space pose */
-        m_pos = m_pos0 = localPosition;
-        m_rot = m_rot0 = localRotation;
+        m_pos = m_pos0 = position;
+        m_rot = m_rot0 = rotation;
         m_tf.setPosition( m_pos );
         m_tf.setRotation( m_rot );
         m_tf0.setPosition( m_pos0 );
@@ -233,7 +232,7 @@ namespace tysoc {
     {
         if ( !m_parentRef )
         {
-            TYSOC_CORE_WARN( "Compound Body >>> tried setting relative position of a root 
+            TYSOC_CORE_WARN( "Compound Body >>> tried setting relative position of a root\
                               compound-body, use \"setPosition\" instead" );
             return;
         }
@@ -250,7 +249,7 @@ namespace tysoc {
     {
         if ( !m_parentRef )
         {
-            TYSOC_CORE_WARN( "Compound Body >>> tried setting relative rotation matrix of a root 
+            TYSOC_CORE_WARN( "Compound Body >>> tried setting relative rotation matrix of a root\
                               compound-body, use \"setRotation\" instead" );
             return;
         }
@@ -267,7 +266,7 @@ namespace tysoc {
     {
         if ( !m_parentRef )
         {
-            TYSOC_CORE_WARN( "Compound Body >>> tried setting relative rotation-euler of a root 
+            TYSOC_CORE_WARN( "Compound Body >>> tried setting relative rotation-euler of a root\
                               compound-body, use \"setEuler\" instead" );
             return;
         }
@@ -284,7 +283,7 @@ namespace tysoc {
     {
         if ( !m_parentRef )
         {
-            TYSOC_CORE_WARN( "Compound Body >>> tried setting world-space rotation-quaternion of a 
+            TYSOC_CORE_WARN( "Compound Body >>> tried setting world-space rotation-quaternion of a\
                               root compound-body, use \"setQuaternion\" instead" );
             return;
         }
@@ -301,7 +300,7 @@ namespace tysoc {
     {
         if ( !m_parentRef )
         {
-            TYSOC_CORE_WARN( "Compound Body >>> tried setting relative transform of a root 
+            TYSOC_CORE_WARN( "Compound Body >>> tried setting relative transform of a root\
                               compound-body, use \"setTransform\" instead" );
             return;
         }

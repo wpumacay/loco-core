@@ -40,9 +40,9 @@ namespace tysoc {
         _setupGlRenderingEngine();
 
         // Create drawable adapters for single bodies
-        auto _bodies = m_scenarioPtr->getBodies();
-        for ( size_t i = 0; i < _bodies.size(); i++ )
-            _collectSingleBodies( _bodies[i] );
+        auto _singleBodies = m_scenarioPtr->getSingleBodies();
+        for ( auto _singleBody : _singleBodies )
+            _collectSingleBodies( _singleBody );
 
         // Create visualization wrappers for the terrain generator
         auto _terrainGenerators = m_scenarioPtr->getTerrainGenerators();
@@ -504,12 +504,12 @@ namespace tysoc {
         m_vizKinTreeWrappers.push_back( std::unique_ptr< TGLVizKinTree >( _vizKinTreeWrapper ) );
     }
 
-    void TGLVisualizer::_collectSingleBodies( TIBody* bodyPtr )
+    void TGLVisualizer::_collectSingleBodies( TSingleBody* bodyRef )
     {
-        if ( !bodyPtr )
+        if ( !bodyRef )
             return;
 
-        auto _collision = bodyPtr->collision();
+        auto _collision = bodyRef->collision();
         if ( _collision )
         {
             auto _collisionDrawable = new TGLDrawable( _collision->data() );
@@ -529,7 +529,7 @@ namespace tysoc {
             }
         }
 
-        auto _visual = bodyPtr->visual();
+        auto _visual = bodyRef->visual();
         if ( _visual )
         {
             auto _visualDrawable = new TGLDrawable( _visual->data() );

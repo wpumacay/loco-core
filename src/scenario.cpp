@@ -6,126 +6,96 @@ namespace tysoc {
 
     TScenario::TScenario()
     {
-        m_state = IDLE;
 
-        // initialize some mappings
-        m_mapBodiesByType[ eDynamicsType::DYNAMIC ]     = std::vector< TSingleBody* >();
-        m_mapBodiesByType[ eDynamicsType::STATIC ]      = std::vector< TSingleBody* >();
-        m_mapBodiesByType[ eDynamicsType::KINEMATIC ]   = std::vector< TSingleBody* >();
-
-        m_mapAgentsByType[ eAgentType::BASE ]  = std::vector< TAgent* >();
-
-        m_mapSensorsByType[ eSensorType::PROP_JOINT ] = std::vector< TISensor* >();
-        m_mapSensorsByType[ eSensorType::PROP_BODY ] = std::vector< TISensor* >();
-        m_mapSensorsByType[ eSensorType::EXT_HEIGHTFIELD_1D ] = std::vector< TISensor* >();
-        m_mapSensorsByType[ eSensorType::EXT_HEIGHTFIELD_2D ] = std::vector< TISensor* >();
-        m_mapSensorsByType[ eSensorType::EXT_CAMERA_RGB ] = std::vector< TISensor* >();
-        m_mapSensorsByType[ eSensorType::EXT_CAMERA_DEPTH ] = std::vector< TISensor* >();
-        m_mapSensorsByType[ eSensorType::EXT_CAMERA_SEGMENTATION ] = std::vector< TISensor* >();
-
-        m_mapTerrainGeneratorsByType[ TERRAIN_TYPE_STATIC ] = std::vector< TITerrainGenerator* >();
-        m_mapTerrainGeneratorsByType[ TERRAIN_TYPE_PROCEDURAL_SECTIONS_PATH ]   = std::vector< TITerrainGenerator* >();
-        m_mapTerrainGeneratorsByType[ TERRAIN_TYPE_PROCEDURAL_SECTIONS_BLOCKS ] = std::vector< TITerrainGenerator* >();
     }
-    
-    
+
     TScenario::~TScenario()
     {
         TYSOC_CORE_INFO( "Destroying scenario" );
-
-        m_state = FINISHED;
 
         // Clean the stored references as ...
         // the runtime is in charge to hold ...
         // all data of the simulation
         for ( size_t i = 0; i < m_singleBodies.size(); i++ )
-        {
             delete m_singleBodies[i];
-        }
+
         m_singleBodies.clear();
-        m_mapBodiesByName.clear();
-        m_mapBodiesByType.clear();
+        m_mapSingleBodiesByName.clear();
 
         for ( size_t i = 0; i < m_agents.size(); i++ )
-        {
             delete m_agents[i];
-        }
+
         m_agents.clear();
         m_mapAgentsByName.clear();
-        m_mapAgentsByType.clear();
 
         for ( size_t i = 0; i < m_sensors.size(); i++ )
-        {
             delete m_sensors[i];
-        }
+
         m_sensors.clear();
         m_mapSensorsByName.clear();
-        m_mapSensorsByType.clear();
 
         for ( size_t i = 0; i < m_terrainGenerators.size(); i++ )
-        {
-            delete m_terrainGenerators[ i ];
-        }
+            delete m_terrainGenerators[i];
+
         m_terrainGenerators.clear();
         m_mapTerrainGeneratorsByName.clear();
-        m_mapTerrainGeneratorsByType.clear();
     }
 
-    void TScenario::addSingleBody( TSingleBody* bodyRef )
+    // @todo: should we handle ownership with unique_ptrs?
+    void TScenario::addSingleBody( TSingleBody* body )
     {
-        if ( !bodyRef )
+        if ( !body )
             return;
 
-        m_singleBodies.push_back( bodyRef );
-        m_mapBodiesByName[ bodyRef->name() ] = bodyRef;
+        m_singleBodies.push_back( body );
+        m_mapSingleBodiesByName[ body->name() ] = body;
     }
 
-    void TScenario::addCompoundBody( TCompoundBody* rootCompoundRef )
+    // @todo: should we handle ownership with unique_ptrs?
+    void TScenario::addCompoundBody( TCompoundBody* rootCompound )
     {
-        if ( !rootCompoundRef )
+        if ( !rootCompound )
             return;
 
-        m_compoundBodies.push_back( rootCompoundRef );
-        m_mapCompoundBodiesByName[ rootCompoundRef->name() ] = rootCompoundRef;
+        m_compoundBodies.push_back( rootCompound );
+        m_mapCompoundBodiesByName[ rootCompound->name() ] = rootCompound;
     }
 
+    // @todo: should we handle ownership with unique_ptrs?
     void TScenario::addAgent( TAgent* agent )
     {
-        if ( agent )
-        {
-            m_agents.push_back( agent );
-            m_mapAgentsByName[ agent->name() ] = agent;
-            m_mapAgentsByType[ agent->type() ].push_back( agent );
-        }
+        if ( !agent )
+            return;
+
+        m_agents.push_back( agent );
+        m_mapAgentsByName[ agent->name() ] = agent;
     }
 
+    // @todo: should we handle ownership with unique_ptrs?
     void TScenario::addSensor( TISensor* sensor )
     {
-        if ( sensor )
-        {
-            m_sensors.push_back( sensor );
-            m_mapSensorsByName[ sensor->name() ] = sensor;
-            m_mapSensorsByType[ sensor->type() ].push_back( sensor );
-        }
+        if ( !sensor )
+            return;
+
+        m_sensors.push_back( sensor );
+        m_mapSensorsByName[ sensor->name() ] = sensor;
     }
 
+    // @todo: should we handle ownership with unique_ptrs?
     void TScenario::addTerrainGenerator( TITerrainGenerator* terrainGenerator )
     {
-        if ( terrainGenerator )
-        {
-            m_terrainGenerators.push_back( terrainGenerator );
-            m_mapTerrainGeneratorsByName[ terrainGenerator->name() ] = terrainGenerator;
-            m_mapTerrainGeneratorsByType[ terrainGenerator->type() ].push_back( terrainGenerator );
-        }
+        if ( !terrainGenerator )
+            return;
+
+        m_terrainGenerators.push_back( terrainGenerator );
+        m_mapTerrainGeneratorsByName[ terrainGenerator->name() ] = terrainGenerator;
     }
 
     void TScenario::initialize()
     {
         // @TODO|@CHECK: should remove initialization? is it useful?
         for ( size_t i = 0; i < m_terrainGenerators.size(); i++ )
-        {
             m_terrainGenerators[ i ]->initialize();
-        }
     }
 
     void TScenario::update()
@@ -143,125 +113,69 @@ namespace tysoc {
             m_agents[i]->update();
     }
 
-    TSingleBody* TScenario::getBodyByName( const std::string& name )
+    TSingleBody* TScenario::getSingleBodyByName( const std::string& name )
     {
-        if ( m_mapBodiesByName.find( name ) != m_mapBodiesByName.end() )
-            return m_mapBodiesByName[ name ];
+        if ( m_mapSingleBodiesByName.find( name ) != m_mapSingleBodiesByName.end() )
+            return m_mapSingleBodiesByName[name];
 
-        std::cout << "WARNING> body with name: " << name 
-                  << " does not exist. Returning NULL instead." << std::endl;
+        TYSOC_CORE_WARN( "Scenario >>> single-body with name \"{0}\" does not exist. \
+                          Returning nullptr instead.", name );
 
-        return NULL;
+        return nullptr;
+    }
+
+    TCompoundBody* TScenario::getCompoundBodyByName( const std::string& name )
+    {
+        if ( m_mapCompoundBodiesByName.find( name ) != m_mapCompoundBodiesByName.end() )
+            return m_mapCompoundBodiesByName[name];
+
+        TYSOC_CORE_WARN( "Scenario >>> compound-body with name \"{0}\" does not exist. \
+                          Returning nullptr instead.", name )
+
+        return nullptr;
     }
 
     TAgent* TScenario::getAgentByName( const std::string& name )
     {
         if ( m_mapAgentsByName.find( name ) != m_mapAgentsByName.end() )
-        {
-            return m_mapAgentsByName[ name ];
-        }
+            return m_mapAgentsByName[name];
 
-        std::cout << "WARNING> agent with name: " 
-                  << name << " does not exist" << std::endl;
+        TYSOC_CORE_WARN( "Scenario >>> agent with name \"{0}\" does not exist. \
+                          Returning nullptr instead.", name );
 
-        return NULL;
+        return nullptr;
     }
 
     TISensor* TScenario::getSensorByName( const std::string& name )
     {
         if ( m_mapSensorsByName.find( name ) != m_mapSensorsByName.end() )
-        {
-            return m_mapSensorsByName[ name ];
-        }
+            return m_mapSensorsByName[name];
 
-        std::cout << "WARNING> sensor with name: "
-                  << name << " does not exist" << std::endl;
+        TYSOC_CORE_WARN( "Scenario >>> sensor with name \"{0}\" does not exist. \
+                          Returning nullptr instead", name );
 
-        return NULL;
+        return nullptr;
     }
 
     TITerrainGenerator* TScenario::getTerrainGeneratorByName( const std::string& name )
     {
         if ( m_mapTerrainGeneratorsByName.find( name ) != m_mapTerrainGeneratorsByName.end() )
-        {
-            return m_mapTerrainGeneratorsByName[ name ];
-        }
+            return m_mapTerrainGeneratorsByName[name];
 
-        std::cout << "WARNING> terrain generator with name: "
-                  << name << " does not exist" << std::endl;
+        TYSOC_CORE_WARN( "Scenario >>> terrain generator with name \"{0}\" does not exist. \
+                          Returning nullptr instead", name );
 
-        return NULL;
+        return nullptr;
     }
 
-    std::vector< TITerrainGenerator* > TScenario::getTerrainGenerators()
+    bool TScenario::hasSingleBody( const std::string& singleBodyName )
     {
-        return m_terrainGenerators;
+        return m_mapSingleBodiesByName.find( singleBodyName ) != m_mapSingleBodiesByName.end();
     }
 
-    std::vector< TSingleBody* > TScenario::getBodies()
+    bool TScenario::hasCompoundBody( const std::string& compoundBodyName )
     {
-        return m_singleBodies;
-    }
-
-    std::vector< TAgent* > TScenario::getAgents()
-    {
-        return m_agents;
-    }
-
-    std::vector< TISensor* > TScenario::getSensors()
-    {
-        return m_sensors;
-    }
-
-    std::vector< TSingleBody* > TScenario::getBodiesByType( const eDynamicsType& type )
-    {
-        if ( m_mapBodiesByType.find( type ) != m_mapBodiesByType.end() )
-            return m_mapBodiesByType[ type ];
-
-        std::cout << "WARNING> tried to get bodies of non existent type: " << tysoc::toString( type ) << std::endl;
-
-        return std::vector< TSingleBody* >();
-    }
-
-    std::vector< TAgent* > TScenario::getAgentsByType( const eAgentType& type )
-    {
-        if ( m_mapAgentsByType.find( type ) != m_mapAgentsByType.end() )
-        {
-            return m_mapAgentsByType[ type ];
-        }
-
-        std::cout << "WARNING> tried to get agents of non existent type: " << toString( type ) << std::endl;
-
-        return std::vector< TAgent* >();
-    }
-
-    std::vector< TISensor* > TScenario::getSensorsByType( const eSensorType& type )
-    {
-        if ( m_mapSensorsByType.find( type ) != m_mapSensorsByType.end() )
-        {
-            return m_mapSensorsByType[ type ];
-        }
-
-        std::cout << "WARNING> tried to get sensors of non existent type: " << tysoc::toString( type ) << std::endl;
-
-        return std::vector< TISensor* >();
-    }
-
-    std::vector< TITerrainGenerator* > TScenario::getTerrainGeneratorsByType( const std::string& type )
-    {
-        if ( m_mapTerrainGeneratorsByType.find( type ) != m_mapTerrainGeneratorsByType.end() )
-        {
-            return m_mapTerrainGeneratorsByType[ type ];
-        }
-
-        std::cout << "WARNING> tried to get terrain generators of non existent type: " << type << std::endl;
-
-        return std::vector< TITerrainGenerator* >();
-    }
-
-    bool TScenario::hasBody( const std::string& bodyName )
-    {
-        return m_mapBodiesByName.find( bodyName ) != m_mapBodiesByName.end();
+        return m_mapCompoundBodiesByName.find( compoundBodyName ) != m_mapCompoundBodiesByName.end();
     }
 
     bool TScenario::hasAgent( const std::string& agentName )

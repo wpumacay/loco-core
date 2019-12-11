@@ -7,7 +7,7 @@
 #include <glviz_drawable.h>
 #include <glviz_ui.h>
 
-#include <components/body.h>
+#include <primitives/single_body.h>
 
 using namespace engine;
 
@@ -23,8 +23,8 @@ namespace tysoc {
         TGLVisualizer( TScenario* scenarioPtr );
         ~TGLVisualizer();
 
-        void addBody( TIBody* bodyPtr );
-        void addAgent( TAgent* agentPtr );
+        void addSingleBody( TSingleBody* bodyRef );
+        void addAgent( TAgent* agentRef );
 
         engine::CFrameBuffer* fboRgb() const { return m_targetFrameRgb.get(); }
         engine::CFrameBuffer* fboDepth() const { return m_targetFrameDepth.get(); }
@@ -68,10 +68,10 @@ namespace tysoc {
 
         void _setupGlRenderingEngine();
         void _setupGlRenderTargets();
-        void _collectSingleBodies( TIBody* bodyPtr );
-        void _collectKinTreeAgent( TAgent* agentPtr );
-        void _collectTerrainGenerator( TITerrainGenerator* terrainGeneratorPtr );
-        void _renderSensorReading( TISensor* sensorPtr );
+        void _collectSingleBodies( TSingleBody* bodyRef );
+        void _collectKinTreeAgent( TAgent* agentRef );
+        void _collectTerrainGenerator( TITerrainGenerator* terrainGeneratorRef );
+        void _renderSensorReading( TISensor* sensorRef );
         void _collectCustomTargets();
         void _readPixels( CFrameBuffer* fbuffer, TIVizTexture& texture );
 

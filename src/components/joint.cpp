@@ -127,22 +127,28 @@ namespace tysoc {
                   its parent body. It's up to the user to correct the local-transform of its parent
                   accordingly to get the desired behaviour. */
 
+        /* update local-transform for this joint */
         m_localTf = localTransform;
         m_localPos = m_localTf.getPosition();
         m_localRot = m_localTf.getRotation();
+
+        /* update world-transform for this joint */
+        m_tf = m_ownerRef->tf() * m_localTf;
+        m_pos = m_tf.getPosition();
+        m_rot = m_tf.getRotation();
 
         if ( m_jointImplRef )
             m_jointImplRef->setLocalTransform( m_localTf );
 
         if ( m_drawableImplRef )
-            m_drawableImplRef->update();
+            m_drawableImplRef->setWorldTransform( m_tf );
     }
 
     void TJoint::setQpos( const std::vector< TScalar >& qpos )
     {
         if ( qpos.size() != m_nqpos )
         {
-            TYSOC_CORE_WARN( "Joint >>> tried to set a different number of qpos than the ones available 
+            TYSOC_CORE_WARN( "Joint >>> tried to set a different number of qpos than the ones available \
                               for this joint. Skipped setting the q-values to avoid undefined behaviour." );
             return;
         }
@@ -156,9 +162,9 @@ namespace tysoc {
 
     void TJoint::setQvel( const std::vector< TScalar >& qvel )
     {
-        if ( qvel.size() != m_qvel )
+        if ( qvel.size() != m_nqvel )
         {
-            TYSOC_CORE_WARN( "Joint >>> tried to set a different number of qvel than the ones available 
+            TYSOC_CORE_WARN( "Joint >>> tried to set a different number of qvel than the ones available \
                               for this joint. Skipped setting the q-values to avoid undefined behaviour." );
             return;
         }

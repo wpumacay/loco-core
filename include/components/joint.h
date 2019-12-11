@@ -2,6 +2,10 @@
 
 #include <tysoc_common.h>
 #include <components/data.h>
+#include <components/body.h>
+#include <viz/drawable.h>
+
+#include <adapters/joint_adapter.h>
 
 namespace tysoc {
 
@@ -141,7 +145,7 @@ namespace tysoc {
 
         /* qvel values: speeds of degrees of freedom */
         size_t m_nqvel;
-        std::vector< TScalar, TYSOC_MAX_NUM_QVEL > m_qvel;
+        std::array< TScalar, TYSOC_MAX_NUM_QVEL > m_qvel;
 
         /* Adapter-object that gives access to the low-level API for a specific backend */
         TIJointAdapter* m_jointImplRef;

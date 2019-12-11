@@ -36,7 +36,7 @@ namespace tysoc {
 
         virtual void getQpos( std::array< TScalar, TYSOC_MAX_NUM_QPOS >& dstQpos ) = 0;
 
-        virtual void getQvel( std::array< TScalar, TYSOC_MAS_NUM_QVEL >& dstQvel ) = 0;
+        virtual void getQvel( std::array< TScalar, TYSOC_MAX_NUM_QVEL >& dstQvel ) = 0;
 
         virtual void changeLimits( const TVec2& limits ) = 0;
 

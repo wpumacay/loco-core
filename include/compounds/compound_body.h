@@ -69,8 +69,8 @@ namespace tysoc {
         TCompoundBody( const std::string& name,
                        const TBodyData& data,
                        const TVec3& position,
-                       const TVec3& rotation,
-                       const eDynamicsType& dyntype == eDynamicsType::FREE );
+                       const TMat3& rotation,
+                       const eDynamicsType& dyntype = eDynamicsType::DYNAMIC );
 
         ~TCompoundBody();
 

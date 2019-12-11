@@ -149,7 +149,7 @@ namespace tysoc {
 
         std::string name() { return m_name; }
 
-        eClassType classType() { return m_classType; }
+        eBodyClassType classType() { return m_classType; }
 
         TVisual* visual() { return m_visual.get(); }
 
@@ -169,7 +169,7 @@ namespace tysoc {
         std::string m_name;
 
         /* type of body (single|compound|kintree) */
-        eClassType m_classType;
+        eBodyClassType m_classType;
 
         /* initial and current position in world-space */
         TVec3 m_pos0;

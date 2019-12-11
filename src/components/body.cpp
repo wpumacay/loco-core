@@ -261,7 +261,7 @@ namespace tysoc {
     {
         m_localTf = localTransform;
         m_localPos = m_localTf.getPosition();
-        m_localPot = m_localTf.getRotation();
+        m_localRot = m_localTf.getRotation();
 
         if ( m_bodyImplRef )
             m_bodyImplRef->setLocalTransform( m_localTf );

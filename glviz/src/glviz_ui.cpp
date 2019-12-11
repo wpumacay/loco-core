@@ -150,16 +150,16 @@ namespace tysoc
         if ( !ImGui::CollapsingHeader( "Primitives" ) )
             return;
 
-        auto _bodies = m_scenario->getBodies();
+        auto _singleBodies = m_scenario->getSingleBodies();
 
         static std::string _lastBodyName = "";
         static std::string _currentBodyName = "";
-        GLVIZ_IMGUI_COMBO_CONSTRUCT( "primitive", _currentBodyName, _bodies );
+        GLVIZ_IMGUI_COMBO_CONSTRUCT( "primitive", _currentBodyName, _singleBodies );
         bool _refresh = ( _currentBodyName != _lastBodyName );
         _lastBodyName = _currentBodyName;
 
-        if ( m_scenario->hasBody( _currentBodyName ) )
-            _submenuPrimitive( m_scenario->getBodyByName( _currentBodyName ), _refresh );
+        if ( m_scenario->hasSingleBody( _currentBodyName ) )
+            _submenuPrimitive( m_scenario->getSingleBodyByName( _currentBodyName ), _refresh );
     }
 
     void TGLScenarioUtilsLayer::_submenuPrimitive( TIBody* body, bool refresh )
