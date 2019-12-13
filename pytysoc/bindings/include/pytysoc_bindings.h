@@ -6,7 +6,10 @@
 #include <pytysoc_data.h>
 #include <pytysoc_collision.h>
 #include <pytysoc_visual.h>
+#include <pytysoc_joint.h>
 #include <pytysoc_body.h>
+#include <pytysoc_single_body.h>
+#include <pytysoc_compound_body.h>
 #include <pytysoc_agent_core.h>
 #include <pytysoc_sensors.h>
 #include <pytysoc_terrainGen.h>

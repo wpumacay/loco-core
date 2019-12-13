@@ -22,11 +22,11 @@ namespace pytysoc
         PyVisual( const std::string& name,
                   const PyVisualData& visualData );
 
-        PyVisual( tysoc::TVisual* visualPtr );
+        PyVisual( tysoc::TVisual* visualRef );
 
         ~PyVisual();
 
-        void setParentBody( PyBody* parenPyBodyPtr );
+        void setParentBody( PyBody* parentPyBodyRef );
 
         void setVisibility( bool visible );
 
@@ -52,43 +52,43 @@ namespace pytysoc
 
         void changeShininess( const TScalar& shininess );
 
-        std::string name();
+        std::string name() const;
 
-        bool visible();
+        bool visible() const;
 
-        bool wireframe();
+        bool wireframe() const;
 
-        py::array_t<TScalar> pos();
+        py::array_t<TScalar> pos() const;
 
-        py::array_t<TScalar> rot();
+        py::array_t<TScalar> rot() const;
 
-        py::array_t<TScalar> quat();
+        py::array_t<TScalar> quat() const;
 
-        py::array_t<TScalar> tf();
+        py::array_t<TScalar> tf() const;
 
-        py::array_t<TScalar> localPos();
+        py::array_t<TScalar> localPos() const;
 
-        py::array_t<TScalar> localRot();
+        py::array_t<TScalar> localRot() const;
 
-        py::array_t<TScalar> localQuat();
+        py::array_t<TScalar> localQuat() const;
 
-        py::array_t<TScalar> localTf();
+        py::array_t<TScalar> localTf() const;
 
-        tysoc::eShapeType shape();
+        tysoc::eShapeType shape() const;
 
-        py::array_t<TScalar> size();
+        py::array_t<TScalar> size() const;
 
-        PyVisualData data();
+        PyVisualData data() const;
 
-        PyBody* parent();
+        PyBody* parent() const { return m_parentPyBodyRef; }
 
-        tysoc::TVisual* ptr();
+        tysoc::TVisual* ptr() const { return m_visualRef; }
 
     private :
 
-        PyBody* m_parentPyBodyPtr;
+        PyBody* m_parentPyBodyRef;
 
-        tysoc::TVisual* m_visualPtr;
+        tysoc::TVisual* m_visualRef;
 
     };
 

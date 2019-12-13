@@ -494,4 +494,134 @@ namespace pytysoc
         return _data;
     }
 
+    /***************************************************************************
+    *                                                                          *
+    *                           JointData extension                            *
+    *                                                                          *
+    ***************************************************************************/
+
+    void PyJointData::setJointType( const tysoc::eJointType& jointType )
+    {
+        this->type = jointType;
+    }
+
+    void PyJointData::setAxis( py::array_t<TScalar>& axis )
+    {
+        this->axis = numpyToVec3( axis );
+    }
+
+    void PyJointData::setLimits( py::array_t<TScalar>& limits )
+    {
+        this->limits = numpyToVec2( limits );
+    }
+
+    void PyJointData::setStiffness( const TScalar& stiffness )
+    {
+        this->stiffness = stiffness;
+    }
+
+    void PyJointData::setArmature( const TScalar& armature )
+    {
+        this->armature = armature;
+    }
+
+    void PyJointData::setDamping( const TScalar& damping )
+    {
+        this->damping = damping;
+    }
+
+    void PyJointData::setRef( const TScalar& ref )
+    {
+        this->ref = ref;
+    }
+
+    void PyJointData::setLocalTransform( py::array_t<TScalar>& localTransform )
+    {
+        this->localTransform = numpyToMat4( localTransform );
+    }
+
+    tysoc::eJointType PyJointData::getJointType()
+    {
+        return this->type;
+    }
+
+    py::array_t<TScalar> PyJointData::getAxis()
+    {
+        return vec3ToNumpy( this->axis );
+    }
+
+    py::array_t<TScalar> PyJointData::getLimits()
+    {
+        return vec2ToNumpy( this->limits );
+    }
+
+    TScalar PyJointData::getStiffness()
+    {
+        return this->stiffness;
+    }
+
+    TScalar PyJointData::getArmature()
+    {
+        return this->armature;
+    }
+
+    TScalar PyJointData::getDamping()
+    {
+        return this->damping;
+    }
+
+    TScalar PyJointData::getRef()
+    {
+        return this->ref;
+    }
+
+    int PyJointData::getNqpos()
+    {
+        return this->nqpos;
+    }
+
+    int PyJointData::getNqvel()
+    {
+        return this->nqvel;
+    }
+
+    py::array_t<TScalar> PyJointData::getLocalTransform()
+    {
+        return mat4ToNumpy( this->localTransform );
+    }
+
+    PyJointData toPyJointData( const tysoc::TJointData& data )
+    {
+        PyJointData _pydata;
+        _pydata.type = data.type;
+        _pydata.axis = data.axis;
+        _pydata.limits = data.limits;
+        _pydata.stiffness = data.stiffness;
+        _pydata.armature = data.armature;
+        _pydata.damping = data.damping;
+        _pydata.ref = data.ref;
+        _pydata.nqpos = data.nqpos;
+        _pydata.nqvel = data.nqvel;
+        _pydata.localTransform = data.localTransform;
+
+        return _pydata;
+    }
+
+    tysoc::TJointData toTJointData( const PyJointData& pydata )
+    {
+        tysoc::TJointData _data;
+        _data.type = pydata.type;
+        _data.axis = pydata.axis;
+        _data.limits = pydata.limits;
+        _data.stiffness = pydata.stiffness;
+        _data.armature = pydata.armature;
+        _data.damping = pydata.damping;
+        _data.ref = pydata.ref;
+        _data.nqpos = pydata.nqpos;
+        _data.nqvel = pydata.nqvel;
+        _data.localTransform = pydata.localTransform;
+
+        return _data;
+    }
+
 }

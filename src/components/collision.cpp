@@ -28,7 +28,19 @@ namespace tysoc {
 
     void TCollision::setParentBody( TIBody* parentBodyRef )
     {
+        if ( !parentBodyRef )
+            return;
+
         m_parentBodyRef = parentBodyRef;
+        m_tf = m_parentBodyRef->tf() * m_localTf;
+        m_pos = m_tf.getPosition();
+        m_rot = m_tf.getRotation();
+
+        if ( m_collisionImplRef )
+            m_collisionImplRef->update();
+
+        if ( m_drawableImplRef )
+            m_drawableImplRef->setWorldTransform( m_tf );
     }
 
     void TCollision::setAdapter( TICollisionAdapter* collisionImplRef )
@@ -42,8 +54,18 @@ namespace tysoc {
 
     void TCollision::setDrawable( TIDrawable* drawablePtr )
     {
-        // change the reference to our new shiny drawable
+        if ( !drawablePtr )
+            return;
+
+        /* notify the backend that the current adapter is ready for deletion */
+        if ( m_drawableImplRef )
+            m_drawableImplRef->detach();
+
+        /* change the reference to our new shiny drawable */
         m_drawableImplRef = drawablePtr;
+
+        /* notify drawable-adapter that the world-transform has changed */
+        m_drawableImplRef->setWorldTransform( m_tf );
     }
 
     void TCollision::show( bool visible )

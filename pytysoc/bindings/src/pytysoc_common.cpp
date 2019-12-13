@@ -12,7 +12,7 @@ namespace pytysoc
         auto _data = ( TScalar* ) _bufferInfo.ptr;
         if ( _bufferInfo.size != 2 )
         {
-            std::cout << "WARNING> vec2 conversion requires an array with 2 elements" << std::endl;
+            TYSOC_CORE_WARN( "numpyToVec2() >>> vec2 conversion requires an array with 2 elements" );
             return tysoc::TVec2();
         }
 
@@ -25,7 +25,7 @@ namespace pytysoc
         auto _data = ( TScalar* ) _bufferInfo.ptr;
         if ( _bufferInfo.size != 3 )
         {
-            std::cout << "WARNING> vec3 conversion requires an array with 3 elements" << std::endl;
+            TYSOC_CORE_WARN( "numpyToVec3() >>> vec3 conversion requires an array with 3 elements" );
             return tysoc::TVec3();
         }
 
@@ -38,7 +38,7 @@ namespace pytysoc
         auto _data = ( TScalar* ) _bufferInfo.ptr;
         if ( _bufferInfo.size != 4 )
         {
-            std::cout << "WARNING> vec4 conversion requires an array with 3 elements" << std::endl;
+            TYSOC_CORE_WARN( "numpyToVec4() >>> vec4 conversion requires an array with 4 elements" );
             return tysoc::TVec4();
         }
 
@@ -51,15 +51,9 @@ namespace pytysoc
         auto _data = ( TScalar* ) _bufferInfo.ptr;
         if ( _bufferInfo.size != 9 )
         {
-            std::cout << "WARNING> mat3 conversion requires an array with 9 elements" << std::endl;
+            TYSOC_CORE_WARN( "numpyToMat3() >>> mat3 conversion requires an array with 9 elements" );
             return tysoc::TMat3();
         }
-        // std::cout << "LOG> size: " << _bufferInfo.size << std::endl;
-        // std::cout << "LOG> ndim: " << _bufferInfo.ndim << std::endl;
-        // for ( size_t q = 0; q < _bufferInfo.ndim; q++ )
-        // {
-        //     std::cout << "LOG> shape[" << q << "]: " << _bufferInfo.shape[q] << std::endl;
-        // }
 
         return tysoc::TMat3( _data[0], _data[1], _data[2],
                              _data[3], _data[4], _data[5],
@@ -72,15 +66,9 @@ namespace pytysoc
         auto _data = ( TScalar* ) _bufferInfo.ptr;
         if ( _bufferInfo.size != 16 )
         {
-            std::cout << "WARNING> mat4 conversion requires an array with 16 elements" << std::endl;
+            TYSOC_CORE_WARN( "numpyToMat4() >>> mat4 conversion requires an array with 16 elements" );
             return tysoc::TMat4();
         }
-        // std::cout << "LOG> size: " << _bufferInfo.size << std::endl;
-        // std::cout << "LOG> ndim: " << _bufferInfo.ndim << std::endl;
-        // for ( size_t q = 0; q < _bufferInfo.ndim; q++ )
-        // {
-        //     std::cout << "LOG> shape[" << q << "]: " << _bufferInfo.shape[q] << std::endl;
-        // }
 
         return tysoc::TMat4( _data[0], _data[1], _data[2], _data[3],
                              _data[4], _data[5], _data[6], _data[7],
@@ -95,9 +83,7 @@ namespace pytysoc
 
         std::vector<TScalar> _vecarray;
         for ( size_t q = 0; q < _bufferInfo.size; q++ )
-        {
             _vecarray.push_back( _data[q] );
-        }
 
         return _vecarray;
     }
@@ -189,42 +175,41 @@ namespace pytysoc
     void test_numpyToVec2( py::array_t<TScalar>& nparray )
     {
         auto _vec2 = numpyToVec2( nparray );
-        std::cout << "LOG> vec2: " << tysoc::TVec2::toString( _vec2 ) << std::endl;
+        TYSOC_CORE_TRACE( "test_numpyToVec2() >>> vec2: {0}", tysoc::TVec2::toString( _vec2 ) );
     }
 
     void test_numpyToVec3( py::array_t<TScalar>& nparray )
     {
         auto _vec3 = numpyToVec3( nparray );
-        std::cout << "LOG> vec3: " << tysoc::TVec3::toString( _vec3 ) << std::endl;
+        TYSOC_CORE_TRACE( "test_numpyToVec3() >>> vec3: {0}", tysoc::TVec3::toString( _vec3 ) );
     }
 
     void test_numpyToVec4( py::array_t<TScalar>& nparray )
     {
         auto _vec4 = numpyToVec4( nparray );
-        std::cout << "LOG> vec4: " << tysoc::TVec4::toString( _vec4 ) << std::endl;
+        TYSOC_CORE_TRACE( "test_numpyToVec4() >>> vec4: {0}", tysoc::TVec4::toString( _vec4 ) );
     }
 
     void test_numpyToMat3( py::array_t<TScalar>& nparray )
     {
         auto _mat3 = numpyToMat3( nparray );
-        std::cout << "LOG> mat3: " << tysoc::TMat3::toString( _mat3 ) << std::endl;
+        TYSOC_CORE_TRACE( "test_numpyToMat3() >>> mat3: {0}", tysoc::TMat3::toString( _mat3 ) );
     }
 
     void test_numpyToMat4( py::array_t<TScalar>& nparray )
     {
         auto _mat4 = numpyToMat4( nparray );
-        std::cout << "LOG> mat4: " << tysoc::TMat4::toString( _mat4 ) << std::endl;
+        TYSOC_CORE_TRACE( "test_numpyToMat4() >>> mat4: {0}", tysoc::TMat4::toString( _mat4 ) );
     }
 
     void test_numpyToVecArray( py::array_t<TScalar>& nparray )
     {
         auto _vecarray = numpyToVecArray( nparray );
-        std::cout << "LOG> std::vector [ ";
+        std::string _strres = " [ ";
         for ( size_t q = 0; q < _vecarray.size(); q++ )
-        {
-            std::cout << _vecarray[q] << " ";
-        }
-        std::cout << "]" << std::endl;
+            _strres += std::to_string( _vecarray[q] ) + " ";
+        _strres += "]";
+        TYSOC_CORE_TRACE( "test_numpyToVecArray() >>> std::vector: {0}", _strres );
     }
 
     py::array_t<TScalar> test_vecArrayToNumpy()

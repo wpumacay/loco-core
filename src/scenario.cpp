@@ -103,6 +103,9 @@ namespace tysoc {
         for ( size_t i = 0; i < m_singleBodies.size(); i++ )
             m_singleBodies[i]->update();
 
+        for ( size_t i = 0; i < m_compoundBodies.size(); i++ )
+            m_compoundBodies[i]->update();
+
         for ( size_t i = 0; i < m_terrainGenerators.size(); i++ )
             m_terrainGenerators[i]->update();
 

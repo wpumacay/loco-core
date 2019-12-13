@@ -12,7 +12,10 @@ pybind11_add_module( tysoc_bindings
                      src/pytysoc_data.cpp
                      src/pytysoc_collision.cpp
                      src/pytysoc_visual.cpp
+                     src/pytysoc_joint.cpp
                      src/pytysoc_body.cpp
+                     src/pytysoc_single_body.cpp
+                     src/pytysoc_compound_body.cpp
                      src/pytysoc_agent_core.cpp
                      src/pytysoc_terrainGen.cpp
                      src/pytysoc_sensors.cpp

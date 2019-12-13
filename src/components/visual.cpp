@@ -22,18 +22,36 @@ namespace tysoc {
 
     void TVisual::setParentBody( TIBody* parentBodyRef )
     {
+        if ( !parentBodyRef )
+            return;
+
         /* keep a reference to the parent body */
         m_parentBodyRef = parentBodyRef;
+
+        /* update our world-transform accordingly */
+        m_tf = m_parentBodyRef->tf() * m_localTf;
+        m_pos = m_tf.getPosition();
+        m_rot = m_tf.getRotation();
+
+        /* notify drawable-adapter that the world-transform has changed */
+        if ( m_drawableImplRef )
+            m_drawableImplRef->setWorldTransform( m_tf );
     }
 
     void TVisual::setDrawable( TIDrawable* drawableImplRef )
     {
+        if ( !drawableImplRef )
+            return;
+
         /* notify the backend that the current adapter is ready for deletion */
         if ( m_drawableImplRef )
             m_drawableImplRef->detach();
 
         /* keep the reference to the new drawable */
         m_drawableImplRef = drawableImplRef;
+
+        /* notify drawable-adapter that the world-transform has changed */
+        m_drawableImplRef->setWorldTransform( m_tf );
     }
 
     void TVisual::show( bool visible )

@@ -13,7 +13,7 @@ namespace pytysoc
 
     PySimulation::~PySimulation()
     {
-        m_simulationPtr = NULL;
+        m_simulationPtr = nullptr;
     }
 
     bool PySimulation::initialize()
@@ -21,35 +21,30 @@ namespace pytysoc
         if ( m_simulationPtr )
             return m_simulationPtr->initialize();
 
-        std::cout << "ERROR> could not initialize non-existent "
-                  << "wrapped simulation object" << std::endl;
+        TYSOC_CORE_ERROR( "PySimulation::initialize() >>> wrapped simulation-obj is null" );
         return false;
     }
 
     void PySimulation::step()
     {
-        if ( m_simulationPtr )
+        if ( !m_simulationPtr )
         {
-            m_simulationPtr->step();
+            TYSOC_CORE_ERROR( "PySimulation::step() >>> wrapped simulation-obj is null" );
+            return;
         }
-        else
-        {
-            std::cout << "ERROR> could not make a simulation step on "
-                      << "a non-existent wrapped simulation object" << std::endl;
-        }
+
+        m_simulationPtr->step();
     }
 
     void PySimulation::reset()
     {
-        if ( m_simulationPtr )
+        if ( !m_simulationPtr )
         {
-            m_simulationPtr->reset();
+            TYSOC_CORE_ERROR( "PySimulation::initialize() >>> wrapped simulation-obj is null" );
+            return;
         }
-        else
-        {
-            std::cout << "ERROR> could not reset non-existent "
-                      << "wrapped simulation object" << std::endl;
-        }
+
+        m_simulationPtr->reset();
     }
 
     MeasurementDict PySimulation::getDictOfVectorizedSimData()
@@ -77,8 +72,7 @@ namespace pytysoc
         if ( m_simulationPtr )
             return m_simulationPtr->type();
 
-        std::cout << "ERROR> could not query type of a non-existent "
-                  << "wrapped simulation object" << std::endl;
+        TYSOC_CORE_ERROR( "PySimulation::type() >>> wrapped simulation-obj is null" );
         return "undefined";
     }
 

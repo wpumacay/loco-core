@@ -17,11 +17,10 @@ namespace pytysoc
         if ( m_runtimePtr )
         {
             delete m_runtimePtr;
-            m_runtimePtr = NULL;
+            m_runtimePtr = nullptr;
         }
     }
 
-    // @TODO: Add default argument to allow NULL as parameter
     PySimulation* PyRuntime::createSimulation( PyScenario* pyScenarioPtr )
     {
         auto _scenarioPtr = pyScenarioPtr->ptr();
@@ -32,7 +31,6 @@ namespace pytysoc
             return nullptr;
     }
 
-    // @TODO: Add default argument to allow NULL as parameter
     PyVisualizer* PyRuntime::createVisualizer( PyScenario* pyScenarioPtr )
     {
         auto _scenarioPtr = pyScenarioPtr->ptr();

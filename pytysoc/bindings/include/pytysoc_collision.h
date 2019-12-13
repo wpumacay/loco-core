@@ -22,11 +22,11 @@ namespace pytysoc
         PyCollision( const std::string& name,
                      const PyCollisionData& data );
 
-        PyCollision( tysoc::TCollision* collisionPtr );
+        PyCollision( tysoc::TCollision* collisionRef );
 
         ~PyCollision();
 
-        void setParentBody( PyBody* parentPyBodyPtr );
+        void setParentBody( PyBody* parentPyBodyRef );
 
         void setVisibility( bool visible );
 
@@ -42,43 +42,43 @@ namespace pytysoc
 
         void changeSize( py::array_t<TScalar>& newSize );
 
-        std::string name();
+        std::string name() const;
 
-        bool visible();
+        bool visible() const;
 
-        bool wireframe();
+        bool wireframe() const;
 
-        py::array_t<TScalar> pos();
+        py::array_t<TScalar> pos() const;
 
-        py::array_t<TScalar> rot();
+        py::array_t<TScalar> rot() const;
 
-        py::array_t<TScalar> quat();
+        py::array_t<TScalar> quat() const;
 
-        py::array_t<TScalar> tf();
+        py::array_t<TScalar> tf() const;
 
-        py::array_t<TScalar> localPos();
+        py::array_t<TScalar> localPos() const;
 
-        py::array_t<TScalar> localRot();
+        py::array_t<TScalar> localRot() const;
 
-        py::array_t<TScalar> localTf();
+        py::array_t<TScalar> localTf() const;
 
-        py::array_t<TScalar> localQuat();
+        py::array_t<TScalar> localQuat() const;
 
-        tysoc::eShapeType shape();
+        tysoc::eShapeType shape() const;
 
-        py::array_t<TScalar> size();
+        py::array_t<TScalar> size() const;
 
-        PyCollisionData data();
+        PyCollisionData data() const;
 
-        PyBody* parent();
+        PyBody* parent() const { return m_parentPyBodyRef; };
 
-        tysoc::TCollision* ptr();
+        tysoc::TCollision* ptr() const { return m_collisionRef; }
 
     private :
 
-        PyBody* m_parentPyBodyPtr;
+        PyBody* m_parentPyBodyRef;
 
-        tysoc::TCollision* m_collisionPtr;
+        tysoc::TCollision* m_collisionRef;
 
     };
 

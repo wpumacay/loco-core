@@ -8,6 +8,9 @@ namespace py = pybind11;
 
 namespace pytysoc
 {
+    // @todo: check if it is possible to remove double definitions for these structures
+    //        > it seems this can be achieved using "def_readwrite"
+    //        > the problem is that TVecX are custom types that are should also be wrapped in python
 
     struct PyHeightFieldData : public tysoc::THeightFieldData
     {
@@ -114,6 +117,32 @@ namespace pytysoc
     PyBodyData toPyBodyData( const tysoc::TBodyData& data );
     tysoc::TBodyData toTBodyData( const PyBodyData& pydata );
 
+    struct PyJointData : public tysoc::TJointData
+    {
+        void setJointType( const tysoc::eJointType& jointType );
+        void setAxis( py::array_t<TScalar>& axis );
+        void setLimits( py::array_t<TScalar>& limits );
+        void setStiffness( const TScalar& stiffness );
+        void setArmature( const TScalar& armature );
+        void setDamping( const TScalar& damping );
+        void setRef( const TScalar& ref );
+        void setLocalTransform( py::array_t<TScalar>& localTransform );
+
+        tysoc::eJointType getJointType();
+        py::array_t<TScalar> getAxis();
+        py::array_t<TScalar> getLimits();
+        TScalar getStiffness();
+        TScalar getArmature();
+        TScalar getDamping();
+        TScalar getRef();
+        int getNqpos();
+        int getNqvel();
+        py::array_t<TScalar> getLocalTransform();
+    };
+
+    PyJointData toPyJointData( const tysoc::TJointData& data );
+    tysoc::TJointData toTJointData( const PyJointData& pydata );
+
 }
 
 #define PYTYSOC_ENUM_BINDINGS(m) \
@@ -136,7 +165,16 @@ namespace pytysoc
     py::enum_<tysoc::eDynamicsType>(m, "eDynamicsType", py::arithmetic()) \
             .value( "DYNAMIC", tysoc::eDynamicsType::DYNAMIC ) \
             .value( "STATIC", tysoc::eDynamicsType::STATIC ) \
-            .value( "KINEMATIC", tysoc::eDynamicsType::KINEMATIC );
+            .value( "KINEMATIC", tysoc::eDynamicsType::KINEMATIC ); \
+    py::enum_<tysoc::eSensorType>(m, "eSensorType", py::arithmetic()) \
+            .value( "NONE", tysoc::eSensorType::NONE ) \
+            .value( "PROP_JOINT", tysoc::eSensorType::PROP_JOINT ) \
+            .value( "PROP_BODY", tysoc::eSensorType::PROP_BODY ) \
+            .value( "EXT_HEIGHTFIELD_1D", tysoc::eSensorType::EXT_HEIGHTFIELD_1D ) \
+            .value( "EXT_HEIGHTFIELD_2D", tysoc::eSensorType::EXT_HEIGHTFIELD_2D ) \
+            .value( "EXT_CAMERA_RGB", tysoc::eSensorType::EXT_CAMERA_RGB ) \
+            .value( "EXT_CAMERA_DEPTH", tysoc::eSensorType::EXT_CAMERA_DEPTH ) \
+            .value( "EXT_CAMERA_SEGMENTATION", tysoc::eSensorType::EXT_CAMERA_SEGMENTATION );
 
 #define PYTYSOC_DATA_BINDINGS(m) \
     py::class_<pytysoc::PyHeightFieldData>(m, "PyHeightFieldData") \
@@ -179,4 +217,16 @@ namespace pytysoc
             .def_property( "inertia", &pytysoc::PyBodyData::getInertia, &pytysoc::PyBodyData::setInertia ) \
             .def_property( "inertialFrame", &pytysoc::PyBodyData::getInertialFrame, &pytysoc::PyBodyData::setInertialFrame ) \
             .def_property( "collision", &pytysoc::PyBodyData::getCollision, &pytysoc::PyBodyData::setCollision ) \
-            .def_property( "visual", &pytysoc::PyBodyData::getVisual, &pytysoc::PyBodyData::setVisual );
+            .def_property( "visual", &pytysoc::PyBodyData::getVisual, &pytysoc::PyBodyData::setVisual ); \
+    py::class_<pytysoc::PyJointData>(m, "PyJointData") \
+            .def( py::init<>() ) \
+            .def_property( "type", &pytysoc::PyJointData::getJointType, &pytysoc::PyJointData::setJointType ) \
+            .def_property( "axis", &pytysoc::PyJointData::getAxis, &pytysoc::PyJointData::setAxis ) \
+            .def_property( "limits", &pytysoc::PyJointData::getLimits, &pytysoc::PyJointData::setLimits ) \
+            .def_property( "stiffness", &pytysoc::PyJointData::getStiffness, &pytysoc::PyJointData::setStiffness ) \
+            .def_property( "armature", &pytysoc::PyJointData::getArmature, &pytysoc::PyJointData::setArmature ) \
+            .def_property( "damping", &pytysoc::PyJointData::getDamping, &pytysoc::PyJointData::setDamping ) \
+            .def_property( "ref", &pytysoc::PyJointData::getRef, &pytysoc::PyJointData::setRef ) \
+            .def_property_readonly( "nqpos", &pytysoc::PyJointData::getNqpos ) \
+            .def_property_readonly( "nqvel", &pytysoc::PyJointData::getNqvel ) \
+            .def_property( "localTransform", &pytysoc::PyJointData::getLocalTransform, &pytysoc::PyJointData::setLocalTransform );

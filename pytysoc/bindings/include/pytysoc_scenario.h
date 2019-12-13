@@ -3,7 +3,8 @@
 
 #include <scenario.h>
 #include <pytysoc_common.h>
-#include <pytysoc_body.h>
+#include <pytysoc_single_body.h>
+#include <pytysoc_compound_body.h>
 #include <pytysoc_agent_core.h>
 #include <pytysoc_terrainGen.h>
 #include <pytysoc_sensors.h>
@@ -20,12 +21,14 @@ namespace pytysoc
 
         tysoc::TScenario* m_scenarioPtr;
 
-        std::vector< PyBody* > m_pyBodies;
+        std::vector< PySingleBody* > m_pySingleBodies;
+        std::vector< PyCompoundBody* > m_pyCompoundBodies;
         std::vector< PyCoreAgent* > m_pyCoreAgents;
         std::vector< PySensor* > m_pySensors;
         std::vector< PyTerrainGen* > m_pyTerrainGens;
 
-        std::map< std::string, PyBody* > m_pyBodiesMap;
+        std::map< std::string, PySingleBody* > m_pySingleBodiesMap;
+        std::map< std::string, PyCompoundBody* > m_pyCompoundBodiesMap;
         std::map< std::string, PyCoreAgent* > m_pyCoreAgentsMap;
         std::map< std::string, PySensor* > m_pySensorsMap;
         std::map< std::string, PyTerrainGen* > m_pyTerrainGensMap;
@@ -52,12 +55,20 @@ namespace pytysoc
         ~PyScenario();
 
         /**
-        *   Adds a PyBody wrapper to this scenario wrapper
+        *   Adds a single-body PySingleBody wrapper to this scenario wrapper
         *
-        *   @param pyBodyPtr    A pointer to the PyBody wrapper to add to the scenario
-        *   @exposed            Exposed through python API
+        *   @param pySingleBodyRef  A pointer to the PySingleBody wrapper to be added
+        *   @exposed                Exposed through python API
         */
-        void addBody( PyBody* pyBodyPtr );
+        void addSingleBody( PySingleBody* pySingleBodyRef );
+
+        /**
+        *   Adds a single-body PySingleBody wrapper to this scenario wrapper
+        *
+        *   @param pyCompoundBodyRef    A pointer to the pyCompoundBodyRef wrapper to be added
+        *   @exposed                    Exposed through python API
+        */
+        void addCompoundBody( PyCompoundBody* pyCompoundBodyRef );
 
         /**
         *   Adds a PyCoreAgent wrapper to this scenario wrapper
@@ -84,12 +95,20 @@ namespace pytysoc
         void addSensor( PySensor* pySensorPtr );
 
         /**
-        *   Gets the PyBody wrapper of a body in the scenario with a given name
+        *   Gets the single-body PySingleBody wrapper of a single-body in the scenario with a given name
         *
-        *   @param name     The name of the wrapped body ther user has requested
+        *   @param name     The name of the wrapped single-body ther user has requested
         *   @exposed        Exposed through python API
         */
-        PyBody* getBodyByName( const std::string& name );
+        PySingleBody* getSingleBodyByName( const std::string& name );
+
+        /**
+        *   Gets the compound-body pyCompoundBodyRef wrapper of a compound-body in the scenario with a given name
+        *
+        *   @param name     The name of the wrapped compound-body ther user has requested
+        *   @exposed        Exposed through python API
+        */
+        PyCompoundBody* getCompoundBodyByName( const std::string& name );
 
         /**
         *   Gets the PyCoreAgent wrapper of an agent with a given name
@@ -116,16 +135,26 @@ namespace pytysoc
         PySensor* getSensorByName( const std::string& name );
 
         /**
-        *   Gets a list of all bodies belonging to this scenario wrapper
+        *   Gets a list of all single-bodies belonging to this scenario wrapper
         *
         *   @exposed    Exposed through python API
+        *   @todo: check return policy (should not have taken ownership)
         */
-        std::vector< PyBody* > getBodies();
+        std::vector< PySingleBody* > getSingleBodies();
+
+        /**
+        *   Gets a list of all compound-bodies belonging to this scenario wrapper
+        *
+        *   @exposed    Exposed through python API
+        *   @todo: check return policy (should not have taken ownership)
+        */
+        std::vector< PyCompoundBody* > getCompoundBodies();
 
         /**
         *   Gets a list of all agents belonging to this scenario wrapper
         *
         *   @exposed    Exposed through python API
+        *   @todo: check return policy (should not have taken ownership)
         */
         std::vector< PyCoreAgent* > getAgents();
 
@@ -133,6 +162,7 @@ namespace pytysoc
         *   Gets a list of all terrainGens belonging to this scenario wrapper
         *
         *   @exposed    Exposed through python API
+        *   @todo: check return policy (should not have taken ownership)
         */
         std::vector< PyTerrainGen* > getTerrainGens();
 
@@ -140,20 +170,31 @@ namespace pytysoc
         *   Gets a list of all sensors belonging to this scenario wrapper
         *
         *   @exposed    Exposed through python API
+        *   @todo: check return policy (should not have taken ownership)
         */
         std::vector< PySensor* > getSensors();
 
         /**
-        *   Gets a dictionary of all bodies belonging to this scenario wrapper
+        *   Gets a dictionary of all single-bodies belonging to this scenario wrapper
         *
         *   @exposed    Exposed through python API
+        *   @todo: check return policy (should not have taken ownership)
         */
-        std::map< std::string, PyBody* > getBodiesMap();
+        std::map< std::string, PySingleBody* > getSingleBodiesMap();
+
+        /**
+        *   Gets a dictionary of all compound-bodies belonging to this scenario wrapper
+        *
+        *   @exposed    Exposed through python API
+        *   @todo: check return policy (should not have taken ownership)
+        */
+        std::map< std::string, PyCompoundBody* > getCompoundBodiesMap();
 
         /**
         *   Gets a dictionary of all agents belonging to this scenario wrapper
         *
         *   @exposed    Exposed through python API
+        *   @todo: check return policy (should not have taken ownership)
         */
         std::map< std::string, PyCoreAgent* > getAgentsMap();
 
@@ -161,6 +202,7 @@ namespace pytysoc
         *   Gets a dictionary of all terrainGens belonging to this scenario wrapper
         *
         *   @exposed    Exposed through python API
+        *   @todo: check return policy (should not have taken ownership)
         */
         std::map< std::string, PyTerrainGen* > getTerrainGensMap();
 
@@ -168,6 +210,7 @@ namespace pytysoc
         *   Gets a dictionary of all sensors belonging to this scenario wrapper
         *
         *   @exposed    Exposed through python API
+        *   @todo: check return policy (should not have taken ownership)
         */
         std::map< std::string, PySensor* > getSensorsMap();
 
@@ -188,12 +231,16 @@ namespace pytysoc
 #define PYTYSOC_SCENARIO_BINDINGS(m) \
     py::class_<pytysoc::PyScenario>( m, "PyScenario" ) \
         .def( py::init<>() ) \
-        .def( "addBody", &pytysoc::PyScenario::addBody ) \
-        .def( "getBodyByName", &pytysoc::PyScenario::getBodyByName, py::return_value_policy::automatic ) \
-        .def( "getBodies", &pytysoc::PyScenario::getBodies ) \
-        .def( "getBodiesMap", &pytysoc::PyScenario::getBodiesMap ) \
+        .def( "addSingleBody", &pytysoc::PyScenario::addSingleBody ) \
+        .def( "getSingleBodyByName", &pytysoc::PyScenario::getSingleBodyByName ) \
+        .def( "getSingleBodies", &pytysoc::PyScenario::getSingleBodies ) \
+        .def( "getSingleBodiesMap", &pytysoc::PyScenario::getSingleBodiesMap ) \
+        .def( "addCompoundBody", &pytysoc::PyScenario::addCompoundBody ) \
+        .def( "getCompoundBodyByName", &pytysoc::PyScenario::getCompoundBodyByName ) \
+        .def( "getCompoundBodies", &pytysoc::PyScenario::getCompoundBodies ) \
+        .def( "getCompoundBodiesMap", &pytysoc::PyScenario::getCompoundBodiesMap ) \
         .def( "addAgent", &pytysoc::PyScenario::addAgent ) \
-        .def( "getAgentByName", &pytysoc::PyScenario::getAgentByName, py::return_value_policy::automatic ) \
+        .def( "getAgentByName", &pytysoc::PyScenario::getAgentByName ) \
         .def( "getAgents", &pytysoc::PyScenario::getAgents ) \
         .def( "getAgentsMap", &pytysoc::PyScenario::getAgentsMap ) \
         .def( "addSensor", &pytysoc::PyScenario::addSensor ) \
