@@ -3,11 +3,14 @@
 #include <components/joint.h>
 #include <components/body.h>
 
+#include <compounds/compound.h>
+
 namespace tysoc {
 
     class TCollision;
     class TVisual;
     class TJoint;
+    class TCompound;
 
     /**
     *   Body object used to handle composite bodies (compounds)
@@ -50,13 +53,15 @@ namespace tysoc {
         *
         *   This is one of the constructors that create the root of a chain of compound bodies.
         *   The key difference with this constructor is that it allows the user to attach this
-        *   root-body to the world via a joint, which might be required in some scenarios.
+        *   root-body to the world via a joint, which might be required in some scenarios. Notice
+        *   that the body is created w.r.t. the base of a compound, that's why the local|relative
+        *   position and rotation are given instead of world-space information.
         */
         TCompoundBody( const std::string& name,
                        const TBodyData& data,
                        const TJointData& jointData,
-                       const TVec3& position,
-                       const TMat3& rotation );
+                       const TVec3& localPosition,
+                       const TMat3& localRotation );
 
         /**
         *   Creates a root compound body that could be whether free or fixed w.r.t. the world
@@ -64,19 +69,38 @@ namespace tysoc {
         *   This is the other of the constructor that creates a root of a chain of compound bodies.
         *   The key difference with this constructor is that it allows the user to create free and
         *   fixed root bodies w.r.t. the world. This means that you could have bases that can move
-        *   around, and bases that remain always in the same position.
+        *   around, and bases that remain always in the same position. Notice that the body is created 
+        *   w.r.t. the base of a compound, that's why the local|relative position and rotation are 
+        *   given instead of world-space information.
         */
         TCompoundBody( const std::string& name,
                        const TBodyData& data,
-                       const TVec3& position,
-                       const TMat3& rotation,
-                       const eDynamicsType& dyntype = eDynamicsType::DYNAMIC );
+                       const TVec3& localPosition,
+                       const TMat3& localRotation,
+                       const eDynamicsType& dyntype );
 
         ~TCompoundBody();
+
+        void setCompound( TCompound* compoundRef );
 
         void setParent( TCompoundBody* parentRef );
 
         void setJoint( std::unique_ptr< TJoint > jointObj );
+
+        std::pair< TCompoundBody*, TJoint* > addBodyJointPair( const std::string& name,
+                                                               const TBodyData& bodyData,
+                                                               const TJointData& jointData,
+                                                               const TMat4& bodyLocalTransform );
+
+        std::pair< TCompoundBody*, TJoint* > addBodyJointPair( const std::string& name,
+                                                               const eShapeType& bodyShape,
+                                                               const TVec3& bodySize,
+                                                               const TVec3& bodyColor,
+                                                               const TMat4& bodyLocalTransform,
+                                                               const eJointType& jointType,
+                                                               const TVec3& jointAxis,
+                                                               const TVec2& jointLimits,
+                                                               const TMat4& jointLocalTransform );
 
         void update() override;
 
@@ -102,17 +126,31 @@ namespace tysoc {
 
         void setLocalTransform( const TMat4& transform ) override;
 
+        TCompound* compound() const { return m_compoundRef; }
+
         TJoint* joint() const { return m_joint.get(); }
 
         TCompoundBody* parent() const { return m_parentRef; }
 
+        std::vector< TCompoundBody* > children() const { return m_childrenRefs; }
+
     private :
+
+        void _addChildRef( TCompoundBody* childRef );
+
+    private :
+
+        /* Reference to the compound that owns this body */
+        TCompound* m_compoundRef;
 
         /* Single joint connecting this compound-body to a parent compound-body */
         std::unique_ptr< TJoint > m_joint;
 
         /* Reference to parent compound-body */
         TCompoundBody* m_parentRef;
+
+        /* References to children compound-bodies */
+        std::vector< TCompoundBody* > m_childrenRefs;
     };
 
 }

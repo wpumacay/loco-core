@@ -11,10 +11,20 @@ namespace tysoc {
                                   const TMat3& localRotation )
         : TIBody( name, data )
     {
-        /* keep a reference to the parent */
-        m_parentRef = parentRef;
+        /* define some defaults */
+        m_parentRef = nullptr;
+        m_joint = nullptr;
+        m_compoundRef = nullptr;
+
+        /* keep a reference to the parent (if no parent, notify that this is the wrong constructor to use) */
         if ( !parentRef )
-            TYSOC_CORE_ERROR( "Compound body >>> created child compound-body without a parent-reference" );
+        {
+            TYSOC_CORE_ERROR( "TCompoundBody::TCompoundBody() >>> no parent-reference given for body \"{0}\". \
+                               If you wanted a root-body, use another constructor", name );
+            return;
+        }
+        m_parentRef = parentRef;
+        m_parentRef->_addChildRef( this );
 
         /* create and keep ownership of the joint */
         m_joint = std::unique_ptr< TJoint >( new TJoint( m_name + "_joint", jointData ) );
@@ -28,52 +38,49 @@ namespace tysoc {
         m_localTf.setRotation( m_localRot );
         m_localTf0.setPosition( m_localPos0 );
         m_localTf0.setRotation( m_localRot0 );
-
-        /* configure initial and current world-space pose w.r.t. parent's world space */
-        m_tf = m_parentRef->tf() * m_localTf;
-        m_tf0 = m_parentRef->tf0() * m_localTf0;
-        m_pos = m_tf.getPosition();
-        m_rot = m_tf.getRotation();
-        m_pos0 = m_tf0.getPosition();
-        m_rot0 = m_tf0.getRotation();
     }
 
     TCompoundBody::TCompoundBody( const std::string& name,
                                   const TBodyData& data,
                                   const TJointData& jointData,
-                                  const TVec3& position,
-                                  const TMat3& rotation )
+                                  const TVec3& localPosition,
+                                  const TMat3& localRotation )
         : TIBody( name, data )
     {
+        /* define some defaults */
+        m_parentRef = nullptr;
+        m_joint = nullptr;
+        m_compoundRef = nullptr;
+
         /* this is a root body, so no parent-reference */
         m_parentRef = nullptr;
 
         /* create and keep ownership of the joint */
-        m_joint = std::unique_ptr< TJoint >( new TJoint( m_name + "_joint", jointData ) );
+        m_joint = std::unique_ptr< TJoint >( new TJoint( m_name + ":/joint", jointData ) );
         m_joint->setOwnerBody( this );
         m_joint->setOwnerParent( nullptr );
 
-        /* configure initial and current world-space pose */
-        m_pos = m_pos0 = position;
-        m_rot = m_rot0 = rotation;
-        m_tf.setPosition( m_pos );
-        m_tf.setRotation( m_rot );
-        m_tf0.setPosition( m_pos0 );
-        m_tf0.setRotation( m_rot0 );
-
-        /* configure initial and current local-space pose with defaults */
-        m_localPos = m_localPos0 = tysoc::TVec3(); // zeros
-        m_localRot = m_localRot0 = tysoc::TMat3(); // identity
-        m_localTf = m_localTf0 = tysoc::TMat4(); // identity
+        /* configure initial and current local-space pose */
+        m_localPos = m_localPos0 = localPosition;
+        m_localRot = m_localRot0 = localRotation;
+        m_localTf.setPosition( m_localPos );
+        m_localTf.setRotation( m_localRot );
+        m_localTf0.setPosition( m_localPos0 );
+        m_localTf0.setRotation( m_localRot0 );
     }
 
     TCompoundBody::TCompoundBody( const std::string& name,
                                   const TBodyData& data,
-                                  const TVec3& position,
-                                  const TMat3& rotation,
+                                  const TVec3& localPosition,
+                                  const TMat3& localRotation,
                                   const eDynamicsType& dyntype )
         : TIBody( name, data )
     {
+        /* define some defaults */
+        m_parentRef = nullptr;
+        m_joint = nullptr;
+        m_compoundRef = nullptr;
+
         /* this is a root body, so no parent-reference */
         m_parentRef = nullptr;
 
@@ -81,28 +88,30 @@ namespace tysoc {
         TJointData _jointData;
         _jointData.type = ( dyntype == eDynamicsType::STATIC ) ? eJointType::FIXED : eJointType::FREE;
         _jointData.localTransform.setIdentity();
-        m_joint = std::unique_ptr< TJoint >( new TJoint( m_name + "_joint", _jointData ) );
+        m_joint = std::unique_ptr< TJoint >( new TJoint( m_name + ":/joint", _jointData ) );
         m_joint->setOwnerBody( this );
         m_joint->setOwnerParent( nullptr );
 
-        /* configure initial and current world-space pose */
-        m_pos = m_pos0 = position;
-        m_rot = m_rot0 = rotation;
-        m_tf.setPosition( m_pos );
-        m_tf.setRotation( m_rot );
-        m_tf0.setPosition( m_pos0 );
-        m_tf0.setRotation( m_rot0 );
-
-        /* configure initial and current local-space pose with defaults */
-        m_localPos = m_localPos0 = tysoc::TVec3(); // zeros
-        m_localRot = m_localRot0 = tysoc::TMat3(); // identity
-        m_localTf = m_localTf0 = tysoc::TMat4(); // identity
+        /* configure initial and current local-space pose */
+        m_localPos = m_localPos0 = localPosition;
+        m_localRot = m_localRot0 = localRotation;
+        m_localTf.setPosition( m_localPos );
+        m_localTf.setRotation( m_localRot );
+        m_localTf0.setPosition( m_localPos0 );
+        m_localTf0.setRotation( m_localRot0 );
     }
 
     TCompoundBody::~TCompoundBody()
     {
         m_parentRef = nullptr;
         m_joint = nullptr;
+        m_compoundRef = nullptr;
+    }
+
+    void TCompoundBody::setCompound( TCompound* compoundRef )
+    {
+        /* keep the reference to the compound owner of this body */
+        m_compoundRef = compoundRef;
     }
 
     void TCompoundBody::setParent( TCompoundBody* parentRef )
@@ -117,6 +126,67 @@ namespace tysoc {
         // @experimental: allows to dynamically modify chains, which might cause breaks
         /* keep ownership of the joint */
         m_joint = std::move( jointObj );
+    }
+
+    std::pair< TCompoundBody*, TJoint* > TCompoundBody::addBodyJointPair( const std::string& name,
+                                                                          const TBodyData& bodyData,
+                                                                          const TJointData& jointData,
+                                                                          const TMat4& localTransform )
+    {
+        if ( !m_compoundRef )
+        {
+            TYSOC_CORE_ERROR( "TCompoundBody::addBodyJointPair() >>> body \"{0}\" must have a valid\
+                               reference to the compound that owns it before adding more bodies to the compound.\
+                               Skipping addition of body \"{1}\" and returning (nullptr,nullptr) instead", m_name, name );
+            return { nullptr, nullptr };
+        }
+
+        auto _childBody = new TCompoundBody( name,
+                                             bodyData,
+                                             jointData,
+                                             this,
+                                             localTransform.getPosition(),
+                                             localTransform.getRotation() );
+        m_childrenRefs.push_back( _childBody );
+        m_compoundRef->addCompoundBody( std::unique_ptr< TCompoundBody >( _childBody ) );
+
+        return { _childBody, _childBody->joint() };
+    }
+
+    std::pair< TCompoundBody*, TJoint* > TCompoundBody::addBodyJointPair( const std::string& name,
+                                                                          const eShapeType& bodyShape,
+                                                                          const TVec3& bodySize,
+                                                                          const TVec3& bodyColor,
+                                                                          const TMat4& bodyLocalTransform,
+                                                                          const eJointType& jointType,
+                                                                          const TVec3& jointAxis,
+                                                                          const TVec2& jointLimits,
+                                                                          const TMat4& jointLocalTransform )
+    {
+        auto _bodyCollisionData = TCollisionData();
+        _bodyCollisionData.type = bodyShape;
+        _bodyCollisionData.size = bodySize;
+
+        auto _bodyVisualData = TVisualData();
+        _bodyVisualData.type = bodyShape;
+        _bodyVisualData.size = bodySize;
+        _bodyVisualData.ambient = bodyColor;
+        _bodyVisualData.diffuse = bodyColor;
+        _bodyVisualData.specular = bodyColor;
+        _bodyVisualData.shininess = 64.0f;
+
+        auto _bodyData = TBodyData();
+        _bodyData.dyntype = eDynamicsType::DYNAMIC;
+        _bodyData.collision = _bodyCollisionData;
+        _bodyData.visual = _bodyVisualData;
+
+        auto _jointData = TJointData();
+        _jointData.type = jointType;
+        _jointData.axis = jointAxis;
+        _jointData.limits = jointLimits;
+        _jointData.localTransform = jointLocalTransform;
+
+        return addBodyJointPair( name, _bodyData, _jointData, bodyLocalTransform );
     }
 
     void TCompoundBody::update()
@@ -232,8 +302,8 @@ namespace tysoc {
     {
         if ( !m_parentRef )
         {
-            TYSOC_CORE_WARN( "Compound Body >>> tried setting relative position of a root\
-                              compound-body, use \"setPosition\" instead" );
+            TYSOC_CORE_WARN( "TCompoundBody::setLocalPosition() >>> tried setting relative position of \
+                              root compound-body \"{0}\", use \"setPosition\" instead", m_name );
             return;
         }
 
@@ -249,8 +319,8 @@ namespace tysoc {
     {
         if ( !m_parentRef )
         {
-            TYSOC_CORE_WARN( "Compound Body >>> tried setting relative rotation matrix of a root\
-                              compound-body, use \"setRotation\" instead" );
+            TYSOC_CORE_WARN( "TCompoundBody::setLocalRotation() >>> tried setting relative rotation matrix\
+                              of root compound-body \"{0}\", use \"setRotation\" instead", m_name );
             return;
         }
 
@@ -266,8 +336,8 @@ namespace tysoc {
     {
         if ( !m_parentRef )
         {
-            TYSOC_CORE_WARN( "Compound Body >>> tried setting relative rotation-euler of a root\
-                              compound-body, use \"setEuler\" instead" );
+            TYSOC_CORE_WARN( "TCompoundBody::setLocalEuler() >>> tried setting relative rotation-euler\
+                              of root compound-body \"{0}\", use \"setEuler\" instead", m_name );
             return;
         }
 
@@ -283,8 +353,8 @@ namespace tysoc {
     {
         if ( !m_parentRef )
         {
-            TYSOC_CORE_WARN( "Compound Body >>> tried setting world-space rotation-quaternion of a\
-                              root compound-body, use \"setQuaternion\" instead" );
+            TYSOC_CORE_WARN( "TCompoundBody::setLocalQuaternion() >>> tried setting world-space rotation-quaternion\
+                               of root compound-body \"{0}\", use \"setQuaternion\" instead", m_name );
             return;
         }
 
@@ -300,8 +370,8 @@ namespace tysoc {
     {
         if ( !m_parentRef )
         {
-            TYSOC_CORE_WARN( "Compound Body >>> tried setting relative transform of a root\
-                              compound-body, use \"setTransform\" instead" );
+            TYSOC_CORE_WARN( "TCompoundBody::setLocalTransform() >>> tried setting relative transform\
+                               of root compound-body \"{0}\", use \"setTransform\" instead", m_name );
             return;
         }
 
@@ -311,6 +381,13 @@ namespace tysoc {
         /* update the joint (relative position w.r.t. owner might have changed) */
         if ( m_joint )
             m_joint->update();
+    }
+
+
+    void TCompoundBody::_addChildRef( TCompoundBody* childRef )
+    {
+        /* keep the reference to a child-body in a compound */
+        m_childrenRefs.push_back( childRef );
     }
 
 }

@@ -11,7 +11,8 @@ namespace tysoc {
 
     public :
 
-        TIBodyAdapter( TIBody* bodyRef ) { m_bodyRef = bodyRef; }
+        TIBodyAdapter( TIBody* bodyRef )
+            : m_bodyRef( bodyRef ), m_active( true ) {}
 
         virtual ~TIBodyAdapter() {}
 
@@ -20,6 +21,12 @@ namespace tysoc {
         virtual void reset() = 0;
 
         virtual void update() = 0;
+
+        // @todo: required to notify the backend to pause simulating this adapter's body
+        virtual void pause() { m_active = true; };
+
+        // @todo: required to notify the backend to continue simulating this adapter's body
+        virtual void resume() { m_active = false; };
 
         // @todo: required for backend to handle dynamic deletion (when detached from a TIBody)
         virtual void detach() {}
@@ -56,11 +63,15 @@ namespace tysoc {
 
         virtual void getLocalTransform( TMat4& dstTransform ) = 0;
 
+        bool active() const { return m_active; }
+
         TIBody* body() const { return m_bodyRef; }
 
     protected :
 
         TIBody* m_bodyRef;
+
+        bool m_active;
     };
 
     /* dl-function to be loaded from the backend support */
