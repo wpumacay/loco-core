@@ -1,10 +1,9 @@
-
 #pragma once
 
 #include <scenario.h>
 #include <pytysoc_common.h>
 #include <pytysoc_single_body.h>
-#include <pytysoc_compound_body.h>
+#include <pytysoc_compound.h>
 #include <pytysoc_agent_core.h>
 #include <pytysoc_terrainGen.h>
 #include <pytysoc_sensors.h>
@@ -22,13 +21,13 @@ namespace pytysoc
         tysoc::TScenario* m_scenarioPtr;
 
         std::vector< PySingleBody* > m_pySingleBodies;
-        std::vector< PyCompoundBody* > m_pyCompoundBodies;
+        std::vector< PyCompound* > m_pyCompounds;
         std::vector< PyCoreAgent* > m_pyCoreAgents;
         std::vector< PySensor* > m_pySensors;
         std::vector< PyTerrainGen* > m_pyTerrainGens;
 
         std::map< std::string, PySingleBody* > m_pySingleBodiesMap;
-        std::map< std::string, PyCompoundBody* > m_pyCompoundBodiesMap;
+        std::map< std::string, PyCompound* > m_pyCompoundsMap;
         std::map< std::string, PyCoreAgent* > m_pyCoreAgentsMap;
         std::map< std::string, PySensor* > m_pySensorsMap;
         std::map< std::string, PyTerrainGen* > m_pyTerrainGensMap;
@@ -65,10 +64,10 @@ namespace pytysoc
         /**
         *   Adds a single-body PySingleBody wrapper to this scenario wrapper
         *
-        *   @param pyCompoundBodyRef    A pointer to the pyCompoundBodyRef wrapper to be added
-        *   @exposed                    Exposed through python API
+        *   @param pyCompoundRef    A pointer to the pyCompoundRef wrapper to be added
+        *   @exposed                Exposed through python API
         */
-        void addCompoundBody( PyCompoundBody* pyCompoundBodyRef );
+        void addCompound( PyCompound* pyCompoundRef );
 
         /**
         *   Adds a PyCoreAgent wrapper to this scenario wrapper
@@ -103,12 +102,12 @@ namespace pytysoc
         PySingleBody* getSingleBodyByName( const std::string& name );
 
         /**
-        *   Gets the compound-body pyCompoundBodyRef wrapper of a compound-body in the scenario with a given name
+        *   Gets the compound-body pyCompoundRef wrapper of a compound-body in the scenario with a given name
         *
         *   @param name     The name of the wrapped compound-body ther user has requested
         *   @exposed        Exposed through python API
         */
-        PyCompoundBody* getCompoundBodyByName( const std::string& name );
+        PyCompound* getCompoundByName( const std::string& name );
 
         /**
         *   Gets the PyCoreAgent wrapper of an agent with a given name
@@ -148,7 +147,7 @@ namespace pytysoc
         *   @exposed    Exposed through python API
         *   @todo: check return policy (should not have taken ownership)
         */
-        std::vector< PyCompoundBody* > getCompoundBodies();
+        std::vector< PyCompound* > getCompounds();
 
         /**
         *   Gets a list of all agents belonging to this scenario wrapper
@@ -188,7 +187,7 @@ namespace pytysoc
         *   @exposed    Exposed through python API
         *   @todo: check return policy (should not have taken ownership)
         */
-        std::map< std::string, PyCompoundBody* > getCompoundBodiesMap();
+        std::map< std::string, PyCompound* > getCompoundsMap();
 
         /**
         *   Gets a dictionary of all agents belonging to this scenario wrapper
@@ -235,10 +234,10 @@ namespace pytysoc
         .def( "getSingleBodyByName", &pytysoc::PyScenario::getSingleBodyByName ) \
         .def( "getSingleBodies", &pytysoc::PyScenario::getSingleBodies ) \
         .def( "getSingleBodiesMap", &pytysoc::PyScenario::getSingleBodiesMap ) \
-        .def( "addCompoundBody", &pytysoc::PyScenario::addCompoundBody ) \
-        .def( "getCompoundBodyByName", &pytysoc::PyScenario::getCompoundBodyByName ) \
-        .def( "getCompoundBodies", &pytysoc::PyScenario::getCompoundBodies ) \
-        .def( "getCompoundBodiesMap", &pytysoc::PyScenario::getCompoundBodiesMap ) \
+        .def( "addCompound", &pytysoc::PyScenario::addCompound ) \
+        .def( "getCompoundByName", &pytysoc::PyScenario::getCompoundByName ) \
+        .def( "getCompounds", &pytysoc::PyScenario::getCompounds ) \
+        .def( "getCompoundsMap", &pytysoc::PyScenario::getCompoundsMap ) \
         .def( "addAgent", &pytysoc::PyScenario::addAgent ) \
         .def( "getAgentByName", &pytysoc::PyScenario::getAgentByName ) \
         .def( "getAgents", &pytysoc::PyScenario::getAgents ) \

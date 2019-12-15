@@ -13,14 +13,17 @@ namespace tysoc {
     {
         TYSOC_CORE_INFO( "Destroying scenario" );
 
-        // Clean the stored references as ...
-        // the runtime is in charge to hold ...
-        // all data of the simulation
-        for ( size_t i = 0; i < m_singleBodies.size(); i++ )
-            delete m_singleBodies[i];
+        for ( auto _singleBody : m_singleBodies )
+            delete _singleBody;
 
         m_singleBodies.clear();
         m_mapSingleBodiesByName.clear();
+
+        for ( auto _compound : m_compounds )
+            delete _compound;
+
+        m_compounds.clear();
+        m_mapCompoundsByName.clear();
 
         for ( size_t i = 0; i < m_agents.size(); i++ )
             delete m_agents[i];
@@ -52,13 +55,13 @@ namespace tysoc {
     }
 
     // @todo: should we handle ownership with unique_ptrs?
-    void TScenario::addCompoundBody( TCompoundBody* rootCompound )
+    void TScenario::addCompound( TCompound* rootCompound )
     {
         if ( !rootCompound )
             return;
 
-        m_compoundBodies.push_back( rootCompound );
-        m_mapCompoundBodiesByName[ rootCompound->name() ] = rootCompound;
+        m_compounds.push_back( rootCompound );
+        m_mapCompoundsByName[ rootCompound->name() ] = rootCompound;
     }
 
     // @todo: should we handle ownership with unique_ptrs?
@@ -96,6 +99,9 @@ namespace tysoc {
         // @TODO|@CHECK: should remove initialization? is it useful?
         for ( size_t i = 0; i < m_terrainGenerators.size(); i++ )
             m_terrainGenerators[ i ]->initialize();
+
+        for ( auto _compound : m_compounds )
+            _compound->initializeToRestConfiguration();
     }
 
     void TScenario::update()
@@ -103,8 +109,8 @@ namespace tysoc {
         for ( size_t i = 0; i < m_singleBodies.size(); i++ )
             m_singleBodies[i]->update();
 
-        for ( size_t i = 0; i < m_compoundBodies.size(); i++ )
-            m_compoundBodies[i]->update();
+        for ( size_t i = 0; i < m_compounds.size(); i++ )
+            m_compounds[i]->update();
 
         for ( size_t i = 0; i < m_terrainGenerators.size(); i++ )
             m_terrainGenerators[i]->update();
@@ -127,12 +133,12 @@ namespace tysoc {
         return nullptr;
     }
 
-    TCompoundBody* TScenario::getCompoundBodyByName( const std::string& name )
+    TCompound* TScenario::getCompoundByName( const std::string& name )
     {
-        if ( m_mapCompoundBodiesByName.find( name ) != m_mapCompoundBodiesByName.end() )
-            return m_mapCompoundBodiesByName[name];
+        if ( m_mapCompoundsByName.find( name ) != m_mapCompoundsByName.end() )
+            return m_mapCompoundsByName[name];
 
-        TYSOC_CORE_WARN( "Scenario >>> compound-body with name \"{0}\" does not exist. \
+        TYSOC_CORE_WARN( "Scenario >>> compound with name \"{0}\" not found in scenario. \
                           Returning nullptr instead.", name )
 
         return nullptr;
@@ -176,9 +182,9 @@ namespace tysoc {
         return m_mapSingleBodiesByName.find( singleBodyName ) != m_mapSingleBodiesByName.end();
     }
 
-    bool TScenario::hasCompoundBody( const std::string& compoundBodyName )
+    bool TScenario::hasCompound( const std::string& compoundName )
     {
-        return m_mapCompoundBodiesByName.find( compoundBodyName ) != m_mapCompoundBodiesByName.end();
+        return m_mapCompoundsByName.find( compoundName ) != m_mapCompoundsByName.end();
     }
 
     bool TScenario::hasAgent( const std::string& agentName )

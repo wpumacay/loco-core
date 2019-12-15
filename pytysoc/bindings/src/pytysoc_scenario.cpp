@@ -16,8 +16,8 @@ namespace pytysoc
         m_pySingleBodies.clear();
         m_pySingleBodiesMap.clear();
 
-        m_pyCompoundBodies.clear();
-        m_pyCompoundBodiesMap.clear();
+        m_pyCompounds.clear();
+        m_pyCompoundsMap.clear();
 
         m_pyCoreAgents.clear();
         m_pyCoreAgentsMap.clear();
@@ -52,21 +52,21 @@ namespace pytysoc
         m_pySingleBodiesMap[ pySingleBodyRef->name() ] = pySingleBodyRef;
     }
 
-    void PyScenario::addCompoundBody( PyCompoundBody* pyCompoundBodyRef )
+    void PyScenario::addCompound( PyCompound* pyCompoundRef )
     {
-        TYSOC_CORE_ASSERT( m_scenarioPtr, "PyScenario::addCompoundBody> there's no cpp-scenario yet" );
-        TYSOC_CORE_ASSERT( pyCompoundBodyRef->ptr(), "PyScenario::addCompoundBody> compound-body has no cpp-resource to add" );
+        TYSOC_CORE_ASSERT( m_scenarioPtr, "PyScenario::addCompound> there's no cpp-scenario yet" );
+        TYSOC_CORE_ASSERT( pyCompoundRef->ptr(), "PyScenario::addCompound> compound has no cpp-resource to add" );
 
-        if ( m_pyCompoundBodiesMap.find( pyCompoundBodyRef->name() ) != m_pyCompoundBodiesMap.end() )
+        if ( m_pyCompoundsMap.find( pyCompoundRef->name() ) != m_pyCompoundsMap.end() )
         {
-            TYSOC_CORE_WARN( "PyScenario::addCompoundBody> tried to add an existing body with name: {0}", pyCompoundBodyRef->name() );
+            TYSOC_CORE_WARN( "PyScenario::addCompound> tried to add an existing body with name: {0}", pyCompoundRef->name() );
             return;
         }
 
-        m_scenarioPtr->addCompoundBody( dynamic_cast< tysoc::TCompoundBody* >( pyCompoundBodyRef->ptr() ) );
+        m_scenarioPtr->addCompound( dynamic_cast< tysoc::TCompound* >( pyCompoundRef->ptr() ) );
 
-        m_pyCompoundBodies.push_back( pyCompoundBodyRef );
-        m_pyCompoundBodiesMap[pyCompoundBodyRef->name()] = pyCompoundBodyRef;
+        m_pyCompounds.push_back( pyCompoundRef );
+        m_pyCompoundsMap[pyCompoundRef->name()] = pyCompoundRef;
     }
 
     void PyScenario::addAgent( PyCoreAgent* pyCoreAgentPtr )
@@ -149,15 +149,15 @@ namespace pytysoc
         return m_pySingleBodiesMap[name];
     }
 
-    PyCompoundBody* PyScenario::getCompoundBodyByName( const std::string& name )
+    PyCompound* PyScenario::getCompoundByName( const std::string& name )
     {
-        if ( m_pyCompoundBodiesMap.find( name ) == m_pyCompoundBodiesMap.end() )
+        if ( m_pyCompoundsMap.find( name ) == m_pyCompoundsMap.end() )
         {
-            TYSOC_CORE_WARN( "PyScenario::getCompoundBodyByName> compound-body \"{0}\" not found in scenario", name );
+            TYSOC_CORE_WARN( "PyScenario::getCompoundByName> compound \"{0}\" not found in scenario", name );
             return nullptr;
         }
 
-        return m_pyCompoundBodiesMap[name];
+        return m_pyCompoundsMap[name];
     }
 
     PyCoreAgent* PyScenario::getAgentByName( const std::string& name )
@@ -198,9 +198,9 @@ namespace pytysoc
         return m_pySingleBodies;
     }
 
-    std::vector< PyCompoundBody* > PyScenario::getCompoundBodies()
+    std::vector< PyCompound* > PyScenario::getCompounds()
     {
-        return m_pyCompoundBodies;
+        return m_pyCompounds;
     }
 
     std::vector< PyCoreAgent* > PyScenario::getAgents()
@@ -223,9 +223,9 @@ namespace pytysoc
         return m_pySingleBodiesMap;
     }
 
-    std::map< std::string, PyCompoundBody* > PyScenario::getCompoundBodiesMap()
+    std::map< std::string, PyCompound* > PyScenario::getCompoundsMap()
     {
-        return m_pyCompoundBodiesMap;
+        return m_pyCompoundsMap;
     }
 
     std::map< std::string, PyCoreAgent* > PyScenario::getAgentsMap()

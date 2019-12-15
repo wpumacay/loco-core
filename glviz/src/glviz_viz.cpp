@@ -42,7 +42,12 @@ namespace tysoc {
         // Create drawable adapters for single bodies
         auto _singleBodies = m_scenarioPtr->getSingleBodies();
         for ( auto _singleBody : _singleBodies )
-            _collectSingleBodies( _singleBody );
+            _collectBody( _singleBody );
+
+        // Create drawable adapters for compounds
+        auto _compounds = m_scenarioPtr->getCompounds();
+        for ( auto _compound : _compounds )
+            _collectCompound( _compound );
 
         // Create visualization wrappers for the terrain generator
         auto _terrainGenerators = m_scenarioPtr->getTerrainGenerators();
@@ -504,7 +509,7 @@ namespace tysoc {
         m_vizKinTreeWrappers.push_back( std::unique_ptr< TGLVizKinTree >( _vizKinTreeWrapper ) );
     }
 
-    void TGLVisualizer::_collectSingleBodies( TSingleBody* bodyRef )
+    void TGLVisualizer::_collectBody( TIBody* bodyRef )
     {
         if ( !bodyRef )
             return;
@@ -555,6 +560,63 @@ namespace tysoc {
             }
         }
 
+        if ( bodyRef->classType() == eBodyClassType::COMPOUND_BODY )
+        {
+            auto _joint = dynamic_cast< TCompoundBody* >( bodyRef )->joint();// @todo: use joint-type for vis. shape-type
+            auto _jointVisualData = TVisualData();
+            _jointVisualData.type = eShapeType::CYLINDER;
+            _jointVisualData.size = { 0.01f, 0.02f, 0.0f };
+            _jointVisualData.ambient = { 0.2f, 0.4f, 0.3f };
+            _jointVisualData.diffuse = { 0.2f, 0.4f, 0.3f };
+            _jointVisualData.specular = { 0.2f, 0.4f, 0.3f };
+            _jointVisualData.shininess = 64.0f;
+
+            // @todo: change renderable-adapter for gizmo-adapter
+            auto _jointDrawable = new TGLDrawable( _jointVisualData );
+
+            if ( _jointDrawable )
+            {
+                _jointDrawable->setAmbientColor( _jointVisualData.ambient );
+                _jointDrawable->setDiffuseColor( _jointVisualData.diffuse );
+                _jointDrawable->setSpecularColor( _jointVisualData.specular );
+                _jointDrawable->setShininess( _jointVisualData.shininess );
+
+                _jointDrawable->show( true );
+                _jointDrawable->wireframe( false );
+                _joint->setDrawable( _jointDrawable );
+
+                // scene keeps ownership of gl-renderable resource, drawable keeps only a reference
+                if ( _jointDrawable->renderable() )
+                    m_glScene->addRenderable( std::unique_ptr< engine::CIRenderable >( _jointDrawable->renderable() ) );
+
+                // visualizer keeps ownership of the adapter
+                m_vizDrawables.push_back( std::unique_ptr< TGLDrawable >( _jointDrawable ) );
+            }
+
+        }
+    }
+
+    void TGLVisualizer::_collectCompound( TCompound* compoundRef )
+    {
+        if ( !compoundRef )
+            return;
+
+        std::stack< TCompoundBody* > _bodiesToCollect;
+        _bodiesToCollect.push( compoundRef->root() );
+        while ( _bodiesToCollect.size() > 0 )
+        {
+            auto _body = _bodiesToCollect.top();
+            _bodiesToCollect.pop();
+
+            if ( !_body )
+                continue;
+
+            _collectBody( _body );
+
+            auto _children = _body->children();
+            for ( auto _child : _children )
+                _bodiesToCollect.push( _child );
+        }
     }
 
     void TGLVisualizer::_collectTerrainGenerator( TITerrainGenerator* terrainGeneratorPtr )

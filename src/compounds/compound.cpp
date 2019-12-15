@@ -47,6 +47,9 @@ namespace tysoc
         m_bodies.push_back( std::move( std::unique_ptr< TCompoundBody >( _rootCompoundBody ) ) );
         m_bodiesMap[ _rootCompoundBody->name() ] = _rootCompoundBody;
 
+        /* keep a reference of the root for easier access */
+        m_rootBodyRef = _rootCompoundBody;
+
         /* return a reference for the user to play with */
         return _rootCompoundBody;
     }
@@ -98,6 +101,9 @@ namespace tysoc
         /* take ownership of the root-body and cache it for easy access */
         m_bodies.push_back( std::move( std::unique_ptr< TCompoundBody >( _rootCompoundBody ) ) );
         m_bodiesMap[ _rootCompoundBody->name() ] = _rootCompoundBody;
+
+        /* keep a reference of the root for easier access */
+        m_rootBodyRef = _rootCompoundBody;
 
         /* return body-joint references pair */
         return { _rootCompoundBody, _rootCompoundBody->joint() };
@@ -153,16 +159,92 @@ namespace tysoc
             return nullptr;
         }
 
-        if ( !body->parent() )
+        if ( !body->parent() && m_rootBodyRef )
         {
             TYSOC_CORE_ERROR( "TCompound::addCompoundBody() >>> body \"{0}\" has no parent. Compounds can only have one root body. Skipping addition", body->name() );
             return nullptr;
         }
 
+        auto _bodyRef = body.get();
         m_bodies.push_back( std::move( body ) );
-        m_bodiesMap[ m_bodies.back()->name() ] = m_bodies.back().get();
+        m_bodiesMap[ _bodyRef->name() ] = _bodyRef;
 
-        return m_bodies.back().get();
+        if ( !_bodyRef->parent() && !m_rootBodyRef )
+            m_rootBodyRef = _bodyRef;
+
+        return _bodyRef;
+    }
+
+    void TCompound::update()
+    {
+        if ( !m_rootBodyRef )
+        {
+            TYSOC_CORE_ERROR( "TCompound::update() >>> compound \"{0}\" has no root-body, so we can't\
+                               do the traversal", m_name );
+            return;
+        }
+
+        /* Update internal low-level state using the adapter (link to the backend) */
+        if ( m_compoundImplRef )
+        {
+            // update the adapter to handle internal stuff
+            m_compoundImplRef->update();
+
+            // grab the latest world-transform from the backend
+            m_compoundImplRef->getTransform( m_tf );
+        }
+
+        /* Send update-request to all bodies recursively */
+        std::stack< TCompoundBody* > _bodiesToUpdate;
+        _bodiesToUpdate.push( m_rootBodyRef );
+        while ( _bodiesToUpdate.size() > 0 )
+        {
+            auto _body = _bodiesToUpdate.top();
+            _bodiesToUpdate.pop();
+            if ( _body )
+            {
+                _body->update();
+                auto _children = _body->children();
+                for ( auto _child : _children )
+                    _bodiesToUpdate.push( _child );
+            }
+        }
+    }
+
+    void TCompound::reset()
+    {
+        if ( !m_rootBodyRef )
+        {
+            TYSOC_CORE_ERROR( "TCompound::reset() >>> compound \"{0}\" has no root-body, so we can't\
+                               do the traversal", m_name );
+            return;
+        }
+
+        /* Reset internal low-level state using the adapter (link to the backend) */
+        if ( m_compoundImplRef )
+        {
+            // reset to rest configuration using the adapter
+            m_compoundImplRef->reset();
+
+            // grab the latest world-transfrom from the backend
+            m_compoundImplRef->getTransform( m_tf );
+        }
+
+        /* Send update-request to all bodies recursively */
+        std::stack< TCompoundBody* > _bodiesToReset;
+        _bodiesToReset.push( m_rootBodyRef );
+        while ( _bodiesToReset.size() > 0 )
+        {
+            auto _body = _bodiesToReset.top();
+            _bodiesToReset.pop();
+            if ( _body )
+            {
+                _body->reset();
+                auto _children = _body->children();
+                for ( auto _child : _children )
+                    _bodiesToReset.push( _child );
+            }
+        }
     }
 
     void TCompound::initializeToRestConfiguration()

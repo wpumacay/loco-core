@@ -7,7 +7,7 @@
 
 #include <components/body.h>
 #include <primitives/single_body.h>
-#include <compounds/compound_body.h>
+#include <compounds/compound.h>
 
 namespace tysoc
 {
@@ -28,25 +28,25 @@ namespace tysoc
         void update();
 
         void addSingleBody( TSingleBody* body );
-        void addCompoundBody( TCompoundBody* rootCompound );
+        void addCompound( TCompound* compound );
         void addAgent( TAgent* agent );
         void addSensor( TISensor* sensor );
         void addTerrainGenerator( TITerrainGenerator* terrainGenerator );
 
         std::vector< TSingleBody* > getSingleBodies() const { return m_singleBodies; }
-        std::vector< TCompoundBody* > getCompoundBodies() const { return m_compoundBodies; }
+        std::vector< TCompound* > getCompounds() const { return m_compounds; }
         std::vector< TAgent* > getAgents() const { return m_agents; }
         std::vector< TISensor* > getSensors() const { return m_sensors; }
         std::vector< TITerrainGenerator* > getTerrainGenerators() const { return m_terrainGenerators; }
 
         TSingleBody* getSingleBodyByName( const std::string& name );
-        TCompoundBody* getCompoundBodyByName( const std::string& name );
+        TCompound* getCompoundByName( const std::string& name );
         TAgent* getAgentByName( const std::string& name );
         TISensor* getSensorByName( const std::string& name );
         TITerrainGenerator* getTerrainGeneratorByName( const std::string& name );
 
         bool hasSingleBody( const std::string& singleBodyName );
-        bool hasCompoundBody( const std::string& compoundBodyName );
+        bool hasCompound( const std::string& compoundName );
         bool hasAgent( const std::string& agentName );
         bool hasTerrainGen( const std::string& terrainGenName );
         bool hasSensor( const std::string& sensorName );
@@ -56,8 +56,8 @@ namespace tysoc
         std::vector< TSingleBody* > m_singleBodies;
         std::map< std::string, TSingleBody* > m_mapSingleBodiesByName;
 
-        std::vector< TCompoundBody* > m_compoundBodies;
-        std::map< std::string, TCompoundBody* > m_mapCompoundBodiesByName;
+        std::vector< TCompound* > m_compounds;
+        std::map< std::string, TCompound* > m_mapCompoundsByName;
 
         std::vector< TAgent* > m_agents;
         std::map< std::string, TAgent* > m_mapAgentsByName;

@@ -8,6 +8,7 @@
 #include <glviz_ui.h>
 
 #include <primitives/single_body.h>
+#include <compounds/compound.h>
 
 using namespace engine;
 
@@ -68,7 +69,8 @@ namespace tysoc {
 
         void _setupGlRenderingEngine();
         void _setupGlRenderTargets();
-        void _collectSingleBodies( TSingleBody* bodyRef );
+        void _collectBody( TIBody* bodyRef );
+        void _collectCompound( TCompound* compoundRef );
         void _collectKinTreeAgent( TAgent* agentRef );
         void _collectTerrainGenerator( TITerrainGenerator* terrainGeneratorRef );
         void _renderSensorReading( TISensor* sensorRef );

@@ -118,6 +118,31 @@ namespace tysoc
         TCompoundBody* addCompoundBody( std::unique_ptr< TCompoundBody > body );
 
         /**
+        *   @brief Updates the internal state of the compound and its components
+        *
+        *   @details
+        *    Updates this compound based on the information obtained from its adapter, which
+        *    holds the current state of the compound in the backend. It then sends update requests
+        *    to the components (bodies) recursively, each using its own adapter to grab its
+        *    internal simulation state. If no adapters are available, or if they are inactive,
+        *    then the recursive update just keeps setting the current configuration (rest configuration
+        *    or last simulation configuration, respectively).
+        */
+        void update();
+
+        /**
+        *   @brief Resets the internal state of the compound (and components) to the rest configuration
+        *
+        *   @details
+        *    Resets this compound by requesting the adapters to set their internal state to the
+        *    rest-configuration state given by the user. This reset is recursive, and traverses
+        *    all components (each component uses its own adapter to handle the reset request). If
+        *    no adapters are available, then no request is send to the backend. If the adapters
+        *    are inactive, the request is made and the adapter is reset to its active state.
+        */
+        void reset();
+
+        /**
         *   @brief Recursively configures the zero|rest configuration of the compound
         *
         *   @details
@@ -200,11 +225,25 @@ namespace tysoc
         */
         std::vector< TCompoundBody* > bodies();
 
-        TVec3 position() const { return m_tf.getPosition(); }
+        TVec3 pos() const { return m_tf.getPosition(); }
 
-        TMat3 rotation() const { return m_tf.getRotation(); }
+        TMat3 rot() const { return m_tf.getRotation(); }
 
-        TMat4 transform() const { return m_tf; }
+        TVec4 quat() const { return m_tf.getRotQuaternion(); }
+
+        TVec3 euler() const { return m_tf.getRotEuler(); }
+
+        TMat4 tf() const { return m_tf; }
+
+        TVec3 pos0() const { return m_tf0.getPosition(); }
+
+        TMat3 rot0() const { return m_tf0.getRotation(); }
+
+        TVec4 quat0() const { return m_tf0.getRotQuaternion(); }
+
+        TVec3 euler0() const { return m_tf0.getRotEuler(); }
+
+        TMat4 tf0() const { return m_tf0; }
 
         std::string name() const { return m_name; }
 

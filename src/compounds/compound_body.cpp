@@ -193,6 +193,14 @@ namespace tysoc {
     {
         TIBody::update();
 
+        /* Update localTf of this body w.r.t. parent body */
+        if ( m_parentRef )
+        {
+            m_localTf = m_parentRef->tf().inverse() * m_tf;
+            m_localPos = m_localTf.getPosition();
+            m_localRot = m_localTf.getRotation();
+        }
+
         if ( m_joint )
             m_joint->update();
     }

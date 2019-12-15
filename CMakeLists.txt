@@ -114,12 +114,13 @@ target_link_libraries( tysocCore
 # Configure glviz
 add_subdirectory( glviz )
 
-# Configure python bindings
-add_subdirectory( pytysoc )
-## # Configure tests
-## add_subdirectory( tests )
-## # Configure unittests
-## add_subdirectory( unittest )
+## # Configure python bindings
+## add_subdirectory( pytysoc )
+
+#### # Configure tests
+#### add_subdirectory( tests )
+#### # Configure unittests
+#### add_subdirectory( unittest )
 
 if( TYSOCCORE_IS_MASTER_PROJECT )
     # Configure examples
