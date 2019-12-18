@@ -57,7 +57,9 @@ namespace tysoc {
 
         void setVisual( std::unique_ptr< TVisual > visualObj );
 
-        virtual void update();
+        virtual void preStep();
+
+        virtual void postStep();
 
         virtual void reset();
 

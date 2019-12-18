@@ -29,7 +29,9 @@ namespace tysoc {
 
         void wireframe( bool wireframe );
 
-        void update();
+        void preStep();
+
+        void postStep();
 
         void reset();
 

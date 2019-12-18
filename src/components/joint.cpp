@@ -202,13 +202,21 @@ namespace tysoc {
             m_jointImplRef->changeLimits( limits );
     }
 
-    void TJoint::update()
+    void TJoint::preStep()
+    {
+        TYSOC_CORE_ASSERT( m_ownerRef, "Joint >>> joint \"{0}\" isn't attached to an owner body", m_name );
+
+        if ( m_jointImplRef )
+            m_jointImplRef->preStep();
+    }
+
+    void TJoint::postStep()
     {
         TYSOC_CORE_ASSERT( m_ownerRef, "Joint >>> joint \"{0}\" isn't attached to an owner body", m_name );
 
         if ( m_jointImplRef )
         {
-            m_jointImplRef->update();
+            m_jointImplRef->postStep();
             m_jointImplRef->getQpos( m_qpos );
             m_jointImplRef->getQvel( m_qvel );
         }

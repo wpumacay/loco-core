@@ -3,7 +3,7 @@
 
 #include <terrain/terrain_common.h>
 
-#define PROCEDURAL_TERRAIN_POOL_SIZE 100
+#define PROCEDURAL_TERRAIN_POOL_SIZE 1
 
 namespace tysoc {
 

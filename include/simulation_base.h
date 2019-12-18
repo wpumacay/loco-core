@@ -2,6 +2,10 @@
 #pragma once
 
 #include <scenario.h>
+#include <adapters/collision_adapter.h>
+#include <adapters/joint_adapter.h>
+#include <adapters/body_adapter.h>
+#include <adapters/compound_adapter.h>
 #include <agent_wrapper.h>
 #include <terrain_wrapper.h>
 #include <viz/viz.h>
@@ -71,8 +75,14 @@ namespace tysoc {
         /* Collision adapters instantiated as part of the high-level bodies in the scenario */
         std::vector< TICollisionAdapter* > m_collisionAdapters;
 
+        /* Joint adapters instantiated as part of the high-level joints in the scenario */
+        std::vector< TIJointAdapter* > m_jointAdapters;
+
         /* Body adapters instantiated for the high-level bodies in the scenario */
         std::vector< TIBodyAdapter* > m_bodyAdapters;
+
+        /* Compound adapters instantiated for the high-level compounds in the scenario */
+        std::vector< TICompoundAdapter* > m_compoundAdapters;
 
         /* Executes functionality used before taking a simulation step in the backend */
         void _preStep();

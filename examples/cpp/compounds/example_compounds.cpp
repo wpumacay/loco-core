@@ -24,10 +24,10 @@ tysoc::TCompound* createDoorVersion1( const std::string& name, const tysoc::TVec
     auto _frame_0_body_data = tysoc::TBodyData();
     _frame_0_body_data.collision = _frame_0_coldata;
     _frame_0_body_data.visual = _frame_0_visdata;
-    auto _frame_0_tf = tysoc::TMat4::fromPositionAndRotation( { 0.0f, -0.5f, 1.0f }, tysoc::TMat3() );
+    auto _frame_0_local_tf = tysoc::TMat4::fromPositionAndRotation( { 0.0f, -0.5f, 1.0f }, tysoc::TMat3() );
     auto _frame_0_body = _compound->createRootBody( "frame_0", 
                                                     _frame_0_body_data,
-                                                    _frame_0_tf );
+                                                    _frame_0_local_tf );
 
     auto _frame_1_coldata = tysoc::TCollisionData();
     _frame_1_coldata.type = tysoc::eShapeType::BOX;
@@ -45,13 +45,13 @@ tysoc::TCompound* createDoorVersion1( const std::string& name, const tysoc::TVec
     auto _frame_1_joint_data = tysoc::TJointData();
     _frame_1_joint_data.type = tysoc::eJointType::FIXED;
     _frame_1_joint_data.localTransform = tysoc::TMat4(); // identity (same ref-frame as body's frame)
-    auto _frame_1_tf = tysoc::TMat4::fromPositionAndRotation( { 0.0f, 0.5f, 0.9f }, tysoc::TMat3() );
+    auto _frame_1_local_tf = tysoc::TMat4::fromPositionAndRotation( { 0.0f, 0.5f, 0.9f }, tysoc::TMat3() );
     auto _frame_1_body = new tysoc::TCompoundBody( "frame_1",
                                                    _frame_1_body_data,
                                                    _frame_1_joint_data,
                                                    _frame_0_body,
-                                                   _frame_1_tf.getPosition(),
-                                                   _frame_1_tf.getRotation() );
+                                                   _frame_1_local_tf.getPosition(),
+                                                   _frame_1_local_tf.getRotation() );
 
     auto _frame_2_coldata = tysoc::TCollisionData();
     _frame_2_coldata.type = tysoc::eShapeType::BOX;
@@ -69,17 +69,44 @@ tysoc::TCompound* createDoorVersion1( const std::string& name, const tysoc::TVec
     auto _frame_2_joint_data = tysoc::TJointData();
     _frame_2_joint_data.type = tysoc::eJointType::FIXED;
     _frame_2_joint_data.localTransform = tysoc::TMat4(); // identity (same ref-frame as body's frame)
-    auto _frame_2_tf = tysoc::TMat4::fromPositionAndRotation( { 0.0f, 0.5f, -0.9f }, tysoc::TMat3() );
+    auto _frame_2_local_tf = tysoc::TMat4::fromPositionAndRotation( { 0.0f, 0.5f, -0.9f }, tysoc::TMat3() );
     auto _frame_2_body = new tysoc::TCompoundBody( "frame_2",
                                                    _frame_2_body_data,
                                                    _frame_2_joint_data,
                                                    _frame_1_body,
-                                                   _frame_2_tf.getPosition(),
-                                                   _frame_2_tf.getRotation() );
+                                                   _frame_2_local_tf.getPosition(),
+                                                   _frame_2_local_tf.getRotation() );
+
+    auto _panel_coldata = tysoc::TCollisionData();
+    _panel_coldata.type = tysoc::eShapeType::BOX;
+    _panel_coldata.size = { 1.2f, 0.1f, 2.0f };
+    auto _panel_visdata = tysoc::TVisualData();
+    _panel_visdata.type = tysoc::eShapeType::BOX;
+    _panel_visdata.size = { 1.2f, 0.1f, 2.0f };
+    _panel_visdata.ambient = { 0.4f, 0.3f, 0.5f };
+    _panel_visdata.diffuse = { 0.4f, 0.3f, 0.5f };
+    _panel_visdata.specular = { 0.4f, 0.3f, 0.5f };
+    _panel_visdata.shininess = 50.0f;
+    auto _panel_body_data = tysoc::TBodyData();
+    _panel_body_data.collision = _panel_coldata;
+    _panel_body_data.visual = _panel_visdata;
+    auto _panel_joint_data = tysoc::TJointData();
+    _panel_joint_data.type = tysoc::eJointType::REVOLUTE;
+    _panel_joint_data.axis = { 0.0f, 0.0f, 1.0f };
+    _panel_joint_data.limits = { -0.5f * TYSOC_PI, 0.5F * TYSOC_PI };
+    _panel_joint_data.localTransform = tysoc::TMat4::fromPositionAndRotation( { 0.1f, -0.1f, 0.0f }, tysoc::TMat3() );
+    auto _panel_local_tf = tysoc::TMat4::fromPositionAndRotation( { 0.7f, -0.15f, 0.0f }, tysoc::TMat3() );
+    auto _panel_body = new tysoc::TCompoundBody( "panel",
+                                                 _panel_body_data,
+                                                 _panel_joint_data,
+                                                 _frame_0_body,
+                                                 _panel_local_tf.getPosition(),
+                                                 _panel_local_tf.getRotation() );
 
     // add all bodies (the compound is just a handy container)
     _compound->addCompoundBody( std::unique_ptr< tysoc::TCompoundBody >( _frame_1_body ) );
     _compound->addCompoundBody( std::unique_ptr< tysoc::TCompoundBody >( _frame_2_body ) );
+    _compound->addCompoundBody( std::unique_ptr< tysoc::TCompoundBody >( _panel_body ) );
 
     /**********************************************************************************************/
 

@@ -21,7 +21,9 @@ namespace tysoc
 
         virtual void reset() = 0;
 
-        virtual void update() = 0;
+        virtual void preStep() = 0;
+
+        virtual void postStep() = 0;
 
         // @todo: required to notify the backend to pause simulating this adapter's compound
         virtual void pause() { m_active = true; };

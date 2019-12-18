@@ -25,7 +25,9 @@ namespace tysoc
         ~TScenario();
 
         void initialize();
-        void update();
+        void preStep();
+        void postStep();
+        void reset();
 
         void addSingleBody( TSingleBody* body );
         void addCompound( TCompound* compound );

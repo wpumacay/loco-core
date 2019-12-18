@@ -82,7 +82,12 @@ namespace tysoc {
         return m_drawableImplRef->isWireframe();
     }
 
-    void TVisual::update()
+    void TVisual::preStep()
+    {
+        // not much to do before a simulation step
+    }
+
+    void TVisual::postStep()
     {
         // update our own transform using the world-transform from the parent
         assert( m_parentBodyRef != nullptr );

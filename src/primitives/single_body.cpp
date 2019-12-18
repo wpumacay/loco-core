@@ -25,6 +25,9 @@ namespace tysoc {
         m_localPos = m_localPos0 = tysoc::TVec3(); // zeros
         m_localRot = m_localRot0 = tysoc::TMat3(); // identity
         m_localTf = m_localTf0 = tysoc::TMat4(); // identity
+
+        /* make sure our type is single-body */
+        m_classType = eBodyClassType::SINGLE_BODY;
     }
 
     TSingleBody::~TSingleBody()

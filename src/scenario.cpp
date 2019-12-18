@@ -104,22 +104,46 @@ namespace tysoc {
             _compound->initializeToRestConfiguration();
     }
 
-    void TScenario::update()
+    void TScenario::preStep()
     {
-        for ( size_t i = 0; i < m_singleBodies.size(); i++ )
-            m_singleBodies[i]->update();
+        for ( auto _singleBody : m_singleBodies )
+            _singleBody->preStep();
 
-        for ( size_t i = 0; i < m_compounds.size(); i++ )
-            m_compounds[i]->update();
+        for ( auto _compound : m_compounds )
+            _compound->preStep();
 
+        // @todo: implement pre-step into these, once we update the API to have a similar specification
         for ( size_t i = 0; i < m_terrainGenerators.size(); i++ )
             m_terrainGenerators[i]->update();
+    }
 
+    void TScenario::postStep()
+    {
+        for ( auto _singleBody : m_singleBodies )
+            _singleBody->postStep();
+
+        for ( auto _compound : m_compounds )
+            _compound->postStep();
+
+        // @todo: implement post-step into these, once we update the API to have a similar specification
         for ( size_t i = 0; i < m_sensors.size(); i++ )
             m_sensors[i]->update();
 
+        // @todo: implement post-step into these, once we update the API to have a similar specification
         for ( size_t i = 0; i < m_agents.size(); i++ )
             m_agents[i]->update();
+}
+
+    void TScenario::reset()
+    {
+        for ( auto _singleBody : m_singleBodies )
+            _singleBody->reset();
+
+        for ( auto _compound : m_compounds )
+            _compound->reset();
+
+        for ( auto _agent : m_agents )
+            _agent->reset();
     }
 
     TSingleBody* TScenario::getSingleBodyByName( const std::string& name )

@@ -37,7 +37,7 @@ namespace tysoc {
         m_rot = m_tf.getRotation();
 
         if ( m_collisionImplRef )
-            m_collisionImplRef->update();
+            m_collisionImplRef->postStep();
 
         if ( m_drawableImplRef )
             m_drawableImplRef->setWorldTransform( m_tf );
@@ -96,11 +96,18 @@ namespace tysoc {
         return m_drawableImplRef->isWireframe();
     }
 
-    void TCollision::update()
+    void TCollision::preStep()
     {
-        // update internal stuff that might be required in the backend
+        // update any required information prior to taking a simulation step
         if ( m_collisionImplRef )
-            m_collisionImplRef->update();
+            m_collisionImplRef->preStep();
+    }
+
+    void TCollision::postStep()
+    {
+        // update any required information after a simulation step has been taken
+        if ( m_collisionImplRef )
+            m_collisionImplRef->postStep();
 
         // update our own transform using the world-transform from the parent
         assert( m_parentBodyRef != nullptr );

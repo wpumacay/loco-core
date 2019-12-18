@@ -6,6 +6,7 @@
 namespace tysoc 
 {
     class TCompoundBody;
+    class TICompoundAdapter;
 
     class TCompound
     {
@@ -18,6 +19,17 @@ namespace tysoc
                    const eDynamicsType& dyntype );
 
         ~TCompound();
+
+        /**
+        *   @brief Sets the reference of the compound-adapter of a specific backend
+        *
+        *   @details
+        *    Sets the internal reference to the compound-adapter, which is used to
+        *    interact with the low-level backend API.
+        *
+        *   @param compoundImplRef  Reference to an adapter that implements a link to a backend
+        */
+        void setAdapter( TICompoundAdapter* compoundImplRef );
 
         /**
         *   @brief Creates the root-body of this compound given user configuration
@@ -118,17 +130,22 @@ namespace tysoc
         TCompoundBody* addCompoundBody( std::unique_ptr< TCompoundBody > body );
 
         /**
-        *   @brief Updates the internal state of the compound and its components
+        *   @brief Updates any internals of the compound and its components prior to take a simulation step
         *
         *   @details
-        *    Updates this compound based on the information obtained from its adapter, which
-        *    holds the current state of the compound in the backend. It then sends update requests
-        *    to the components (bodies) recursively, each using its own adapter to grab its
-        *    internal simulation state. If no adapters are available, or if they are inactive,
-        *    then the recursive update just keeps setting the current configuration (rest configuration
-        *    or last simulation configuration, respectively).
+        *    Updated|sets up internals of the compound prior to taking a simulation step. It then notifies
+        *    its components recursively (bodies, colliders, joints) to do similar prior updates.
         */
-        void update();
+        void preStep();
+
+        /**
+        *   @brief Updates any internals of the compound and its components after simulation step was taken
+        *
+        *   @details
+        *    Updates internals of the compound by using after a simulation step was taken. It then notifies
+        *    its components recursively (bodies, colliders, joints) to do similar post updates.
+        */
+        void postStep();
 
         /**
         *   @brief Resets the internal state of the compound (and components) to the rest configuration

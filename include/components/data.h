@@ -103,6 +103,11 @@ namespace tysoc {
         int         nqpos;                  // Number of generalized coordinates
         int         nqvel;                  // Number of degrees of freedom
         TMat4       localTransform;         // relative transform of this joint w.r.t. owner (body)
+
+        TJointData() 
+            : limits( { 1.0f, -1.0f } ), stiffness( 0.0f ), 
+              armature( 0.0f ), damping( 0.0f ), ref( 0.0f ), 
+              nqpos( 0 ), nqvel( 0 ) {}
     };
 
     struct TCollisionData : public TShapeData

@@ -16,6 +16,9 @@ namespace tysoc {
         m_joint = nullptr;
         m_compoundRef = nullptr;
 
+        /* make sure our type is compound-body */
+        m_classType = eBodyClassType::COMPOUND_BODY;
+
         /* keep a reference to the parent (if no parent, notify that this is the wrong constructor to use) */
         if ( !parentRef )
         {
@@ -52,6 +55,9 @@ namespace tysoc {
         m_joint = nullptr;
         m_compoundRef = nullptr;
 
+        /* make sure our type is compound-body */
+        m_classType = eBodyClassType::COMPOUND_BODY;
+
         /* this is a root body, so no parent-reference */
         m_parentRef = nullptr;
 
@@ -80,6 +86,9 @@ namespace tysoc {
         m_parentRef = nullptr;
         m_joint = nullptr;
         m_compoundRef = nullptr;
+
+        /* make sure our type is compound-body */
+        m_classType = eBodyClassType::COMPOUND_BODY;
 
         /* this is a root body, so no parent-reference */
         m_parentRef = nullptr;
@@ -189,121 +198,188 @@ namespace tysoc {
         return addBodyJointPair( name, _bodyData, _jointData, bodyLocalTransform );
     }
 
-    void TCompoundBody::update()
+    void TCompoundBody::preStep()
     {
-        TIBody::update();
+        if ( m_bodyImplRef && m_bodyImplRef->active() )
+            m_bodyImplRef->preStep();
 
-        /* Update localTf of this body w.r.t. parent body */
-        if ( m_parentRef )
+        /* update all internal components required prior to take a simulation step */
+        _preStepComponents();
+    }
+
+    void TCompoundBody::postStep()
+    {
+        /* Update|grab the state of the body either from the adapter (if available and 
+           active) or from the last configuration (either initial or simulated) */
+        if ( m_bodyImplRef && m_bodyImplRef->active() )
         {
-            m_localTf = m_parentRef->tf().inverse() * m_tf;
-            m_localPos = m_localTf.getPosition();
-            m_localRot = m_localTf.getRotation();
+            // update the adapter to handle internal stuff
+            m_bodyImplRef->postStep();
+
+            // grab the latest world-transform from the backend
+            m_bodyImplRef->getPosition( m_pos );
+            m_bodyImplRef->getRotation( m_rot );
+            m_bodyImplRef->getTransform( m_tf );
+
+            /* Update localTf of this body w.r.t. parent body */
+            _updateLocalTransform();
+        }
+        else
+        {
+            auto _parentWorldTf = TMat4();
+            if ( m_parentRef )
+                _parentWorldTf = m_parentRef->tf();
+            else
+                _parentWorldTf = m_compoundRef->tf();
+
+            m_tf = _parentWorldTf * m_localTf;
+            m_pos = m_tf.getPosition();
+            m_rot = m_tf.getRotation();
         }
 
-        if ( m_joint )
-            m_joint->update();
+        /* update all internal components after the simulation step was taken */
+        _postStepComponents();
     }
 
     void TCompoundBody::reset()
     {
-        TIBody::reset();
-
-        if ( m_joint )
+        /* Request a reset of the internal state of the body either from the adapter (if available
+           and active) or from the initial configuration */
+        if ( m_bodyImplRef && m_bodyImplRef->active() )
         {
-            m_joint->reset();
-            m_joint->update();
+            // request a reset of the adapter's internal resources
+            m_bodyImplRef->reset();
+
+            // grab the latest world-transform from the backend
+            m_bodyImplRef->getPosition( m_pos );
+            m_bodyImplRef->getRotation( m_rot );
+            m_bodyImplRef->getTransform( m_tf );
+
+            /* Update localTf of this body w.r.t. parent body */
+            _updateLocalTransform();
         }
+        else
+        {
+            auto _parentWorldTf = TMat4();
+            if ( m_parentRef )
+                _parentWorldTf = m_parentRef->tf0();
+            else
+                _parentWorldTf = m_compoundRef->tf0();
+
+            m_tf = _parentWorldTf * m_localTf0;
+            m_pos = m_tf.getPosition();
+            m_rot = m_tf.getRotation();
+        }
+
+        /* reset and update all internal components */
+        _resetComponents();
+        _postStepComponents();
     }
 
     void TCompoundBody::setPosition( const TVec3& position )
     {
-        /* set world-space position normally (the local-transform w.r.t. parent might have changed) */
-        TIBody::setPosition( position );
-
-        /* update joint if applicable */
-        if ( m_joint )
-            m_joint->update();
+        /* update world-position and world-transform (as in the base class) */
+        m_pos = position;
+        m_tf.setPosition( m_pos );
 
         /* update local-transform w.r.t. parent body if this is a child body */
-        if ( m_parentRef )
-        {
-            m_localTf = m_parentRef->tf().inverse() * m_tf;
-            m_localPos = m_localTf.getPosition();
-            m_localRot = m_localTf.getRotation();
-        }
+        _updateLocalTransform();
+
+        /* request adapter to handle the changes (as in the base class) */
+        if ( m_bodyImplRef )
+            m_bodyImplRef->setPosition( m_pos );
+
+        /* update all internal components */
+        _postStepComponents();
+
+        /* update the state of our children */
+        for ( auto _child : m_childrenRefs )
+            _child->postStep();
     }
 
     void TCompoundBody::setRotation( const TMat3& rotation )
     {
-        /* set world-space rotation-matrix normally (the local-transform w.r.t. parent might have changed) */
-        TIBody::setRotation( rotation );
-
-        /* update joint if applicable */
-        if ( m_joint )
-            m_joint->update();
+        /* update world-rotation and world-transform (as in the base class) */
+        m_rot = rotation;
+        m_tf.setRotation( m_rot );
 
         /* update local-transform w.r.t. parent body if this is a child body */
-        if ( m_parentRef )
-        {
-            m_localTf = m_parentRef->tf().inverse() * m_tf;
-            m_localPos = m_localTf.getPosition();
-            m_localRot = m_localTf.getRotation();
-        }
+        _updateLocalTransform();
+
+        /* request adapter to handle the changes (as in the base class) */
+        if ( m_bodyImplRef )
+            m_bodyImplRef->setRotation( m_rot );
+
+        /* update all internal components */
+        _postStepComponents();
+
+        /* update the state of our children */
+        for ( auto _child : m_childrenRefs )
+            _child->postStep();
     }
 
     void TCompoundBody::setEuler( const TVec3& euler )
     {
-        /* set world-space euler-angles normally (the local-transform w.r.t. parent might have changed) */
-        TIBody::setEuler( euler );
-
-        /* update joint if applicable */
-        if ( m_joint )
-            m_joint->update();
+        /* update world-rotation and world-transform (as in the base class) */
+        m_rot = TMat3::fromEuler( euler );
+        m_tf.setRotation( m_rot );
 
         /* update local-transform w.r.t. parent body if this is a child body */
-        if ( m_parentRef )
-        {
-            m_localTf = m_parentRef->tf().inverse() * m_tf;
-            m_localPos = m_localTf.getPosition();
-            m_localRot = m_localTf.getRotation();
-        }
+        _updateLocalTransform();
+
+        /* request adapter to handle the changes (as in the base class) */
+        if ( m_bodyImplRef )
+            m_bodyImplRef->setRotation( m_rot );
+
+        /* update all internal components */
+        _postStepComponents();
+
+        /* update the state of our children */
+        for ( auto _child : m_childrenRefs )
+            _child->postStep();
     }
 
     void TCompoundBody::setQuaternion( const TVec4& quat )
     {
-        /* set world-space quaternion normally (the local-transform w.r.t. parent might have changed) */
-        TIBody::setQuaternion( quat );
-
-        /* update joint if applicable */
-        if ( m_joint )
-            m_joint->update();
+        /* update world-rotation and world-transform (as in the base class) */
+        m_rot = TMat3::fromQuaternion( quat );
+        m_tf.setRotation( m_rot );
 
         /* update local-transform w.r.t. parent body if this is a child body */
-        if ( m_parentRef )
-        {
-            m_localTf = m_parentRef->tf().inverse() * m_tf;
-            m_localPos = m_localTf.getPosition();
-            m_localRot = m_localTf.getRotation();
-        }
+        _updateLocalTransform();
+
+        /* request adapter to handle the changes (as in the base class) */
+        if ( m_bodyImplRef )
+            m_bodyImplRef->setRotation( m_rot );
+
+        /* update all internal components */
+        _postStepComponents();
+
+        /* update the state of our children */
+        for ( auto _child : m_childrenRefs )
+            _child->postStep();
     }
 
     void TCompoundBody::setTransform( const TMat4& transform )
     {
-        /* set world-space transform normally (the local-transform w.r.t. parent might have changed) */
-        TIBody::setTransform( transform );
-
-        /* update joint if applicable */
-        if ( m_joint )
-            m_joint->update();
+        /* update world-transform (as in the base class) */
+        m_tf = transform;
+        m_pos = m_tf.getPosition();
+        m_rot = m_tf.getRotation();
 
         /* update local-transform w.r.t. parent body if this is a child body */
-        if ( m_parentRef )
-        {
-            m_localTf = m_parentRef->tf().inverse() * m_tf;
-            m_localPos = m_localTf.getPosition();
-            m_localRot = m_localTf.getRotation();
-        }
+        _updateLocalTransform();
+
+        /* request adapter to handle the changes (as in the base class) */
+        if ( m_bodyImplRef )
+            m_bodyImplRef->setTransform( m_tf );
+
+        /* update all internal components */
+        _postStepComponents();
+
+        /* update the state of our children */
+        for ( auto _child : m_childrenRefs )
+            _child->postStep();
     }
 
     void TCompoundBody::setLocalPosition( const TVec3& localPosition )
@@ -320,7 +396,7 @@ namespace tysoc {
 
         /* update the joint (relative position w.r.t. owner might have changed) */
         if ( m_joint )
-            m_joint->update();
+            m_joint->postStep();
     }
 
     void TCompoundBody::setLocalRotation( const TMat3& localRotation )
@@ -337,7 +413,7 @@ namespace tysoc {
 
         /* update the joint (relative position w.r.t. owner might have changed) */
         if ( m_joint )
-            m_joint->update();
+            m_joint->postStep();
     }
 
     void TCompoundBody::setLocalEuler( const TVec3& localEuler )
@@ -354,7 +430,7 @@ namespace tysoc {
 
         /* update the joint (relative position w.r.t. owner might have changed) */
         if ( m_joint )
-            m_joint->update();
+            m_joint->postStep();
     }
 
     void TCompoundBody::setLocalQuaternion( const TVec4& localQuat )
@@ -371,7 +447,7 @@ namespace tysoc {
 
         /* update the joint (relative position w.r.t. owner might have changed) */
         if ( m_joint )
-            m_joint->update();
+            m_joint->postStep();
     }
 
     void TCompoundBody::setLocalTransform( const TMat4& localTransform )
@@ -388,14 +464,63 @@ namespace tysoc {
 
         /* update the joint (relative position w.r.t. owner might have changed) */
         if ( m_joint )
-            m_joint->update();
+            m_joint->postStep();
     }
-
 
     void TCompoundBody::_addChildRef( TCompoundBody* childRef )
     {
         /* keep the reference to a child-body in a compound */
         m_childrenRefs.push_back( childRef );
+    }
+
+    void TCompoundBody::_updateLocalTransform()
+    {
+        /* Update localTf of this body w.r.t. parent body, or compound if no-parent (root) */
+        if ( m_parentRef )
+            m_localTf = m_parentRef->tf().inverse() * m_tf;
+        else if ( m_compoundRef )
+            m_localTf = m_compoundRef->tf().inverse() * m_tf;
+        else
+            TYSOC_CORE_ERROR( "??????? wtf??????" );
+
+        m_localPos = m_localTf.getPosition();
+        m_localRot = m_localTf.getRotation();
+    }
+
+    void TCompoundBody::_preStepComponents()
+    {
+        if ( m_collision )
+            m_collision->preStep();
+
+        if ( m_visual )
+            m_visual->preStep();
+
+        if ( m_joint )
+            m_joint->preStep();
+    }
+
+    void TCompoundBody::_postStepComponents()
+    {
+        if ( m_collision )
+            m_collision->postStep();
+
+        if ( m_visual )
+            m_visual->postStep();
+
+        if ( m_joint )
+            m_joint->postStep();
+    }
+
+    void TCompoundBody::_resetComponents()
+    {
+        if ( m_collision )
+            m_collision->reset();
+
+        if ( m_visual )
+            m_visual->reset();
+
+        if ( m_joint )
+            m_joint->reset();
     }
 
 }

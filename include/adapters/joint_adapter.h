@@ -19,7 +19,9 @@ namespace tysoc {
 
         virtual void reset() = 0;
 
-        virtual void update() = 0;
+        virtual void preStep() = 0;
+
+        virtual void postStep() = 0;
 
         // @todo: required for backend to handle dynamic deletion (when detached from a TJoint)
         virtual void detach() {}

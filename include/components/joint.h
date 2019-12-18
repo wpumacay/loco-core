@@ -63,7 +63,9 @@ namespace tysoc {
 
         void changeLimits( const TVec2& limits );
 
-        void update();
+        void preStep();
+
+        void postStep();
 
         void reset();
 
@@ -101,6 +103,8 @@ namespace tysoc {
 
         std::string name() const { return m_name; }
 
+        TJointData& dataRef() { return m_data; }
+
         TJointData data() const { return m_data; }
 
         eJointType type() const { return m_data.type; }
@@ -112,6 +116,8 @@ namespace tysoc {
         TScalar limitLow() const { return m_data.limits.x; }
 
         TScalar limitHigh() const { return m_data.limits.y; }
+
+        TIJointAdapter* adapter() const { return m_jointImplRef; }
 
         TIBody* owner() const { return m_ownerRef; }
 

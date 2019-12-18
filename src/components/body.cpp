@@ -29,6 +29,10 @@ namespace tysoc {
 
     void TIBody::setAdapter( TIBodyAdapter* bodyImplRef )
     {
+        /* notify the backend that the current adapter is ready for deletion */
+        if ( m_bodyImplRef )
+            m_bodyImplRef->detach();
+
         /* keep a reference to the adapter */
         m_bodyImplRef = bodyImplRef;
     }
@@ -57,29 +61,41 @@ namespace tysoc {
         m_data.visual = m_visual->data();
     }
 
-    void TIBody::update()
+    void TIBody::preStep()
     {
+        /* update any internal backend resources prior to a simulation step */
+        if ( m_bodyImplRef )
+            m_bodyImplRef->preStep();
+
+        /* notify the collider to update any required resources prior to take a simulation step */
+        if ( m_collision )
+            m_collision->preStep();
+
+        /* notify the visual to update any required resources prior to take a simulation step */
+        if ( m_visual )
+            m_visual->preStep();
+    }
+
+    void TIBody::postStep()
+    {
+        /* update any internal backend resources (grab sim-state) after a sim. step has been taken */
         if ( m_bodyImplRef )
         {
-            // update the adapter to handle internal stuff
-            m_bodyImplRef->update();
+            m_bodyImplRef->postStep();
 
             // grab the latest world-transform from the backend
             m_bodyImplRef->getPosition( m_pos );
             m_bodyImplRef->getRotation( m_rot );
             m_bodyImplRef->getTransform( m_tf );
-
-            // grab the latest local-transfrom from the backend
-            m_bodyImplRef->getLocalPosition( m_localPos );
-            m_bodyImplRef->getLocalRotation( m_localRot );
-            m_bodyImplRef->getLocalTransform( m_localTf );
         }
 
+        /* notify the collider to update any required resources after a simulation step was taken */
         if ( m_collision )
-            m_collision->update();
+            m_collision->postStep();
 
+        /* notify the visual to update any required resources after a simulation step was taken */
         if ( m_visual )
-            m_visual->update();
+            m_visual->postStep();
     }
 
     void TIBody::reset()
@@ -93,23 +109,18 @@ namespace tysoc {
             m_bodyImplRef->getPosition( m_pos );
             m_bodyImplRef->getRotation( m_rot );
             m_bodyImplRef->getTransform( m_tf );
-
-            // grab the local position|rotation information as well
-            m_bodyImplRef->getLocalPosition( m_localPos );
-            m_bodyImplRef->getLocalRotation( m_localRot );
-            m_bodyImplRef->getLocalTransform( m_localTf );
         }
 
         if ( m_collision )
         {
             m_collision->reset();
-            m_collision->update();
+            m_collision->postStep();
         }
 
         if ( m_visual )
         {
             m_visual->reset();
-            m_visual->update();
+            m_visual->postStep();
         }
     }
 
@@ -126,10 +137,10 @@ namespace tysoc {
             m_bodyImplRef->setPosition( m_pos );
 
         if ( m_collision )
-            m_collision->update();
+            m_collision->postStep();
 
         if ( m_visual )
-            m_visual->update();
+            m_visual->postStep();
     }
 
     void TIBody::setRotation( const TMat3& rotation )
@@ -141,10 +152,10 @@ namespace tysoc {
             m_bodyImplRef->setRotation( m_rot );
 
         if ( m_collision )
-            m_collision->update();
+            m_collision->postStep();
 
         if ( m_visual )
-            m_visual->update();
+            m_visual->postStep();
     }
 
     void TIBody::setEuler( const TVec3& euler )
@@ -156,10 +167,10 @@ namespace tysoc {
             m_bodyImplRef->setRotation( m_rot );
 
         if ( m_collision )
-            m_collision->update();
+            m_collision->postStep();
 
         if ( m_visual )
-            m_visual->update();
+            m_visual->postStep();
     }
 
     void TIBody::setQuaternion( const TVec4& quat )
@@ -171,10 +182,10 @@ namespace tysoc {
             m_bodyImplRef->setRotation( m_rot );
 
         if ( m_collision )
-            m_collision->update();
+            m_collision->postStep();
 
         if ( m_visual )
-            m_visual->update();
+            m_visual->postStep();
     }
 
     void TIBody::setTransform( const TMat4& transform )
@@ -187,10 +198,10 @@ namespace tysoc {
             m_bodyImplRef->setTransform( m_tf );
 
         if ( m_collision )
-            m_collision->update();
+            m_collision->postStep();
 
         if ( m_visual )
-            m_visual->update();
+            m_visual->postStep();
     }
 
     ////////////////////////////////////////////////////////////
@@ -206,10 +217,10 @@ namespace tysoc {
             m_bodyImplRef->setLocalPosition( m_localPos );
 
         if ( m_collision )
-            m_collision->update();
+            m_collision->postStep();
 
         if ( m_visual )
-            m_visual->update();
+            m_visual->postStep();
     }
 
     void TIBody::setLocalRotation( const TMat3& localRotation )
@@ -221,10 +232,10 @@ namespace tysoc {
             m_bodyImplRef->setLocalRotation( m_localRot );
 
         if ( m_collision )
-            m_collision->update();
+            m_collision->postStep();
 
         if ( m_visual )
-            m_visual->update();
+            m_visual->postStep();
     }
 
     void TIBody::setLocalEuler( const TVec3& localEuler )
@@ -236,10 +247,10 @@ namespace tysoc {
             m_bodyImplRef->setLocalRotation( m_localRot );
 
         if ( m_collision )
-            m_collision->update();
+            m_collision->postStep();
 
         if ( m_visual )
-            m_visual->update();
+            m_visual->postStep();
     }
 
     void TIBody::setLocalQuaternion( const TVec4& localQuat )
@@ -251,10 +262,10 @@ namespace tysoc {
             m_bodyImplRef->setLocalRotation( m_localRot );
 
         if ( m_collision )
-            m_collision->update();
+            m_collision->postStep();
 
         if ( m_visual )
-            m_visual->update();
+            m_visual->postStep();
     }
 
     void TIBody::setLocalTransform( const TMat4& localTransform )
@@ -267,9 +278,9 @@ namespace tysoc {
             m_bodyImplRef->setLocalTransform( m_localTf );
 
         if ( m_collision )
-            m_collision->update();
+            m_collision->postStep();
 
         if ( m_visual )
-            m_visual->update();
+            m_visual->postStep();
     }
 }

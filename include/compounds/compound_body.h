@@ -102,7 +102,9 @@ namespace tysoc {
                                                                const TVec2& jointLimits,
                                                                const TMat4& jointLocalTransform );
 
-        void update() override;
+        void preStep() override;
+
+        void postStep() override;
 
         void reset() override;
 
@@ -132,11 +134,17 @@ namespace tysoc {
 
         TCompoundBody* parent() const { return m_parentRef; }
 
+        bool isRoot() const { return m_parentRef == nullptr; }
+
         std::vector< TCompoundBody* > children() const { return m_childrenRefs; }
 
     private :
 
         void _addChildRef( TCompoundBody* childRef );
+        void _updateLocalTransform();
+        void _preStepComponents();
+        void _postStepComponents();
+        void _resetComponents();
 
     private :
 

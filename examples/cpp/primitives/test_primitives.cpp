@@ -121,7 +121,8 @@ int main()
         if ( _visualizer->checkSingleKeyPress( tysoc::keys::KEY_ESCAPE ) )
             break;
 
-        _scenario->update();
+        _scenario->preStep();
+        _scenario->postStep();
         _visualizer->update();
     }
 

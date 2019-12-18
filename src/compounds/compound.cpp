@@ -10,7 +10,7 @@ namespace tysoc
                           const eDynamicsType& dyntype )
     {
         m_name = name;
-        m_tf = TMat4( position, rotation );
+        m_tf = m_tf0 = TMat4( position, rotation );
         m_dyntype = dyntype;
 
         m_rootBodyRef = nullptr;
@@ -24,6 +24,16 @@ namespace tysoc
 
         m_rootBodyRef = nullptr;
         m_compoundImplRef = nullptr;
+    }
+
+    void TCompound::setAdapter( TICompoundAdapter* compoundImplRef )
+    {
+        /* notify the backend that the current adapter is ready for deletion */
+        if ( m_compoundImplRef )
+            m_compoundImplRef->detach();
+
+        /* keep a reference to the adapter */
+        m_compoundImplRef = compoundImplRef;
     }
 
     TCompoundBody* TCompound::createRootBody( const std::string& name,
@@ -49,6 +59,8 @@ namespace tysoc
 
         /* keep a reference of the root for easier access */
         m_rootBodyRef = _rootCompoundBody;
+        /* assign compound parent to the body */
+        m_rootBodyRef->setCompound( this );
 
         /* return a reference for the user to play with */
         return _rootCompoundBody;
@@ -104,6 +116,8 @@ namespace tysoc
 
         /* keep a reference of the root for easier access */
         m_rootBodyRef = _rootCompoundBody;
+        /* assign compound parent to the body */
+        m_rootBodyRef->setCompound( this );
 
         /* return body-joint references pair */
         return { _rootCompoundBody, _rootCompoundBody->joint() };
@@ -169,13 +183,39 @@ namespace tysoc
         m_bodies.push_back( std::move( body ) );
         m_bodiesMap[ _bodyRef->name() ] = _bodyRef;
 
+        /* assign compound parent to the body */
+        _bodyRef->setCompound( this );
+
         if ( !_bodyRef->parent() && !m_rootBodyRef )
             m_rootBodyRef = _bodyRef;
 
         return _bodyRef;
     }
 
-    void TCompound::update()
+    void TCompound::preStep()
+    {
+        /* Update low-level internals using the adapter before a simulation step is taken */
+        if ( m_compoundImplRef )
+            m_compoundImplRef->preStep();
+
+        /* Send update-request to all bodies recursively */
+        std::stack< TCompoundBody* > _bodiesToUpdate;
+        _bodiesToUpdate.push( m_rootBodyRef );
+        while ( _bodiesToUpdate.size() > 0 )
+        {
+            auto _body = _bodiesToUpdate.top();
+            _bodiesToUpdate.pop();
+            if ( !_body )
+                continue;
+
+            _body->preStep();
+            auto _children = _body->children();
+            for ( auto _child : _children )
+                _bodiesToUpdate.push( _child );
+        }
+    }
+
+    void TCompound::postStep()
     {
         if ( !m_rootBodyRef )
         {
@@ -184,11 +224,10 @@ namespace tysoc
             return;
         }
 
-        /* Update internal low-level state using the adapter (link to the backend) */
+        /* Grab low-level simulation state using the adapter after the simulation step was taken */
         if ( m_compoundImplRef )
         {
-            // update the adapter to handle internal stuff
-            m_compoundImplRef->update();
+            m_compoundImplRef->postStep();
 
             // grab the latest world-transform from the backend
             m_compoundImplRef->getTransform( m_tf );
@@ -201,13 +240,13 @@ namespace tysoc
         {
             auto _body = _bodiesToUpdate.top();
             _bodiesToUpdate.pop();
-            if ( _body )
-            {
-                _body->update();
-                auto _children = _body->children();
-                for ( auto _child : _children )
-                    _bodiesToUpdate.push( _child );
-            }
+            if ( !_body )
+                continue;
+
+            _body->postStep();
+            auto _children = _body->children();
+            for ( auto _child : _children )
+                _bodiesToUpdate.push( _child );
         }
     }
 
@@ -237,13 +276,13 @@ namespace tysoc
         {
             auto _body = _bodiesToReset.top();
             _bodiesToReset.pop();
-            if ( _body )
-            {
-                _body->reset();
-                auto _children = _body->children();
-                for ( auto _child : _children )
-                    _bodiesToReset.push( _child );
-            }
+            if ( !_body )
+                continue;
+
+            _body->reset();
+            auto _children = _body->children();
+            for ( auto _child : _children )
+                _bodiesToReset.push( _child );
         }
     }
 
@@ -253,13 +292,6 @@ namespace tysoc
         {
             TYSOC_CORE_ERROR( "TCompound::initializeToRestConfiguration() >>> compound \"{0}\" has \
                                no root-body, so we can't do the traversal", m_name );
-            return;
-        }
-
-        if ( m_compoundImplRef )
-        {
-            TYSOC_CORE_ERROR( "TCompound::initializeToRestConfiguration() >>> compound \"{0}\"'s \
-                               state' is handled by an adapter, so we shouldn't do the traversal", m_name );
             return;
         }
 
