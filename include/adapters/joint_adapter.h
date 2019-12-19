@@ -11,7 +11,8 @@ namespace tysoc {
 
     public :
 
-        TIJointAdapter( TJoint* jointRef ) { m_jointRef = jointRef; }
+        TIJointAdapter( TJoint* jointRef )
+            :  m_jointRef( jointRef ) {}
 
         virtual ~TIJointAdapter() {}
 

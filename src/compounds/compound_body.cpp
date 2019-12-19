@@ -30,7 +30,7 @@ namespace tysoc {
         m_parentRef->_addChildRef( this );
 
         /* create and keep ownership of the joint */
-        m_joint = std::unique_ptr< TJoint >( new TJoint( m_name + "_joint", jointData ) );
+        m_joint = std::unique_ptr< TJoint >( new TJoint( m_name + ":/joint", jointData ) );
         m_joint->setOwnerBody( this );
         m_joint->setOwnerParent( m_parentRef );
 
@@ -220,9 +220,6 @@ namespace tysoc {
             m_bodyImplRef->getPosition( m_pos );
             m_bodyImplRef->getRotation( m_rot );
             m_bodyImplRef->getTransform( m_tf );
-
-            /* Update localTf of this body w.r.t. parent body */
-            _updateLocalTransform();
         }
         else
         {
@@ -254,9 +251,6 @@ namespace tysoc {
             m_bodyImplRef->getPosition( m_pos );
             m_bodyImplRef->getRotation( m_rot );
             m_bodyImplRef->getTransform( m_tf );
-
-            /* Update localTf of this body w.r.t. parent body */
-            _updateLocalTransform();
         }
         else
         {
@@ -481,7 +475,8 @@ namespace tysoc {
         else if ( m_compoundRef )
             m_localTf = m_compoundRef->tf().inverse() * m_tf;
         else
-            TYSOC_CORE_ERROR( "??????? wtf??????" );
+            TYSOC_CORE_ERROR( "TCompoundBody::_updateLocalTransform() >>> body \"{0}\" does not have \
+                               a valid compound reference", m_name );
 
         m_localPos = m_localTf.getPosition();
         m_localRot = m_localTf.getRotation();

@@ -295,7 +295,9 @@ namespace tysoc
             return;
         }
 
-        _updateCurrentConfigurationRecursive( m_rootBodyRef, m_tf0 );
+        /* compute root-body's world-transform (components like col, vis, etc. are updated internally by the body) */
+        auto _rootBodyWorldTf = m_tf0 * m_rootBodyRef->localTf();
+        m_rootBodyRef->setTransform( _rootBodyWorldTf );
     }
 
     void TCompound::setPosition( const TVec3& position )
@@ -375,7 +377,6 @@ namespace tysoc
         /* compute body's world-transform (components like col, vis, etc. are updated internally by the body) */
         auto _bodyWorldTf = parentWorldTf * body->localTf();
         body->setTransform( _bodyWorldTf );
-
         /* traverse the children in a similar fashion */
         auto _childrenRefs = body->children();
         for ( auto _child : _childrenRefs )

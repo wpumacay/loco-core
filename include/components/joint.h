@@ -61,6 +61,10 @@ namespace tysoc {
 
         std::vector< TScalar > getQvel() const;
 
+        std::vector< TScalar > getQpos0() const;
+
+        std::vector< TScalar > getQvel0() const;
+
         void changeLimits( const TVec2& limits );
 
         void preStep();
@@ -148,10 +152,12 @@ namespace tysoc {
         /* qpos values: generalized coordinates */
         size_t m_nqpos;
         std::array< TScalar, TYSOC_MAX_NUM_QPOS > m_qpos;
+        std::array< TScalar, TYSOC_MAX_NUM_QPOS > m_qpos0;
 
         /* qvel values: speeds of degrees of freedom */
         size_t m_nqvel;
         std::array< TScalar, TYSOC_MAX_NUM_QVEL > m_qvel;
+        std::array< TScalar, TYSOC_MAX_NUM_QVEL > m_qvel0;
 
         /* Adapter-object that gives access to the low-level API for a specific backend */
         TIJointAdapter* m_jointImplRef;

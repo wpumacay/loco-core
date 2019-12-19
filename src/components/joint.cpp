@@ -16,8 +16,13 @@ namespace tysoc {
         /* initialze defaults for degrees of freedom */
         m_nqpos = 0;
         m_nqvel = 0;
-        m_qpos.fill( 0.0f );
-        m_qvel.fill( 0.0f );
+        m_qpos.fill( 0.0f ); m_qpos0.fill( 0.0f );
+        m_qvel.fill( 0.0f ); m_qvel0.fill( 0.0f );
+
+        /* grab local-transform w.r.t. owner body */
+        m_localTf = jointData.localTransform;
+        m_localPos = m_localTf.getPosition();
+        m_localRot = m_localTf.getRotation();
 
         /* Configure joint nqs (number of generalized coordinates and degrees of freedom). 
            According to the backend, this functionality might be implemented with maximal
@@ -31,8 +36,8 @@ namespace tysoc {
             m_data.nqpos = m_nqpos = 1;
             m_data.nqvel = m_nqvel = 1;
             // qpos and qvel set to zero by default
-            m_qpos[0] = 0.0f;
-            m_qvel[0] = 0.0f;
+            m_qpos[0] = m_qpos0[0] = 0.0f;
+            m_qvel[0] = m_qvel0[0] = 0.0f;
         }
         else if ( _jointType == eJointType::PRISMATIC )
         {
@@ -40,8 +45,8 @@ namespace tysoc {
             m_data.nqpos = m_nqpos = 1;
             m_data.nqvel = m_nqvel = 1;
             // qpos and qvel set to zero by default
-            m_qpos[0] = 0.0f;
-            m_qvel[0] = 0.0f;
+            m_qpos[0] = m_qpos0[0] = 0.0f;
+            m_qvel[0] = m_qvel0[0] = 0.0f;
         }
         else if ( _jointType == eJointType::SPHERICAL )
         {
@@ -51,8 +56,10 @@ namespace tysoc {
             // qpos and qvel set to "zero" by default
             //        qx  qy  qz  qw   --unused--
             m_qpos = { 0., 0., 0., 1. }; // zero-quaternion
+            m_qpos0 = { 0., 0., 0., 1. }; // zero-quaternion
             //        ex  ey  ez  ---unused---
             m_qvel = { 0., 0., 0. }; // zero velocity
+            m_qvel0 = { 0., 0., 0. }; // zero velocity
         }
         else if ( _jointType == eJointType::FREE )
         {
@@ -62,8 +69,10 @@ namespace tysoc {
             // qpos and qvel set to "zero" by default
             //         x   y   z  qx  qy  qz  qw
             m_qpos = { 0., 0., 0., 0., 0., 0., 1. }; // zero-xyz + zero-quat
+            m_qpos0 = { 0., 0., 0., 0., 0., 0., 1. }; // zero-xyz + zero-quat
             //         x   y   z   ex  ey  ez
             m_qvel = { 0., 0., 0., 0., 0., 0. }; // zero-xyz + zero-euler? velocity
+            m_qvel0 = { 0., 0., 0., 0., 0., 0. }; // zero-xyz + zero-euler? velocity
         }
         else if ( _jointType == eJointType::FIXED )
         {
@@ -185,11 +194,29 @@ namespace tysoc {
         return _qpos;
     }
 
+    std::vector< TScalar > TJoint::getQpos0() const
+    {
+        std::vector< TScalar > _qpos( m_nqpos, 0.0f );
+        for ( size_t i = 0; i < m_nqpos; i++ )
+            _qpos[i] = m_qpos0[i];
+
+        return _qpos;
+    }
+
     std::vector< TScalar > TJoint::getQvel() const
     {
         std::vector< TScalar > _qvel( m_nqvel, 0.0f );
         for ( size_t i = 0; i < m_nqvel; i++ )
             _qvel[i] = m_qvel[i];
+
+        return _qvel;
+    }
+
+    std::vector< TScalar > TJoint::getQvel0() const
+    {
+        std::vector< TScalar > _qvel( m_nqvel, 0.0f );
+        for ( size_t i = 0; i < m_nqvel; i++ )
+            _qvel[i] = m_qvel0[i];
 
         return _qvel;
     }

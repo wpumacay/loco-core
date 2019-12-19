@@ -46,9 +46,6 @@ namespace tysoc {
 
     bool TISimulation::initialize()
     {
-        if ( m_scenarioPtr )
-            m_scenarioPtr->initialize();
-
         /* build all resources required before assembling them in the init-internal stage */
         for ( auto _bodyAdapter : m_bodyAdapters )
             _bodyAdapter->build();
@@ -61,6 +58,10 @@ namespace tysoc {
 
         /* backend-specific initialization: assemble resources and create extra low-level resources */
         m_isRunning = _initializeInternal();
+
+        /* initialize the scenario to the required simulation step */
+        if ( m_isRunning && m_scenarioPtr )
+            m_scenarioPtr->initialize();
 
         return m_isRunning;
     }

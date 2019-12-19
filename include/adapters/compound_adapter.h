@@ -26,10 +26,10 @@ namespace tysoc
         virtual void postStep() = 0;
 
         // @todo: required to notify the backend to pause simulating this adapter's compound
-        virtual void pause() { m_active = true; };
+        virtual void pause() { m_active = false; };
 
         // @todo: required to notify the backend to continue simulating this adapter's compound
-        virtual void resume() { m_active = false; };
+        virtual void resume() { m_active = true; };
 
         // @todo: required for backend to handle dynamic deletion (when detached from a TCompound)
         virtual void detach() {}
