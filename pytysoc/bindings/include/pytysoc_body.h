@@ -51,9 +51,6 @@ namespace pytysoc
         void setTransform( py::array_t<TScalar>& transform );
 
         /* @exposed */
-        std::string name() const;
-
-        /* @exposed */
         py::array_t<TScalar> pos() const;
 
         /* @exposed */
@@ -84,6 +81,12 @@ namespace pytysoc
         py::array_t<TScalar> tf0() const;
 
         /* @exposed */
+        std::string name() const;
+
+        /* @exposed */
+        tysoc::eBodyClassType classType() const;
+
+        /* @exposed */
         tysoc::eDynamicsType dyntype() const;
 
         /* @exposed */
@@ -96,13 +99,14 @@ namespace pytysoc
         PyCollision* collision() const { return m_pyCollision; }
 
         /* @notexposed */
-        tysoc::TIBody* ptr() const { return m_body; }
+        tysoc::TIBody* ptr() const { return m_bodyRef; }
 
     protected :
 
-        tysoc::TIBody* m_body;
+        tysoc::TIBody* m_bodyRef;
 
         PyCollision* m_pyCollision;
+
         PyVisual* m_pyVisual;
     };
 
@@ -115,8 +119,9 @@ namespace pytysoc
         .def_property( "quat", &pytysoc::PyBody::quat, &pytysoc::PyBody::setQuaternion ) \
         .def_property( "euler", &pytysoc::PyBody::euler, &pytysoc::PyBody::setEuler ) \
         .def_property( "tf", &pytysoc::PyBody::tf, &pytysoc::PyBody::setTransform ) \
-        .def_property_readonly( "dyntype", &pytysoc::PyBody::dyntype ) \
         .def_property_readonly( "name", &pytysoc::PyBody::name ) \
+        .def_property_readonly( "classType", &pytysoc::PyBody::classType ) \
+        .def_property_readonly( "dyntype", &pytysoc::PyBody::dyntype ) \
         .def_property_readonly( "data", &pytysoc::PyBody::data ) \
         .def_property( "visual", &pytysoc::PyBody::visual, &pytysoc::PyBody::setVisual ) \
         .def_property( "collision", &pytysoc::PyBody::collision, &pytysoc::PyBody::setCollision );

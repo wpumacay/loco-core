@@ -174,7 +174,12 @@ namespace pytysoc
             .value( "EXT_HEIGHTFIELD_2D", tysoc::eSensorType::EXT_HEIGHTFIELD_2D ) \
             .value( "EXT_CAMERA_RGB", tysoc::eSensorType::EXT_CAMERA_RGB ) \
             .value( "EXT_CAMERA_DEPTH", tysoc::eSensorType::EXT_CAMERA_DEPTH ) \
-            .value( "EXT_CAMERA_SEGMENTATION", tysoc::eSensorType::EXT_CAMERA_SEGMENTATION );
+            .value( "EXT_CAMERA_SEGMENTATION", tysoc::eSensorType::EXT_CAMERA_SEGMENTATION ); \
+    py::enum_<tysoc::eBodyClassType>(m, "eBodyClassType", py::arithmetic()) \
+            .value( "NONE", tysoc::eBodyClassType::NONE ) \
+            .value( "SINGLE_BODY", tysoc::eBodyClassType::SINGLE_BODY ) \
+            .value( "COMPOUND_BODY", tysoc::eBodyClassType::COMPOUND_BODY ) \
+            .value( "KINEMATIC_TREE_BODY", tysoc::eBodyClassType::KINEMATIC_TREE_BODY );
 
 #define PYTYSOC_DATA_BINDINGS(m) \
     py::class_<pytysoc::PyHeightFieldData>(m, "PyHeightFieldData") \

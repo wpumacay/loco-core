@@ -13,13 +13,13 @@ namespace pytysoc
         : PyBody( name, data )
     {
         /* instantiate wrapper body object */
-        m_body = new tysoc::TSingleBody( name, 
-                                         toTBodyData( data ), 
-                                         numpyToVec3( xyz ),
-                                         tysoc::TMat3::fromEuler( numpyToVec3( rpy ) ) );
+        m_bodyRef = new tysoc::TSingleBody( name, 
+                                            toTBodyData( data ), 
+                                            numpyToVec3( xyz ),
+                                            tysoc::TMat3::fromEuler( numpyToVec3( rpy ) ) );
 
         /* wrap alredy-existing collider object */
-        auto _collision = m_body->collision();
+        auto _collision = m_bodyRef->collision();
         if ( _collision )
         {
             m_pyCollision = new PyCollision( _collision );
@@ -28,7 +28,7 @@ namespace pytysoc
         }
 
         /* wrap alredy-existing drawable object */
-        auto _visual = m_body->visual();
+        auto _visual = m_bodyRef->visual();
         if ( _visual )
         {
             m_pyVisual = new PyVisual( _visual );

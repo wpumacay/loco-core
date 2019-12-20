@@ -3,6 +3,24 @@
 
 namespace py = pybind11;
 
+// @todo: REMOVE usage of double wrapping, as we're currently creating wrappers for c++ resources,
+//        but pybind11 already wraps the classes we make as wrappers (double wrapping). Instead, 
+//        just wrap directly, as in the following example:
+//
+//  current:
+//          /* define some wrapping class */
+//          class PyBody{}
+//          /* define wrappers using pybind for this """wrapping""" class */
+//          py::class_<pytysoc::PyBody>(m,"PyBody") \...
+//
+//  desired:
+//          /* just wrap directly the tysoc::TIBody object */
+//          py::class_<tysoc::TIBody>(m,"TIBody") \...
+//
+// for this to work, we need to expose every element to pybind, and this means EVERY elements on
+// the c++ side: enums (e.g. eJointType), structs (e.g. TJointData), math-objects (e.g. TMat4), 
+// core tysoc objects (e.g. TIBody, TCompound), etc.
+
 namespace pytysoc
 {
     void initializeMjcfSchemaPath( const std::string& schemaPath )
@@ -44,6 +62,8 @@ PYBIND11_MODULE( tysoc_bindings, m )
     PYTYSOC_INTERFACE_BODY_BINDINGS( m )
     PYTYSOC_SINGLE_BODY_BINDINGS( m )
     PYTYSOC_COMPOUND_BODY_BINDINGS( m )
+    // Core compound bindings
+    PYTYSOC_COMPOUND_BINDINGS( m )
     // Core agent bindings
     PYTYSOC_CORE_AGENT_BINDINGS( m )
     // Core terrainGen bindings
