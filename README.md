@@ -1,3 +1,5 @@
+**Status**: Heavy development (you might run into crashes as the library is being developed, sorry in advance).
+
 # tysocCore: Core functionality for a locomotion framework
 
 <!-- Travis CI -->
@@ -7,6 +9,17 @@ This is the core functionality used for a locomotion framework I'm making
 as part of my Msc. thesis. This is physics-backend agnostic, and the concrete
 implementations are found in some other repositories (mujoco in [this](https://github.com/wpumacay/tysocMjc)
 repository, bullet and physX are on the way).
+
+## Setup
+
+### Requirements
+
+#### Ubuntu >= 16.04
+
+```bash
+sudo apt install make cmake pkg-config
+sudo apt install libassimp-dev libglfw3-dev libglew-dev
+```
 
 ## Objective
 
@@ -30,15 +43,7 @@ I'm working on the core functionality, which should include :
 
 ## Features
 
-I'm currently working on this library and will be on heavy development for the next 8 months. 
-The features will be updated in the corresponding dependency repos, and updated here as well. 
-The updates will be documented in the [UPDATES.md](https://github.com/wpumacay/tysocMjc/blob/master/doc/UPDATES.md) file.
-
 I will be adding more documentation as I develop the library, and sorry in advance as 
 I might forget to update the docs from time to time. However, one main objective is 
 to write comprehensive documentation, and I will be doing it on the go. If you have any 
 suggestions/issues, just post an issue or contact me at wpumacay@gmail.com .
-
-## Roadmap
-
-The current roadmap and features being in my todolist can be found in [this](https://trello.com/b/pLkqprwU) trello board.
