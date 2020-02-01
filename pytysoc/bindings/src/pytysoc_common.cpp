@@ -175,31 +175,31 @@ namespace pytysoc
     void test_numpyToVec2( py::array_t<TScalar>& nparray )
     {
         auto _vec2 = numpyToVec2( nparray );
-        TYSOC_CORE_TRACE( "test_numpyToVec2() >>> vec2: {0}", tysoc::TVec2::toString( _vec2 ) );
+        TYSOC_CORE_TRACE( "test_numpyToVec2() >>> vec2: {0}", tysoc::toString( _vec2 ) );
     }
 
     void test_numpyToVec3( py::array_t<TScalar>& nparray )
     {
         auto _vec3 = numpyToVec3( nparray );
-        TYSOC_CORE_TRACE( "test_numpyToVec3() >>> vec3: {0}", tysoc::TVec3::toString( _vec3 ) );
+        TYSOC_CORE_TRACE( "test_numpyToVec3() >>> vec3: {0}", tysoc::toString( _vec3 ) );
     }
 
     void test_numpyToVec4( py::array_t<TScalar>& nparray )
     {
         auto _vec4 = numpyToVec4( nparray );
-        TYSOC_CORE_TRACE( "test_numpyToVec4() >>> vec4: {0}", tysoc::TVec4::toString( _vec4 ) );
+        TYSOC_CORE_TRACE( "test_numpyToVec4() >>> vec4: {0}", tysoc::toString( _vec4 ) );
     }
 
     void test_numpyToMat3( py::array_t<TScalar>& nparray )
     {
         auto _mat3 = numpyToMat3( nparray );
-        TYSOC_CORE_TRACE( "test_numpyToMat3() >>> mat3: {0}", tysoc::TMat3::toString( _mat3 ) );
+        TYSOC_CORE_TRACE( "test_numpyToMat3() >>> mat3: {0}", tysoc::toString( _mat3 ) );
     }
 
     void test_numpyToMat4( py::array_t<TScalar>& nparray )
     {
         auto _mat4 = numpyToMat4( nparray );
-        TYSOC_CORE_TRACE( "test_numpyToMat4() >>> mat4: {0}", tysoc::TMat4::toString( _mat4 ) );
+        TYSOC_CORE_TRACE( "test_numpyToMat4() >>> mat4: {0}", tysoc::toString( _mat4 ) );
     }
 
     void test_numpyToVecArray( py::array_t<TScalar>& nparray )

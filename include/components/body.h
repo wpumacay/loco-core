@@ -63,14 +63,14 @@ namespace tysoc {
 
         virtual void reset();
 
-        /*******************************************************************************
-        * World-space setters: use these to set the world-space pose of the body in 
-        * question. Implementation varies among body types in the following way:
-        *
-        *   > single-body: works normally (sets world pose)
-        *   > compound-body: works normally if root-body, and does nothing otherwise
-        *   > kintree-body: disabled, to allow access only through kintree-api
-        *******************************************************************************/
+        //------------------------------------------------------------------------------------------
+        // World-space setters: use these to set the world-space pose of the body in 
+        // question. Implementation varies among body types in the following way:
+        //
+        //   > single-body: works normally (sets world pose)
+        //   > compound-body: works normally if root-body, and does nothing otherwise
+        //   > kintree-body: disabled, to allow access only through kintree-api
+        //------------------------------------------------------------------------------------------
 
         virtual void setPosition( const TVec3& position );
 
@@ -82,14 +82,14 @@ namespace tysoc {
 
         virtual void setTransform( const TMat4& transform );
 
-        /*******************************************************************************
-        * Local-space setters: use these to set the relative pose of the body in question 
-        * w.r.t. a parent body. Implementation varies among body types in the following way:
-        *
-        *   > single-body: disabled, as single primitives have no parent
-        *   > compound-body: works normally (sets local pose w.r.t. parent body)
-        *   > kintree-body: disabled, to allow access only through kintree-api
-        *******************************************************************************/
+        //------------------------------------------------------------------------------------------
+        // Local-space setters: use these to set the relative pose of the body in question 
+        // w.r.t. a parent body. Implementation varies among body types in the following way:
+        //
+        //   > single-body: disabled, as single primitives have no parent
+        //   > compound-body: works normally (sets local pose w.r.t. parent body)
+        //   > kintree-body: disabled, to allow access only through kintree-api
+        //------------------------------------------------------------------------------------------
 
         virtual void setLocalPosition( const TVec3& localPosition );
 
@@ -101,57 +101,63 @@ namespace tysoc {
 
         virtual void setLocalTransform( const TMat4& localTransform );
 
-        /*************************************************************
-        *                      World-space getters                   *
-        *************************************************************/
+        //------------------------------------------------------------------------------------------
+        //                                 World-space getters
+        //------------------------------------------------------------------------------------------
 
-        TVec3 pos() const { return m_pos; }
+        TVec3 pos() const { return TVec3( m_tf.col( 3 ) ); }
 
-        TMat3 rot() const { return m_rot; }
+        TMat3 rot() const { return TMat3( m_tf ); }
 
-        TVec4 quat() const { return m_tf.getRotQuaternion(); }
+        TVec4 quat() const { return tinymath::quaternion( m_tf ); }
 
-        TVec3 euler() const { return m_tf.getRotEuler(); }
+        TVec3 euler() const { return tinymath::euler( m_tf ); }
 
         TMat4 tf() const { return m_tf; }
 
-        TVec3 pos0() const { return m_pos0; }
+        TVec3 pos0() const { return TVec3( m_tf0.col( 3 ) ); }
 
-        TMat3 rot0() const { return m_rot0; }
+        TMat3 rot0() const { return TMat3( m_tf0 ); }
 
-        TVec4 quat0() const { return m_tf0.getRotQuaternion(); }
+        TVec4 quat0() const { return tinymath::quaternion( m_tf0 ); }
 
-        TVec3 euler0() const { return m_tf0.getRotEuler(); }
+        TVec3 euler0() const { return tinymath::euler( m_tf0 ); }
 
         TMat4 tf0() const { return m_tf0; }
 
-        /*************************************************************
-        *                      Local-space getters                   *
-        *************************************************************/
+        //------------------------------------------------------------------------------------------
+        //                                Local-space getters
+        //------------------------------------------------------------------------------------------
 
-        TVec3 localPos() const { return m_localPos; }
+        TVec3 localPos() const { return TVec3( m_localTf.col( 3 ) ); }
 
-        TMat3 localRot() const { return m_localRot; }
+        TMat3 localRot() const { return TMat3( m_localTf ); }
 
-        TVec4 localQuat() const { return m_localTf.getRotQuaternion(); }
+        TVec4 localQuat() const { return tinymath::quaternion( m_localTf ); }
 
-        TVec3 localEuler() const { return m_localTf.getRotEuler(); }
+        TVec3 localEuler() const { return tinymath::euler( m_localTf ); }
 
         TMat4 localTf() const { return m_localTf; }
 
-        TVec3 localPos0() const { return m_localPos0; }
+        TVec3 localPos0() const { return TVec3( m_localTf0.col( 3 ) ); }
 
-        TMat3 localRot0() const { return m_localRot0; }
+        TMat3 localRot0() const { return TMat3( m_localTf0 ); }
 
-        TVec4 localQuat0() const { return m_localTf0.getRotQuaternion(); }
+        TVec4 localQuat0() const { return tinymath::quaternion( m_localTf0 ); }
 
-        TVec3 localEuler0() const { return m_localTf0.getRotEuler(); }
+        TVec3 localEuler0() const { return tinymath::euler( m_localTf0 ); }
 
         TMat4 localTf0() const { return m_localTf0; }
 
-        std::string name() { return m_name; }
+        //------------------------------------------------------------------------------------------
+        //                               Read-only properties
+        //------------------------------------------------------------------------------------------
 
-        eBodyClassType classType() { return m_classType; }
+        std::string name() const { return m_name; }
+
+        eBodyClassType classType() const { return m_classType; }
+
+        eDynamicsType dyntype() const { return m_data.dyntype; }
 
         TVisual* visual() { return m_visual.get(); }
 
@@ -163,46 +169,29 @@ namespace tysoc {
 
         TBodyData& dataRef() { return m_data; }
 
-        eDynamicsType dyntype() const { return m_data.dyntype; }
+        const TBodyData& dataRef() const { return m_data; }
 
     protected :
 
-        /* unique name identifier */
+        /// Unique name identifier
         std::string m_name;
-
-        /* type of body (single|compound|kintree) */
+        /// Type of body (single|compound|kintree)
         eBodyClassType m_classType;
-
-        /* initial and current position in world-space */
-        TVec3 m_pos0;
-        TVec3 m_pos;
-        /* initial and current orientation in world-space */
-        TMat3 m_rot0;
-        TMat3 m_rot; 
-        /* initial and current transform in world-space */
-        TMat4 m_tf0;
+        /// Transform in world-space
         TMat4 m_tf;
-
-        /* initial and current position in local-space */
-        TVec3 m_localPos0;
-        TVec3 m_localPos;
-        /* initial and current orientation in local-space */
-        TMat3 m_localRot0;
-        TMat3 m_localRot; 
-        /* initial and current transform in local-space */
-        TMat4 m_localTf0;
+        /// Initial transform in world-space
+        TMat4 m_tf0;
+        /// Relative transform w.r.t. parent (if applicable)
         TMat4 m_localTf;
-
-        /* properties of this object */
+        /// Initial relative transform w.r.t. parent (if applicable)
+        TMat4 m_localTf0;
+        /// Properties(struct) of this body
         TBodyData m_data;
-
-        /* Adapter-object that gives access to the low-level API for a specific backend (reference only, as simulation owns it) */
+        /// Adapter-object that gives access to the low-level API for a specific backend
         TIBodyAdapter* m_bodyImplRef;
-
-        /* Single collider (collision object) of this body */
+        /// Single collider (collision object) associated with this body
         std::unique_ptr< TCollision > m_collision;
-
-        /* Single visual (viewer object) of this body */
+        /// Single visual (viewer object) associated with this body
         std::unique_ptr< TVisual > m_visual;
     };
 

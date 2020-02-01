@@ -100,8 +100,8 @@ void printJointInfo( tysoc::rlsim::RlsimJoint* jointPtr )
     std::cout << "joint->name: " << jointPtr->name << std::endl;
     std::cout << "joint->type: " << jointPtr->type << std::endl;
     std::cout << "joint->parentJointId: " << jointPtr->parentJointId << std::endl;
-    std::cout << "joint->localPos: " << tysoc::TVec3::toString( jointPtr->localPos ) << std::endl;
-    std::cout << "joint->localEuler: " << tysoc::TVec3::toString( jointPtr->localEuler ) << std::endl;
+    std::cout << "joint->localPos: " << tysoc::toString( jointPtr->localPos ) << std::endl;
+    std::cout << "joint->localEuler: " << tysoc::toString( jointPtr->localEuler ) << std::endl;
     std::cout << "joint->childJoints.size(): " << jointPtr->childJoints.size() << std::endl;
     std::cout << "joint->childVisuals.size(): " << jointPtr->childVisuals.size() << std::endl;
     std::cout << "joint->childBodies.size(): " << jointPtr->childBodies.size() << std::endl;

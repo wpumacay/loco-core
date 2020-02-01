@@ -4,8 +4,8 @@
 namespace tysoc {
 namespace mjcf {
 
-    std::string MJCF_SCHEMA_PATH = std::string( TYSOC_PATH_RESOURCES ) + std::string( "xml/schema.xml" );
-    Schema* MJCF_SCHEMA = NULL;
+    std::string MJCF_SCHEMA_PATH = tysoc::PATH_RESOURCES + "xml/schema.xml";
+    Schema* MJCF_SCHEMA = nullptr;
     
     GenericElement* _parseGenericElement( Schema* schema, tinyxml2::XMLElement* xmlElement )
     {
@@ -13,7 +13,7 @@ namespace mjcf {
         _gelement->collectAttribs( schema, xmlElement );
 
         auto _currentChild = xmlElement->FirstChildElement();
-        while ( _currentChild != NULL )
+        while ( _currentChild != nullptr )
         {
             // parse child element
             auto _ieChildElement = _parseGenericElement( schema, _currentChild );
@@ -80,9 +80,7 @@ namespace mjcf {
     GenericElement* findFirstChildByType( GenericElement* target, const std::string& type )
     {
         if ( !target )
-        {
-            return NULL;
-        }
+            return nullptr;
 
         // Find using DFS, it does the job and our xmls are not that deep
         // @TODO: Change for other traversal if needed
@@ -96,13 +94,11 @@ namespace mjcf {
             {
                 auto _elm = findFirstChildByType( target->children[i], type );
                 if ( _elm )
-                {
                     return _elm;
-                }
             }
         }
 
-        return NULL;
+        return nullptr;
     }
 
     std::vector< GenericElement* > getChildrenByType( GenericElement* target, const std::string& type )
@@ -175,15 +171,15 @@ namespace mjcf {
                                  const std::string& elementName, 
                                  const std::string& agentName )
     {
-        if ( type == "body" ) return std::string( TYSOC_PREFIX_BODY ) + agentName + std::string( "_" ) + elementName;
-        if ( type == "joint" ) return std::string( TYSOC_PREFIX_JOINT ) + agentName + std::string( "_" ) + elementName;
-        if ( type == "geom" ) return std::string( TYSOC_PREFIX_GEOM ) + agentName + std::string( "_" ) + elementName;
-        if ( type == "site" ) return std::string( TYSOC_PREFIX_SITE ) + agentName + std::string( "_" ) + elementName;
-        if ( type == "sensor" ) return std::string( TYSOC_PREFIX_SENSOR ) + agentName + std::string( "_" ) + elementName;
-        if ( type == "camera" ) return std::string( TYSOC_PREFIX_CAMERA ) + agentName + std::string( "_" ) + elementName;
+        if ( type == "body" ) return PREFIX_BODY + agentName + std::string( "_" ) + elementName;
+        if ( type == "joint" ) return PREFIX_JOINT + agentName + std::string( "_" ) + elementName;
+        if ( type == "geom" ) return PREFIX_GEOM + agentName + std::string( "_" ) + elementName;
+        if ( type == "site" ) return PREFIX_SITE + agentName + std::string( "_" ) + elementName;
+        if ( type == "sensor" ) return PREFIX_SENSOR + agentName + std::string( "_" ) + elementName;
+        if ( type == "camera" ) return PREFIX_CAMERA + agentName + std::string( "_" ) + elementName;
         if ( type == "mesh" || type == "material" ) return elementName;
         if ( type == "actuator" || type == "motor" || type == "position" || type == "velocity" )
-            return std::string( TYSOC_PREFIX_ACTUATOR ) + agentName + std::string( "_" ) + elementName;
+            return PREFIX_ACTUATOR + agentName + std::string( "_" ) + elementName;
 
         return elementName;
     }
@@ -198,16 +194,16 @@ namespace mjcf {
             return elementName;
 
         std::string _prefix = "";
-        if ( type == "body" ) _prefix = std::string( TYSOC_PREFIX_BODY ) + agentName + "_";
-        else if ( type == "joint" ) _prefix = std::string( TYSOC_PREFIX_JOINT ) + agentName + "_";
-        else if ( type == "geom" ) _prefix = std::string( TYSOC_PREFIX_GEOM ) + agentName + "_";
-        else if ( type == "site" ) _prefix = std::string( TYSOC_PREFIX_SITE ) + agentName + "_";
-        else if ( type == "sensor" ) _prefix = std::string( TYSOC_PREFIX_SENSOR ) + agentName + "_";
-        else if ( type == "camera" ) _prefix = std::string( TYSOC_PREFIX_CAMERA ) + agentName + "_";
-        else if ( type == "actuator" ) _prefix = std::string( TYSOC_PREFIX_ACTUATOR ) + agentName + "_";
-        else if ( type == "motor" ) _prefix = std::string( TYSOC_PREFIX_ACTUATOR ) + agentName + "_";
-        else if ( type == "position" ) _prefix = std::string( TYSOC_PREFIX_ACTUATOR ) + agentName + "_";
-        else if ( type == "velocity" ) _prefix = std::string( TYSOC_PREFIX_ACTUATOR ) + agentName + "_";
+        if ( type == "body" ) _prefix = PREFIX_BODY + agentName + "_";
+        else if ( type == "joint" ) _prefix = PREFIX_JOINT + agentName + "_";
+        else if ( type == "geom" ) _prefix = PREFIX_GEOM + agentName + "_";
+        else if ( type == "site" ) _prefix = PREFIX_SITE + agentName + "_";
+        else if ( type == "sensor" ) _prefix = PREFIX_SENSOR + agentName + "_";
+        else if ( type == "camera" ) _prefix = PREFIX_CAMERA + agentName + "_";
+        else if ( type == "actuator" ) _prefix = PREFIX_ACTUATOR + agentName + "_";
+        else if ( type == "motor" ) _prefix = PREFIX_ACTUATOR + agentName + "_";
+        else if ( type == "position" ) _prefix = PREFIX_ACTUATOR + agentName + "_";
+        else if ( type == "velocity" ) _prefix = PREFIX_ACTUATOR + agentName + "_";
 
         auto _startIndex = elementName.find( _prefix );
         if ( _startIndex == -1 )

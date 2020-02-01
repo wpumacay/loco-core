@@ -26,11 +26,11 @@ namespace tysoc {
 
     struct TPathTerrainPrimitive : public TTerrainPrimitive
     {
-        struct { float x; float y; float z; }   p1;
-        struct { float x; float y; float z; }   p2;
-        struct { float x; float y; float z; }   p3;
-        struct { float x; float y; float z; }   p4;
-        struct { float x; float y; float z; }   normal;
+        TVec3 p1;
+        TVec3 p2;
+        TVec3 p3;
+        TVec3 p4;
+        TVec3 normal;
 
         TPathTerrainPrimitive() 
         { 

@@ -116,8 +116,8 @@ namespace tysoc {
         std::string _res;
 
         _res += "type       : " + toString( shapeData.type ) + "\n\r";
-        _res += "size       : " + tysoc::TVec3::toString( shapeData.size ) + "\n\r";
-        _res += "localTf    : \n\r" + tysoc::TMat4::toString( shapeData.localTransform ) + "\n\r";
+        _res += "size       : " + tysoc::toString( shapeData.size ) + "\n\r";
+        _res += "localTf    : \n\r" + tysoc::toString( shapeData.localTransform ) + "\n\r";
 
         return _res;
     }
@@ -128,7 +128,7 @@ namespace tysoc {
 
         if ( shapeData.type == eShapeType::BOX )
         {
-            _volume = ( shapeData.size.x * shapeData.size.y * shapeData.size.z );
+            _volume = ( shapeData.size.x() * shapeData.size.y() * shapeData.size.z() );
         }
         else if ( shapeData.type == eShapeType::PLANE )
         {
@@ -136,33 +136,33 @@ namespace tysoc {
         }
         else if ( shapeData.type == eShapeType::SPHERE )
         {
-            _volume = ( 4.0f / 3.0f ) * TYSOC_PI * ( shapeData.size.x * shapeData.size.x * shapeData.size.x );
+            _volume = ( 4.0f / 3.0f ) * TYSOC_PI * ( shapeData.size.x() * shapeData.size.x() * shapeData.size.x() );
         }
         else if ( shapeData.type == eShapeType::CYLINDER )
         {
-            auto _cylinderRadius = shapeData.size.x;
-            auto _cylinderHeight = shapeData.size.y;
+            auto _cylinderRadius = shapeData.size.x();
+            auto _cylinderHeight = shapeData.size.y();
 
             _volume = ( TYSOC_PI * _cylinderRadius * _cylinderRadius ) * _cylinderHeight;
         }
         else if ( shapeData.type == eShapeType::CAPSULE )
         {
-            auto _capsuleRadius = shapeData.size.x;
-            auto _capsuleHeight = shapeData.size.y;
+            auto _capsuleRadius = shapeData.size.x();
+            auto _capsuleHeight = shapeData.size.y();
 
             _volume = ( TYSOC_PI * _capsuleRadius * _capsuleRadius ) * _capsuleHeight +
                       ( 4.0f / 3.0f ) * ( TYSOC_PI * _capsuleRadius * _capsuleRadius * _capsuleRadius );
         }
         else if ( shapeData.type == eShapeType::ELLIPSOID )
         {
-            _volume = ( 4.0f / 3.0f ) * TYSOC_PI * ( shapeData.size.x * shapeData.size.y * shapeData.size.z );
+            _volume = ( 4.0f / 3.0f ) * TYSOC_PI * ( shapeData.size.x() * shapeData.size.y() * shapeData.size.z() );
         }
         else if ( shapeData.type == eShapeType::MESH )
         {
             std::pair<TVec3, TVec3> _aabb = computeMeshAABB( shapeData.filename );
-            _volume = std::abs( ( _aabb.second.x - _aabb.first.x ) * shapeData.size.x *
-                                ( _aabb.second.y - _aabb.first.y ) * shapeData.size.y *
-                                ( _aabb.second.z - _aabb.first.z ) * shapeData.size.z );
+            _volume = std::abs( ( _aabb.second.x() - _aabb.first.x() ) * shapeData.size.x() *
+                                ( _aabb.second.y() - _aabb.first.y() ) * shapeData.size.y() *
+                                ( _aabb.second.z() - _aabb.first.z() ) * shapeData.size.z() );
         }
         else if ( shapeData.type == eShapeType::HFIELD )
         {
@@ -224,13 +224,13 @@ namespace tysoc {
                         continue;
                     }
 
-                    _aabbMin.x = std::min( (float)_vertex.x, _aabbMin.x );
-                    _aabbMin.y = std::min( (float)_vertex.y, _aabbMin.y );
-                    _aabbMin.z = std::min( (float)_vertex.z, _aabbMin.z );
+                    _aabbMin.x() = std::min( (float)_vertex.x, _aabbMin.x() );
+                    _aabbMin.y() = std::min( (float)_vertex.y, _aabbMin.y() );
+                    _aabbMin.z() = std::min( (float)_vertex.z, _aabbMin.z() );
 
-                    _aabbMax.x = std::max( (float)_vertex.x, _aabbMax.x );
-                    _aabbMax.y = std::max( (float)_vertex.y, _aabbMax.y );
-                    _aabbMax.z = std::max( (float)_vertex.z, _aabbMax.z );
+                    _aabbMax.x() = std::max( (float)_vertex.x, _aabbMax.x() );
+                    _aabbMax.y() = std::max( (float)_vertex.y, _aabbMax.y() );
+                    _aabbMax.z() = std::max( (float)_vertex.z, _aabbMax.z() );
                 }
             }
         }

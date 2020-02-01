@@ -131,8 +131,8 @@ namespace tysoc {
 
             for ( size_t i = 0; i < m_sensorMeasurement->bodiesLinVelocities.size(); i++ )
             {
-                std::cout << "linvel(" << i << "): " << TVec3::toString( m_sensorMeasurement->bodiesLinVelocities[i] ) << std::endl;
-                std::cout << "linacc(" << i << "): " << TVec3::toString( m_sensorMeasurement->bodiesLinAccelerations[i] ) << std::endl;
+                std::cout << "linvel(" << i << "): " << tysoc::toString( m_sensorMeasurement->bodiesLinVelocities[i] ) << std::endl;
+                std::cout << "linacc(" << i << "): " << tysoc::toString( m_sensorMeasurement->bodiesLinAccelerations[i] ) << std::endl;
             }
 
             std::cout << "*******************************************" << std::endl;

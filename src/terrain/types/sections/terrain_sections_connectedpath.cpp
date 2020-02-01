@@ -151,17 +151,17 @@ namespace tysoc {
             * [ t  1  n ] =  [  0   1  0  ] (because it's a plane)
             * [    0    ]    [ -nx  0  nz ]
             */
-            _pathPrimitive->rotmat.buff[0] = _pathPrimitive->normal.z;
-            _pathPrimitive->rotmat.buff[1] = 0.0f;
-            _pathPrimitive->rotmat.buff[2] = -_pathPrimitive->normal.x;
+            _pathPrimitive->rotmat( 0, 0 ) = _pathPrimitive->normal.z;
+            _pathPrimitive->rotmat( 1, 0 ) = 0.0f;
+            _pathPrimitive->rotmat( 2, 0 ) = -_pathPrimitive->normal.x;
 
-            _pathPrimitive->rotmat.buff[3] = 0.0f;
-            _pathPrimitive->rotmat.buff[4] = 1.0f;
-            _pathPrimitive->rotmat.buff[5] = 0.0f;
+            _pathPrimitive->rotmat( 0, 1 ) = 0.0f;
+            _pathPrimitive->rotmat( 1, 1 ) = 1.0f;
+            _pathPrimitive->rotmat( 2, 1 ) = 0.0f;
 
-            _pathPrimitive->rotmat.buff[6] = _pathPrimitive->normal.x;
-            _pathPrimitive->rotmat.buff[7] = _pathPrimitive->normal.y;// must be 0.0
-            _pathPrimitive->rotmat.buff[8] = _pathPrimitive->normal.z;
+            _pathPrimitive->rotmat( 0, 2 ) = _pathPrimitive->normal.x;
+            _pathPrimitive->rotmat( 1, 2 ) = _pathPrimitive->normal.y;// must be 0.0
+            _pathPrimitive->rotmat( 2, 2 ) = _pathPrimitive->normal.z;
 
             _pathPrimitive->color = { 0.83f, 0.83f, 0.83f };
         }

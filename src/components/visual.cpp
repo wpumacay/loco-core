@@ -1,8 +1,8 @@
 
 #include <components/collision.h>
 
-namespace tysoc {
-
+namespace tysoc
+{
     TVisual::TVisual( const std::string& name,
                       const TVisualData& visualData )
     {
@@ -15,7 +15,7 @@ namespace tysoc {
 
     TVisual::~TVisual()
     {
-        /* clear references (owners are in charge or releasing them) */
+        // Clear references (owners are in charge or releasing them)
         m_parentBodyRef = nullptr;
         m_drawableImplRef = nullptr;
     }
@@ -25,15 +25,9 @@ namespace tysoc {
         if ( !parentBodyRef )
             return;
 
-        /* keep a reference to the parent body */
         m_parentBodyRef = parentBodyRef;
-
-        /* update our world-transform accordingly */
         m_tf = m_parentBodyRef->tf() * m_localTf;
-        m_pos = m_tf.getPosition();
-        m_rot = m_tf.getRotation();
 
-        /* notify drawable-adapter that the world-transform has changed */
         if ( m_drawableImplRef )
             m_drawableImplRef->setWorldTransform( m_tf );
     }
@@ -43,14 +37,7 @@ namespace tysoc {
         if ( !drawableImplRef )
             return;
 
-        /* notify the backend that the current adapter is ready for deletion */
-        if ( m_drawableImplRef )
-            m_drawableImplRef->detach();
-
-        /* keep the reference to the new drawable */
         m_drawableImplRef = drawableImplRef;
-
-        /* notify drawable-adapter that the world-transform has changed */
         m_drawableImplRef->setWorldTransform( m_tf );
     }
 
@@ -66,7 +53,7 @@ namespace tysoc {
             m_drawableImplRef->wireframe( wireframe );
     }
 
-    bool TVisual::isVisible()
+    bool TVisual::isVisible() const
     {
         if ( !m_drawableImplRef )
             return false;
@@ -74,7 +61,7 @@ namespace tysoc {
         return m_drawableImplRef->isVisible();
     }
 
-    bool TVisual::isWireframe()
+    bool TVisual::isWireframe() const
     {
         if ( !m_drawableImplRef )
             return false;
@@ -92,8 +79,6 @@ namespace tysoc {
         // update our own transform using the world-transform from the parent
         assert( m_parentBodyRef != nullptr );
         m_tf = m_parentBodyRef->tf() * m_localTf;
-        m_pos = m_tf.getPosition();
-        m_rot = m_tf.getRotation();
 
         // set the transform of the renderable to be our own world-transform
         if ( m_drawableImplRef )
@@ -107,27 +92,29 @@ namespace tysoc {
 
     void TVisual::setLocalPosition( const TVec3& localPosition )
     {
-        m_localPos = localPosition;
-        m_localTf.setPosition( m_localPos );
+        m_localTf.set( localPosition, 3 );
     }
 
     void TVisual::setLocalRotation( const TMat3& localRotation )
     {
-        m_localRot = localRotation;
-        m_localTf.setRotation( m_localRot );
+        m_localTf.set( localRotation );
     }
 
     void TVisual::setLocalQuat( const TVec4& localQuaternion )
     {
-        m_localRot = TMat3::fromQuaternion( localQuaternion );
-        m_localTf.setRotation( m_localRot );
+        auto localRotation = tinymath::rotation( localQuaternion );
+        m_localTf.set( localRotation );
+    }
+
+    void TVisual::setLocalEuler( const TVec3& localEuler )
+    {
+        auto localRotation = tinymath::rotation( localEuler );
+        m_localTf.set( localRotation );
     }
 
     void TVisual::setLocalTransform( const TMat4& localTransform )
     {
         m_localTf = localTransform;
-        m_localPos = m_localTf.getPosition();
-        m_localRot = m_localTf.getRotation();
     }
 
     void TVisual::changeSize( const TVec3& newSize )
@@ -213,5 +200,4 @@ namespace tysoc {
         if ( m_drawableImplRef )
             m_drawableImplRef->setShininess( shininess );
     }
-
 }

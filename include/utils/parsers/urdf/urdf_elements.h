@@ -24,7 +24,7 @@ namespace urdf {
         {
             name        = "undefined";
             filename    = "";
-            color       = TYSOC_DEFAULT_RGBA_COLOR;
+            color       = tysoc::DEFAULT_RGBA_COLOR;
             usesMaterialFromMesh = true;
         }
 

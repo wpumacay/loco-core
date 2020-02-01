@@ -16,12 +16,7 @@ namespace tysoc {
 
     TCollision::~TCollision()
     {
-        if ( m_drawableImplRef )
-            delete m_drawableImplRef;
-
-        if ( m_collisionImplRef )
-            delete m_collisionImplRef;
-
+        m_parentBodyRef = nullptr;
         m_drawableImplRef = nullptr;
         m_collisionImplRef = nullptr;
     }
@@ -33,8 +28,6 @@ namespace tysoc {
 
         m_parentBodyRef = parentBodyRef;
         m_tf = m_parentBodyRef->tf() * m_localTf;
-        m_pos = m_tf.getPosition();
-        m_rot = m_tf.getRotation();
 
         if ( m_collisionImplRef )
             m_collisionImplRef->postStep();
@@ -45,26 +38,18 @@ namespace tysoc {
 
     void TCollision::setAdapter( TICollisionAdapter* collisionImplRef )
     {
-        // if a previous adapter is present, release its resources
-        if ( m_collisionImplRef )
-            delete m_collisionImplRef;
+        if ( !collisionImplRef )
+            return;
 
         m_collisionImplRef = collisionImplRef;
     }
 
-    void TCollision::setDrawable( TIDrawable* drawablePtr )
+    void TCollision::setDrawable( TIDrawable* drawableRef )
     {
-        if ( !drawablePtr )
+        if ( !drawableRef )
             return;
 
-        /* notify the backend that the current adapter is ready for deletion */
-        if ( m_drawableImplRef )
-            m_drawableImplRef->detach();
-
-        /* change the reference to our new shiny drawable */
-        m_drawableImplRef = drawablePtr;
-
-        /* notify drawable-adapter that the world-transform has changed */
+        m_drawableImplRef = drawableRef;
         m_drawableImplRef->setWorldTransform( m_tf );
     }
 
@@ -80,7 +65,7 @@ namespace tysoc {
             m_drawableImplRef->wireframe( wireframe );
     }
 
-    bool TCollision::isVisible()
+    bool TCollision::isVisible() const
     {
         if ( !m_drawableImplRef )
             return false;
@@ -88,7 +73,7 @@ namespace tysoc {
         return m_drawableImplRef->isVisible();
     }
 
-    bool TCollision::isWireframe()
+    bool TCollision::isWireframe() const
     {
         if ( !m_drawableImplRef )
             return false;
@@ -112,8 +97,6 @@ namespace tysoc {
         // update our own transform using the world-transform from the parent
         assert( m_parentBodyRef != nullptr );
         m_tf = m_parentBodyRef->tf() * m_localTf;
-        m_pos = m_tf.getPosition();
-        m_rot = m_tf.getRotation();
 
         // set the transform of the renderable to be our own world-transform
         if ( m_drawableImplRef )
@@ -128,36 +111,41 @@ namespace tysoc {
 
     void TCollision::setLocalPosition( const TVec3& localPosition )
     {
-        m_localPos = localPosition;
-        m_localTf.setPosition( m_localPos );
+        m_localTf.set( localPosition, 3 );
 
         if ( m_collisionImplRef )
-            m_collisionImplRef->setLocalPosition( m_localPos );
+            m_collisionImplRef->setLocalPosition( localPosition );
     }
 
     void TCollision::setLocalRotation( const TMat3& localRotation )
     {
-        m_localRot = localRotation;
-        m_localTf.setRotation( m_localRot );
+        m_localTf.set( localRotation );
 
         if ( m_collisionImplRef )
-            m_collisionImplRef->setLocalRotation( m_localRot );
+            m_collisionImplRef->setLocalRotation( localRotation );
     }
 
     void TCollision::setLocalQuat( const TVec4& localQuaternion )
     {
-        m_localRot = TMat3::fromQuaternion( localQuaternion );
-        m_localTf.setRotation( m_localRot );
+        auto localRotation = tinymath::rotation( localQuaternion );
+        m_localTf.set( localRotation );
 
         if ( m_collisionImplRef )
-            m_collisionImplRef->setLocalRotation( m_localRot );
+            m_collisionImplRef->setLocalRotation( localRotation );
+    }
+
+    void TCollision::setLocalEuler( const TVec3& localEuler )
+    {
+        auto localRotation = tinymath::rotation( localEuler );
+        m_localTf.set( localRotation );
+
+        if ( m_collisionImplRef )
+            m_collisionImplRef->setLocalRotation( localRotation );
     }
 
     void TCollision::setLocalTransform( const TMat4& localTransform )
     {
         m_localTf = localTransform;
-        m_localPos = m_localTf.getPosition();
-        m_localRot = m_localTf.getRotation();
 
         if ( m_collisionImplRef )
             m_collisionImplRef->setLocalTransform( m_localTf );

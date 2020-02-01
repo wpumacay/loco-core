@@ -30,11 +30,6 @@ endif()
 # Definitions used for development. Python bindings do not use these definitions, but ...
 # instead we load the paths dynamically according to the user configuration/installation.
 add_definitions( -DTYSOC_PATH_RESOURCES="${CMAKE_CURRENT_SOURCE_DIR}/res/" )
-add_definitions( -DTYSOC_PATH_WORKING_DIR="${CMAKE_CURRENT_SOURCE_DIR}/res/xml/" )
-add_definitions( -DTYSOC_PATH_MJCF_TEMPLATES="${CMAKE_CURRENT_SOURCE_DIR}/res/templates/mjcf/" )
-add_definitions( -DTYSOC_PATH_URDF_TEMPLATES="${CMAKE_CURRENT_SOURCE_DIR}/res/templates/urdf/" )
-add_definitions( -DTYSOC_PATH_RLSIM_TEMPLATES="${CMAKE_CURRENT_SOURCE_DIR}/res/templates/rlsim/" )
-add_definitions( -DTYSOC_PATH_MESHES_DIR="${CMAKE_CURRENT_SOURCE_DIR}/res/meshes/" )
 if ( WIN32 )
     add_definitions( -DTYSOC_BACKEND_GRAPHICS_GLVIZ="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libtysocRenderingGlviz.dll" )
 elseif ( UNIX )
@@ -46,11 +41,6 @@ elseif ( UNIX )
 endif()
 
 set_property( GLOBAL PROPERTY PROP_TYSOC_PATH_RESOURCES         "${CMAKE_CURRENT_SOURCE_DIR}/res/" )
-set_property( GLOBAL PROPERTY PROP_TYSOC_PATH_WORKING_DIR       "${CMAKE_CURRENT_SOURCE_DIR}/res/xml/" )
-set_property( GLOBAL PROPERTY PROP_TYSOC_PATH_MJCF_TEMPLATES    "${CMAKE_CURRENT_SOURCE_DIR}/res/templates/mjcf/" )
-set_property( GLOBAL PROPERTY PROP_TYSOC_PATH_URDF_TEMPLATES    "${CMAKE_CURRENT_SOURCE_DIR}/res/templates/urdf/" )
-set_property( GLOBAL PROPERTY PROP_TYSOC_PATH_RLSIM_TEMPLATES   "${CMAKE_CURRENT_SOURCE_DIR}/res/templates/rlsim/" )
-set_property( GLOBAL PROPERTY PROP_TYSOC_PATH_MESHES_DIR        "${CMAKE_CURRENT_SOURCE_DIR}/res/meshes/" )
 if ( WIN32 )
     set_property( GLOBAL PROPERTY PROP_TYSOC_BACKEND_GRAPHICS_GLVIZ "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libtysocRenderingGlviz.dll" )
 elseif ( UNIX )
@@ -64,19 +54,9 @@ endif()
 # test all properties --------------------------------------------------------------------------------------------------
 
 get_property( VAR_TYSOC_PATH_RESOURCES          GLOBAL PROPERTY PROP_TYSOC_PATH_RESOURCES )
-get_property( VAR_TYSOC_PATH_WORKING_DIR        GLOBAL PROPERTY PROP_TYSOC_PATH_WORKING_DIR )
-get_property( VAR_TYSOC_PATH_MJCF_TEMPLATES     GLOBAL PROPERTY PROP_TYSOC_PATH_MJCF_TEMPLATES )
-get_property( VAR_TYSOC_PATH_URDF_TEMPLATES     GLOBAL PROPERTY PROP_TYSOC_PATH_URDF_TEMPLATES )
-get_property( VAR_TYSOC_PATH_RLSIM_TEMPLATES    GLOBAL PROPERTY PROP_TYSOC_PATH_RLSIM_TEMPLATES )
-get_property( VAR_TYSOC_PATH_MESHES_DIR         GLOBAL PROPERTY PROP_TYSOC_PATH_MESHES_DIR )
 get_property( VAR_TYSOC_BACKEND_GRAPHICS_GLVIZ  GLOBAL PROPERTY PROP_TYSOC_BACKEND_GRAPHICS_GLVIZ )
 
 message( "PROP_TYSOC_PATH_RESOURCES:            ${VAR_TYSOC_PATH_RESOURCES}" )
-message( "PROP_TYSOC_PATH_WORKING_DIR:          ${VAR_TYSOC_PATH_WORKING_DIR}" )
-message( "PROP_TYSOC_PATH_MJCF_TEMPLATES:       ${VAR_TYSOC_PATH_MJCF_TEMPLATES}" )
-message( "PROP_TYSOC_PATH_URDF_TEMPLATES:       ${VAR_TYSOC_PATH_URDF_TEMPLATES}" )
-message( "PROP_TYSOC_PATH_RLSIM_TEMPLATES:      ${VAR_TYSOC_PATH_RLSIM_TEMPLATES}" )
-message( "PROP_TYSOC_PATH_MESHES_DIR:           ${VAR_TYSOC_PATH_MESHES_DIR}" )
 message( "PROP_TYSOC_BACKEND_GRAPHICS_GLVIZ:    ${VAR_TYSOC_BACKEND_GRAPHICS_GLVIZ}" )
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -90,7 +70,55 @@ endif()
 find_package( ASSIMP REQUIRED )
 
 # Main Sources
-file( GLOB_RECURSE TYSOC_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" )
+#### file( GLOB_RECURSE TYSOC_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" )
+#### foreach(file ${TYSOC_SOURCES})
+####     message( "src-file: ${file}" )
+#### endforeach(file)
+set( TYSOC_SOURCES
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/tysoc_common.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/tysoc_math.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/tysoc_logger.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent/agent_base.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent/agent_components.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent/formats/kintree_format_mjcf.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent/formats/kintree_format_rlsim.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent/formats/kintree_format_urdf.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent_wrapper.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/data.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/collision.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/visual.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/joint.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/body.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/compounds/compound.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/compounds/compound_body.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/model_loader.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/primitives/single_body.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/runtime.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/scenario.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/sensor_base.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/types/sensor_agent_intrinsics.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/types/sensor_terrain_sections.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/simulation_base.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/terrain/terrain_base.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/terrain/types/sections/terrain_sections_base.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/terrain/types/sections/terrain_sections_blocky.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/terrain/types/sections/terrain_sections_connectedpath.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/terrain/types/sections/terrain_sections_connectedpath_profiles.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/terrain/types/static/terrain_static.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/terrain_wrapper.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/parsers/mjcf/mjcf.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/parsers/mjcf/mjcf_common.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/parsers/mjcf/mjcf_elements.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/parsers/parsers_common.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/parsers/parsers_json.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/parsers/parsers_xml.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/parsers/rlsim/rlsim.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/parsers/rlsim/rlsim_elements.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/parsers/urdf/urdf.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/parsers/urdf/urdf_elements.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/primitives_spawner.cpp"
+     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/viz/viz.cpp"
+)
 # External dependencies
 set( TYSOC_SOURCES 
      ${TYSOC_SOURCES}
@@ -102,20 +130,22 @@ include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include/" )
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/ext/tinyxml2" )
 include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/ext/json" )
 include_directories( "${CMAKE_SOURCE_DIR}/ext/spdlog/include" )
+include_directories( "${CMAKE_SOURCE_DIR}/ext/tiny_math/include" )
 
 add_library( tysocCore SHARED
              ${TYSOC_SOURCES} )
 
 target_link_libraries( tysocCore
+                       tinymath_cpp_lib
                        assimp
                        spdlog
                        dl )
 
-# Configure glviz
-add_subdirectory( glviz )
+#### # Configure glviz @todo: add option to select if visualizer is enabled or not
+#### add_subdirectory( glviz )
 
-# Configure python bindings
-add_subdirectory( pytysoc )
+#### # Configure python bindings
+#### add_subdirectory( pytysoc )
 
 #### # Configure tests
 #### add_subdirectory( tests )
@@ -123,12 +153,12 @@ add_subdirectory( pytysoc )
 #### add_subdirectory( unittest )
 
 if( TYSOCCORE_IS_MASTER_PROJECT )
-    # Configure examples
-    add_subdirectory( examples )
+    #### # Configure examples
+    #### add_subdirectory( examples )
     
-    # Check for docs
-    if ( TYSOCCORE_BUILD_DOCS )
-        # Configure documentation
-        add_subdirectory( docs )
-    endif()
+    #### # Check for docs
+    #### if ( TYSOCCORE_BUILD_DOCS )
+    ####     # Configure documentation
+    ####     add_subdirectory( docs )
+    #### endif()
 endif()

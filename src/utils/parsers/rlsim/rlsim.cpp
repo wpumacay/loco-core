@@ -248,23 +248,23 @@ namespace rlsim {
 
         if ( type == "body" )
         {
-            _res += std::string( TYSOC_PREFIX_BODY ) + agentName + std::string( "_" ) + elementName;
+            _res += PREFIX_BODY + agentName + std::string( "_" ) + elementName;
         }
         else if ( type == "collision" )
         {
-            _res += std::string( TYSOC_PREFIX_GEOM ) + agentName + std::string( "_" ) + elementName;
+            _res += PREFIX_GEOM + agentName + std::string( "_" ) + elementName;
         }
         else if ( type == "joint" )
         {
-            _res += std::string( TYSOC_PREFIX_JOINT ) + agentName + std::string( "_" ) + elementName;
+            _res += PREFIX_JOINT + agentName + std::string( "_" ) + elementName;
         }
         else if ( type == "actuator" )
         {
-            _res += std::string( TYSOC_PREFIX_ACTUATOR ) + agentName + std::string( "_" ) + elementName;
+            _res += PREFIX_ACTUATOR + agentName + std::string( "_" ) + elementName;
         }
         else if ( type == "visual" )
         {
-            _res += std::string( TYSOC_PREFIX_GEOM ) + agentName + std::string( "_" ) + elementName;
+            _res += PREFIX_GEOM + agentName + std::string( "_" ) + elementName;
         }
         else
         {

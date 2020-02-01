@@ -77,13 +77,13 @@ namespace tysoc {
         *                      World-space getters                   *
         *************************************************************/
 
-        TVec3 pos() const { return m_pos; }
+        TVec3 pos() const { return TVec3( m_tf.col( 3 ) ); }
 
-        TMat3 rot() const { return m_rot; }
+        TMat3 rot() const { return TMat3( m_tf ); }
 
-        TVec4 quat() const { return m_tf.getRotQuaternion(); }
+        TVec4 quat() const { return tinymath::quaternion( m_tf ); }
 
-        TVec3 euler() const { return m_tf.getRotEuler(); }
+        TVec3 euler() const { return tinymath::euler( m_tf ); }
 
         TMat4 tf() const { return m_tf; }
 
@@ -91,13 +91,13 @@ namespace tysoc {
         *                      Local-space getters                   *
         *************************************************************/
 
-        TVec3 localPos() const { return m_localPos; }
+        TVec3 localPos() const { return TVec3( m_localTf.col( 3 ) ); }
 
-        TMat3 localRot() const { return m_localRot; }
+        TMat3 localRot() const { return TMat3( m_localTf ); }
 
-        TVec4 localQuat() const { return m_localTf.getRotQuaternion(); }
+        TVec4 localQuat() const { return tinymath::quaternion( m_localTf ); }
 
-        TVec3 localEuler() const { return m_localTf.getRotEuler(); }
+        TVec3 localEuler() const { return tinymath::euler( m_localTf ); }
 
         TMat4 localTf() const { return m_localTf; }
 
@@ -117,9 +117,9 @@ namespace tysoc {
 
         TVec2 limits() const { return m_data.limits; }
 
-        TScalar limitLow() const { return m_data.limits.x; }
+        TScalar limitLow() const { return m_data.limits.x(); }
 
-        TScalar limitHigh() const { return m_data.limits.y; }
+        TScalar limitHigh() const { return m_data.limits.y(); }
 
         TIJointAdapter* adapter() const { return m_jointImplRef; }
 
@@ -129,46 +129,33 @@ namespace tysoc {
 
     protected :
 
-        /* unique name identifier */
+        /// Unique name identifier
         std::string m_name;
-
-        /* position in world space */
-        TVec3 m_pos;
-        /* orientation in world space */
-        TMat3 m_rot; 
-        /* transform in world space */
+        /// Transform in world space
         TMat4 m_tf;
-
-        /* relative position to owner body */
-        TVec3 m_localPos;
-        /* relative rotation to owner body */
-        TMat3 m_localRot;
-        /* relative transform to owner body */
+        /// Relative transform to owner body
         TMat4 m_localTf;
-
-        /* data of this joint object */
+        /// Properties(struct) of this joint
         TJointData m_data;
-
-        /* qpos values: generalized coordinates */
+        /// Number of generalized coordinates (qpos) associated with this joint
         size_t m_nqpos;
+        /// Generalized coordinates for this joint
         std::array< TScalar, TYSOC_MAX_NUM_QPOS > m_qpos;
+        /// Initial values of the generalized coordinates for this joint
         std::array< TScalar, TYSOC_MAX_NUM_QPOS > m_qpos0;
-
-        /* qvel values: speeds of degrees of freedom */
+        /// Number of degrees of freedom (qvel) associated with this joint
         size_t m_nqvel;
+        /// QVel values for this joint
         std::array< TScalar, TYSOC_MAX_NUM_QVEL > m_qvel;
+        /// Initial QVel values for this joint
         std::array< TScalar, TYSOC_MAX_NUM_QVEL > m_qvel0;
-
-        /* Adapter-object that gives access to the low-level API for a specific backend */
+        /// Adapter-object that gives access to the low-level API for a specific backend
         TIJointAdapter* m_jointImplRef;
-
-        /* reference to the drawable resource used for visualization */
+        /// Reference to the drawable resource used for visualization
         TIDrawable* m_drawableImplRef;
-
-        /* reference to the owner body (the one that this dof belongs to) */
+        /// Reference to the owner body (the one that this dof belongs to)
         TIBody* m_ownerRef;
-
-        /* reference to the owner's parent body */
+        /// Reference to the owner's parent body
         TIBody* m_ownerParentRef;
     };
 

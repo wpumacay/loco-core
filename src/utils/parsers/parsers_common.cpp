@@ -93,9 +93,7 @@ namespace parsing {
         // @TOQO: Add asserts
         _res.ndim = _fields.size();
         for ( size_t i = 0; i < _fields.size(); i++ )
-        {
-            _res.buff[i] = std::stoi( _fields[i] );
-        }
+            _res[i] = std::stoi( _fields[i] );
 
         return _res;
     }
@@ -109,18 +107,18 @@ namespace parsing {
         // @TOQO: Add asserts
         _res.ndim = _fields.size();
         for ( size_t i = 0; i < _fields.size(); i++ )
-        {
-            _res.buff[i] = std::stof( _fields[i] );
-        }
+            _res[i] = std::stof( _fields[i] );
 
         return _res;
     }
 
+    // @todo: replace by logger functionality
     void logError( const std::string& errorMsg )
     {
         std::cout << "ERROR> " << errorMsg << std::endl;
     }
 
+    // @todo: replace by logger functionality
     void logWarning( const std::string& warningMsg )
     {
         std::cout << "WARNING> " << warningMsg << std::endl;

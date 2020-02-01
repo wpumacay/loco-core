@@ -22,7 +22,7 @@ namespace rlsim {
             name    = "undefined";
             shape   = "sphere";
             size    = { 0.1f, 0.0f, 0.0f };
-            rgba    = TYSOC_DEFAULT_RGBA_COLOR;
+            rgba    = tysoc::DEFAULT_RGBA_COLOR;
 
             parentJointId = -1;
         }
@@ -48,7 +48,7 @@ namespace rlsim {
             shape   = "sphere";
             mass    = 0.0f;
             size    = { 0.1f, 0.0f, 0.0f };
-            rgba    = TYSOC_DEFAULT_RGBA_COLOR;
+            rgba    = tysoc::DEFAULT_RGBA_COLOR;
 
             collGroup = -1;
             parentJointId = -1;

@@ -93,16 +93,16 @@ namespace tysoc {
 
     struct TJointData
     {
-        eJointType  type;                   // type of joint (see enum above)
-        TVec3       axis;                   // axis of joint to be constructed
-        TVec2       limits;                 // motion range (lo==hi: fixed, lo>hi: continuous, lo<hi: limited)
-        TScalar     stiffness;              // Stiffness (spring like behaviour)
-        TScalar     armature;               // Armature (extra diag inertia)
-        TScalar     damping;                // Damping applied to the joint
-        TScalar     ref;                    // Ref. for the joint
-        int         nqpos;                  // Number of generalized coordinates
-        int         nqvel;                  // Number of degrees of freedom
-        TMat4       localTransform;         // relative transform of this joint w.r.t. owner (body)
+        eJointType  type;           // type of joint (see enum above)
+        TVec3       axis;           // axis of joint to be constructed
+        TVec2       limits;         // motion range (lo==hi: fixed, lo>hi: continuous, lo<hi: limited)
+        TScalar     stiffness;      // Stiffness (spring like behaviour)
+        TScalar     armature;       // Armature (extra diag inertia)
+        TScalar     damping;        // Damping applied to the joint
+        TScalar     ref;            // Ref. for the joint
+        size_t      nqpos;          // Number of generalized coordinates
+        size_t      nqvel;          // Number of degrees of freedom
+        TMat4       localTransform; // relative transform of this joint w.r.t. owner (body)
 
         TJointData() 
             : limits( { 1.0f, -1.0f } ), stiffness( 0.0f ), 

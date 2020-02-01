@@ -376,7 +376,7 @@ namespace tysoc {
         _imguiProperties.useDockingSpace = true;
         _imguiProperties.useDockingSpacePassthrough = true;
         _imguiProperties.useAutosaveLayout = false;
-        _imguiProperties.fileLayout = std::string( TYSOC_PATH_RESOURCES ) + "app_gui_layout.ini";
+        _imguiProperties.fileLayout = tysoc::PATH_RESOURCES + "app_gui_layout.ini";
     #else
         _imguiProperties.useDockingSpace = false;
         _imguiProperties.useDockingSpacePassthrough = false;

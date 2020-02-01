@@ -146,8 +146,8 @@ namespace mjcf {
     {
         TSizef _svec;
         _svec.ndim = 2;
-        _svec.buff[0] = vec.x;
-        _svec.buff[1] = vec.y;
+        _svec[0] = vec.x();
+        _svec[1] = vec.y();
 
         _sizefs[ attribName ] = _svec;
     }
@@ -156,9 +156,9 @@ namespace mjcf {
     {
         TSizef _svec;
         _svec.ndim = 3;
-        _svec.buff[0] = vec.x;
-        _svec.buff[1] = vec.y;
-        _svec.buff[2] = vec.z;
+        _svec[0] = vec.x();
+        _svec[1] = vec.y();
+        _svec[2] = vec.z();
 
         _sizefs[ attribName ] = _svec;
     }
@@ -167,10 +167,10 @@ namespace mjcf {
     {
         TSizef _svec;
         _svec.ndim = 4;
-        _svec.buff[0] = vec.x;
-        _svec.buff[1] = vec.y;
-        _svec.buff[2] = vec.z;
-        _svec.buff[3] = vec.w;
+        _svec[0] = vec.x();
+        _svec[1] = vec.y();
+        _svec[2] = vec.z();
+        _svec[3] = vec.w();
 
         _sizefs[ attribName ] = _svec;
     }
@@ -234,8 +234,8 @@ namespace mjcf {
         {
             TSizef _vec2 = _sizefs[ attribName ];
 
-            _res.x = _vec2.buff[0];
-            _res.y = _vec2.buff[1];
+            _res.x = _vec2[0];
+            _res.y = _vec2[1];
         }
         else
         {
@@ -253,9 +253,9 @@ namespace mjcf {
         {
             TSizef _vec3 = _sizefs[ attribName ];
 
-            _res.x = _vec3.buff[0];
-            _res.y = _vec3.buff[1];
-            _res.z = _vec3.buff[2];
+            _res.x = _vec3[0];
+            _res.y = _vec3[1];
+            _res.z = _vec3[2];
         }
         else
         {
@@ -273,10 +273,10 @@ namespace mjcf {
         {
             TSizef _vec4 = _sizefs[ attribName ];
             
-            _res.x = _vec4.buff[0];
-            _res.y = _vec4.buff[1];
-            _res.z = _vec4.buff[2];
-            _res.w = _vec4.buff[3];
+            _res.x = _vec4[0];
+            _res.y = _vec4[1];
+            _res.z = _vec4[2];
+            _res.w = _vec4[3];
         }
         else
         {

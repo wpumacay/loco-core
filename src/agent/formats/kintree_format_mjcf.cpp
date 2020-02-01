@@ -207,9 +207,9 @@ namespace tysoc {
             {
                 auto _materialAsset = TGenericParams();
                 if ( _asset->hasAttributeVec4( "rgba" ) )
-                    _materialAsset.set( "rgba", _asset->getAttributeVec4( "rgba", TYSOC_DEFAULT_RGBA_COLOR ) );
+                    _materialAsset.set( "rgba", _asset->getAttributeVec4( "rgba", tysoc::DEFAULT_RGBA_COLOR ) );
                 if ( _asset->hasAttributeFloat( "shininess" ) )
-                    _materialAsset.set( "shininess", _asset->getAttributeFloat( "shininess", TYSOC_DEFAULT_SHININESS / 128.0f ) * 128.0f );
+                    _materialAsset.set( "shininess", _asset->getAttributeFloat( "shininess", tysoc::DEFAULT_SHININESS / 128.0f ) * 128.0f );
                 if ( _asset->hasAttributeFloat( "specular" ) )
                     _materialAsset.set( "specular", _asset->getAttributeFloat( "specular", 1.0f ) );
 
@@ -378,9 +378,9 @@ namespace tysoc {
             _kinVisual->data.localTransform.setRotation( _rotFromFromto );
         }
 
-        auto _rgba = TVec4( TYSOC_DEFAULT_RGBA_COLOR );
-        auto _specular = TVec3( TYSOC_DEFAULT_SPECULAR_COLOR );
-        float _shininess = TYSOC_DEFAULT_SHININESS;
+        auto _rgba = tysoc::DEFAULT_RGBA_COLOR;
+        auto _specular = tysoc::DEFAULT_SPECULAR_COLOR;
+        auto _shininess = tysoc::DEFAULT_SHININESS;
         auto _materialId = _grabString( context, geomElementPtr, "material", "" );
         if ( !geomElementPtr->hasAttributeVec4( "rgba" ) && ( _materialId != "" ) &&
              ( context.assetsMaterials.find( _materialId ) != context.assetsMaterials.end() ) )
@@ -398,7 +398,7 @@ namespace tysoc {
         }
         else
         {
-            _rgba = _grabVec4( context, geomElementPtr, "rgba", TYSOC_DEFAULT_RGBA_COLOR );
+            _rgba = _grabVec4( context, geomElementPtr, "rgba", tysoc::DEFAULT_RGBA_COLOR );
             _specular = { _rgba.x, _rgba.y, _rgba.z };
             
         }
@@ -493,12 +493,12 @@ namespace tysoc {
             // we have been given a full positive-definite symmetric inertia matrix
             auto _inertiaArray6 = inertialElmPtr->getAttributeArrayFloat( "fullinertia" );
             // and assign the inertia matrix
-            _kinInertial.ixx = _inertiaArray6.buff[0];
-            _kinInertial.iyy = _inertiaArray6.buff[1];
-            _kinInertial.izz = _inertiaArray6.buff[2];
-            _kinInertial.ixy = _inertiaArray6.buff[3];
-            _kinInertial.ixz = _inertiaArray6.buff[4];
-            _kinInertial.iyz = _inertiaArray6.buff[5];
+            _kinInertial.ixx = _inertiaArray6[0];
+            _kinInertial.iyy = _inertiaArray6[1];
+            _kinInertial.izz = _inertiaArray6[2];
+            _kinInertial.ixy = _inertiaArray6[3];
+            _kinInertial.ixz = _inertiaArray6[4];
+            _kinInertial.iyz = _inertiaArray6[5];
         }
         else
         {
@@ -662,13 +662,13 @@ namespace tysoc {
             else if ( _gsize.ndim == 1 )
             {
                 // the dimensions should be repeated
-                _width = _depth = _gsize.buff[0];
+                _width = _depth = _gsize[0];
             }
             else if ( _gsize.ndim >= 2 )
             {
                 // each dimensiones has a separate field
-                _width = 2.0f * _gsize.buff[0];
-                _depth = 2.0f * _gsize.buff[1];
+                _width = 2.0f * _gsize[0];
+                _depth = 2.0f * _gsize[1];
                 // third is spacing
             }
 
@@ -687,14 +687,14 @@ namespace tysoc {
             }
             else if ( _gsize.ndim == 1 )
             {
-                _radius = _gsize.buff[0];
+                _radius = _gsize[0];
             }
             else
             {
                 // just in case, if someone passed more parameters than needed
                 // it's like ... "thanks, but no thanks xD", so just use the first two
                 TYSOC_CORE_WARN( "Parser-mjcf {0} >> sphere \"{1}\" has more parameters than needed", context.filename, _gname );
-                _radius = _gsize.buff[0];
+                _radius = _gsize[0];
             }
 
             targetSize.x = _radius;
@@ -713,13 +713,13 @@ namespace tysoc {
                 *   |_____________________|
                 */
                 // first 3 are start point (s)
-                float _x1 = _gfromto.buff[0];
-                float _y1 = _gfromto.buff[1];
-                float _z1 = _gfromto.buff[2];
+                float _x1 = _gfromto[0];
+                float _y1 = _gfromto[1];
+                float _z1 = _gfromto[2];
                 // second 3 are the end point (e)
-                float _x2 = _gfromto.buff[3];
-                float _y2 = _gfromto.buff[4];
-                float _z2 = _gfromto.buff[5];
+                float _x2 = _gfromto[3];
+                float _y2 = _gfromto[4];
+                float _z2 = _gfromto[5];
                 // get the length of the capsule (the space orientation is ...
                 // computed from the scene, so we just use that one)
                 float _dx = ( _x2 - _x1 );
@@ -730,7 +730,7 @@ namespace tysoc {
                 // get the radius from the size param
                 if ( _gsize.ndim >= 1 )
                 {
-                    _radius = _gsize.buff[0];
+                    _radius = _gsize[0];
                 }
                 else
                 {
@@ -755,8 +755,8 @@ namespace tysoc {
             {
                 if ( _gsize.ndim == 2 )
                 {
-                    _radius = _gsize.buff[0];
-                    _length = 2.0f * _gsize.buff[1];
+                    _radius = _gsize[0];
+                    _length = 2.0f * _gsize[1];
                 }
                 else
                 {
@@ -776,9 +776,9 @@ namespace tysoc {
 
             if ( _gsize.ndim == 3 )
             {
-                _hwidth  = _gsize.buff[0];
-                _hdepth  = _gsize.buff[1];
-                _hheight = _gsize.buff[2];
+                _hwidth  = _gsize[0];
+                _hdepth  = _gsize[1];
+                _hheight = _gsize[2];
             }
             else
             {

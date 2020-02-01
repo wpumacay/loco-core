@@ -21,8 +21,6 @@ namespace tysoc {
 
         /* grab local-transform w.r.t. owner body */
         m_localTf = jointData.localTransform;
-        m_localPos = m_localTf.getPosition();
-        m_localRot = m_localTf.getRotation();
 
         /* Configure joint nqs (number of generalized coordinates and degrees of freedom). 
            According to the backend, this functionality might be implemented with maximal
@@ -96,33 +94,21 @@ namespace tysoc {
 
     void TJoint::setOwnerBody( TIBody* ownerRef )
     {
-        /* keep a reference to the owner for later usage */
         m_ownerRef = ownerRef;
     }
 
     void TJoint::setOwnerParent( TIBody* ownerParentRef )
     {
-        /* keep a reference to the owner's parent body for later usage */
         m_ownerParentRef = ownerParentRef;
     }
 
     void TJoint::setAdapter( TIJointAdapter* jointImplRef )
     {
-        /* notify the backend that the current adapter is ready for deletion */
-        if ( m_jointImplRef )
-            m_jointImplRef->detach();
-
-        /* keep a reference to the joint-adapter, to access the low-level API for each backend */
         m_jointImplRef = jointImplRef;
     }
 
     void TJoint::setDrawable( TIDrawable* drawableImplRef )
     {
-        /* notify the backend that the current adapter is ready for deletion */
-        if ( m_drawableImplRef )
-            m_drawableImplRef->detach();
-
-        /* keep a reference to the drawable (from specific rendering backend) */
         m_drawableImplRef = drawableImplRef;
     }
 
@@ -138,13 +124,9 @@ namespace tysoc {
 
         /* update local-transform for this joint */
         m_localTf = localTransform;
-        m_localPos = m_localTf.getPosition();
-        m_localRot = m_localTf.getRotation();
 
         /* update world-transform for this joint */
         m_tf = m_ownerRef->tf() * m_localTf;
-        m_pos = m_tf.getPosition();
-        m_rot = m_tf.getRotation();
 
         if ( m_jointImplRef )
             m_jointImplRef->setLocalTransform( m_localTf );
@@ -249,8 +231,6 @@ namespace tysoc {
         }
 
         m_tf = m_ownerRef->tf() * m_localTf;
-        m_pos = m_tf.getPosition();
-        m_rot = m_tf.getRotation();
 
         if ( m_drawableImplRef )
             m_drawableImplRef->setWorldTransform( m_tf );
@@ -269,8 +249,6 @@ namespace tysoc {
 
         // @todo: check resets when qpos0 changes, which changes zero|rest configuration
         m_tf = m_ownerRef->tf() * m_localTf;
-        m_pos = m_tf.getPosition();
-        m_rot = m_tf.getRotation();
 
         if ( m_drawableImplRef )
             m_drawableImplRef->setWorldTransform( m_tf );

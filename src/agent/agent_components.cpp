@@ -27,10 +27,10 @@ namespace tysoc {
         name                        = "undefined";
         data.type                   = eShapeType::SPHERE;
         data.size                   = { 0.1f, 0.0f, 0.0f };
-        data.ambient                = DEFAULT_AMBIENT_COLOR;
-        data.diffuse                = DEFAULT_DIFFUSE_COLOR;
-        data.specular               = DEFAULT_SPECULAR_COLOR;
-        data.shininess              = DEFAULT_SHININESS;
+        data.ambient                = tysoc::DEFAULT_AMBIENT_COLOR;
+        data.diffuse                = tysoc::DEFAULT_DIFFUSE_COLOR;
+        data.specular               = tysoc::DEFAULT_SPECULAR_COLOR;
+        data.shininess              = tysoc::DEFAULT_SHININESS;
         data.texture                = "";
         data.usesMaterialFromMesh   = true;
         parentBodyPtr               = nullptr;
@@ -187,7 +187,7 @@ namespace tysoc {
         _strRep += std::string( "\tBody.iyy                 : " ) + std::to_string( kinTreeBodyPtr->inertialData.iyy ) + "\n\r";
         _strRep += std::string( "\tBody.iyz                 : " ) + std::to_string( kinTreeBodyPtr->inertialData.iyz ) + "\n\r";
         _strRep += std::string( "\tBody.izz                 : " ) + std::to_string( kinTreeBodyPtr->inertialData.izz ) + "\n\r";
-        _strRep += std::string( "\tBody.inertiaFrame        : " ) + TMat4::toString( kinTreeBodyPtr->inertialData.localTransform ) + "\n\r";
+        _strRep += std::string( "\tBody.inertiaFrame        : " ) + tysoc::toString( kinTreeBodyPtr->inertialData.localTransform ) + "\n\r";
 
         if ( kinTreeBodyPtr->parentBodyPtr )
             _strRep += std::string( "\tBody.parentBody          : " ) + kinTreeBodyPtr->parentBodyPtr->name + "\n\r";
@@ -209,8 +209,8 @@ namespace tysoc {
             _strRep += ( _joint ) ? ( _joint->name + " | " ) : ( "nullptr | " );
         _strRep += std::string( "\n\r" );
 
-        _strRep += std::string( "\tBody.localTransformZero  : " ) + TMat4::toString( kinTreeBodyPtr->localTransformZero ) + "\n\r";
-        _strRep += std::string( "\tBody.worldTransform      : " ) + TMat4::toString( kinTreeBodyPtr->worldTransform ) + "\n\r";
+        _strRep += std::string( "\tBody.localTransformZero  : " ) + tysoc::toString( kinTreeBodyPtr->localTransformZero ) + "\n\r";
+        _strRep += std::string( "\tBody.worldTransform      : " ) + tysoc::toString( kinTreeBodyPtr->worldTransform ) + "\n\r";
 
         return _strRep;
     }
@@ -224,15 +224,15 @@ namespace tysoc {
 
         _strRep += std::string( "\tJoint.name                   : " ) + kinTreeJointPtr->name + "\n\r";
         _strRep += std::string( "\tJoint.type                   : " ) + tysoc::toString( kinTreeJointPtr->data.type ) + "\n\r";
-        _strRep += std::string( "\tjoint.axis                   : " ) + TVec3::toString( kinTreeJointPtr->data.axis ) + "\n\r";
-        _strRep += std::string( "\tJoint.limits                 : " ) + TVec2::toString( kinTreeJointPtr->data.limits ) + "\n\r";
+        _strRep += std::string( "\tjoint.axis                   : " ) + tysoc::toString( kinTreeJointPtr->data.axis ) + "\n\r";
+        _strRep += std::string( "\tJoint.limits                 : " ) + tysoc::toString( kinTreeJointPtr->data.limits ) + "\n\r";
         _strRep += std::string( "\tJoint.stiffness              : " ) + std::to_string( kinTreeJointPtr->data.stiffness ) + "\n\r";
         _strRep += std::string( "\tJoint.armature               : " ) + std::to_string( kinTreeJointPtr->data.armature ) + "\n\r";
         _strRep += std::string( "\tJoint.damping                : " ) + std::to_string( kinTreeJointPtr->data.damping ) + "\n\r";
         _strRep += std::string( "\tJoint.ref                    : " ) + std::to_string( kinTreeJointPtr->data.ref ) + "\n\r";
         _strRep += std::string( "\tJoint.nqpos                  : " ) + std::to_string( kinTreeJointPtr->data.nqpos ) + "\n\r";
         _strRep += std::string( "\tJoint.nqvel                  : " ) + std::to_string( kinTreeJointPtr->data.nqvel ) + "\n\r";
-        _strRep += std::string( "\tJoint.localTransform         : \n\r" ) + TMat4::toString( kinTreeJointPtr->data.localTransform ) +  "\n\r";
+        _strRep += std::string( "\tJoint.localTransform         : \n\r" ) + tysoc::toString( kinTreeJointPtr->data.localTransform ) +  "\n\r";
 
         _strRep += std::string( "\tJoint.qpos                   : |");
         for ( auto _qpos_i : kinTreeJointPtr->qpos )
@@ -259,7 +259,7 @@ namespace tysoc {
         else
             _strRep += std::string( "\tJoint.ParentBody             : nullptr\n\r" );
 
-        _strRep += std::string( "\tJoint.worldTransform         : " ) + TMat4::toString( kinTreeJointPtr->worldTransform ) + "\n\r";
+        _strRep += std::string( "\tJoint.worldTransform         : " ) + tysoc::toString( kinTreeJointPtr->worldTransform ) + "\n\r";
 
         return _strRep;
     }
@@ -273,12 +273,12 @@ namespace tysoc {
 
         _strRep += std::string( "\tCollision.name               : " ) + kinTreeCollisionPtr->name + "\n\r";
         _strRep += std::string( "\tCollision.shape              : " ) + tysoc::toString( kinTreeCollisionPtr->data.type ) + "\n\r";
-        _strRep += std::string( "\tCollision.size               : " ) + TVec3::toString( kinTreeCollisionPtr->data.size ) + "\n\r";
+        _strRep += std::string( "\tCollision.size               : " ) + tysoc::toString( kinTreeCollisionPtr->data.size ) + "\n\r";
         _strRep += std::string( "\tCollision.filename           : " ) + kinTreeCollisionPtr->data.filename + "\n\r";
-        _strRep += std::string( "\tCollision.localTransform     : " ) + TMat4::toString( kinTreeCollisionPtr->data.localTransform ) + "\n\r";
+        _strRep += std::string( "\tCollision.localTransform     : " ) + tysoc::toString( kinTreeCollisionPtr->data.localTransform ) + "\n\r";
         _strRep += std::string( "\tCollision.collisionGroup     : " ) + std::to_string( kinTreeCollisionPtr->data.collisionGroup ) + "\n\r";
         _strRep += std::string( "\tCollision.collisionMask      : " ) + std::to_string( kinTreeCollisionPtr->data.collisionMask ) + "\n\r";
-        _strRep += std::string( "\tCollision.friction           : " ) + TVec3::toString( kinTreeCollisionPtr->data.friction ) + "\n\r";
+        _strRep += std::string( "\tCollision.friction           : " ) + tysoc::toString( kinTreeCollisionPtr->data.friction ) + "\n\r";
         _strRep += std::string( "\tCollision.density            : " ) + std::to_string( kinTreeCollisionPtr->data.density ) + "\n\r";
 
         if ( kinTreeCollisionPtr->parentBodyPtr )
@@ -286,7 +286,7 @@ namespace tysoc {
         else
             _strRep += std::string( "\tCollision.parentBody         : nullptr\n\r" );
 
-        _strRep += std::string( "\tCollision.worldTransform     : " ) + TMat4::toString( kinTreeCollisionPtr->worldTransform ) + "\n\r";
+        _strRep += std::string( "\tCollision.worldTransform     : " ) + tysoc::toString( kinTreeCollisionPtr->worldTransform ) + "\n\r";
 
         return _strRep;
     }
@@ -300,12 +300,12 @@ namespace tysoc {
 
         _strRep += std::string( "\tVisual.name              : " ) + kinTreeVisualPtr->name + "\n\r";
         _strRep += std::string( "\tVisual.shape             : " ) + tysoc::toString( kinTreeVisualPtr->data.type ) + "\n\r";
-        _strRep += std::string( "\tVisual.size              : " ) + TVec3::toString( kinTreeVisualPtr->data.size ) + "\n\r";
+        _strRep += std::string( "\tVisual.size              : " ) + tysoc::toString( kinTreeVisualPtr->data.size ) + "\n\r";
         _strRep += std::string( "\tVisual.filename          : " ) + kinTreeVisualPtr->data.filename + "\n\r";
-        _strRep += std::string( "\tVisual.localTransform    : " ) + TMat4::toString( kinTreeVisualPtr->data.localTransform ) + "\n\r";
-        _strRep += std::string( "\tVisual.ambient           : " ) + TVec3::toString( kinTreeVisualPtr->data.ambient ) + "\n\r";
-        _strRep += std::string( "\tVisual.diffuse           : " ) + TVec3::toString( kinTreeVisualPtr->data.diffuse ) + "\n\r";
-        _strRep += std::string( "\tVisual.specular          : " ) + TVec3::toString( kinTreeVisualPtr->data.specular ) + "\n\r";
+        _strRep += std::string( "\tVisual.localTransform    : " ) + tysoc::toString( kinTreeVisualPtr->data.localTransform ) + "\n\r";
+        _strRep += std::string( "\tVisual.ambient           : " ) + tysoc::toString( kinTreeVisualPtr->data.ambient ) + "\n\r";
+        _strRep += std::string( "\tVisual.diffuse           : " ) + tysoc::toString( kinTreeVisualPtr->data.diffuse ) + "\n\r";
+        _strRep += std::string( "\tVisual.specular          : " ) + tysoc::toString( kinTreeVisualPtr->data.specular ) + "\n\r";
         _strRep += std::string( "\tVisual.shininess         : " ) + std::to_string( kinTreeVisualPtr->data.shininess ) + "\n\r";
         _strRep += std::string( "\tVisual.texture           : " ) + kinTreeVisualPtr->data.texture + "\n\r";
 
@@ -314,7 +314,7 @@ namespace tysoc {
         else
             _strRep += std::string( "\tVisual.parentBody        : nullptr\n\r" );
 
-        _strRep += std::string( "\tVisual.worldTransform    : " ) + TMat4::toString( kinTreeVisualPtr->worldTransform ) + "\n\r";
+        _strRep += std::string( "\tVisual.worldTransform    : " ) + tysoc::toString( kinTreeVisualPtr->worldTransform ) + "\n\r";
 
         return _strRep;
     }
@@ -328,7 +328,7 @@ namespace tysoc {
 
         _strRep += std::string( "\tSensor.name                  : " ) + kinTreeSensorPtr->name + "\n\r";
         _strRep += std::string( "\tSensor.type                  : " ) + tysoc::toString( kinTreeSensorPtr->data.type ) + "\n\r";
-        _strRep += std::string( "\tSensor.localTransform        : " ) + TMat4::toString( kinTreeSensorPtr->data.localTransform ) + "\n\r";
+        _strRep += std::string( "\tSensor.localTransform        : " ) + tysoc::toString( kinTreeSensorPtr->data.localTransform ) + "\n\r";
 
         _strRep += std::string( "\tSensor.bodyName              : " ) + kinTreeSensorPtr->bodyName + "\n\r";
         if ( kinTreeSensorPtr->bodyPtr )
@@ -349,16 +349,16 @@ namespace tysoc {
         }
         else if ( kinTreeSensorPtr->data.type == eSensorType::PROP_BODY )
         {
-            _strRep += std::string( "\tSensor.linVelocity           : " ) + TVec3::toString( dynamic_cast< TKinTreeBodySensor* >( kinTreeSensorPtr )->linVelocity ) + "\n\r";
-            _strRep += std::string( "\tSensor.linAcceleration       : " ) + TVec3::toString( dynamic_cast< TKinTreeBodySensor* >( kinTreeSensorPtr )->linAcceleration ) + "\n\r";
-            _strRep += std::string( "\tSensor.comForce              : " ) + TVec3::toString( dynamic_cast< TKinTreeBodySensor* >( kinTreeSensorPtr )->comForce ) + "\n\r";
-            _strRep += std::string( "\tSensor.comTorque             : " ) + TVec3::toString( dynamic_cast< TKinTreeBodySensor* >( kinTreeSensorPtr )->comTorque ) + "\n\r";
+            _strRep += std::string( "\tSensor.linVelocity           : " ) + tysoc::toString( dynamic_cast< TKinTreeBodySensor* >( kinTreeSensorPtr )->linVelocity ) + "\n\r";
+            _strRep += std::string( "\tSensor.linAcceleration       : " ) + tysoc::toString( dynamic_cast< TKinTreeBodySensor* >( kinTreeSensorPtr )->linAcceleration ) + "\n\r";
+            _strRep += std::string( "\tSensor.comForce              : " ) + tysoc::toString( dynamic_cast< TKinTreeBodySensor* >( kinTreeSensorPtr )->comForce ) + "\n\r";
+            _strRep += std::string( "\tSensor.comTorque             : " ) + tysoc::toString( dynamic_cast< TKinTreeBodySensor* >( kinTreeSensorPtr )->comTorque ) + "\n\r";
         }
 
         // @todo: add extra logging for other sensor-types as well
         // ...
 
-        _strRep += std::string( "\tSensor.worldTransform        : " ) + TMat4::toString( kinTreeSensorPtr->worldTransform ) + "\n\r";
+        _strRep += std::string( "\tSensor.worldTransform        : " ) + tysoc::toString( kinTreeSensorPtr->worldTransform ) + "\n\r";
 
         return _strRep;
     }
@@ -372,11 +372,11 @@ namespace tysoc {
 
         _strRep += std::string( "\tActuator.name            : " ) + kinTreeActuatorPtr->name +  "\n\r";
         _strRep += std::string( "\tActuator.type            : " ) + tysoc::toString( kinTreeActuatorPtr->data.type ) + "\n\r";
-        _strRep += std::string( "\tActuator.limits          : " ) + TVec2::toString( kinTreeActuatorPtr->data.limits ) + "\n\r";
+        _strRep += std::string( "\tActuator.limits          : " ) + tysoc::toString( kinTreeActuatorPtr->data.limits ) + "\n\r";
         _strRep += std::string( "\tActuator.gear            : [" ) + tysoc::toString( kinTreeActuatorPtr->data.gear ) + "]\n\r";
         _strRep += std::string( "\tActuator.kp              : " ) + std::to_string( kinTreeActuatorPtr->data.kp ) + "\n\r";
         _strRep += std::string( "\tActuator.kv              : " ) + std::to_string( kinTreeActuatorPtr->data.kv ) + "\n\r";
-        _strRep += std::string( "\tActuator.localTransform  : " ) + TMat4::toString( kinTreeActuatorPtr->data.localTransform ) + "\n\r";
+        _strRep += std::string( "\tActuator.localTransform  : " ) + tysoc::toString( kinTreeActuatorPtr->data.localTransform ) + "\n\r";
         _strRep += std::string( "\tActuator.ctrlValue       : " ) + std::to_string( kinTreeActuatorPtr->ctrlValue ) + "\n\r";
 
         if ( kinTreeActuatorPtr->jointPtr )
@@ -384,7 +384,7 @@ namespace tysoc {
         else
             _strRep += std::string( "\tActuator.jointPtr        : nullptr\n\r" );
 
-        _strRep += std::string( "\tActuator.worldTransform  : " ) + TMat4::toString( kinTreeActuatorPtr->worldTransform ) + "\n\r";
+        _strRep += std::string( "\tActuator.worldTransform  : " ) + tysoc::toString( kinTreeActuatorPtr->worldTransform ) + "\n\r";
 
         return _strRep;
     }

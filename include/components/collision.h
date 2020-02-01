@@ -43,6 +43,8 @@ namespace tysoc {
 
         void setLocalRotation( const TMat3& localRotation );
 
+        void setLocalEuler( const TVec3& localEuler );
+
         void setLocalQuat( const TVec4& localQuaternion );
 
         void setLocalTransform( const TMat4& transform );
@@ -51,73 +53,63 @@ namespace tysoc {
 
         void changeElevationData( const std::vector< float >& heightData );
 
-        std::string name() { return m_name; }
+        std::string name() const { return m_name; }
 
-        bool isVisible();
+        bool isVisible() const;
 
-        bool isWireframe();
+        bool isWireframe() const;
 
-        TVec3 pos() { return m_pos; }
+        TVec3 pos() const { return TVec3( m_tf.col( 3 ) ); }
 
-        TMat3 rot() { return m_rot; }
+        TMat3 rot() const { return TMat3( m_tf ); }
 
-        TVec3 euler() { return m_tf.getRotEuler(); }
+        TVec3 euler() const { return tinymath::euler( m_tf ); }
 
-        TVec4 quat() { return m_tf.getRotQuaternion(); }
+        TVec4 quat() const { return tinymath::quaternion( m_tf ); }
 
-        TMat4 tf() { return m_tf; }
+        TMat4 tf() const { return m_tf; }
 
-        TVec3 localPos() { return m_localPos; }
+        TVec3 localPos() const { return TVec3( m_localTf.col( 3 ) ); }
 
-        TMat3 localRot() { return m_localRot; }
+        TMat3 localRot() const { return TMat3( m_localTf ); }
 
-        TVec3 localEuler() { return m_localTf.getRotEuler(); }
+        TVec3 localEuler() const { return tinymath::euler( m_localTf ); }
 
-        TVec4 localQuat() { return m_localTf.getRotQuaternion(); }
+        TVec4 localQuat() const { return tinymath::quaternion( m_localTf ); }
 
-        TMat4 localTf() { return m_localTf; }
+        TMat4 localTf() const { return m_localTf; }
 
-        eShapeType shape() { return m_data.type; }
+        eShapeType shape() const { return m_data.type; }
 
-        TVec3 size() { return m_data.size; }
+        TVec3 size() const { return m_data.size; }
 
-        TCollisionData data() { return m_data; }
+        TCollisionData data() const { return m_data; }
 
         TCollisionData& dataRef() { return m_data; }
 
+        const TCollisionData& dataRef() const { return m_data; }
+
         TIBody* parent() { return m_parentBodyRef; }
+
+        const TIBody* parent() const { return m_parentBodyRef; }
 
         TICollisionAdapter* adapter() { return m_collisionImplRef; }
 
     protected :
 
-        /* unique name identifier */
+        /// Unique name identifier
         std::string m_name;
-
-        /* relative position w.r.t. parent body */
-        TVec3 m_localPos;
-        /* relative rotation w.r.t. parent body */
-        TMat3 m_localRot;
-        /* relative transform w.r.t. parent body */
-        TMat4 m_localTf;
-
-        /* position in world-space */
-        TVec3 m_pos;
-        /* rotation in world-space */
-        TMat3 m_rot;
-        /* transform in world-space */
+        /// Transform in world-space
         TMat4 m_tf;
-
-        /* reference to the parent-body of this collision object */
+        /// Relative transform w.r.t. parent body
+        TMat4 m_localTf;
+        /// Reference to the parent-body of this collision object
         TIBody* m_parentBodyRef;
-
-        /* construction data of this collision object */
+        /// Construction data of this collision object
         TCollisionData m_data;
-
-        /* reference to the drawable resource used for visualization */
+        /// Reference to the drawable resource used for visualization
         TIDrawable* m_drawableImplRef;
-
-        /* Adapter object that gives access to the low-level API for a specific backend */
+        /// Adapter object that gives access to the low-level API for a specific backend
         TICollisionAdapter* m_collisionImplRef;
     };
 

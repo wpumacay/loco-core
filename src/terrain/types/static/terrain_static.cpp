@@ -43,7 +43,7 @@ namespace tysoc {
         _terrainPrimitivePtr->useCustomColor = true;
         _terrainPrimitivePtr->color = rgb;
         // and a approx bound of the primitive (radius of a bounding sphere)
-        _terrainPrimitivePtr->rbound = TVec3::length( size );
+        _terrainPrimitivePtr->rbound = size.length();
 
         m_primitives.push_back( _terrainPrimitivePtr );
         m_fixed.push( _terrainPrimitivePtr );

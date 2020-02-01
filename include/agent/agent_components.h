@@ -4,13 +4,8 @@
 #include <tysoc_common.h>
 #include <components/data.h>
 
-namespace tysoc {
-
-    const TVec3 DEFAULT_AMBIENT_COLOR = { 0.7f, 0.5f, 0.3f };
-    const TVec3 DEFAULT_DIFFUSE_COLOR = { 0.7f, 0.5f, 0.3f };
-    const TVec3 DEFAULT_SPECULAR_COLOR = { 0.7f, 0.5f, 0.3f };
-    const float DEFAULT_SHININESS = 32.0f;
-
+namespace tysoc 
+{
     /* Keep track of how many misconfigured elements we have */
     extern size_t NUM_UNNAMED_COLLISIONS;   // Counter for unnamed collision
     extern size_t NUM_UNNAMED_VISUALS;      // Counter for unnamed visuals
