@@ -67,6 +67,8 @@ namespace loco
 
     std::vector< std::string > split( const std::string &txt, char separator = '/' );
 
+    std::string pointerToHexAddress( const void* ptr );
+
     std::string getFilenameFromFilePath( const std::string& filepath );
     std::string getFoldernameFromFilePath( const std::string& filepath );
     std::string getFolderpathFromFilePath( const std::string& filepath );

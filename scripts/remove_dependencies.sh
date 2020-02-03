@@ -10,11 +10,13 @@ do
     REPO=${GIT_DEPS_REPO[$i]}
     BRANCH=${GIT_DEPS_BRANCH[$i]}
     URL=https://github.com/${USER}/${REPO}
-    if [ ! -d "ext/${GIT_DEPS_REPO[$i]}" ]
+    if [ -d "ext/${GIT_DEPS_REPO[$i]}" ]
     then
-        echo "===> Cloning ${USER}/${REPO} @ github - ${BRANCH} branch"
-        git clone --branch=${BRANCH} ${URL} ext/${REPO}
+        echo "===> Deleting ${USER}/${REPO} ..."
+        rm -rf ext/${REPO}
     else
-        echo "===> Repository ${USER}/${REPO} @ github already checked out"
+        echo "===> Dependency ${USER}/${REPO} already deleted"
     fi
 done
+
+echo "Done!"

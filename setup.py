@@ -1,14 +1,13 @@
+#!/usr/bin/env python
 
 import os
 import sys
 import subprocess
 
-from setuptools import find_packages
-from setuptools import setup 
-from setuptools import Extension
+from setuptools import find_packages, setup, Extension
+from setuptools.command.build_ext import build_ext
 
-from setuptools.command.build_ext import build_ext as BaseBuildExtCommand
-
+DEBUG = True
 
 def buildBindings( sourceDir, buildDir, cmakeArgs, buildArgs, env ):
     if not os.path.exists( buildDir ) :
@@ -23,7 +22,7 @@ class CMakeExtension( Extension ) :
         super( CMakeExtension, self ).__init__( name, sources=[] )
         self.sourceDir = os.path.abspath( sourceDir )
 
-class BuildCommand( BaseBuildExtCommand ) :
+class BuildCommand( build_ext ) :
 
     def run( self ) :
         try:
@@ -36,15 +35,22 @@ class BuildCommand( BaseBuildExtCommand ) :
             self.build_extension( _extension )
 
     def build_extension( self, extension ) :
+        global DEBUG
         _extensionFullPath = self.get_ext_fullpath( extension.name )
         _extensionDirName = os.path.dirname( _extensionFullPath )
         _extensionDirPath = os.path.abspath( _extensionDirName )
 
+        self.debug = True if DEBUG else False
         _cfg = 'Debug' if self.debug else 'Release'
         _buildArgs = ['--config', _cfg, '--', '-j4']
         _cmakeArgs = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + _extensionDirPath,
                       '-DPYTHON_EXECUTABLE=' + sys.executable,
-                      '-DCMAKE_BUILD_TYPE=' + _cfg]
+                      '-DCMAKE_BUILD_TYPE=' + _cfg,
+                      '-DLOCO_CORE_BUILD_DOCS=OFF',
+                      '-DLOCO_CORE_BUILD_EXAMPLES=OFF',
+                      '-DLOCO_CORE_BUILD_PYTHON_BINDINGS=ON',
+                      '-DLOCO_CORE_BUILD_WITH_LOGS=OFF',
+                      '-DLOCO_CORE_BUILD_WITH_TRACK_ALLOCS=OFF']
 
         _env = os.environ.copy()
         _env['CXXFLAGS'] = '{} -DVERSION_INFO=\\"{}\\"'.format( _env.get( 'CXXFLAGS', '' ),
@@ -55,8 +61,14 @@ class BuildCommand( BaseBuildExtCommand ) :
 
         buildBindings( _sourceDir, _buildDir, _cmakeArgs, _buildArgs, _env )
 
+with open( 'README.md', 'r' ) as fh :
+    longDescriptionData = fh.read()
+
+with open( 'requirements.txt', 'r' ) as fh :
+    requiredPackages = [ line.replace( '\n', '' ) for line in fh.readlines() ]
+
 setup(
-    name                    = 'pytysoc',
+    name                    = 'wp-loco',
     description             = 'Core functionality for a backend-agnostic locomotion framework',
     author                  = 'Wilbert Santos Pumacay Huallpa',
     license                 = 'MIT License',
@@ -65,10 +77,7 @@ setup(
     keywords                = 'locomotion control simulation',
     packages                = find_packages(),
     zip_safe                = False,
-    install_requires        = [
-                                'numpy',
-                                'setuptools'
-                              ],
+    install_requires        = requiredPackages,
     package_data            = {
                                 'pytysoc': [ '../res/templates/mjcf/*.xml',
                                              '../res/templates/urdf/*.urdf',
@@ -89,7 +98,7 @@ setup(
                                              '../res/xml/sawyer_meshes/*.obj' ]
                               },
     ext_modules             = [
-                                CMakeExtension( 'tysoc_bindings', '.' )
+                                CMakeExtension( 'loco_bindings', '.' )
                               ],
     cmdclass                = {
                                 'build_ext': BuildCommand

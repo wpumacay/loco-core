@@ -77,7 +77,7 @@ namespace loco
     {
         int                     nWidthSamples;  // number of samples of the grid in the x-dimension (extent is given by size.x)
         int                     nDepthSamples;  // number of samples of the grid on the y-dimension (extent is given by size.y)
-        std::vector< float >    heightData;     // height values in [0-1], scaled to actual height by size.z component
+        std::vector< float >    heightData;     // height values (row-major format) in [0-1], scaled to actual height by size.z component
     };
 
     struct TShapeData

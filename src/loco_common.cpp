@@ -35,6 +35,14 @@ namespace loco
         return _res;
     }
 
+    std::string pointerToHexAddress( const void* ptr )
+    {
+        auto ptr_casted = reinterpret_cast<std::intptr_t>( ptr );
+        std::stringstream _ss;
+        _ss << "0x" << std::hex << ptr_casted;
+        return _ss.str();
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////////////
     ////                                                                                        ////
     ////                                  Path helpers impl.                                    ////

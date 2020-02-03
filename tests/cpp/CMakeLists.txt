@@ -1,7 +1,8 @@
+message( "LOCO::CORE::tests::cpp >>> Configuring C/C++ tests" )
 
-message( "Configuring tysocCore::unittest" )
+include_directories( "${LOCO_CORE_INCLUDE_DIRS}" )
 
-function( FcnBuildUnitTest pSourcesList pExecutableName )
+function( FcnBuildTest pSourcesList pExecutableName )
 
     add_executable( ${pExecutableName}
                     ${pSourcesList} )
@@ -11,15 +12,13 @@ function( FcnBuildUnitTest pSourcesList pExecutableName )
 
 endfunction()
 
-FILE( GLOB UnitTestSources *.cpp )
+FILE( GLOB TestSources *.cpp )
 
-foreach( testFile ${UnitTestSources} )
+foreach( testFile ${TestSources} )
     
     string( REPLACE ".cpp" "" executableLongName ${testFile} )
     get_filename_component( execName ${executableLongName} NAME )
 
-    FcnBuildUnitTest( ${testFile} ${execName} )
+    FcnBuildTest( ${testFile} ${execName} )
 
-endforeach( testFile )
-
-message( "tysocCore::unittest::UnitTestSources: ${UnitTestSources}" )
+endforeach( testFile)

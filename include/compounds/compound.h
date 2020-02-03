@@ -3,7 +3,7 @@
 #include <compounds/compound_body.h>
 #include <adapters/compound_adapter.h>
 
-namespace tysoc 
+namespace loco
 {
     class TCompoundBody;
     class TICompoundAdapter;
@@ -242,23 +242,23 @@ namespace tysoc
         */
         std::vector< TCompoundBody* > bodies();
 
-        TVec3 pos() const { return m_tf.getPosition(); }
+        TVec3 pos() const { return TVec3( m_tf.col( 3 ) ); }
 
-        TMat3 rot() const { return m_tf.getRotation(); }
+        TMat3 rot() const { return TMat3( m_tf ); }
 
-        TVec4 quat() const { return m_tf.getRotQuaternion(); }
+        TVec4 quat() const { return tinymath::quaternion( m_tf ); }
 
-        TVec3 euler() const { return m_tf.getRotEuler(); }
+        TVec3 euler() const { return tinymath::euler( m_tf ); }
 
         TMat4 tf() const { return m_tf; }
 
-        TVec3 pos0() const { return m_tf0.getPosition(); }
+        TVec3 pos0() const { return TVec3( m_tf0.col( 3 ) ); }
 
-        TMat3 rot0() const { return m_tf0.getRotation(); }
+        TMat3 rot0() const { return TMat3( m_tf0 ); }
 
-        TVec4 quat0() const { return m_tf0.getRotQuaternion(); }
+        TVec4 quat0() const { return tinymath::quaternion( m_tf0); }
 
-        TVec3 euler0() const { return m_tf0.getRotEuler(); }
+        TVec3 euler0() const { return tinymath::euler( m_tf0 ); }
 
         TMat4 tf0() const { return m_tf0; }
 
@@ -266,7 +266,9 @@ namespace tysoc
 
         eDynamicsType dyntype() const { return m_dyntype; }
 
-        TCompoundBody* root() const { return m_rootBodyRef; }
+        TCompoundBody* root() { return m_rootBodyRef; }
+
+        const TCompoundBody* root() const { return m_rootBodyRef; }
 
     private :
 
