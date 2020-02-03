@@ -11,7 +11,7 @@ namespace tysoc {
 
     TScenario::~TScenario()
     {
-        TYSOC_CORE_INFO( "Destroying scenario" );
+        LOCO_CORE_INFO( "Destroying scenario" );
 
         for ( auto _singleBody : m_singleBodies )
             delete _singleBody;
@@ -151,7 +151,7 @@ namespace tysoc {
         if ( m_mapSingleBodiesByName.find( name ) != m_mapSingleBodiesByName.end() )
             return m_mapSingleBodiesByName[name];
 
-        TYSOC_CORE_WARN( "Scenario >>> single-body with name \"{0}\" does not exist. \
+        LOCO_CORE_WARN( "Scenario >>> single-body with name \"{0}\" does not exist. \
                           Returning nullptr instead.", name );
 
         return nullptr;
@@ -162,7 +162,7 @@ namespace tysoc {
         if ( m_mapCompoundsByName.find( name ) != m_mapCompoundsByName.end() )
             return m_mapCompoundsByName[name];
 
-        TYSOC_CORE_WARN( "Scenario >>> compound with name \"{0}\" not found in scenario. \
+        LOCO_CORE_WARN( "Scenario >>> compound with name \"{0}\" not found in scenario. \
                           Returning nullptr instead.", name )
 
         return nullptr;
@@ -173,7 +173,7 @@ namespace tysoc {
         if ( m_mapAgentsByName.find( name ) != m_mapAgentsByName.end() )
             return m_mapAgentsByName[name];
 
-        TYSOC_CORE_WARN( "Scenario >>> agent with name \"{0}\" does not exist. \
+        LOCO_CORE_WARN( "Scenario >>> agent with name \"{0}\" does not exist. \
                           Returning nullptr instead.", name );
 
         return nullptr;
@@ -184,7 +184,7 @@ namespace tysoc {
         if ( m_mapSensorsByName.find( name ) != m_mapSensorsByName.end() )
             return m_mapSensorsByName[name];
 
-        TYSOC_CORE_WARN( "Scenario >>> sensor with name \"{0}\" does not exist. \
+        LOCO_CORE_WARN( "Scenario >>> sensor with name \"{0}\" does not exist. \
                           Returning nullptr instead", name );
 
         return nullptr;
@@ -195,7 +195,7 @@ namespace tysoc {
         if ( m_mapTerrainGeneratorsByName.find( name ) != m_mapTerrainGeneratorsByName.end() )
             return m_mapTerrainGeneratorsByName[name];
 
-        TYSOC_CORE_WARN( "Scenario >>> terrain generator with name \"{0}\" does not exist. \
+        LOCO_CORE_WARN( "Scenario >>> terrain generator with name \"{0}\" does not exist. \
                           Returning nullptr instead", name );
 
         return nullptr;

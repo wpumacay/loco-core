@@ -1,14 +1,14 @@
 #pragma once
 
-#include <tysoc_common.h>
+#include <loco_common.h>
 
 #include <components/data.h>
 #include <components/body.h>
 
 #include <viz/drawable.h>
 
-namespace tysoc {
-
+namespace loco
+{
     class TIBody;
 
     class TVisual
@@ -106,5 +106,4 @@ namespace tysoc {
         /// Reference to the drawable resource used for visualization
         TIDrawable* m_drawableImplRef;
     };
-
 }

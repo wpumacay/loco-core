@@ -21,7 +21,7 @@ namespace pytysoc
         if ( m_simulationPtr )
             return m_simulationPtr->initialize();
 
-        TYSOC_CORE_ERROR( "PySimulation::initialize() >>> wrapped simulation-obj is null" );
+        LOCO_CORE_ERROR( "PySimulation::initialize() >>> wrapped simulation-obj is null" );
         return false;
     }
 
@@ -29,7 +29,7 @@ namespace pytysoc
     {
         if ( !m_simulationPtr )
         {
-            TYSOC_CORE_ERROR( "PySimulation::step() >>> wrapped simulation-obj is null" );
+            LOCO_CORE_ERROR( "PySimulation::step() >>> wrapped simulation-obj is null" );
             return;
         }
 
@@ -40,7 +40,7 @@ namespace pytysoc
     {
         if ( !m_simulationPtr )
         {
-            TYSOC_CORE_ERROR( "PySimulation::initialize() >>> wrapped simulation-obj is null" );
+            LOCO_CORE_ERROR( "PySimulation::initialize() >>> wrapped simulation-obj is null" );
             return;
         }
 
@@ -72,7 +72,7 @@ namespace pytysoc
         if ( m_simulationPtr )
             return m_simulationPtr->type();
 
-        TYSOC_CORE_ERROR( "PySimulation::type() >>> wrapped simulation-obj is null" );
+        LOCO_CORE_ERROR( "PySimulation::type() >>> wrapped simulation-obj is null" );
         return "undefined";
     }
 

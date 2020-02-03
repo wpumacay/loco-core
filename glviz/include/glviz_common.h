@@ -3,7 +3,7 @@
 
 #include <CCommon.h>
 #include <CMath.h>
-#include <tysoc_common.h>
+#include <locosim_common.h>
 #include <components/data.h>
 
 #include <CEngine.h>

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <tysoc_common.h>
+#include <loco_common.h>
 #include <components/data.h>
 
 namespace tysoc 
@@ -124,7 +124,7 @@ namespace tysoc
         std::vector< TKinTreeVisual* >      visuals;            // Visuals attached to the body
         std::vector< TKinTreeJoint* >       joints;             // Joints attached to the body (dof)
         std::vector< TKinTreeBody* >        children;           // Child bodies
-        TMat4                               localTransformZero;     // Relative transform (at zero-configuration) of this body w.r.t. parent body
+        TMat4                               localTransformZero; // Relative transform (at zero-configuration) of this body w.r.t. parent body
         TMat4                               worldTransform;     // Reference frame in world-space
 
         TKinTreeBody();
@@ -139,15 +139,15 @@ namespace tysoc
     */
     struct TKinTreeJoint
     {
-        std::string                                 name;           // Unique name of this joint
-        TJointData                                  data;           // Information|properties of this joint
-        std::array< TScalar, TYSOC_MAX_NUM_QPOS >   qpos;           // Values of the generalized coordinates
-        std::array< TScalar, TYSOC_MAX_NUM_QVEL >   qvel;           // Generalized speeds or the "degrees of freedom"
-        std::array< TScalar, TYSOC_MAX_NUM_QPOS >   qpos0;          // Initial value for the generalized coordinates
-        std::array< TScalar, TYSOC_MAX_NUM_QVEL >   qvel0;          // Initial value for the generalized speeds or the "degrees of freedom"
-        bool                                        userControlled; // Flags used to indicate whether the simulation or the user can write to the q-values
-        TKinTreeBody*                               parentBodyPtr;  // Parent body
-        TMat4                                       worldTransform; // Transform in world-space
+        std::string                         name;           // Unique name of this joint
+        TJointData                          data;           // Information|properties of this joint
+        std::array< TScalar, MAX_NUM_QPOS > qpos;           // Values of the generalized coordinates
+        std::array< TScalar, MAX_NUM_QVEL > qvel;           // Generalized speeds or the "degrees of freedom"
+        std::array< TScalar, MAX_NUM_QPOS > qpos0;          // Initial value for the generalized coordinates
+        std::array< TScalar, MAX_NUM_QVEL > qvel0;          // Initial value for the generalized speeds or the "degrees of freedom"
+        bool                                userControlled; // Flags used to indicate whether the simulation or the user can write to the q-values
+        TKinTreeBody*                       parentBodyPtr;  // Parent body
+        TMat4                               worldTransform; // Transform in world-space
 
         TKinTreeJoint( const eJointType& type );
     };

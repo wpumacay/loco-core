@@ -182,7 +182,7 @@ namespace tysoc {
         _kinCollision->data.collisionGroup = 1;
         _kinCollision->data.collisionMask = 1;
         _kinCollision->data.friction = { 1.0f, 0.005f, 0.0001f };
-        _kinCollision->data.density = TYSOC_DEFAULT_DENSITY;
+        _kinCollision->data.density = DEFAULT_DENSITY;
 
         context.agentPtr->collisions.push_back( _kinCollision );
         context.agentPtr->collisionsMap[ _kinCollision->name ] = _kinCollision;

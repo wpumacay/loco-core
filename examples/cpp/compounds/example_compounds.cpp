@@ -93,7 +93,7 @@ tysoc::TCompound* createDoorVersion1( const std::string& name, const tysoc::TVec
     auto _panel_joint_data = tysoc::TJointData();
     _panel_joint_data.type = tysoc::eJointType::REVOLUTE;
     _panel_joint_data.axis = { 0.0f, 0.0f, 1.0f };
-    _panel_joint_data.limits = { -0.5f * TYSOC_PI, 0.5F * TYSOC_PI };
+    _panel_joint_data.limits = { -0.5f * loco::PI, 0.5f * loco::PI };
     _panel_joint_data.localTransform = tysoc::TMat4::fromPositionAndRotation( { 0.1f, -0.1f, 0.0f }, tysoc::TMat3() );
     auto _panel_local_tf = tysoc::TMat4::fromPositionAndRotation( { 0.7f, -0.15f, 0.0f }, tysoc::TMat3() );
     auto _panel_body = new tysoc::TCompoundBody( "panel",

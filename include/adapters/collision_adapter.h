@@ -2,8 +2,8 @@
 
 #include <components/collision.h>
 
-namespace tysoc {
-
+namespace loco
+{
     class TCollision;
 
     class TICollisionAdapter
@@ -44,5 +44,4 @@ namespace tysoc {
 
     /* dl-function to be loaded from the backend support */
     typedef TICollisionAdapter* FcnCreateCollisionAdapter( TCollision* collisionPtr );
-
 }

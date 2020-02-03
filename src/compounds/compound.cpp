@@ -42,7 +42,7 @@ namespace tysoc
     {
         if ( m_rootBodyRef )
         {
-            TYSOC_CORE_ERROR( "TCompound::createRootBody() >>> compound already has a root body. Skipping creation" );
+            LOCO_CORE_ERROR( "TCompound::createRootBody() >>> compound already has a root body. Skipping creation" );
             return nullptr;
         }
 
@@ -99,7 +99,7 @@ namespace tysoc
     {
         if ( m_rootBodyRef )
         {
-            TYSOC_CORE_ERROR( "TCompound::createRootBodyJointPair() >>> compound already has a root body. Skipping creation" );
+            LOCO_CORE_ERROR( "TCompound::createRootBodyJointPair() >>> compound already has a root body. Skipping creation" );
             return { nullptr, nullptr };
         }
 
@@ -163,19 +163,19 @@ namespace tysoc
     {
         if ( !body )
         {
-            TYSOC_CORE_ERROR( "TCompound::addCompoundBody() >>> tried adding null body" );
+            LOCO_CORE_ERROR( "TCompound::addCompoundBody() >>> tried adding null body" );
             return nullptr;
         }
 
         if ( m_bodiesMap.find( body->name() ) != m_bodiesMap.end() )
         {
-            TYSOC_CORE_ERROR( "TCompound::addCompoundBody() >> tried adding a body with the same name \"{0}\". Skipping addition", body->name() );
+            LOCO_CORE_ERROR( "TCompound::addCompoundBody() >> tried adding a body with the same name \"{0}\". Skipping addition", body->name() );
             return nullptr;
         }
 
         if ( !body->parent() && m_rootBodyRef )
         {
-            TYSOC_CORE_ERROR( "TCompound::addCompoundBody() >>> body \"{0}\" has no parent. Compounds can only have one root body. Skipping addition", body->name() );
+            LOCO_CORE_ERROR( "TCompound::addCompoundBody() >>> body \"{0}\" has no parent. Compounds can only have one root body. Skipping addition", body->name() );
             return nullptr;
         }
 
@@ -219,7 +219,7 @@ namespace tysoc
     {
         if ( !m_rootBodyRef )
         {
-            TYSOC_CORE_ERROR( "TCompound::update() >>> compound \"{0}\" has no root-body, so we can't\
+            LOCO_CORE_ERROR( "TCompound::update() >>> compound \"{0}\" has no root-body, so we can't\
                                do the traversal", m_name );
             return;
         }
@@ -254,7 +254,7 @@ namespace tysoc
     {
         if ( !m_rootBodyRef )
         {
-            TYSOC_CORE_ERROR( "TCompound::reset() >>> compound \"{0}\" has no root-body, so we can't\
+            LOCO_CORE_ERROR( "TCompound::reset() >>> compound \"{0}\" has no root-body, so we can't\
                                do the traversal", m_name );
             return;
         }
@@ -290,7 +290,7 @@ namespace tysoc
     {
         if ( !m_rootBodyRef )
         {
-            TYSOC_CORE_ERROR( "TCompound::initializeToRestConfiguration() >>> compound \"{0}\" has \
+            LOCO_CORE_ERROR( "TCompound::initializeToRestConfiguration() >>> compound \"{0}\" has \
                                no root-body, so we can't do the traversal", m_name );
             return;
         }
@@ -304,7 +304,7 @@ namespace tysoc
     {
         if ( !m_rootBodyRef )
         {
-            TYSOC_CORE_ERROR( "TCompound::setPosition() >>> compound \"{0}\" has no root-body. Skipping translation", m_name );
+            LOCO_CORE_ERROR( "TCompound::setPosition() >>> compound \"{0}\" has no root-body. Skipping translation", m_name );
             return;
         }
 
@@ -320,7 +320,7 @@ namespace tysoc
     {
         if ( !m_rootBodyRef )
         {
-            TYSOC_CORE_ERROR( "TCompound::setRotation() >>> compound \"{0}\" has no root-body. Skipping rotation", m_name );
+            LOCO_CORE_ERROR( "TCompound::setRotation() >>> compound \"{0}\" has no root-body. Skipping rotation", m_name );
             return;
         }
 
@@ -336,7 +336,7 @@ namespace tysoc
     {
         if ( !m_rootBodyRef )
         {
-            TYSOC_CORE_ERROR( "TCompound::setTransform() >>> compound \"{0}\" has no root-body. Skipping world-transform update", m_name );
+            LOCO_CORE_ERROR( "TCompound::setTransform() >>> compound \"{0}\" has no root-body. Skipping world-transform update", m_name );
             return;
         }
 
@@ -352,7 +352,7 @@ namespace tysoc
     {
         if ( m_bodiesMap.find( name ) == m_bodiesMap.end() )
         {
-            TYSOC_CORE_ERROR( "TCompound::getBodyByName() >>> couldn't find body \"{0}\" in \
+            LOCO_CORE_ERROR( "TCompound::getBodyByName() >>> couldn't find body \"{0}\" in \
                                compound \"{1}\". Returning nullptr instead", name, m_name );
             return nullptr;
         }

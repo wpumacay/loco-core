@@ -116,11 +116,11 @@ tysoc::TSingleBody* createSimpleBody( const std::string& name, const std::string
     {
         _collisionData.type = tysoc::eShapeType::MESH;
         _collisionData.size = { 0.2, 0.2, 0.2 };
-        _collisionData.filename = std::string( TYSOC_PATH_MESHES_DIR ) + "monkey.stl";
+        _collisionData.filename = tysoc::PATH_RESOURCES + "meshes/monkey.stl";
 
         _visualData.type = tysoc::eShapeType::MESH;
         _visualData.size = { 0.2, 0.2, 0.2 };
-        _visualData.filename = std::string( TYSOC_PATH_MESHES_DIR ) + "monkey.stl";
+        _visualData.filename = tysoc::PATH_RESOURCES + "meshes/monkey.stl";
     }
     else 
     {
@@ -149,9 +149,9 @@ tysoc::TSingleBody* createSimpleBody( const std::string& name, const std::string
 
     // choose a random orientation
     tysoc::TVec3 _rotation;
-    _rotation.x = TYSOC_PI * g_randomUniformDistribution( g_randomGenerator ) / 4.;
-    _rotation.y = TYSOC_PI * g_randomUniformDistribution( g_randomGenerator ) / 4.;
-    _rotation.z = TYSOC_PI * g_randomUniformDistribution( g_randomGenerator ) / 4.;
+    _rotation.x = loco::PI * g_randomUniformDistribution( g_randomGenerator ) / 4.;
+    _rotation.y = loco::PI * g_randomUniformDistribution( g_randomGenerator ) / 4.;
+    _rotation.z = loco::PI * g_randomUniformDistribution( g_randomGenerator ) / 4.;
 
     // create the abstract body
     auto _bodyPtr = new tysoc::TSingleBody( name, 

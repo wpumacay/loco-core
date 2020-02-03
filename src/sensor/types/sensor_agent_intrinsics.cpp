@@ -18,7 +18,7 @@ namespace tysoc {
 
         TAgentIntrinsicsSensor::~TAgentIntrinsicsSensor()
         {
-            TYSOC_CORE_TRACE( "Destroying(AgentIntrinsics) sensor: ", m_name );
+            LOCO_CORE_TRACE( "Destroying(AgentIntrinsics) sensor: ", m_name );
 
             m_agentPtr = NULL;
 

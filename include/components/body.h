@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tysoc_common.h>
+#include <loco_common.h>
 
 #include <components/data.h>
 #include <components/collision.h>
@@ -8,8 +8,8 @@
 
 #include <adapters/body_adapter.h>
 
-namespace tysoc {
-
+namespace loco
+{
     class TCollision;
     class TVisual;
     class TIBodyAdapter;

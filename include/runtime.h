@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <tysoc_logger.h>
+#include <loco_logger.h>
 #include <simulation_base.h>
 #include <viz/viz.h>
 
@@ -54,11 +54,11 @@ namespace tysoc {
             auto _fcnPtr = ( FunctionTypePtr ) dlsym( m_libraryHandleSim, fcnName.c_str() );
             if ( !_fcnPtr )
             {
-                TYSOC_CORE_ERROR( "Couldn't load simulation-symbol: {0}. Error message: {1}", fcnName, dlerror() );
+                LOCO_CORE_ERROR( "Couldn't load simulation-symbol: {0}. Error message: {1}", fcnName, dlerror() );
                 return nullptr;
             }
 
-            TYSOC_CORE_INFO( "Successfully loaded simulation-symbol: {0}", fcnName );
+            LOCO_CORE_INFO( "Successfully loaded simulation-symbol: {0}", fcnName );
             return _fcnPtr;
         }
 
@@ -69,11 +69,11 @@ namespace tysoc {
             auto _fcnPtr = ( FunctionTypePtr ) dlsym( m_libraryHandleViz, fcnName.c_str() );
             if ( !_fcnPtr )
             {
-                TYSOC_CORE_ERROR( "Couldn't load visualization-symbol: {0}. Error message: {1}", fcnName, dlerror() );
+                LOCO_CORE_ERROR( "Couldn't load visualization-symbol: {0}. Error message: {1}", fcnName, dlerror() );
                 return nullptr;
             }
 
-            TYSOC_CORE_INFO( "Successfully loaded visualization-symbol: {0}", fcnName );
+            LOCO_CORE_INFO( "Successfully loaded visualization-symbol: {0}", fcnName );
             return _fcnPtr;
         }
 

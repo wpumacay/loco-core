@@ -1,7 +1,7 @@
 
 #include <components/collision.h>
 
-namespace tysoc
+namespace loco
 {
     TVisual::TVisual( const std::string& name,
                       const TVisualData& visualData )

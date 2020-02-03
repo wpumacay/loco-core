@@ -72,9 +72,9 @@ tysoc::TSingleBody* createSimpleBody( const std::string& name, const std::string
 
     // choose a random orientation
     tysoc::TVec3 _rotation;
-    _rotation.x = TYSOC_PI * g_randomUniformDistribution( g_randomGenerator ) / 4.;
-    _rotation.y = TYSOC_PI * g_randomUniformDistribution( g_randomGenerator ) / 4.;
-    _rotation.z = TYSOC_PI * g_randomUniformDistribution( g_randomGenerator ) / 4.;
+    _rotation.x = loco::PI * g_randomUniformDistribution( g_randomGenerator ) / 4.;
+    _rotation.y = loco::PI * g_randomUniformDistribution( g_randomGenerator ) / 4.;
+    _rotation.z = loco::PI * g_randomUniformDistribution( g_randomGenerator ) / 4.;
 
     // create the abstract body
     auto _bodyPtr = new tysoc::TSingleBody( name, 

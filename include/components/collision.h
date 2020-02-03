@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tysoc_common.h>
+#include <loco_common.h>
 
 #include <components/data.h>
 #include <components/body.h>
@@ -8,8 +8,8 @@
 #include <viz/drawable.h>
 #include <adapters/collision_adapter.h>
 
-namespace tysoc {
-
+namespace loco
+{
     class TIBody;
     class TICollisionAdapter;
 
@@ -112,5 +112,4 @@ namespace tysoc {
         /// Adapter object that gives access to the low-level API for a specific backend
         TICollisionAdapter* m_collisionImplRef;
     };
-
 }

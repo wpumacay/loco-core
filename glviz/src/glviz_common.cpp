@@ -240,7 +240,7 @@ namespace tysoc {
         }
         else if ( type == eShapeType::HFIELD )
         {
-            TYSOC_CORE_WARN( "Hfield shapes don't support changing the scale. Change the elevation data instead" );
+            LOCO_CORE_WARN( "Hfield shapes don't support changing the scale. Change the elevation data instead" );
         }
     }
 

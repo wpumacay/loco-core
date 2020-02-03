@@ -72,7 +72,7 @@ namespace tysoc {
             m_libraryHandleSim = dlopen( m_dlpathSim.c_str(), RTLD_NOW );
             if ( !m_libraryHandleSim )
             {
-                TYSOC_CORE_ERROR( "Runtime >>> error while loading simulation dllibrary \"{0}\". Error message: {1}", m_dlpathSim, dlerror() );
+                LOCO_CORE_ERROR( "Runtime >>> error while loading simulation dllibrary \"{0}\". Error message: {1}", m_dlpathSim, dlerror() );
                 return;
             }
 
@@ -116,13 +116,13 @@ namespace tysoc {
     {
         if ( !m_libraryHandleSim )
         {
-            TYSOC_CORE_ERROR( "Runtime >>> tried creating a simulation without proper backend-fcnPointer" );
+            LOCO_CORE_ERROR( "Runtime >>> tried creating a simulation without proper backend-fcnPointer" );
             return nullptr;
         }
 
         if ( m_simulationPtr )
         {
-            TYSOC_CORE_WARN( "Runtime >>> there's already a simulation. Deleting and creating a new one" );
+            LOCO_CORE_WARN( "Runtime >>> there's already a simulation. Deleting and creating a new one" );
             delete m_simulationPtr;
         }
         
@@ -146,7 +146,7 @@ namespace tysoc {
     {
         if ( !m_fcnCreateAgent )
         {
-            TYSOC_CORE_ERROR( "Runtime >>> tried creating an agent-wrapper without proper backend-fcnPointer" );
+            LOCO_CORE_ERROR( "Runtime >>> tried creating an agent-wrapper without proper backend-fcnPointer" );
             return nullptr;
         }
 
@@ -157,7 +157,7 @@ namespace tysoc {
     {
         if ( !m_fcnCreateTerrainGen )
         {
-            TYSOC_CORE_ERROR( "Runtime >>> tried creating a terrain-wrapper without proper backend-fcnPointer" );
+            LOCO_CORE_ERROR( "Runtime >>> tried creating a terrain-wrapper without proper backend-fcnPointer" );
             return nullptr;
         }
 
@@ -168,13 +168,13 @@ namespace tysoc {
     {
         if ( !m_libraryHandleViz )
         {
-            TYSOC_CORE_ERROR( "Runtime >>> tried creating a visualizer without proper backend-fcnPointer" );
+            LOCO_CORE_ERROR( "Runtime >>> tried creating a visualizer without proper backend-fcnPointer" );
             return nullptr;
         }
 
         if ( m_visualizerPtr )
         {
-            TYSOC_CORE_WARN( "Runtime >>> there's already a visualizer. Deleting and creating a new one." );
+            LOCO_CORE_WARN( "Runtime >>> there's already a visualizer. Deleting and creating a new one." );
             delete m_visualizerPtr;
         }
 

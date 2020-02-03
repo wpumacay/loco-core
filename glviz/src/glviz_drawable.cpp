@@ -198,7 +198,7 @@ namespace tysoc {
         }
         else if ( m_type == eShapeType::HFIELD )
         {
-            TYSOC_CORE_WARN( "Hfield shapes don't support changing the scale. Change the elevation data instead" );
+            LOCO_CORE_WARN( "Hfield shapes don't support changing the scale. Change the elevation data instead" );
         }
 
         if ( !m_renderablePtr )
@@ -211,13 +211,13 @@ namespace tysoc {
     {
         if ( m_data.type != eShapeType::HFIELD )
         {
-            TYSOC_CORE_WARN( "Method changeElevationData expectes hfield shape, but {0} was given", tysoc::toString( m_data.type ) );
+            LOCO_CORE_WARN( "Method changeElevationData expectes hfield shape, but {0} was given", tysoc::toString( m_data.type ) );
             return;
         }
 
         if( ( m_data.hdata.nWidthSamples * m_data.hdata.nDepthSamples ) != heightData.size() )
         {
-            TYSOC_CORE_WARN( "Number of elements in internal and given elevation buffers don't match.\n\r\
+            LOCO_CORE_WARN( "Number of elements in internal and given elevation buffers don't match.\n\r\
                               nx-samples    : {0}\n\r\
                               ny-samples    : {1}\n\r\
                               hdata.size()  : {2}", 

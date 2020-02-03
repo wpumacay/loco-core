@@ -15,7 +15,7 @@ namespace tysoc {
         data.type           = eShapeType::SPHERE;
         data.size           = { 0.1f, 0.0f, 0.0f };
         data.friction       = { 1., 0.005, 0.0001 };
-        data.density        = TYSOC_DEFAULT_DENSITY;
+        data.density        = DEFAULT_DENSITY;
         data.collisionGroup = 1;
         data.collisionMask  = 1;
         parentBodyPtr       = nullptr;
@@ -153,7 +153,7 @@ namespace tysoc {
         }
         else
         {
-            TYSOC_CORE_ERROR( "Joint \"{0}\" has unsupported type \"{1}\"", name, tysoc::toString( type ) );
+            LOCO_CORE_ERROR( "Joint \"{0}\" has unsupported type \"{1}\"", name, tysoc::toString( type ) );
         }
     }
 

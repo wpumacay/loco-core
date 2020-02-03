@@ -14,7 +14,7 @@ namespace tysoc {
 
     TITerrainGenerator::~TITerrainGenerator()
     {
-        TYSOC_CORE_TRACE( "Base-Destroying terrain-generator: ", m_name );
+        LOCO_CORE_TRACE( "Base-Destroying terrain-generator: ", m_name );
         
         while ( !m_pool.empty() )
         {

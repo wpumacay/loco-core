@@ -27,7 +27,7 @@ namespace pytysoc
 
     void PyCollision::setParentBody( PyBody* parentPyBodyRef )
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::setParentBody() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::setParentBody() >>> wrapped internal-collision is null" );
 
         m_parentPyBodyRef = parentPyBodyRef;
         m_collisionRef->setParentBody( m_parentPyBodyRef->ptr() );
@@ -35,147 +35,147 @@ namespace pytysoc
 
     void PyCollision::setVisibility( bool visible )
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::setVisibility() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::setVisibility() >>> wrapped internal-collision is null" );
 
         m_collisionRef->show( visible );
     }
 
     void PyCollision::setWireframe( bool wireframe )
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::setWireframe() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::setWireframe() >>> wrapped internal-collision is null" );
 
         m_collisionRef->wireframe( wireframe );
     }
 
     void PyCollision::setLocalPosition( py::array_t<TScalar>& localPosition )
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::setLocalPosition() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::setLocalPosition() >>> wrapped internal-collision is null" );
 
         m_collisionRef->setLocalPosition( numpyToVec3( localPosition ) );
     }
 
     void PyCollision::setLocalRotation( py::array_t<TScalar>& localRotation )
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::setLocalRotation() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::setLocalRotation() >>> wrapped internal-collision is null" );
 
         m_collisionRef->setLocalRotation( numpyToMat3( localRotation ) );
     }
 
     void PyCollision::setLocalQuat( py::array_t<TScalar>& localQuaternion )
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::setLocalQuat() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::setLocalQuat() >>> wrapped internal-collision is null" );
 
         m_collisionRef->setLocalQuat( numpyToVec4( localQuaternion ) );
     }
 
     void PyCollision::setLocalTransform( py::array_t<TScalar>& localTransform )
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::setLocalTransform() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::setLocalTransform() >>> wrapped internal-collision is null" );
 
         m_collisionRef->setLocalTransform( numpyToMat4( localTransform ) );
     }
 
     void PyCollision::changeSize( py::array_t<TScalar>& newSize )
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::changeSize() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::changeSize() >>> wrapped internal-collision is null" );
 
         m_collisionRef->changeSize( numpyToVec3( newSize ) );
     }
 
     std::string PyCollision::name() const
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::name() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::name() >>> wrapped internal-collision is null" );
 
         return m_collisionRef->name();
     }
 
     py::array_t<TScalar> PyCollision::pos() const
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::pos() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::pos() >>> wrapped internal-collision is null" );
 
         return vec3ToNumpy( m_collisionRef->pos() );
     }
 
     bool PyCollision::visible() const
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::visible() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::visible() >>> wrapped internal-collision is null" );
 
         return m_collisionRef->isVisible();
     }
 
     bool PyCollision::wireframe() const
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::wireframe() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::wireframe() >>> wrapped internal-collision is null" );
 
         return m_collisionRef->isWireframe();
     }
 
     py::array_t<TScalar> PyCollision::rot() const
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::rot() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::rot() >>> wrapped internal-collision is null" );
 
         return mat3ToNumpy( m_collisionRef->rot() );
     }
 
     py::array_t<TScalar> PyCollision::quat() const
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::quat() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::quat() >>> wrapped internal-collision is null" );
 
         return vec4ToNumpy( m_collisionRef->quat() );
     }
 
     py::array_t<TScalar> PyCollision::tf() const
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::tf() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::tf() >>> wrapped internal-collision is null" );
 
         return mat4ToNumpy( m_collisionRef->tf() );
     }
 
     py::array_t<TScalar> PyCollision::localPos() const
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::localPos() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::localPos() >>> wrapped internal-collision is null" );
 
         return vec3ToNumpy( m_collisionRef->localPos() );
     }
 
     py::array_t<TScalar> PyCollision::localRot() const
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::localRot() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::localRot() >>> wrapped internal-collision is null" );
 
         return mat3ToNumpy( m_collisionRef->localRot() );
     }
 
     py::array_t<TScalar> PyCollision::localTf() const
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::localTf() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::localTf() >>> wrapped internal-collision is null" );
 
         return mat4ToNumpy( m_collisionRef->localTf() );
     }
 
     py::array_t<TScalar> PyCollision::localQuat() const
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::localQuat() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::localQuat() >>> wrapped internal-collision is null" );
 
         return vec4ToNumpy( m_collisionRef->localQuat() );
     }
 
     tysoc::eShapeType PyCollision::shape() const
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::shape() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::shape() >>> wrapped internal-collision is null" );
 
         return m_collisionRef->shape();
     }
 
     py::array_t<TScalar> PyCollision::size() const
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::size() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::size() >>> wrapped internal-collision is null" );
 
         return vec3ToNumpy( m_collisionRef->size() );
     }
 
     PyCollisionData PyCollision::data() const
     {
-        TYSOC_CORE_ASSERT( m_collisionRef, "PyCollision::data() >>> wrapped internal-collision is null" );
+        LOCO_CORE_ASSERT( m_collisionRef, "PyCollision::data() >>> wrapped internal-collision is null" );
 
         PyCollisionData _data;
 

@@ -10,7 +10,7 @@ namespace tysoc {
         m_glApplication  = nullptr;
         m_guiScenarioLayer = nullptr;
 
-    #ifdef TYSOC_DEMO
+    #ifdef LOCOSIM_DEMO
         m_useSensorReadings = true;
         m_useSensorReadingRgb = true;
         m_useSensorReadingDepth = true;
@@ -32,7 +32,7 @@ namespace tysoc {
     {
         if ( !m_scenarioPtr )
         {
-            TYSOC_CORE_ERROR( "Scenario reference is nullptr" );
+            LOCO_CORE_ERROR( "Scenario reference is nullptr" );
             return false;
         }
 
@@ -372,7 +372,7 @@ namespace tysoc {
         _windowProperties.resizable = true;
 
         auto _imguiProperties = engine::CImGuiProps();
-    #ifdef TYSOC_DEMO
+    #ifdef LOCOSIM_DEMO
         _imguiProperties.useDockingSpace = true;
         _imguiProperties.useDockingSpacePassthrough = true;
         _imguiProperties.useAutosaveLayout = false;

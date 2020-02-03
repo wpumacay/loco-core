@@ -47,7 +47,7 @@ namespace tysoc
 
     void TGLScenarioUtilsLayer::_menuDemo()
     {
-    #ifdef TYSOC_DEMO
+    #ifdef LOCOSIM_DEMO
         ImGui::Begin( "Sim-Demo" );
 
         ImGui::Checkbox( "Use camera sensors", &DEMO_OPTIONS.useDemoCameraSensors );

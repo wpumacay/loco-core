@@ -34,7 +34,7 @@ namespace pytysoc
 
         if ( m_pyRootBodyRef )
         {
-            TYSOC_CORE_WARN( "PyCompound::createRootBody() >>> compound \"{0}\" already has a root body.", m_compoundRef->name() );
+            LOCO_CORE_WARN( "PyCompound::createRootBody() >>> compound \"{0}\" already has a root body.", m_compoundRef->name() );
             return nullptr;
         }
 
@@ -44,7 +44,7 @@ namespace pytysoc
 
         if ( !_compoundBodyRef )
         {
-            TYSOC_CORE_WARN( "PyCompound::createRootBody() >>> something wen't wrong while creating c++ compound-body "
+            LOCO_CORE_WARN( "PyCompound::createRootBody() >>> something wen't wrong while creating c++ compound-body "
                              "\"{0}\" for compound \"{1}\"", name, m_compoundRef->name() );
             return nullptr;
         }
@@ -67,7 +67,7 @@ namespace pytysoc
 
         if ( m_pyRootBodyRef )
         {
-            TYSOC_CORE_WARN( "PyCompound::createRootBody() >>> compound \"{0}\" already has a root body.", m_compoundRef->name() );
+            LOCO_CORE_WARN( "PyCompound::createRootBody() >>> compound \"{0}\" already has a root body.", m_compoundRef->name() );
             return nullptr;
         }
 
@@ -79,7 +79,7 @@ namespace pytysoc
 
         if ( !_compoundBodyRef )
         {
-            TYSOC_CORE_WARN( "PyCompound::createRootBody() >>> something wen't wrong while creating c++ compound-body "
+            LOCO_CORE_WARN( "PyCompound::createRootBody() >>> something wen't wrong while creating c++ compound-body "
                              "\"{0}\" for compound \"{1}\"", name, m_compoundRef->name() );
             return nullptr;
         }
@@ -101,7 +101,7 @@ namespace pytysoc
 
         if ( m_pyRootBodyRef )
         {
-            TYSOC_CORE_WARN( "PyCompound::createRootBodyJointPair() >>> compound \"{0}\" already has a root body.", m_compoundRef->name() );
+            LOCO_CORE_WARN( "PyCompound::createRootBodyJointPair() >>> compound \"{0}\" already has a root body.", m_compoundRef->name() );
             return { nullptr, nullptr };
         }
 
@@ -112,7 +112,7 @@ namespace pytysoc
 
         if ( !_bodyJointPair.first || !_bodyJointPair.second )
         {
-            TYSOC_CORE_WARN( "PyCompound::createRootBodyJointPair() >>> something wen't wrong while creating c++ compound-body "
+            LOCO_CORE_WARN( "PyCompound::createRootBodyJointPair() >>> something wen't wrong while creating c++ compound-body "
                              "\"{0}\" for compound \"{1}\"", bodyName, m_compoundRef->name() );
             return { nullptr, nullptr };
         }
@@ -139,7 +139,7 @@ namespace pytysoc
 
         if ( m_pyRootBodyRef )
         {
-            TYSOC_CORE_WARN( "PyCompound::createRootBodyJointPair() >>> compound \"{0}\" already has a root body.", m_compoundRef->name() );
+            LOCO_CORE_WARN( "PyCompound::createRootBodyJointPair() >>> compound \"{0}\" already has a root body.", m_compoundRef->name() );
             return { nullptr, nullptr };
         }
 
@@ -155,7 +155,7 @@ namespace pytysoc
 
         if ( !_bodyJointPair.first || !_bodyJointPair.second )
         {
-            TYSOC_CORE_WARN( "PyCompound::createRootBodyJointPair() >>> something wen't wrong while creating c++ compound-body "
+            LOCO_CORE_WARN( "PyCompound::createRootBodyJointPair() >>> something wen't wrong while creating c++ compound-body "
                              "\"{0}\" for compound \"{1}\"", bodyName, m_compoundRef->name() );
             return { nullptr, nullptr };
         }
@@ -170,7 +170,7 @@ namespace pytysoc
 
     void PyCompound::addCompoundBody( PyCompoundBody* pyCompoundBody )
     {
-        TYSOC_CORE_ASSERT( m_compoundRef, "PyCompound::addCompoundBody() >>> wrapper contains null reference to a compound" );
+        LOCO_CORE_ASSERT( m_compoundRef, "PyCompound::addCompoundBody() >>> wrapper contains null reference to a compound" );
 
         m_compoundRef->addCompoundBody( std::unique_ptr< tysoc::TCompoundBody >( dynamic_cast< tysoc::TCompoundBody* >( pyCompoundBody->ptr() ) ) );
 

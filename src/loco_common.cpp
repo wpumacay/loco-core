@@ -1,20 +1,7 @@
 
-#include <tysoc_common.h>
+#include <loco_common.h>
 
-#ifdef TYSOC_DEMO
-
-TMjcDemoOptions::TMjcDemoOptions()
-{
-    useDemoCameraSensors = true;
-    useDemoContactManager = true;
-    useDemoDebugDraws = true;
-}
-
-TMjcDemoOptions DEMO_OPTIONS = TMjcDemoOptions();
-
-#endif
-
-namespace tysoc
+namespace loco
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////
     ////                                                                                        ////

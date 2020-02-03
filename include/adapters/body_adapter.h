@@ -2,8 +2,8 @@
 
 #include <components/body.h>
 
-namespace tysoc {
-
+namespace loco
+{
     class TIBody;
 
     class TIBodyAdapter
@@ -76,5 +76,4 @@ namespace tysoc {
 
     /* dl-function to be loaded from the backend support */
     typedef TIBodyAdapter* FcnCreateBodyAdapter( TIBody* bodyRef );
-
 }

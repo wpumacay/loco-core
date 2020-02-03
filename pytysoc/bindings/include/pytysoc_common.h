@@ -4,7 +4,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
-#include <tysoc_common.h>
+#include <locosim_common.h>
 
 namespace py = pybind11;
 

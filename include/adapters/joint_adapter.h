@@ -2,8 +2,8 @@
 
 #include <components/joint.h>
 
-namespace tysoc {
-
+namespace loco
+{
     class TJoint;
 
     class TIJointAdapter
@@ -33,13 +33,13 @@ namespace tysoc {
 
         virtual void setLocalTransform( const TMat4& transform ) = 0;
 
-        virtual void setQpos( const std::array< TScalar, TYSOC_MAX_NUM_QPOS >& qpos ) = 0;
+        virtual void setQpos( const std::array< TScalar, MAX_NUM_QPOS >& qpos ) = 0;
 
-        virtual void setQvel( const std::array< TScalar, TYSOC_MAX_NUM_QVEL >& qvel ) = 0;
+        virtual void setQvel( const std::array< TScalar, MAX_NUM_QVEL >& qvel ) = 0;
 
-        virtual void getQpos( std::array< TScalar, TYSOC_MAX_NUM_QPOS >& dstQpos ) = 0;
+        virtual void getQpos( std::array< TScalar, MAX_NUM_QPOS >& dstQpos ) = 0;
 
-        virtual void getQvel( std::array< TScalar, TYSOC_MAX_NUM_QVEL >& dstQvel ) = 0;
+        virtual void getQvel( std::array< TScalar, MAX_NUM_QVEL >& dstQvel ) = 0;
 
         virtual void changeLimits( const TVec2& limits ) = 0;
 
@@ -52,5 +52,4 @@ namespace tysoc {
 
     /* dl-function to be loaded from the backend support */
     typedef TIJointAdapter* FcnCreateJointAdapter( TJoint* jointRef );
-
 }

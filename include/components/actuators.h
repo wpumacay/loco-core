@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tysoc_common.h>
+#include <loco_common.h>
 
 namespace tysoc {
 

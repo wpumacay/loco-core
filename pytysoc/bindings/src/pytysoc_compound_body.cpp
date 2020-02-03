@@ -14,7 +14,7 @@ namespace pytysoc
                                     py::array_t<TScalar>& localRpy )
         : PyBody( name, data )
     {
-        TYSOC_CORE_ASSERT( parentRef->ptr(), "PyCompoundBody >>> parent body-wrapper has no valid internal TIBody" );
+        LOCO_CORE_ASSERT( parentRef->ptr(), "PyCompoundBody >>> parent body-wrapper has no valid internal TIBody" );
 
         /* instantiate wrapper body object */
         m_bodyRef = new tysoc::TCompoundBody( name, 
@@ -230,7 +230,7 @@ namespace pytysoc
 
         if ( !_bodyJointPair.first || !_bodyJointPair.second )
         {
-            TYSOC_CORE_ERROR( "PyCompoundBody::addBodyJointPair() >>> something went wrong while \
+            LOCO_CORE_ERROR( "PyCompoundBody::addBodyJointPair() >>> something went wrong while \
                                creating the requested body-joint pair on the c++ side" );
             return { nullptr, nullptr };
         }
@@ -263,7 +263,7 @@ namespace pytysoc
 
         if ( !_bodyJointPair.first || !_bodyJointPair.second )
         {
-            TYSOC_CORE_ERROR( "PyCompoundBody::addBodyJointPair() >>> something went wrong while \
+            LOCO_CORE_ERROR( "PyCompoundBody::addBodyJointPair() >>> something went wrong while \
                                creating the requested body-joint pair on the c++ side" );
             return { nullptr, nullptr };
         }

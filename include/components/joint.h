@@ -1,14 +1,14 @@
 #pragma once
 
-#include <tysoc_common.h>
+#include <loco_common.h>
 #include <components/data.h>
 #include <components/body.h>
 #include <viz/drawable.h>
 
 #include <adapters/joint_adapter.h>
 
-namespace tysoc {
-
+namespace loco
+{
     class TIBody;
     class TIJointAdapter;
 
@@ -140,15 +140,15 @@ namespace tysoc {
         /// Number of generalized coordinates (qpos) associated with this joint
         size_t m_nqpos;
         /// Generalized coordinates for this joint
-        std::array< TScalar, TYSOC_MAX_NUM_QPOS > m_qpos;
+        std::array< TScalar, MAX_NUM_QPOS > m_qpos;
         /// Initial values of the generalized coordinates for this joint
-        std::array< TScalar, TYSOC_MAX_NUM_QPOS > m_qpos0;
+        std::array< TScalar, MAX_NUM_QPOS > m_qpos0;
         /// Number of degrees of freedom (qvel) associated with this joint
         size_t m_nqvel;
         /// QVel values for this joint
-        std::array< TScalar, TYSOC_MAX_NUM_QVEL > m_qvel;
+        std::array< TScalar, MAX_NUM_QVEL > m_qvel;
         /// Initial QVel values for this joint
-        std::array< TScalar, TYSOC_MAX_NUM_QVEL > m_qvel0;
+        std::array< TScalar, MAX_NUM_QVEL > m_qvel0;
         /// Adapter-object that gives access to the low-level API for a specific backend
         TIJointAdapter* m_jointImplRef;
         /// Reference to the drawable resource used for visualization
@@ -158,5 +158,4 @@ namespace tysoc {
         /// Reference to the owner's parent body
         TIBody* m_ownerParentRef;
     };
-
 }

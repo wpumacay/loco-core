@@ -22,7 +22,7 @@ namespace tysoc {
         /* keep a reference to the parent (if no parent, notify that this is the wrong constructor to use) */
         if ( !parentRef )
         {
-            TYSOC_CORE_ERROR( "TCompoundBody::TCompoundBody() >>> no parent-reference given for body \"{0}\". \
+            LOCO_CORE_ERROR( "TCompoundBody::TCompoundBody() >>> no parent-reference given for body \"{0}\". \
                                If you wanted a root-body, use another constructor", name );
             return;
         }
@@ -144,7 +144,7 @@ namespace tysoc {
     {
         if ( !m_compoundRef )
         {
-            TYSOC_CORE_ERROR( "TCompoundBody::addBodyJointPair() >>> body \"{0}\" must have a valid\
+            LOCO_CORE_ERROR( "TCompoundBody::addBodyJointPair() >>> body \"{0}\" must have a valid\
                                reference to the compound that owns it before adding more bodies to the compound.\
                                Skipping addition of body \"{1}\" and returning (nullptr,nullptr) instead", m_name, name );
             return { nullptr, nullptr };
@@ -380,7 +380,7 @@ namespace tysoc {
     {
         if ( !m_parentRef )
         {
-            TYSOC_CORE_WARN( "TCompoundBody::setLocalPosition() >>> tried setting relative position of \
+            LOCO_CORE_WARN( "TCompoundBody::setLocalPosition() >>> tried setting relative position of \
                               root compound-body \"{0}\", use \"setPosition\" instead", m_name );
             return;
         }
@@ -397,7 +397,7 @@ namespace tysoc {
     {
         if ( !m_parentRef )
         {
-            TYSOC_CORE_WARN( "TCompoundBody::setLocalRotation() >>> tried setting relative rotation matrix\
+            LOCO_CORE_WARN( "TCompoundBody::setLocalRotation() >>> tried setting relative rotation matrix\
                               of root compound-body \"{0}\", use \"setRotation\" instead", m_name );
             return;
         }
@@ -414,7 +414,7 @@ namespace tysoc {
     {
         if ( !m_parentRef )
         {
-            TYSOC_CORE_WARN( "TCompoundBody::setLocalEuler() >>> tried setting relative rotation-euler\
+            LOCO_CORE_WARN( "TCompoundBody::setLocalEuler() >>> tried setting relative rotation-euler\
                               of root compound-body \"{0}\", use \"setEuler\" instead", m_name );
             return;
         }
@@ -431,7 +431,7 @@ namespace tysoc {
     {
         if ( !m_parentRef )
         {
-            TYSOC_CORE_WARN( "TCompoundBody::setLocalQuaternion() >>> tried setting world-space rotation-quaternion\
+            LOCO_CORE_WARN( "TCompoundBody::setLocalQuaternion() >>> tried setting world-space rotation-quaternion\
                                of root compound-body \"{0}\", use \"setQuaternion\" instead", m_name );
             return;
         }
@@ -448,7 +448,7 @@ namespace tysoc {
     {
         if ( !m_parentRef )
         {
-            TYSOC_CORE_WARN( "TCompoundBody::setLocalTransform() >>> tried setting relative transform\
+            LOCO_CORE_WARN( "TCompoundBody::setLocalTransform() >>> tried setting relative transform\
                                of root compound-body \"{0}\", use \"setTransform\" instead", m_name );
             return;
         }
@@ -475,7 +475,7 @@ namespace tysoc {
         else if ( m_compoundRef )
             m_localTf = m_compoundRef->tf().inverse() * m_tf;
         else
-            TYSOC_CORE_ERROR( "TCompoundBody::_updateLocalTransform() >>> body \"{0}\" does not have \
+            LOCO_CORE_ERROR( "TCompoundBody::_updateLocalTransform() >>> body \"{0}\" does not have \
                                a valid compound reference", m_name );
 
         m_localPos = m_localTf.getPosition();

@@ -1,8 +1,8 @@
 
 #include <components/data.h>
 
-namespace tysoc {
-
+namespace loco
+{
     std::string toString( const eShapeType& type )
     {
         if ( type == eShapeType::BOX ) return "box";
@@ -116,8 +116,8 @@ namespace tysoc {
         std::string _res;
 
         _res += "type       : " + toString( shapeData.type ) + "\n\r";
-        _res += "size       : " + tysoc::toString( shapeData.size ) + "\n\r";
-        _res += "localTf    : \n\r" + tysoc::toString( shapeData.localTransform ) + "\n\r";
+        _res += "size       : " + loco::toString( shapeData.size ) + "\n\r";
+        _res += "localTf    : \n\r" + loco::toString( shapeData.localTransform ) + "\n\r";
 
         return _res;
     }
@@ -136,26 +136,26 @@ namespace tysoc {
         }
         else if ( shapeData.type == eShapeType::SPHERE )
         {
-            _volume = ( 4.0f / 3.0f ) * TYSOC_PI * ( shapeData.size.x() * shapeData.size.x() * shapeData.size.x() );
+            _volume = ( 4.0f / 3.0f ) * loco::PI * ( shapeData.size.x() * shapeData.size.x() * shapeData.size.x() );
         }
         else if ( shapeData.type == eShapeType::CYLINDER )
         {
             auto _cylinderRadius = shapeData.size.x();
             auto _cylinderHeight = shapeData.size.y();
 
-            _volume = ( TYSOC_PI * _cylinderRadius * _cylinderRadius ) * _cylinderHeight;
+            _volume = ( loco::PI * _cylinderRadius * _cylinderRadius ) * _cylinderHeight;
         }
         else if ( shapeData.type == eShapeType::CAPSULE )
         {
             auto _capsuleRadius = shapeData.size.x();
             auto _capsuleHeight = shapeData.size.y();
 
-            _volume = ( TYSOC_PI * _capsuleRadius * _capsuleRadius ) * _capsuleHeight +
-                      ( 4.0f / 3.0f ) * ( TYSOC_PI * _capsuleRadius * _capsuleRadius * _capsuleRadius );
+            _volume = ( loco::PI * _capsuleRadius * _capsuleRadius ) * _capsuleHeight +
+                      ( 4.0f / 3.0f ) * ( loco::PI * _capsuleRadius * _capsuleRadius * _capsuleRadius );
         }
         else if ( shapeData.type == eShapeType::ELLIPSOID )
         {
-            _volume = ( 4.0f / 3.0f ) * TYSOC_PI * ( shapeData.size.x() * shapeData.size.y() * shapeData.size.z() );
+            _volume = ( 4.0f / 3.0f ) * loco::PI * ( shapeData.size.x() * shapeData.size.y() * shapeData.size.z() );
         }
         else if ( shapeData.type == eShapeType::MESH )
         {
@@ -170,7 +170,7 @@ namespace tysoc {
         }
         else
         {
-            TYSOC_CORE_WARN( "Unsupported type \"{0}\" for volume computation", tysoc::toString( shapeData.type ) );
+            LOCO_CORE_WARN( "Unsupported type \"{0}\" for volume computation", loco::toString( shapeData.type ) );
         }
 
         return _volume;
@@ -202,7 +202,7 @@ namespace tysoc {
 
         if ( !_sceneMesh )
         {
-            TYSOC_CORE_ERROR( "Couldn't load mesh {0}, while trying to compute aabb for volume-computation", filename );
+            LOCO_CORE_ERROR( "Couldn't load mesh {0}, while trying to compute aabb for volume-computation", filename );
             _cachedBounds[filename] = { TVec3( 0.0f, 0.0f, 0.0f ), TVec3( 0.1f, 0.1f, 0.1f ) };
             return _cachedBounds[filename];
         }
@@ -238,5 +238,4 @@ namespace tysoc {
         _cachedBounds[filename] = { _aabbMin, _aabbMax };
         return _cachedBounds[filename];
     }
-
 }

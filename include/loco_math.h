@@ -7,26 +7,31 @@
 #include <matrix_t.h>
 #include <transforms.h>
 
-// Rename some constants
-#define TYSOC_PI TINYMATH_PI
-#define TYSOC_EPS TINYMATH_EPS
-
-namespace tysoc
+namespace loco
 {
-    // scalar-type (single-precision floating point)
+    /// Main scalar type used in the library (single-precision floating point)
     typedef float TScalar;
+
+    /// Pi value (same precision as in tinymath library)
+    const TScalar PI = TINYMATH_PI;
+    /// Eps value (same precision as in tinymath library)
+    const TScalar EPS = TINYMATH_EPS;
 
     TScalar rad2degrees( const TScalar& rads );
     TScalar degrees2rad( const TScalar& degrees );
 
-    // redefine the vector types to use
+    /// Vector2f alias in the library
     typedef tinymath::Vector<TScalar, 2 > TVec2;
+    /// Vector3f alias in the library
     typedef tinymath::Vector<TScalar, 3 > TVec3;
+    /// Vector4f alias in the library
     typedef tinymath::Vector<TScalar, 4 > TVec4;
 
-    // redefine the matrix types to use
+    /// Matrix2f alias in the library
     typedef tinymath::Matrix<TScalar, 2 > TMat2;
+    /// Matrix3f alias in the library
     typedef tinymath::Matrix<TScalar, 3 > TMat3;
+    /// Matrix4f alias in the library
     typedef tinymath::Matrix<TScalar, 4 > TMat4;
 
     // redefine VectorXY toString methods (just for easier migration)

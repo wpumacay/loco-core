@@ -14,9 +14,9 @@
 #include <map>
 #include <unordered_map>
 
-#include <tysoc_math.h>
-#include <tysoc_logger.h>
-#include <tysoc_config.h>
+#include <loco_math.h>
+#include <loco_logger.h>
+#include <loco_config.h>
 
 // Assimp helper functionality
 #include <assimp/config.h>
@@ -24,30 +24,13 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#define TYSOC_DEMO // used to activate some functionality used for demos
-
-#ifdef TYSOC_DEMO
-
-struct TMjcDemoOptions
-{
-    bool useDemoCameraSensors;
-    bool useDemoContactManager;
-    bool useDemoDebugDraws;
-
-    TMjcDemoOptions();
-};
-
-extern TMjcDemoOptions DEMO_OPTIONS;
-
+#ifndef LOCO_PATH_RESOURCES
+    #define LOCO_PATH_RESOURCES "../res/"
 #endif
 
-#ifndef TYSOC_PATH_RESOURCES
-    #define TYSOC_PATH_RESOURCES "../res/"
-#endif
-
-namespace tysoc
+namespace loco
 {
-    const std::string PATH_RESOURCES = TYSOC_PATH_RESOURCES;
+    const std::string PATH_RESOURCES = LOCO_PATH_RESOURCES;
     const std::string PATH_TEMPLATES_MJCF = PATH_RESOURCES + "templates/mjcf";
     const std::string PATH_TEMPLATES_URDF = PATH_RESOURCES + "templates/urdf";
     const std::string PATH_TEMPLATES_RLSIM = PATH_RESOURCES + "templates/rlsim";
@@ -68,20 +51,19 @@ namespace tysoc
     const float DEFAULT_SHININESS       = 32.0f;
 
     /// Maximum number of generalized coordinates possible (free-joint case)
-    const size_t TYSOC_MAX_NUM_QPOS = 7;
+    const size_t MAX_NUM_QPOS = 7;
     /// Maximum number of degrees of freedom possible (free joint case)
-    const size_t TYSOC_MAX_NUM_QVEL = 6;
+    const size_t MAX_NUM_QVEL = 6;
     /// Number of generalized coordinates for prismatic|slide joints : 1qpos, 1qvel
-    const size_t TYSOC_NUM_QPOS_JOINT_PRISMATIC = 1;
+    const size_t NUM_QPOS_JOINT_PRISMATIC = 1;
     /// Number of generalized coordinates for revolute|hinge joints : 1pos, 1qvel
-    const size_t TYSOC_NUM_QPOS_JOINT_REVOLUTE = 1;
+    const size_t NUM_QPOS_JOINT_REVOLUTE = 1;
     /// Number of generalized coordinates for spherical|ball joints : 4qpos (quaternion), 3qvel (angular speed)
-    const size_t TYSOC_NUM_QPOS_JOINT_SPHERICAL = 4;
+    const size_t NUM_QPOS_JOINT_SPHERICAL = 4;
     /// Number of generalized coordinates for free|none joints : 7qpo (pos-xyz, rot-quat), 6qvel (speed-xyz, angular-speed)
-    const size_t TYSOC_NUM_QPOS_JOINT_FREE = 7;
-
+    const size_t NUM_QPOS_JOINT_FREE = 7;
     /// Default density value (1000kg/m3 - water density) used for mass calculation (if no mass given)
-    const TScalar TYSOC_DEFAULT_DENSITY = 1000.0f;
+    const TScalar DEFAULT_DENSITY = 1000.0f;
 
     std::vector< std::string > split( const std::string &txt, char separator = '/' );
 

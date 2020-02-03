@@ -1,9 +1,9 @@
 #pragma once
 
-#include <tysoc_common.h>
+#include <loco_common.h>
 
-namespace tysoc {
-
+namespace loco
+{
     enum class eShapeType
     {
         NONE = 0,
@@ -122,7 +122,7 @@ namespace tysoc {
             collisionGroup = 1;
             collisionMask = 1;
             friction = { 1., 0.005, 0.0001 };
-            density = TYSOC_DEFAULT_DENSITY;
+            density = DEFAULT_DENSITY;
         }
     };
 
@@ -183,10 +183,7 @@ namespace tysoc {
         TCollisionData  collision;          // collisions owned by this body
         TVisualData     visual;             // visuals owned by this body
 
-        TBodyData()
-        {
-            dyntype = eDynamicsType::STATIC;
-        }
+        TBodyData() : dyntype( eDynamicsType::STATIC ) {}
     };
 
     TScalar computeVolumeFromShape( const TShapeData& shapeData );

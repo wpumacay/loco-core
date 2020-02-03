@@ -1,10 +1,10 @@
 #pragma once
 
-#include <tysoc_common.h>
+#include <loco_common.h>
 #include <components/data.h>
 
-namespace tysoc {
-
+namespace loco
+{
     class TCollision;
     class TVisual;
 

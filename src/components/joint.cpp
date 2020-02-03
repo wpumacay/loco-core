@@ -1,8 +1,8 @@
 
 #include <components/joint.h>
 
-namespace tysoc {
-
+namespace loco
+{
     TJoint::TJoint( const std::string& name, const TJointData& jointData )
     {
         m_name = name;
@@ -80,7 +80,7 @@ namespace tysoc {
         }
         else
         {
-            TYSOC_CORE_ERROR( "Joint \"{0}\" has unsupported type \"{1}\"", m_name, tysoc::toString( _jointType ) );
+            LOCO_CORE_ERROR( "Joint \"{0}\" has unsupported type \"{1}\"", m_name, loco::toString( _jointType ) );
         }
     }
 
@@ -139,7 +139,7 @@ namespace tysoc {
     {
         if ( qpos.size() != m_nqpos )
         {
-            TYSOC_CORE_WARN( "Joint >>> tried to set a different number of qpos than the ones available \
+            LOCO_CORE_WARN( "Joint >>> tried to set a different number of qpos than the ones available \
                               for this joint. Skipped setting the q-values to avoid undefined behaviour." );
             return;
         }
@@ -155,7 +155,7 @@ namespace tysoc {
     {
         if ( qvel.size() != m_nqvel )
         {
-            TYSOC_CORE_WARN( "Joint >>> tried to set a different number of qvel than the ones available \
+            LOCO_CORE_WARN( "Joint >>> tried to set a different number of qvel than the ones available \
                               for this joint. Skipped setting the q-values to avoid undefined behaviour." );
             return;
         }
@@ -213,7 +213,7 @@ namespace tysoc {
 
     void TJoint::preStep()
     {
-        TYSOC_CORE_ASSERT( m_ownerRef, "Joint >>> joint \"{0}\" isn't attached to an owner body", m_name );
+        LOCO_CORE_ASSERT( m_ownerRef, "Joint >>> joint \"{0}\" isn't attached to an owner body", m_name );
 
         if ( m_jointImplRef )
             m_jointImplRef->preStep();
@@ -221,7 +221,7 @@ namespace tysoc {
 
     void TJoint::postStep()
     {
-        TYSOC_CORE_ASSERT( m_ownerRef, "Joint >>> joint \"{0}\" isn't attached to an owner body", m_name );
+        LOCO_CORE_ASSERT( m_ownerRef, "Joint >>> joint \"{0}\" isn't attached to an owner body", m_name );
 
         if ( m_jointImplRef )
         {
@@ -238,7 +238,7 @@ namespace tysoc {
 
     void TJoint::reset()
     {
-        TYSOC_CORE_ASSERT( m_ownerRef, "Joint >>> joint \"{0}\" isn't attached to an owner body", m_name );
+        LOCO_CORE_ASSERT( m_ownerRef, "Joint >>> joint \"{0}\" isn't attached to an owner body", m_name );
 
         if ( m_jointImplRef )
         {
@@ -253,5 +253,4 @@ namespace tysoc {
         if ( m_drawableImplRef )
             m_drawableImplRef->setWorldTransform( m_tf );
     }
-
 }

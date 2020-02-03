@@ -1,17 +1,17 @@
 
-#include <tysoc_math.h>
+#include <loco_math.h>
 
-namespace tysoc
+namespace loco
 {
 
     TScalar rad2degrees( const TScalar& rads )
     {
-        return rads * 180.0 / TYSOC_PI;
+        return rads * 180.0 / loco::PI;
     }
 
     TScalar degrees2rad( const TScalar& degrees )
     {
-        return degrees * TYSOC_PI / 180.0;
+        return degrees * loco::PI / 180.0;
     }
 
     std::string toString( const TVec2& vec )

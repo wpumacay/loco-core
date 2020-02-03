@@ -74,7 +74,7 @@ namespace tysoc {
 
     TAgent::~TAgent()
     {
-        TYSOC_CORE_TRACE( "Destroying agent: {0}", m_name );
+        LOCO_CORE_TRACE( "Destroying agent: {0}", m_name );
 
         m_rootBodyPtr = nullptr;
         m_modelDataMjcfPtr = nullptr;
@@ -116,7 +116,7 @@ namespace tysoc {
     {
         if ( !m_rootBodyPtr )
         {
-            TYSOC_CORE_ERROR( "Agent {0} >> found kintree without root body", m_name );
+            LOCO_CORE_ERROR( "Agent {0} >> found kintree without root body", m_name );
             return;
         }
 
@@ -156,7 +156,7 @@ namespace tysoc {
     {
         if ( actions.size() != actuators.size() )
         {
-            TYSOC_CORE_WARN( "Agent {0} >> only {1} control actions available, but {2} were given", m_name, actuators.size(), actions.size() );
+            LOCO_CORE_WARN( "Agent {0} >> only {1} control actions available, but {2} were given", m_name, actuators.size(), actions.size() );
             return;
         }
 
@@ -168,7 +168,7 @@ namespace tysoc {
     {
         if ( actuatorIndx < 0 || actuatorIndx >= actuators.size()  )
         {
-            TYSOC_CORE_WARN( "Agent {0} >> requested actuator-index {0}, but valid bounds are [0-{1}]", m_name, actuatorIndx, actuators.size() - 1 );
+            LOCO_CORE_WARN( "Agent {0} >> requested actuator-index {0}, but valid bounds are [0-{1}]", m_name, actuatorIndx, actuators.size() - 1 );
             return { 1.0, -1.0 };
         }
 
@@ -280,7 +280,7 @@ namespace tysoc {
     {
         if ( !kinJoint->parentBodyPtr )
         {
-            TYSOC_CORE_WARN( "Agent {0} >> joint {1} doesn't have a parent body", m_name, kinJoint->name );
+            LOCO_CORE_WARN( "Agent {0} >> joint {1} doesn't have a parent body", m_name, kinJoint->name );
             return;
         }
 
@@ -291,7 +291,7 @@ namespace tysoc {
     {
         if ( !kinVisual->parentBodyPtr )
         {
-            TYSOC_CORE_WARN( "Agent {0} >> visual {1} doesn't have a parent body", m_name, kinVisual->name );
+            LOCO_CORE_WARN( "Agent {0} >> visual {1} doesn't have a parent body", m_name, kinVisual->name );
             return;
         }
 
@@ -302,7 +302,7 @@ namespace tysoc {
     {
         if( !kinCollision->parentBodyPtr )
         {
-            TYSOC_CORE_WARN( "Agent {0} >> collision {1} doesn't have a parent body", m_name, kinCollision->name );
+            LOCO_CORE_WARN( "Agent {0} >> collision {1} doesn't have a parent body", m_name, kinCollision->name );
             return;
         }
 
@@ -313,7 +313,7 @@ namespace tysoc {
     {
         if( !kinActuator->jointPtr )
         {
-            TYSOC_CORE_WARN( "Agent {0} >> actuator {1} doesn't have a parent body", m_name, kinActuator->name );
+            LOCO_CORE_WARN( "Agent {0} >> actuator {1} doesn't have a parent body", m_name, kinActuator->name );
             return;
         }
 

@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <tysoc_common.h>
+#include <loco_common.h>
 
 #include <utils/parsers/parsers_xml.h>
 

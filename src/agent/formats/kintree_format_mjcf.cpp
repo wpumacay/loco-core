@@ -30,21 +30,21 @@ namespace tysoc {
                                                             "worldbody" );
 
         if ( !_worldBodyElmPtr )
-            TYSOC_CORE_ERROR( "Parser-mjcf {0} >> Something went wrong while parsing agent: {1}. \
+            LOCO_CORE_ERROR( "Parser-mjcf {0} >> Something went wrong while parsing agent: {1}. \
                                Model data doesn't have 'worldbody' xml-element", _context.filename, agentPtr->name() );
 
         auto _rootBodyElmPtr = mjcf::findFirstChildByType( _worldBodyElmPtr, 
                                                            "body" );
 
         if ( !_rootBodyElmPtr )
-            TYSOC_CORE_ERROR( "Parser-mjcf {0} >> Something went wrong while parsing agent: {1}. \
+            LOCO_CORE_ERROR( "Parser-mjcf {0} >> Something went wrong while parsing agent: {1}. \
                                Model data doesn't have a root 'body' xml-element", _context.filename, agentPtr->name() );
 
         // start recursive processing of all kintree components, starting at root
         auto _rootBodyPtr = _processBodyFromMjcf( _context, _rootBodyElmPtr, nullptr );
 
         if ( !_rootBodyPtr )
-            TYSOC_CORE_ERROR( "Parser-mjcf {0} >> Something went wrong while parsing agent: {1}. \
+            LOCO_CORE_ERROR( "Parser-mjcf {0} >> Something went wrong while parsing agent: {1}. \
                                Processed root body is \"nullptr\"", _context.filename, agentPtr->name() );
 
         // make sure we set the root for this agent we are constructing
@@ -191,7 +191,7 @@ namespace tysoc {
                 if ( _asset->hasAttributeString( "file" ) )
                     _meshAsset.set( "file", _asset->getAttributeString( "file", "" ) );
                 else
-                    TYSOC_CORE_WARN( "Parser-mjcf {0} >> Mesh asset doesn't have a valid linked file", context.filename );
+                    LOCO_CORE_WARN( "Parser-mjcf {0} >> Mesh asset doesn't have a valid linked file", context.filename );
 
                 if ( _asset->hasAttributeString( "name" ) )
                     _meshAsset.set( "name", _asset->getAttributeString( "name", "" ) );
@@ -218,7 +218,7 @@ namespace tysoc {
             else
             {
                 // Other asset types are not supported yet
-                TYSOC_CORE_WARN( "Parser-mjcf {0} >> asset of type \"{1}\" isn't supported yet", context.filename, _asset->etype );
+                LOCO_CORE_WARN( "Parser-mjcf {0} >> asset of type \"{1}\" isn't supported yet", context.filename, _asset->etype );
             }
         }
     }
@@ -325,7 +325,7 @@ namespace tysoc {
             }
             else
             {
-                auto _limits = _grabVec2( context, jointElementPtr, "range", { -TYSOC_PI, TYSOC_PI } );
+                auto _limits = _grabVec2( context, jointElementPtr, "range", { -loco::PI, loco::PI } );
                 _kinTreeJointPtr->data.limits = { _limits.x, _limits.y };
             }
         }
@@ -452,7 +452,7 @@ namespace tysoc {
         // and the friction coefficients
         _kinCollision->data.friction = _grabVec3( context, geomElementPtr, "friction", { 1., 0.005, 0.0001 } );
         // and the density of the geometries (for default mass calculation)
-        _kinCollision->data.density = _grabFloat( context, geomElementPtr, "density", TYSOC_DEFAULT_DENSITY );
+        _kinCollision->data.density = _grabFloat( context, geomElementPtr, "density", DEFAULT_DENSITY );
         // and store it in the collisions buffer
         context.agentPtr->collisions.push_back( _kinCollision );
         // and to the collisions map
@@ -503,7 +503,7 @@ namespace tysoc {
         else
         {
             // Must have one inertia matrix definition given by one of the previous elements
-            TYSOC_CORE_ERROR( "Parser-mjcf {0} >> No inertia-matrix given in mjcf model for agent with name: {1}", context.filename, context.agentPtr->name() );
+            LOCO_CORE_ERROR( "Parser-mjcf {0} >> No inertia-matrix given in mjcf model for agent with name: {1}", context.filename, context.agentPtr->name() );
         }
 
         return _kinInertial;
@@ -532,7 +532,7 @@ namespace tysoc {
         }
         else
         {
-            TYSOC_CORE_WARN( "Parser-mjcf {0} >> Actuator \"{1}\" is linked to a non-existent \
+            LOCO_CORE_WARN( "Parser-mjcf {0} >> Actuator \"{1}\" is linked to a non-existent \
                               joint called {2}", context.filename, _kinActuator->name, _jointName );
 
             _kinActuator->jointPtr = nullptr;
@@ -655,7 +655,7 @@ namespace tysoc {
             if ( _gsize.ndim == 0 )
             {
                 // This is weird, but just in case make some default dimensions
-                TYSOC_CORE_WARN( "Parser-mjcf {0} >> plane \"{1}\" has no size property", context.filename, _gname );
+                LOCO_CORE_WARN( "Parser-mjcf {0} >> plane \"{1}\" has no size property", context.filename, _gname );
                 _width = 3.0f;
                 _depth = 3.0f;
             }
@@ -682,7 +682,7 @@ namespace tysoc {
             if ( _gsize.ndim == 0 )
             {
                 // This is weird, but just in case make some default dimenions
-                TYSOC_CORE_WARN( "Parser-mjcf {0} >> sphere \"{1}\" has no size property", context.filename, _gname );
+                LOCO_CORE_WARN( "Parser-mjcf {0} >> sphere \"{1}\" has no size property", context.filename, _gname );
                 _radius = 0.1f;
             }
             else if ( _gsize.ndim == 1 )
@@ -693,7 +693,7 @@ namespace tysoc {
             {
                 // just in case, if someone passed more parameters than needed
                 // it's like ... "thanks, but no thanks xD", so just use the first two
-                TYSOC_CORE_WARN( "Parser-mjcf {0} >> sphere \"{1}\" has more parameters than needed", context.filename, _gname );
+                LOCO_CORE_WARN( "Parser-mjcf {0} >> sphere \"{1}\" has more parameters than needed", context.filename, _gname );
                 _radius = _gsize[0];
             }
 
@@ -734,7 +734,7 @@ namespace tysoc {
                 }
                 else
                 {
-                    TYSOC_CORE_WARN( "Parser-mjcf {0} >> capsule/cylinder \"{1}\" has wrong size-dim for from-to specification", context.filename, _gname );
+                    LOCO_CORE_WARN( "Parser-mjcf {0} >> capsule/cylinder \"{1}\" has wrong size-dim for from-to specification", context.filename, _gname );
                     _radius = 0.25f * _length;
                 }
 
@@ -761,7 +761,7 @@ namespace tysoc {
                 else
                 {
                     // default, just in case passed less than (radius,length)
-                    TYSOC_CORE_WARN( "Parser-mjcf {0} >> capsule/cylinder \"{1}\" has wrong size-dim for normal specification", context.filename, _gname );
+                    LOCO_CORE_WARN( "Parser-mjcf {0} >> capsule/cylinder \"{1}\" has wrong size-dim for normal specification", context.filename, _gname );
                     _radius = 0.05f;
                     _length = 0.1f;
                 }
@@ -782,7 +782,7 @@ namespace tysoc {
             }
             else
             {
-                TYSOC_CORE_WARN( "Parser-mjcf {0} >> box \"{1}\" has wrong size-dim", context.filename, _gname );
+                LOCO_CORE_WARN( "Parser-mjcf {0} >> box \"{1}\" has wrong size-dim", context.filename, _gname );
                 _hwidth = _hdepth = _hheight = 0.1f;
             }
 

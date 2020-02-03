@@ -33,13 +33,13 @@ namespace pytysoc
     {
         if ( !ownerRef )
         {
-            TYSOC_CORE_ERROR( "PyJoint::setOwner >>> tried setting nullptr as owner of joint \"{0}\"", m_joint->name() );
+            LOCO_CORE_ERROR( "PyJoint::setOwner >>> tried setting nullptr as owner of joint \"{0}\"", m_joint->name() );
             return;
         }
 
         if ( !ownerRef->ptr() )
         {
-            TYSOC_CORE_ERROR( "PyJoint::setOwner >>> tried setting as owner of joint \"{0}\" an invalid (null-internal) body", m_joint->name() );
+            LOCO_CORE_ERROR( "PyJoint::setOwner >>> tried setting as owner of joint \"{0}\" an invalid (null-internal) body", m_joint->name() );
             return;
         }
 
@@ -51,13 +51,13 @@ namespace pytysoc
     {
         if ( !ownerParentRef )
         {
-            TYSOC_CORE_ERROR( "PyJoint::setOwnerParent >>> tried setting nullptr as owner's parent of joint \"{0}\"", m_joint->name() );
+            LOCO_CORE_ERROR( "PyJoint::setOwnerParent >>> tried setting nullptr as owner's parent of joint \"{0}\"", m_joint->name() );
             return;
         }
 
         if ( !ownerParentRef->ptr() )
         {
-            TYSOC_CORE_ERROR( "PyJoint::setOwnerParent >>> tried setting as owner's parent of joint \"{0}\" an invalid (null-internal) body", m_joint->name() );
+            LOCO_CORE_ERROR( "PyJoint::setOwnerParent >>> tried setting as owner's parent of joint \"{0}\" an invalid (null-internal) body", m_joint->name() );
             return;
         }
 
@@ -91,7 +91,7 @@ namespace pytysoc
 
     PyJointData PyJoint::data() const 
     {
-        TYSOC_CORE_ASSERT( m_joint, "PyJoint::data() >>> wrapper contains null reference to a body" );
+        LOCO_CORE_ASSERT( m_joint, "PyJoint::data() >>> wrapper contains null reference to a body" );
 
         return toPyJointData( m_joint->data() );
     }

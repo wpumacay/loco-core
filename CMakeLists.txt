@@ -1,83 +1,98 @@
 cmake_minimum_required( VERSION 3.0.0 )
 
-project( tysoc )
+#### aka Tysoc-Core project
+project( LocoCore )
+message( "|---------------------------------------------------------|" )
+message( "|               LOCOMOTION SIMULATION TOOLKIT             |" )
+message( "|---------------------------------------------------------|" )
+message( "
+                               .--~~,__
+                  :-....,-------`~~'._.'
+                   `-,,,  ,_      ;'~U'
+                    _,-' ,'`-__; '--.
+                   (_/'~~      ''''(;" )
 
 set( CMAKE_CXX_STANDARD 11 )
-set( CMAKE_CXX_FLAGS "-g -Wno-format-security ${CMAKE_CXX_FLAGS}" )
-
-# Add the cmake folder so the FindSphinx module is found
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wno-format-security" )
 set( CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH} )
 
-set( TYSOCCORE_BUILD_DOCS OFF )
+# in case nobody set the project type, set it (parent project might have set it for all)
+if ( NOT CMAKE_BUILD_TYPE )
+    set( CMAKE_BUILD_TYPE Debug )
+endif()
+
+option( LOCO_CORE_BUILD_DOCS "Build documentation (requires Doxygen)" ON )
+option( LOCO_CORE_BUILD_EXAMPLES "Build C/C++ examples" ON )
+option( LOCO_CORE_BUILD_PYTHON_BINDINGS "Build Python-bindings" ON )
+option( LOCO_CORE_BUILD_WITH_LOGS "Build using logging functionality" ON )
+option( LOCO_CORE_BUILD_WITH_TRACK_ALLOCS "Build using tracking of objects allocations|deallocations" ON )
 
 if ( NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY )
-    message( "TYSOCCORE> Sending generated libs to OWN build directory" )
+    message( "LOCO::CORE >>> Sending generated libs to OWN build directory" )
     set( CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/libs" )
 else()
-    message( "TYSOCCORE> Sending generated libs to EXTERNAL build directory" )
+    message( "LOCO::CORE >>> Sending generated libs to EXTERNAL build directory" )
 endif()
+message( "LOCO::CORE >>> LIBRARY_OUT_DIR: ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}" )
 
-message( "TYSOCCORE> LIBRARY_OUT_DIR: ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}" )
-
-set( TYSOCCORE_IS_MASTER_PROJECT OFF )
+set( LOCO_CORE_IS_MASTER_PROJECT OFF )
 if( CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR )
-    message( "TYSOCCORE> Configuring as MASTER project" )
-    set( TYSOCCORE_IS_MASTER_PROJECT ON )
+    message( "LOCO::CORE >>> Configuring as MASTER project" )
+    set( LOCO_CORE_IS_MASTER_PROJECT ON )
 else()
-    message( "TYSOCCORE> Configuring as CHILD project" )
+    message( "LOCO::CORE >>> Configuring as CHILD project" )
 endif()
 
-# Definitions used for development. Python bindings do not use these definitions, but ...
-# instead we load the paths dynamically according to the user configuration/installation.
-add_definitions( -DTYSOC_PATH_RESOURCES="${CMAKE_CURRENT_SOURCE_DIR}/res/" )
+if ( LOCO_CORE_BUILD_WITH_LOGS OR ( CMAKE_BUILD_TYPE STREQUAL Debug ) )
+    set( LOCO_CORE_USE_LOGS "YES" )
+    add_definitions( -DLOCO_CORE_USE_LOGS )
+else()
+    set( LOCO_CORE_USE_LOGS "NO" )
+endif()
+
+if ( LOCO_CORE_BUILD_WITH_TRACK_ALLOCS OR ( CMAKE_BUILD_TYPE STREQUAL Debug ) )
+    set( LOCO_CORE_USE_TRACK_ALLOCS "YES" )
+    add_definitions( -DLOCO_CORE_USE_TRACK_ALLOCS )
+else()
+    set( LOCO_CORE_USE_TRACK_ALLOCS "NO" )
+endif()
+
+# Expose definitions and properties for other projects to se (resources path, generated dynamic-library paths)
+# Python-bindings don't use these paths, but the ones obtained during installation (target folder)
+add_definitions( -DLOCO_PATH_RESOURCES="${CMAKE_CURRENT_SOURCE_DIR}/res/" )
+set_property( GLOBAL PROPERTY PROP_LOCO_PATH_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/res/" )
 if ( WIN32 )
-    add_definitions( -DTYSOC_BACKEND_GRAPHICS_GLVIZ="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libtysocRenderingGlviz.dll" )
+    add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/liblocoRenderingGlviz.dll" )
+    set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/liblocoRenderingGlviz.dll" )
 elseif ( UNIX )
     if ( APPLE )
-        add_definitions( -DTYSOC_BACKEND_GRAPHICS_GLVIZ="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libtysocRenderingGlviz.dylib" )
+        add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/liblocoRenderingGlviz.dylib" )
+        set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/liblocoRenderingGlviz.dylib" )
     else ()
-        add_definitions( -DTYSOC_BACKEND_GRAPHICS_GLVIZ="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libtysocRenderingGlviz.so" )
+        add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/liblocoRenderingGlviz.so" )
+        set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/liblocoRenderingGlviz.so" )
     endif ()
 endif()
 
-set_property( GLOBAL PROPERTY PROP_TYSOC_PATH_RESOURCES         "${CMAKE_CURRENT_SOURCE_DIR}/res/" )
-if ( WIN32 )
-    set_property( GLOBAL PROPERTY PROP_TYSOC_BACKEND_GRAPHICS_GLVIZ "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libtysocRenderingGlviz.dll" )
-elseif ( UNIX )
-    if ( APPLE )
-        set_property( GLOBAL PROPERTY PROP_TYSOC_BACKEND_GRAPHICS_GLVIZ "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libtysocRenderingGlviz.dylib" )
-    else ()
-        set_property( GLOBAL PROPERTY PROP_TYSOC_BACKEND_GRAPHICS_GLVIZ "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libtysocRenderingGlviz.so" )
-    endif ()
-endif()
+# Test that properties point where they should -----------------------------------------------------
+get_property( VAR_LOCO_PATH_RESOURCES GLOBAL PROPERTY PROP_LOCO_PATH_RESOURCES )
+get_property( VAR_LOCO_BACKEND_GRAPHICS_GLVIZ GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ )
 
-# test all properties --------------------------------------------------------------------------------------------------
+message( "PROP_LOCO_PATH_RESOURCES           : ${VAR_LOCO_PATH_RESOURCES}" )
+message( "PROP_LOCO_BACKEND_GRAPHICS_GLVIZ   : ${VAR_LOCO_BACKEND_GRAPHICS_GLVIZ}" )
+# --------------------------------------------------------------------------------------------------
 
-get_property( VAR_TYSOC_PATH_RESOURCES          GLOBAL PROPERTY PROP_TYSOC_PATH_RESOURCES )
-get_property( VAR_TYSOC_BACKEND_GRAPHICS_GLVIZ  GLOBAL PROPERTY PROP_TYSOC_BACKEND_GRAPHICS_GLVIZ )
-
-message( "PROP_TYSOC_PATH_RESOURCES:            ${VAR_TYSOC_PATH_RESOURCES}" )
-message( "PROP_TYSOC_BACKEND_GRAPHICS_GLVIZ:    ${VAR_TYSOC_BACKEND_GRAPHICS_GLVIZ}" )
-
-# ----------------------------------------------------------------------------------------------------------------------
-
-if ( TYSOCCORE_IS_MASTER_PROJECT )
-    # Add dependencies from our own submodules
+if ( LOCO_CORE_IS_MASTER_PROJECT )
     add_subdirectory( ext )
 endif()
 
-# Assimp: required for some mesh-computations. (use same version as in cat1-viz)
+# Assimp: required for some mesh-computations. (use same version as in TinyRenderer)
 find_package( ASSIMP REQUIRED )
 
-# Main Sources
-#### file( GLOB_RECURSE TYSOC_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp" )
-#### foreach(file ${TYSOC_SOURCES})
-####     message( "src-file: ${file}" )
-#### endforeach(file)
-set( TYSOC_SOURCES
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/tysoc_common.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/tysoc_math.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/tysoc_logger.cpp"
+set( LOCO_CORE_SRCS
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_common.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_math.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_logger.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent/agent_base.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent/agent_components.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent/formats/kintree_format_mjcf.cpp"
@@ -118,24 +133,20 @@ set( TYSOC_SOURCES
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/parsers/urdf/urdf_elements.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/primitives_spawner.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/viz/viz.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/ext/tinyxml2/tinyxml2.cpp"
 )
-# External dependencies
-set( TYSOC_SOURCES 
-     ${TYSOC_SOURCES}
-     "${CMAKE_CURRENT_SOURCE_DIR}/ext/tinyxml2/tinyxml2.cpp" )
 
-# Main includes
-include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/include/" )
-# External dependencies
-include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/ext/tinyxml2" )
-include_directories( "${CMAKE_CURRENT_SOURCE_DIR}/ext/json" )
-include_directories( "${CMAKE_SOURCE_DIR}/ext/spdlog/include" )
-include_directories( "${CMAKE_SOURCE_DIR}/ext/tiny_math/include" )
+set( LOCO_CORE_INCLUDE_DIRS
+     "${CMAKE_CURRENT_SOURCE_DIR}/include"
+     "${CMAKE_CURRENT_SOURCE_DIR}/ext/tinyxml2"
+     "${CMAKE_CURRENT_SOURCE_DIR}/ext/json"
+     "${CMAKE_SOURCE_DIR}/ext/spdlog/include"
+     "${CMAKE_SOURCE_DIR}/ext/tinymath/include" )
+include_directories( ${LOCO_CORE_INCLUDE_DIRS} )
 
-add_library( tysocCore SHARED
-             ${TYSOC_SOURCES} )
-
-target_link_libraries( tysocCore
+add_library( loco_core SHARED
+             ${LOCO_CORE_SRCS} )
+target_link_libraries( loco_core
                        tinymath_cpp_lib
                        assimp
                        spdlog
@@ -144,21 +155,26 @@ target_link_libraries( tysocCore
 #### # Configure glviz @todo: add option to select if visualizer is enabled or not
 #### add_subdirectory( glviz )
 
-#### # Configure python bindings
-#### add_subdirectory( pytysoc )
-
-#### # Configure tests
-#### add_subdirectory( tests )
-#### # Configure unittests
-#### add_subdirectory( unittest )
-
-if( TYSOCCORE_IS_MASTER_PROJECT )
-    #### # Configure examples
-    #### add_subdirectory( examples )
-    
-    #### # Check for docs
-    #### if ( TYSOCCORE_BUILD_DOCS )
-    ####     # Configure documentation
-    ####     add_subdirectory( docs )
-    #### endif()
+if ( LOCO_CORE_BUILD_PYTHON_BINDINGS )
+    add_subdirectory( bindings )
 endif()
+
+#### if ( LOCO_CORE_IS_MASTER_PROJECT AND LOCO_CORE_BUILD_DOCS )
+####     add_subdirectory( docs )
+#### endif()
+
+#### if ( LOCO_CORE_IS_MASTER_PROJECT AND LOCO_CORE_BUILD_EXAMPLES )
+####     add_subdirectory( examples )
+#### endif()
+
+message( "***************************************************************************************" )
+message( "LOCO::CORE >>> BUILD-OPTIONS SUMMARY:" )
+message( "CMAKE_BUILD_TYPE                  : ${CMAKE_BUILD_TYPE}" )
+message( "LOCO_CORE_BUILD_DOCS              : ${LOCO_CORE_BUILD_DOCS}" )
+message( "LOCO_CORE_BUILD_EXAMPLES          : ${LOCO_CORE_BUILD_EXAMPLES}" )
+message( "LOCO_CORE_BUILD_PYTHON_BINDINGS   : ${LOCO_CORE_BUILD_PYTHON_BINDINGS}" )
+message( "LOCO_CORE_BUILD_WITH_LOGS         : ${LOCO_CORE_BUILD_WITH_LOGS}" )
+message( "LOCO_CORE_BUILD_WITH_TRACK_ALLOCS : ${LOCO_CORE_BUILD_WITH_TRACK_ALLOCS}" )
+message( "LOCO_CORE_USE_LOGS                : ${LOCO_CORE_USE_LOGS}" )
+message( "LOCO_CORE_USE_TRACK_ALLOCS        : ${LOCO_CORE_USE_TRACK_ALLOCS}" )
+message( "***************************************************************************************" )

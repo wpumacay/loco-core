@@ -1,8 +1,8 @@
 
 #include <components/collision.h>
 
-namespace tysoc {
-
+namespace loco
+{
     TCollision::TCollision( const std::string& name,
                             const TCollisionData& collisionData )
     {

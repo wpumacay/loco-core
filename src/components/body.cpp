@@ -1,8 +1,8 @@
 
 #include <components/body.h>
 
-namespace tysoc {
-
+namespace loco
+{
     TIBody::TIBody( const std::string& name,
                     const TBodyData& data )
     {
