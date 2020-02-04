@@ -27,6 +27,32 @@ namespace loco
         return size;
     }
 
+    py::array_t<TScalar> stdvec_to_nparray( const std::vector<TScalar>& stdvec )
+    {
+        auto nparray = py::array_t<TScalar>( stdvec.size() );
+        auto bufferInfo = nparray.request();
+        auto bufferData = bufferInfo.ptr;
+        memcpy( bufferData, stdvec.data(), sizeof( TScalar ) * stdvec.size() );
+        return nparray;
+    }
+
+    std::vector<TScalar> nparray_to_stdvec( const py::array_t<TScalar>& arr_stdvec )
+    {
+        auto bufferInfo = arr_stdvec.request();
+        auto bufferData = bufferInfo.ptr;
+        auto stdvec = std::vector<TScalar>( bufferInfo.size, 0.0 );
+        memcpy( stdvec.data(), bufferData, sizeof( TScalar ) * bufferInfo.size );
+        return stdvec;
+    }
+
+    std::string toString( const std::vector<TScalar>& stdvec )
+    {
+        std::string _strrep = "( ";
+        for ( size_t i = 0; i < stdvec.size(); i++ )
+            _strrep += std::to_string( stdvec[i] ) + ( i < ( stdvec.size() - 1 ) ? ", " : " )" );
+        return _strrep;
+    }
+
     void bindings_common( py::module& m )
     {
         m.attr( "MAX_NUM_QPOS" ) = loco::MAX_NUM_QPOS;

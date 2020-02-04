@@ -41,4 +41,13 @@ namespace loco
 
     // Conversion from numpy array to TSizef
     TSizef nparray_to_sizef( const py::array_t<TScalar>& arr_size );
+
+    // Conversion from std-vector to numpy array
+    py::array_t<TScalar> stdvec_to_nparray( const std::vector<TScalar>& stdvec );
+
+    // Conversion from numpy array to std-vector
+    std::vector<TScalar> nparray_to_stdvec( const py::array_t<TScalar>& arr_stdvec );
+
+    // Returns string-representation of an std-vector
+    std::string toString( const std::vector<TScalar>& stdvec );
 }

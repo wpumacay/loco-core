@@ -6,7 +6,7 @@ namespace py = pybind11;
 
 namespace loco
 {
-    void bindings_components( py::module& m )
+    void bindings_components_data( py::module& m )
     {   
         // Bindings for enumerators|constants
         {
