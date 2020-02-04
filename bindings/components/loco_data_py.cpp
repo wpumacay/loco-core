@@ -88,26 +88,26 @@ namespace loco
                 .def_property( "size",
                     []( const TShapeData* self ) -> py::array_t<TScalar>
                         {
-                            return tinymath::vector_to_nparray<TScalar,3>( self->size );
+                            return tinymath::vector_to_nparray<TScalar, 3>( self->size );
                         },
                     []( TShapeData* self, const py::array_t<TScalar>& arr_size ) -> void
                         {
-                            self->size = tinymath::nparray_to_vector<TScalar,3>( arr_size );
+                            self->size = tinymath::nparray_to_vector<TScalar, 3>( arr_size );
                         } )
                 .def_readwrite( "filename", &TShapeData::filename )
-                .def_readwrite( "hdata", &TShapeData::hdata )
+                .def_readwrite( "hdata", &TShapeData::hdata, py::return_value_policy::reference )
                 .def_property( "localTf",
                     []( const TShapeData* self ) -> py::array_t<TScalar>
                         {
-                            return tinymath::matrix_to_nparray<TScalar,4>( self->localTransform );
+                            return tinymath::matrix_to_nparray<TScalar, 4>( self->localTransform );
                         },
                     []( TShapeData* self, const py::array_t<TScalar>& arr_localTf )
                         {
-                            self->localTransform = tinymath::nparray_to_matrix<TScalar,4>( arr_localTf );
+                            self->localTransform = tinymath::nparray_to_matrix<TScalar, 4>( arr_localTf );
                         } )
                 .def( "__repr__", []( const TShapeData* self )
                     {
-                        auto _strrep = std::string( "TShapeData(\n" );
+                        auto _strrep = std::string( "ShapeData(\n" );
                         _strrep += "cpp-address : " + loco::pointerToHexAddress( self ) + "\n";
                         _strrep += "type        : " + loco::toString( self->type ) + "\n";
                         _strrep += "size        : " + loco::toString( self->size ) + "\n";
@@ -116,6 +116,281 @@ namespace loco
                         _strrep += ")";
                         return _strrep;
                     } );
+        }
+
+        // Bindings for core structs (used for constructing core components)
+        {
+            py::class_< TCollisionData, TShapeData >( m, "CollisionData" )
+                .def( py::init<>() )
+                .def_readwrite( "collisionGroup", &TCollisionData::collisionGroup )
+                .def_readwrite( "collisionMask", &TCollisionData::collisionMask )
+                .def_property( "friction",
+                    []( const TCollisionData* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 3>( self->friction );
+                        },
+                    []( TCollisionData* self, const py::array_t<TScalar>& arr_friction ) -> void
+                        {
+                            self->friction = tinymath::nparray_to_vector<TScalar, 3>( arr_friction );
+                        } )
+                .def_readwrite( "density", &TCollisionData::density )
+                .def( "__repr__", []( const TCollisionData* self )
+                    {
+                        auto _strrep = std::string( "CollisionData(\n" );
+                        _strrep += "cpp-address : " + loco::pointerToHexAddress( self ) + "\n";
+                        _strrep += "type        : " + loco::toString( self->type ) + "\n";
+                        _strrep += "size        : " + loco::toString( self->size ) + "\n";
+                        _strrep += "filename    : " + self->filename + "\n";
+                        _strrep += "localTf     : \n" + loco::toString( self->localTransform ) + "\n";
+                        _strrep += "colGroup    : " + std::to_string( self->collisionGroup ) + "\n";
+                        _strrep += "colMask     : " + std::to_string( self->collisionMask ) + "\n";
+                        _strrep += "friction    : " + loco::toString( self->friction ) + "\n";
+                        _strrep += "density     : " + std::to_string( self->density ) + "\n";
+                        _strrep += ")";
+                        return _strrep;
+                    } );
+
+            py::class_< TVisualData, TShapeData >( m, "VisualData" )
+                .def( py::init<>() )
+                .def_property( "ambient",
+                    []( const TVisualData* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 3>( self->ambient );
+                        },
+                    []( TVisualData* self, const py::array_t<TScalar>& arr_ambient ) -> void
+                        {
+                            self->ambient = tinymath::nparray_to_vector<TScalar, 3>( arr_ambient );
+                        } )
+                .def_property( "diffuse",
+                    []( const TVisualData* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 3>( self->diffuse );
+                        },
+                    []( TVisualData* self, const py::array_t<TScalar>& arr_diffuse ) -> void
+                        {
+                            self->diffuse = tinymath::nparray_to_vector<TScalar, 3>( arr_diffuse );
+                        } )
+                .def_property( "specular",
+                    []( const TVisualData* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 3>( self->specular );
+                        },
+                    []( TVisualData* self, const py::array_t<TScalar>& arr_specular ) -> void
+                        {
+                            self->specular = tinymath::nparray_to_vector<TScalar, 3>( arr_specular );
+                        } )
+                .def_readwrite( "shininess", &TVisualData::shininess )
+                .def_readwrite( "texture", &TVisualData::texture )
+                .def_readwrite( "usesMaterialFromMesh", &TVisualData::usesMaterialFromMesh )
+                .def( "__repr__", []( const TVisualData* self )
+                    {
+                        auto _strrep = std::string( "VisualData(\n" );
+                        _strrep += "cpp-address : " + loco::pointerToHexAddress( self ) + "\n";
+                        _strrep += "type        : " + loco::toString( self->type ) + "\n";
+                        _strrep += "size        : " + loco::toString( self->size ) + "\n";
+                        _strrep += "filename    : " + self->filename + "\n";
+                        _strrep += "localTf     : \n" + loco::toString( self->localTransform ) + "\n";
+                        _strrep += "ambient     : " + loco::toString( self->ambient ) + "\n";
+                        _strrep += "diffuse     : " + loco::toString( self->diffuse ) + "\n";
+                        _strrep += "specular    : " + loco::toString( self->specular ) + "\n";
+                        _strrep += "shininess   : " + std::to_string( self->shininess ) + "\n";
+                        _strrep += "texture     : " + self->texture + "\n";
+                        _strrep += "useMeshMatrl: " + std::string( self->usesMaterialFromMesh ? "True" : "False" ) + "\n";
+                        _strrep += ")";
+                        return _strrep;
+                    } );
+
+            py::class_< TJointData >( m, "JointData" )
+                .def( py::init<>() )
+                .def_readwrite( "type", &TJointData::type )
+                .def_property( "axis",
+                    []( const TJointData* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 3>( self->axis );
+                        },
+                    []( TJointData* self, const py::array_t<TScalar>& arr_axis ) -> void
+                        {
+                            self->axis = tinymath::nparray_to_vector<TScalar, 3>( arr_axis );
+                        } )
+                .def_property( "limits",
+                    []( const TJointData* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 2>( self->limits );
+                        },
+                    []( TJointData* self, const py::array_t<TScalar>& arr_limits ) -> void
+                        {
+                            self->limits = tinymath::nparray_to_vector<TScalar, 2>( arr_limits );
+                        } )
+                .def_readwrite( "stiffness", &TJointData::stiffness )
+                .def_readwrite( "armature", &TJointData::armature )
+                .def_readwrite( "damping", &TJointData::damping )
+                .def_readwrite( "ref", &TJointData::ref )
+                .def_property_readonly( "nqpos", []( const TJointData* self ) -> size_t
+                    {
+                        return self->nqpos;
+                    } )
+                .def_property_readonly( "nqvel", []( const TJointData* self ) -> size_t
+                    {
+                        return self->nqvel;
+                    } )
+                .def_property( "localTf",
+                    []( const TJointData* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::matrix_to_nparray<TScalar, 4>( self->localTransform );
+                        },
+                    []( TJointData* self, const py::array_t<TScalar>& arr_localTf ) -> void
+                        {
+                            self->localTransform = tinymath::nparray_to_matrix<TScalar, 4>( arr_localTf );
+                        } )
+                .def( "__repr__", []( const TJointData* self )
+                    {
+                        auto _strrep = std::string( "JointData(\n" );
+                        _strrep += "cpp-address : " + loco::pointerToHexAddress( self ) + "\n";
+                        _strrep += "type        : " + loco::toString( self->type ) + "\n";
+                        _strrep += "axis        : " + loco::toString( self->axis ) + "\n";
+                        _strrep += "limits      : " + loco::toString( self->limits ) + "\n";
+                        _strrep += "stiffness   : " + std::to_string( self->stiffness ) + "\n";
+                        _strrep += "armature    : " + std::to_string( self->armature ) + "\n";
+                        _strrep += "damping     : " + std::to_string( self->damping ) + "\n";
+                        _strrep += "ref         : " + std::to_string( self->ref ) + "\n";
+                        _strrep += "nqpos       : " + std::to_string( self->nqpos ) + "\n";
+                        _strrep += "nqvel       : " + std::to_string( self->nqvel ) + "\n";
+                        _strrep += "localTf     : \n" + loco::toString( self->localTransform ) + "\n";
+                        _strrep += ")";
+                        return _strrep;
+                    } );
+
+            py::class_< TActuatorData >( m, "ActuatorData" )
+                .def( py::init<>() )
+                .def_readwrite( "type", &TActuatorData::type )
+                .def_property( "limits",
+                    []( const TActuatorData* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 2>( self->limits );
+                        },
+                    []( TActuatorData* self, const py::array_t<TScalar>& arr_limits ) -> void
+                        {
+                            self->limits = tinymath::nparray_to_vector<TScalar, 2>( arr_limits );
+                        } )
+                .def_property( "gear",
+                    []( const TActuatorData* self ) -> py::array_t<TScalar>
+                        {
+                            return loco::sizef_to_nparray( self->gear );
+                        },
+                    []( TActuatorData* self, const py::array_t<TScalar>& arr_gear ) -> void
+                        {
+                            self->gear = loco::nparray_to_sizef( arr_gear );
+                        } )
+                .def_readwrite( "kp", &TActuatorData::kp )
+                .def_readwrite( "kv", &TActuatorData::kv )
+                .def_property( "localTf",
+                    []( const TActuatorData* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::matrix_to_nparray<TScalar, 4>( self->localTransform );
+                        },
+                    []( TActuatorData* self, const py::array_t<TScalar>& arr_localTf ) -> void
+                        {
+                            self->localTransform = tinymath::nparray_to_matrix<TScalar, 4>( arr_localTf );
+                        } )
+                .def( "__repr__", []( const TActuatorData* self )
+                    {
+                        auto _strrep = std::string( "ActuatorData(\n" );
+                        _strrep += "cpp-address : " + loco::pointerToHexAddress( self ) + "\n";
+                        _strrep += "type        : " + loco::toString( self->type ) + "\n";
+                        _strrep += "limits      : " + loco::toString( self->limits ) + "\n";
+                        _strrep += "gear        : " + loco::toString( self->gear ) + "\n";
+                        _strrep += "kp          : " + std::to_string( self->kp ) + "\n";
+                        _strrep += "kv          : " + std::to_string( self->kv ) + "\n";
+                        _strrep += "localTf     : \n" + loco::toString( self->localTransform ) + "\n";
+                        _strrep += ")";
+                        return _strrep;
+                    } );
+
+            py::class_< TSensorData >( m, "SensorData" )
+                .def( py::init<>() )
+                .def_readwrite( "type", &TSensorData::type )
+                .def_property( "localTf",
+                    []( const TSensorData* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::matrix_to_nparray<TScalar, 4>( self->localTransform );
+                        },
+                    []( TSensorData* self, const py::array_t<TScalar>& arr_localTf ) -> void
+                        {
+                            self->localTransform = tinymath::nparray_to_matrix<TScalar, 4>( arr_localTf );
+                        } )
+                .def( "__repr__", []( const TSensorData* self )
+                    {
+                        auto _strrep = std::string( "SensorData(\n" );
+                        _strrep += "cpp-address : " + loco::pointerToHexAddress( self ) + "\n";
+                        _strrep += "type        : " + loco::toString( self->type ) + "\n";
+                        _strrep += "localTf     : \n" + loco::toString( self->localTransform ) + "\n";
+                        _strrep += ")";
+                        return _strrep;
+                    } );
+
+            py::class_< TInertialData >( m, "InertialData" )
+                .def( py::init<>() )
+                .def_readwrite( "mass", &TInertialData::mass )
+                .def_readwrite( "ixx", &TInertialData::ixx )
+                .def_readwrite( "ixy", &TInertialData::ixy )
+                .def_readwrite( "ixz", &TInertialData::ixz )
+                .def_readwrite( "iyy", &TInertialData::iyy )
+                .def_readwrite( "iyz", &TInertialData::iyz )
+                .def_readwrite( "izz", &TInertialData::izz )
+                .def_property( "localTf",
+                    []( const TInertialData* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::matrix_to_nparray<TScalar, 4>( self->localTransform );
+                        },
+                    []( TInertialData* self, const py::array_t<TScalar>& arr_localTf ) -> void
+                        {
+                            self->localTransform = tinymath::nparray_to_matrix<TScalar, 4>( arr_localTf );
+                        } )
+                .def( "__repr__", []( const TInertialData* self )
+                    {
+                        auto _strrep = std::string( "InertialData(\n" );
+                        _strrep += "cpp-address : " + loco::pointerToHexAddress( self ) + "\n";
+                        _strrep += "mass        : " + std::to_string( self->mass ) + "\n";
+                        _strrep += "ixx         : " + std::to_string( self->ixx ) + "\n";
+                        _strrep += "ixy         : " + std::to_string( self->ixy ) + "\n";
+                        _strrep += "ixz         : " + std::to_string( self->ixz ) + "\n";
+                        _strrep += "iyy         : " + std::to_string( self->iyy ) + "\n";
+                        _strrep += "iyz         : " + std::to_string( self->iyz ) + "\n";
+                        _strrep += "izz         : " + std::to_string( self->izz ) + "\n";
+                        _strrep += "localTf     : \n" + loco::toString( self->localTransform ) + "\n";
+                        _strrep += ")";
+                        return _strrep;
+                    } );
+
+            py::class_< TBodyData >( m, "BodyData" )
+                .def( py::init<>() )
+                .def_readwrite( "dyntype", &TBodyData::dyntype )
+                .def_readwrite( "inertialData", &TBodyData::inertialData, py::return_value_policy::reference )
+                .def_property( "localTf0",
+                    []( const TBodyData* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::matrix_to_nparray<TScalar, 4>( self->localTransformZero );
+                        },
+                    []( TBodyData* self, const py::array_t<TScalar>& arr_localTf0 ) -> void
+                        {
+                            self->localTransformZero = tinymath::nparray_to_matrix<TScalar, 4>( arr_localTf0 );
+                        } )
+                .def_readwrite( "collision", &TBodyData::collision, py::return_value_policy::reference )
+                .def_readwrite( "visual", &TBodyData::visual, py::return_value_policy::reference )
+                .def( "__repr__", []( const TBodyData* self )
+                    {
+                        auto _strrep = std::string( "BodyData(\n" );
+                        _strrep += "cpp-address : " + loco::pointerToHexAddress( self ) + "\n";
+                        _strrep += "dyntype     : " + loco::toString( self->dyntype ) + "\n";
+                        _strrep += "localTf0    : \n" + loco::toString( self->localTransformZero ) + "\n";
+                        _strrep += ")";
+                        return _strrep;
+                    } );
+        }
+
+        // Bindings for helper functions
+        {
+            m.def( "computeVolumeFromShape", loco::computeVolumeFromShape );
         }
     }
 }

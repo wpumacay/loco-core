@@ -22,7 +22,7 @@ namespace loco
         return nparray;
     }
 
-    // Conversion from numpy arra (representing a 2D grid of row-major data) to std-vector
+    // Conversion from numpy array (representing a 2D grid of row-major data) to std-vector
     template< typename Scalar_T >
     std::vector<Scalar_T> nparray_to_vecgrid( const py::array_t<Scalar_T>& arr_vecGrid )
     {
@@ -35,4 +35,10 @@ namespace loco
         memcpy( vecGrid.data(), bufferData, sizeof( Scalar_T ) * vecGrid.size() );
         return vecGrid;
     }
+
+    // Conversion from TSizef to numpy array
+    py::array_t<TScalar> sizef_to_nparray( const TSizef& size );
+
+    // Conversion from numpy array to TSizef
+    TSizef nparray_to_sizef( const py::array_t<TScalar>& arr_size );
 }
