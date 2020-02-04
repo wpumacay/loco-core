@@ -35,6 +35,10 @@ namespace loco
 
         virtual void changeElevationData( const std::vector<float>& heightData ) = 0;
 
+        virtual void changeCollisionGroup( int collisionGroup ) = 0;
+
+        virtual void changeCollisionMask( int collisionMask ) = 0;
+
         TCollision* collision() { return m_collisionPtr; }
 
         protected :

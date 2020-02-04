@@ -212,4 +212,22 @@ namespace loco
         if ( m_drawableImplRef )
             m_drawableImplRef->changeElevationData( heightData );
     }
+
+    void TCollision::changeCollisionGroup( int collisionGroup )
+    {
+        m_data.collisionGroup = collisionGroup;
+
+        // Tell the backend resource to change the collisionGroup internally
+        if ( m_collisionImplRef )
+            m_collisionImplRef->changeCollisionGroup( collisionGroup );
+    }
+
+    void TCollision::changeCollisionMask( int collisionMask )
+    {
+        m_data.collisionMask = collisionMask;
+
+        // Tell the backend resource to change the collisionMask internally
+        if ( m_collisionImplRef )
+            m_collisionImplRef->changeCollisionMask( collisionMask );
+    }
 }

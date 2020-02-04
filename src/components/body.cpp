@@ -56,61 +56,17 @@ namespace loco
 
     void TIBody::preStep()
     {
-        // Update any internal backend resources prior to a simulation step
-        if ( m_bodyImplRef )
-            m_bodyImplRef->preStep();
-
-        // Notify the collider to update any required resources prior to take a simulation step
-        if ( m_collision )
-            m_collision->preStep();
-
-        // Notify the visual to update any required resources prior to take a simulation step
-        if ( m_visual )
-            m_visual->preStep();
+        _preStepInternal();
     }
 
     void TIBody::postStep()
     {
-        // Update any internal backend resources (grab sim-state) after a sim. step has been taken
-        if ( m_bodyImplRef )
-        {
-            m_bodyImplRef->postStep();
-
-            // Grab the latest world-transform from the backend
-            m_bodyImplRef->getTransform( m_tf );
-        }
-
-        // Notify the collider to update any required resources after a simulation step was taken
-        if ( m_collision )
-            m_collision->postStep();
-
-        // Notify the visual to update any required resources after a simulation step was taken
-        if ( m_visual )
-            m_visual->postStep();
+        _postStepInternal();
     }
 
     void TIBody::reset()
     {
-        if ( m_bodyImplRef )
-        {
-            // Reset the low-level resources through the adapter
-            m_bodyImplRef->reset();
-
-            // Grab the world position|rotation information as well
-            m_bodyImplRef->getTransform( m_tf );
-        }
-
-        if ( m_collision )
-        {
-            m_collision->reset();
-            m_collision->postStep();
-        }
-
-        if ( m_visual )
-        {
-            m_visual->reset();
-            m_visual->postStep();
-        }
+        _resetInternal();
     }
 
     ////////////////////////////////////////////////////////////
@@ -119,74 +75,27 @@ namespace loco
 
     void TIBody::setPosition( const TVec3& position )
     {
-        m_tf.set( position, 3 );
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->setPosition( position );
-
-        if ( m_collision )
-            m_collision->postStep();
-
-        if ( m_visual )
-            m_visual->postStep();
+        _setPositionInternal( position );
     }
 
     void TIBody::setRotation( const TMat3& rotation )
     {
-        m_tf.set( rotation );
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->setRotation( rotation );
-
-        if ( m_collision )
-            m_collision->postStep();
-
-        if ( m_visual )
-            m_visual->postStep();
+        _setRotationInternal( rotation );
     }
 
     void TIBody::setEuler( const TVec3& euler )
     {
-        auto rotation = tinymath::rotation( euler );
-        m_tf.set( rotation );
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->setRotation( rotation );
-
-        if ( m_collision )
-            m_collision->postStep();
-
-        if ( m_visual )
-            m_visual->postStep();
+        _setEulerInternal( euler );
     }
 
     void TIBody::setQuaternion( const TVec4& quat )
     {
-        auto rotation = tinymath::rotation( quat );
-        m_tf.set( rotation );
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->setRotation( rotation );
-
-        if ( m_collision )
-            m_collision->postStep();
-
-        if ( m_visual )
-            m_visual->postStep();
+        _setQuaternionInternal( quat );
     }
 
     void TIBody::setTransform( const TMat4& transform )
     {
-        m_tf = transform;
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->setTransform( m_tf );
-
-        if ( m_collision )
-            m_collision->postStep();
-
-        if ( m_visual )
-            m_visual->postStep();
+        _setTransformInternal( transform );
     }
 
     ////////////////////////////////////////////////////////////
@@ -195,73 +104,26 @@ namespace loco
 
     void TIBody::setLocalPosition( const TVec3& localPosition )
     {
-        m_localTf.set( localPosition, 3 );
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->setLocalPosition( localPosition );
-
-        if ( m_collision )
-            m_collision->postStep();
-
-        if ( m_visual )
-            m_visual->postStep();
+        _setLocalPositionInternal( localPosition );
     }
 
     void TIBody::setLocalRotation( const TMat3& localRotation )
     {
-        m_localTf.set( localRotation );
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->setLocalRotation( localRotation );
-
-        if ( m_collision )
-            m_collision->postStep();
-
-        if ( m_visual )
-            m_visual->postStep();
+        _setLocalRotationInternal( localRotation );
     }
 
     void TIBody::setLocalEuler( const TVec3& localEuler )
     {
-        auto rotation = tinymath::rotation( localEuler );
-        m_localTf.set( rotation );
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->setLocalRotation( rotation );
-
-        if ( m_collision )
-            m_collision->postStep();
-
-        if ( m_visual )
-            m_visual->postStep();
+        _setLocalEulerInternal( localEuler );
     }
 
     void TIBody::setLocalQuaternion( const TVec4& localQuat )
     {
-        auto rotation = tinymath::rotation( localQuat );
-        m_localTf.set( rotation );
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->setLocalRotation( rotation );
-
-        if ( m_collision )
-            m_collision->postStep();
-
-        if ( m_visual )
-            m_visual->postStep();
+        _setLocalQuaternionInternal( localQuat );
     }
 
     void TIBody::setLocalTransform( const TMat4& localTransform )
     {
-        m_localTf = localTransform;
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->setLocalTransform( m_localTf );
-
-        if ( m_collision )
-            m_collision->postStep();
-
-        if ( m_visual )
-            m_visual->postStep();
+        _setLocalTransformInternal( localTransform );
     }
 }

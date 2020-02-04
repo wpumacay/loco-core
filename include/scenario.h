@@ -7,7 +7,7 @@
 
 #include <components/body.h>
 #include <primitives/single_body.h>
-#include <compounds/compound.h>
+//// #include <compounds/compound.h>
 
 namespace tysoc
 {

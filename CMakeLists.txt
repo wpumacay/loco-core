@@ -107,7 +107,7 @@ set( LOCO_CORE_SRCS
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/compounds/compound.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/compounds/compound_body.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/model_loader.cpp"
-     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/primitives/single_body.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/primitives/single_body.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/runtime.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/scenario.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/sensor_base.cpp"

@@ -198,7 +198,7 @@ namespace tysoc {
         return addBodyJointPair( name, _bodyData, _jointData, bodyLocalTransform );
     }
 
-    void TCompoundBody::preStep()
+    void TCompoundBody::_preStepInternal()
     {
         if ( m_bodyImplRef && m_bodyImplRef->active() )
             m_bodyImplRef->preStep();
@@ -207,7 +207,7 @@ namespace tysoc {
         _preStepComponents();
     }
 
-    void TCompoundBody::postStep()
+    void TCompoundBody::_postStepInternal()
     {
         /* Update|grab the state of the body either from the adapter (if available and 
            active) or from the last configuration (either initial or simulated) */
@@ -238,7 +238,7 @@ namespace tysoc {
         _postStepComponents();
     }
 
-    void TCompoundBody::reset()
+    void TCompoundBody::_resetInternal()
     {
         /* Request a reset of the internal state of the body either from the adapter (if available
            and active) or from the initial configuration */
@@ -270,7 +270,7 @@ namespace tysoc {
         _postStepComponents();
     }
 
-    void TCompoundBody::setPosition( const TVec3& position )
+    void TCompoundBody::_setPositionInternal( const TVec3& position )
     {
         /* update world-position and world-transform (as in the base class) */
         m_pos = position;
@@ -291,7 +291,7 @@ namespace tysoc {
             _child->postStep();
     }
 
-    void TCompoundBody::setRotation( const TMat3& rotation )
+    void TCompoundBody::_setRotationInternal( const TMat3& rotation )
     {
         /* update world-rotation and world-transform (as in the base class) */
         m_rot = rotation;
@@ -312,7 +312,7 @@ namespace tysoc {
             _child->postStep();
     }
 
-    void TCompoundBody::setEuler( const TVec3& euler )
+    void TCompoundBody::_setEulerInternal( const TVec3& euler )
     {
         /* update world-rotation and world-transform (as in the base class) */
         m_rot = TMat3::fromEuler( euler );
@@ -333,7 +333,7 @@ namespace tysoc {
             _child->postStep();
     }
 
-    void TCompoundBody::setQuaternion( const TVec4& quat )
+    void TCompoundBody::_setQuaternionInternal( const TVec4& quat )
     {
         /* update world-rotation and world-transform (as in the base class) */
         m_rot = TMat3::fromQuaternion( quat );
@@ -354,7 +354,7 @@ namespace tysoc {
             _child->postStep();
     }
 
-    void TCompoundBody::setTransform( const TMat4& transform )
+    void TCompoundBody::_setTransformInternal( const TMat4& transform )
     {
         /* update world-transform (as in the base class) */
         m_tf = transform;
@@ -376,7 +376,7 @@ namespace tysoc {
             _child->postStep();
     }
 
-    void TCompoundBody::setLocalPosition( const TVec3& localPosition )
+    void TCompoundBody::_setLocalPositionInternal( const TVec3& localPosition )
     {
         if ( !m_parentRef )
         {
@@ -385,15 +385,15 @@ namespace tysoc {
             return;
         }
 
-        /* set the local-space position */
-        TIBody::setLocalPosition( localPosition );
+        m_localTf.set( localPosition, 3 );
 
-        /* update the joint (relative position w.r.t. owner might have changed) */
-        if ( m_joint )
-            m_joint->postStep();
+        if ( m_bodyImplRef )
+            m_bodyImplRef->setLocalPosition( localPosition );
+
+        _postStepComponents();
     }
 
-    void TCompoundBody::setLocalRotation( const TMat3& localRotation )
+    void TCompoundBody::_setLocalRotationInternal( const TMat3& localRotation )
     {
         if ( !m_parentRef )
         {
@@ -402,15 +402,15 @@ namespace tysoc {
             return;
         }
 
-        /* set the local-space position */
-        TIBody::setLocalRotation( localRotation );
+        m_localTf.set( localRotation );
 
-        /* update the joint (relative position w.r.t. owner might have changed) */
-        if ( m_joint )
-            m_joint->postStep();
+        if ( m_bodyImplRef )
+            m_bodyImplRef->setLocalRotation( localRotation );
+
+        _postStepComponents();
     }
 
-    void TCompoundBody::setLocalEuler( const TVec3& localEuler )
+    void TCompoundBody::_setLocalEulerInternal( const TVec3& localEuler )
     {
         if ( !m_parentRef )
         {
@@ -419,15 +419,16 @@ namespace tysoc {
             return;
         }
 
-        /* set the local-space position */
-        TIBody::setLocalEuler( localEuler );
+        auto rotation = tinymath::rotation( localEuler );
+        m_localTf.set( rotation );
 
-        /* update the joint (relative position w.r.t. owner might have changed) */
-        if ( m_joint )
-            m_joint->postStep();
+        if ( m_bodyImplRef )
+            m_bodyImplRef->setLocalRotation( rotation );
+
+        _postStepComponents();
     }
 
-    void TCompoundBody::setLocalQuaternion( const TVec4& localQuat )
+    void TCompoundBody::_setLocalQuaternionInternal( const TVec4& localQuat )
     {
         if ( !m_parentRef )
         {
@@ -436,15 +437,16 @@ namespace tysoc {
             return;
         }
 
-        /* set the local-space position */
-        TIBody::setLocalQuaternion( localQuat );
+        auto rotation = tinymath::rotation( localQuat );
+        m_localTf.set( rotation );
 
-        /* update the joint (relative position w.r.t. owner might have changed) */
-        if ( m_joint )
-            m_joint->postStep();
+        if ( m_bodyImplRef )
+            m_bodyImplRef->setLocalRotation( rotation );
+
+        _postStepComponents();
     }
 
-    void TCompoundBody::setLocalTransform( const TMat4& localTransform )
+    void TCompoundBody::_setLocalTransformInternal( const TMat4& localTransform )
     {
         if ( !m_parentRef )
         {
@@ -453,12 +455,12 @@ namespace tysoc {
             return;
         }
 
-        /* set the local-space position */
-        TIBody::setLocalTransform( localTransform );
+        m_localTf = localTransform;
 
-        /* update the joint (relative position w.r.t. owner might have changed) */
-        if ( m_joint )
-            m_joint->postStep();
+        if ( m_bodyImplRef )
+            m_bodyImplRef->setLocalTransform( m_localTf );
+
+        _postStepComponents();
     }
 
     void TCompoundBody::_addChildRef( TCompoundBody* childRef )
@@ -517,5 +519,4 @@ namespace tysoc {
         if ( m_joint )
             m_joint->reset();
     }
-
 }

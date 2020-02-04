@@ -53,6 +53,10 @@ namespace loco
 
         void changeElevationData( const std::vector< float >& heightData );
 
+        void changeCollisionGroup( int collisionGroup );
+
+        void changeCollisionMask( int collisionMask );
+
         std::string name() const { return m_name; }
 
         bool isVisible() const;
@@ -82,6 +86,10 @@ namespace loco
         eShapeType shape() const { return m_data.type; }
 
         TVec3 size() const { return m_data.size; }
+
+        int collisionGroup() const { return m_data.collisionGroup; }
+
+        int collisionMask() const { return m_data.collisionMask; }
 
         TCollisionData data() const { return m_data; }
 

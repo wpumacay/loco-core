@@ -57,11 +57,11 @@ namespace loco
 
         void setVisual( std::unique_ptr< TVisual > visualObj );
 
-        virtual void preStep();
+        void preStep();
 
-        virtual void postStep();
+        void postStep();
 
-        virtual void reset();
+        void reset();
 
         //------------------------------------------------------------------------------------------
         // World-space setters: use these to set the world-space pose of the body in 
@@ -72,15 +72,15 @@ namespace loco
         //   > kintree-body: disabled, to allow access only through kintree-api
         //------------------------------------------------------------------------------------------
 
-        virtual void setPosition( const TVec3& position );
+        void setPosition( const TVec3& position );
 
-        virtual void setRotation( const TMat3& rotation );
+        void setRotation( const TMat3& rotation );
 
-        virtual void setEuler( const TVec3& euler );
+        void setEuler( const TVec3& euler );
 
-        virtual void setQuaternion( const TVec4& quat );
+        void setQuaternion( const TVec4& quat );
 
-        virtual void setTransform( const TMat4& transform );
+        void setTransform( const TMat4& transform );
 
         //------------------------------------------------------------------------------------------
         // Local-space setters: use these to set the relative pose of the body in question 
@@ -91,15 +91,15 @@ namespace loco
         //   > kintree-body: disabled, to allow access only through kintree-api
         //------------------------------------------------------------------------------------------
 
-        virtual void setLocalPosition( const TVec3& localPosition );
+        void setLocalPosition( const TVec3& localPosition );
 
-        virtual void setLocalRotation( const TMat3& localRotation );
+        void setLocalRotation( const TMat3& localRotation );
 
-        virtual void setLocalEuler( const TVec3& localEuler );
+        void setLocalEuler( const TVec3& localEuler );
 
-        virtual void setLocalQuaternion( const TVec4& localQuat );
+        void setLocalQuaternion( const TVec4& localQuat );
 
-        virtual void setLocalTransform( const TMat4& localTransform );
+        void setLocalTransform( const TMat4& localTransform );
 
         //------------------------------------------------------------------------------------------
         //                                 World-space getters
@@ -161,7 +161,11 @@ namespace loco
 
         TVisual* visual() { return m_visual.get(); }
 
+        const TVisual* visual() const { return m_visual.get(); }
+
         TCollision* collision() { return m_collision.get(); }
+
+        const TCollision* collision() const { return m_collision.get(); }
 
         TIBodyAdapter* adapter() { return m_bodyImplRef; }
 
@@ -170,6 +174,34 @@ namespace loco
         TBodyData& dataRef() { return m_data; }
 
         const TBodyData& dataRef() const { return m_data; }
+
+    protected :
+
+        virtual void _preStepInternal() = 0;
+
+        virtual void _postStepInternal() = 0;
+
+        virtual void _resetInternal() = 0;
+
+        virtual void _setPositionInternal( const TVec3& position ) = 0;
+
+        virtual void _setRotationInternal( const TMat3& rotation ) = 0;
+
+        virtual void _setEulerInternal( const TVec3& euler ) = 0;
+
+        virtual void _setQuaternionInternal( const TVec4& quat ) = 0;
+
+        virtual void _setTransformInternal( const TMat4& transform ) = 0;
+
+        virtual void _setLocalPositionInternal( const TVec3& localPosition ) = 0;
+
+        virtual void _setLocalRotationInternal( const TMat3& localRotation ) = 0;
+
+        virtual void _setLocalEulerInternal( const TVec3& localEuler ) = 0;
+
+        virtual void _setLocalQuaternionInternal( const TVec4& localQuat ) = 0;
+
+        virtual void _setLocalTransformInternal( const TMat4& localTransform ) = 0;
 
     protected :
 

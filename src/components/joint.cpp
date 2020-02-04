@@ -112,6 +112,70 @@ namespace loco
         m_drawableImplRef = drawableImplRef;
     }
 
+    void TJoint::setLocalPosition( const TVec3& localPosition )
+    {
+        /* update local-transform for this joint */
+        m_localTf.set( localPosition, 3 );
+
+        /* update world-transform for this joint */
+        if ( m_ownerRef )
+            m_tf = m_ownerRef->tf() * m_localTf;
+
+        if ( m_jointImplRef )
+            m_jointImplRef->setLocalTransform( m_localTf );
+
+        if ( m_drawableImplRef )
+            m_drawableImplRef->setWorldTransform( m_tf );
+    }
+
+    void TJoint::setLocalRotation( const TMat3& localRotation )
+    {
+        /* update local-transform for this joint */
+        m_localTf.set( localRotation );
+
+        /* update world-transform for this joint */
+        if ( m_ownerRef )
+            m_tf = m_ownerRef->tf() * m_localTf;
+
+        if ( m_jointImplRef )
+            m_jointImplRef->setLocalTransform( m_localTf );
+
+        if ( m_drawableImplRef )
+            m_drawableImplRef->setWorldTransform( m_tf );
+    }
+
+    void TJoint::setLocalEuler( const TVec3& localEuler )
+    {
+        /* update local-transform for this joint */
+        m_localTf.set( tinymath::rotation( localEuler ) );
+
+        /* update world-transform for this joint */
+        if ( m_ownerRef )
+            m_tf = m_ownerRef->tf() * m_localTf;
+
+        if ( m_jointImplRef )
+            m_jointImplRef->setLocalTransform( m_localTf );
+
+        if ( m_drawableImplRef )
+            m_drawableImplRef->setWorldTransform( m_tf );
+    }
+
+    void TJoint::setLocalQuat( const TVec4& localQuaternion )
+    {
+        /* update local-transform for this joint */
+        m_localTf.set( tinymath::rotation( localQuaternion ) );
+
+        /* update world-transform for this joint */
+        if ( m_ownerRef )
+            m_tf = m_ownerRef->tf() * m_localTf;
+
+        if ( m_jointImplRef )
+            m_jointImplRef->setLocalTransform( m_localTf );
+
+        if ( m_drawableImplRef )
+            m_drawableImplRef->setWorldTransform( m_tf );
+    }
+
     void TJoint::setLocalTransform( const TMat4& localTransform )
     {
         /* @note: the current design allows joints to be placed wherever the user wants. However,
@@ -126,7 +190,8 @@ namespace loco
         m_localTf = localTransform;
 
         /* update world-transform for this joint */
-        m_tf = m_ownerRef->tf() * m_localTf;
+        if ( m_ownerRef )
+            m_tf = m_ownerRef->tf() * m_localTf;
 
         if ( m_jointImplRef )
             m_jointImplRef->setLocalTransform( m_localTf );

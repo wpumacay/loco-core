@@ -5,8 +5,8 @@
 
 #include <compounds/compound.h>
 
-namespace tysoc {
-
+namespace loco
+{
     class TCollision;
     class TVisual;
     class TJoint;
@@ -102,41 +102,39 @@ namespace tysoc {
                                                                const TVec2& jointLimits,
                                                                const TMat4& jointLocalTransform );
 
-        void preStep() override;
-
-        void postStep() override;
-
-        void reset() override;
-
-        void setPosition( const TVec3& position ) override;
-
-        void setRotation( const TMat3& rotation ) override;
-
-        void setEuler( const TVec3& euler ) override;
-
-        void setQuaternion( const TVec4& quat ) override;
-
-        void setTransform( const TMat4& transform ) override;
-
-        void setLocalPosition( const TVec3& position ) override;
-
-        void setLocalRotation( const TMat3& rotation ) override;
-
-        void setLocalEuler( const TVec3& euler ) override;
-
-        void setLocalQuaternion( const TVec4& quat ) override;
-
-        void setLocalTransform( const TMat4& transform ) override;
-
         TCompound* compound() const { return m_compoundRef; }
 
-        TJoint* joint() const { return m_joint.get(); }
+        TJoint* joint() { return m_joint.get(); }
 
-        TCompoundBody* parent() const { return m_parentRef; }
+        const TJoint* joint() const { return m_joint.get(); }
+
+        TCompoundBody* parent() { return m_parentRef; }
+
+        const TCompoundBody* parent() const { return m_parentRef; }
 
         bool isRoot() const { return m_parentRef == nullptr; }
 
-        std::vector< TCompoundBody* > children() const { return m_childrenRefs; }
+        std::vector< TCompoundBody* >& children() { return m_childrenRefs; }
+
+        const std::vector< TCompoundBody* >& children() const { return m_childrenRefs; }
+
+    protected :
+
+        void _preStepInternal() override;
+        void _postStepInternal() override;
+        void _resetInternal() override;
+
+        void _setPositionInternal( const TVec3& position ) override;
+        void _setRotationInternal( const TMat3& rotation ) override;
+        void _setEulerInternal( const TVec3& euler ) override;
+        void _setQuaternionInternal( const TVec4& quat ) override;
+        void _setTransformInternal( const TMat4& transform ) override;
+
+        void _setLocalPositionInternal( const TVec3& position ) override;
+        void _setLocalRotationInternal( const TMat3& rotation ) override;
+        void _setLocalEulerInternal( const TVec3& euler ) override;
+        void _setLocalQuaternionInternal( const TVec4& quat ) override;
+        void _setLocalTransformInternal( const TMat4& transform ) override;
 
     private :
 

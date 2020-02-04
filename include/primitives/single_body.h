@@ -2,8 +2,8 @@
 
 #include <components/body.h>
 
-namespace tysoc {
-
+namespace loco
+{
     class TCollision;
     class TVisual;
 
@@ -19,16 +19,21 @@ namespace tysoc {
 
         ~TSingleBody();
 
-        void setLocalPosition( const TVec3& localPosition ) override;
+        void _preStepInternal() override;
+        void _postStepInternal() override;
+        void _resetInternal() override;
 
-        void setLocalRotation( const TMat3& localRotation ) override;
+        void _setPositionInternal( const TVec3& position ) override;
+        void _setRotationInternal( const TMat3& rotation ) override;
+        void _setEulerInternal( const TVec3& euler ) override;
+        void _setQuaternionInternal( const TVec4& quat ) override;
+        void _setTransformInternal( const TMat4& transform ) override;
 
-        void setLocalEuler( const TVec3& localEuler ) override;
-
-        void setLocalQuaternion( const TVec4& localQuat ) override;
-
-        void setLocalTransform( const TMat4& localTransform ) override;
+        void _setLocalPositionInternal( const TVec3& localPosition ) override;
+        void _setLocalRotationInternal( const TMat3& localRotation ) override;
+        void _setLocalEulerInternal( const TVec3& localEuler ) override;
+        void _setLocalQuaternionInternal( const TVec4& localQuat ) override;
+        void _setLocalTransformInternal( const TMat4& localTransform ) override;
 
     };
-
 }

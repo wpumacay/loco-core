@@ -89,7 +89,25 @@ namespace loco
 
         TVec3 size() const { return m_data.size; }
 
+        TVec3 ambient() const { return m_data.ambient; }
+
+        TVec3 diffuse() const { return m_data.diffuse; }
+
+        TVec3 specular() const { return m_data.specular; }
+
+        TScalar shininess() const { return m_data.shininess; }
+
         TVisualData data() const { return m_data; }
+
+        TVisualData& dataRef() { return m_data; }
+
+        const TVisualData& dataRef() const { return m_data; }
+
+        TIBody* parent() { return m_parentBodyRef; }
+
+        const TIBody* parent() const { return m_parentBodyRef; }
+
+        TIDrawable* adapter() { return m_drawableImplRef; }
 
     protected :
 

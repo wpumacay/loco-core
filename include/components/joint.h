@@ -51,6 +51,14 @@ namespace loco
 
         void setDrawable( TIDrawable* drawableImplRef );
 
+        void setLocalPosition( const TVec3& localPosition );
+
+        void setLocalRotation( const TMat3& localRotation );
+
+        void setLocalEuler( const TVec3& localEuler );
+
+        void setLocalQuat( const TVec4& localQuaternion );
+
         void setLocalTransform( const TMat4& transform );
 
         void setQpos( const std::vector< TScalar >& qpos );
