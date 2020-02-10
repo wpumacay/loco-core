@@ -390,7 +390,7 @@ namespace loco
 
         // Bindings for helper functions
         {
-            m.def( "computeVolumeFromShape", loco::computeVolumeFromShape );
+            m.def( "ComputeVolumeFromShape", loco::ComputeVolumeFromShape );
         }
     }
 }

@@ -1,5 +1,5 @@
 
-#include <primitives/single_body.h>
+#include <primitives/loco_single_body.h>
 
 namespace loco
 {
@@ -30,159 +30,166 @@ namespace loco
         // nothing extra to delete for now
     }
 
-    void TSingleBody::_preStepInternal()
+    void TSingleBody::_InitializeInternal()
+    {
+        // Tell the backend to initialize any required resources for simulation
+        if ( m_bodyImplRef )
+            m_bodyImplRef->Initialize();
+    }
+
+    void TSingleBody::_PreStepInternal()
     {
         // Update any internal backend resources prior to a simulation step
         if ( m_bodyImplRef )
-            m_bodyImplRef->preStep();
+            m_bodyImplRef->PreStep();
 
         // Notify the collider to update any required resources prior to take a simulation step
         if ( m_collision )
-            m_collision->preStep();
+            m_collision->PreStep();
 
         // Notify the visual to update any required resources prior to take a simulation step
         if ( m_visual )
-            m_visual->preStep();
+            m_visual->PreStep();
     }
 
-    void TSingleBody::_postStepInternal()
+    void TSingleBody::_PostStepInternal()
     {
         // Update any internal backend resources (grab sim-state) after a sim. step has been taken
         if ( m_bodyImplRef )
         {
-            m_bodyImplRef->postStep();
+            m_bodyImplRef->PostStep();
 
             // Grab the latest world-transform from the backend
-            m_bodyImplRef->getTransform( m_tf );
+            m_bodyImplRef->GetTransform( m_tf );
         }
 
         // Notify the collider to update any required resources after a simulation step was taken
         if ( m_collision )
-            m_collision->postStep();
+            m_collision->PostStep();
 
         // Notify the visual to update any required resources after a simulation step was taken
         if ( m_visual )
-            m_visual->postStep();
+            m_visual->PostStep();
     }
 
-    void TSingleBody::_resetInternal()
+    void TSingleBody::_ResetInternal()
     {
         if ( m_bodyImplRef )
         {
             // Reset the low-level resources through the adapter
-            m_bodyImplRef->reset();
+            m_bodyImplRef->Reset();
 
             // Grab the world position|rotation information as well
-            m_bodyImplRef->getTransform( m_tf );
+            m_bodyImplRef->GetTransform( m_tf );
         }
 
         if ( m_collision )
         {
-            m_collision->reset();
-            m_collision->postStep();
+            m_collision->Reset();
+            m_collision->PostStep();
         }
 
         if ( m_visual )
         {
-            m_visual->reset();
-            m_visual->postStep();
+            m_visual->Reset();
+            m_visual->PostStep();
         }
     }
 
-    void TSingleBody::_setPositionInternal( const TVec3& position )
+    void TSingleBody::_SetPositionInternal( const TVec3& position )
     {
         m_tf.set( position, 3 );
 
         if ( m_bodyImplRef )
-            m_bodyImplRef->setPosition( position );
+            m_bodyImplRef->SetPosition( position );
 
         if ( m_collision )
-            m_collision->postStep();
+            m_collision->PostStep();
 
         if ( m_visual )
-            m_visual->postStep();
+            m_visual->PostStep();
     }
 
-    void TSingleBody::_setRotationInternal( const TMat3& rotation )
+    void TSingleBody::_SetRotationInternal( const TMat3& rotation )
     {
         m_tf.set( rotation );
 
         if ( m_bodyImplRef )
-            m_bodyImplRef->setRotation( rotation );
+            m_bodyImplRef->SetRotation( rotation );
 
         if ( m_collision )
-            m_collision->postStep();
+            m_collision->PostStep();
 
         if ( m_visual )
-            m_visual->postStep();
+            m_visual->PostStep();
     }
 
-    void TSingleBody::_setEulerInternal( const TVec3& euler )
+    void TSingleBody::_SetEulerInternal( const TVec3& euler )
     {
         auto rotation = tinymath::rotation( euler );
         m_tf.set( rotation );
 
         if ( m_bodyImplRef )
-            m_bodyImplRef->setRotation( rotation );
+            m_bodyImplRef->SetRotation( rotation );
 
         if ( m_collision )
-            m_collision->postStep();
+            m_collision->PostStep();
 
         if ( m_visual )
-            m_visual->postStep();
+            m_visual->PostStep();
     }
 
-    void TSingleBody::_setQuaternionInternal( const TVec4& quat )
+    void TSingleBody::_SetQuaternionInternal( const TVec4& quat )
     {
         auto rotation = tinymath::rotation( quat );
         m_tf.set( rotation );
 
         if ( m_bodyImplRef )
-            m_bodyImplRef->setRotation( rotation );
+            m_bodyImplRef->SetRotation( rotation );
 
         if ( m_collision )
-            m_collision->postStep();
+            m_collision->PostStep();
 
         if ( m_visual )
-            m_visual->postStep();
+            m_visual->PostStep();
     }
 
-    void TSingleBody::_setTransformInternal( const TMat4& transform )
+    void TSingleBody::_SetTransformInternal( const TMat4& transform )
     {
         m_tf = transform;
 
         if ( m_bodyImplRef )
-            m_bodyImplRef->setTransform( m_tf );
+            m_bodyImplRef->SetTransform( m_tf );
 
         if ( m_collision )
-            m_collision->postStep();
+            m_collision->PostStep();
 
         if ( m_visual )
-            m_visual->postStep();
+            m_visual->PostStep();
     }
 
-    void TSingleBody::_setLocalPositionInternal( const TVec3& localPosition )
+    void TSingleBody::_SetLocalPositionInternal( const TVec3& localPosition )
     {
-        // do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
+        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
     }
 
-    void TSingleBody::_setLocalRotationInternal( const TMat3& localRotation )
+    void TSingleBody::_SetLocalRotationInternal( const TMat3& localRotation )
     {
-        // do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
+        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
     }
 
-    void TSingleBody::_setLocalEulerInternal( const TVec3& localEuler )
+    void TSingleBody::_SetLocalEulerInternal( const TVec3& localEuler )
     {
-        // do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
+        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
     }
 
-    void TSingleBody::_setLocalQuaternionInternal( const TVec4& localQuat )
+    void TSingleBody::_SetLocalQuaternionInternal( const TVec4& localQuat )
     {
-        // do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
+        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
     }
 
-    void TSingleBody::_setLocalTransformInternal( const TMat4& localTransform )
+    void TSingleBody::_SetLocalTransformInternal( const TMat4& localTransform )
     {
-        // do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
+        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
     }
 }

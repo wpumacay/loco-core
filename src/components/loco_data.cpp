@@ -1,9 +1,9 @@
 
-#include <components/data.h>
+#include <components/loco_data.h>
 
 namespace loco
 {
-    std::string toString( const eShapeType& type )
+    std::string ToString( const eShapeType& type )
     {
         if ( type == eShapeType::BOX ) return "box";
         if ( type == eShapeType::SPHERE ) return "sphere";
@@ -16,7 +16,7 @@ namespace loco
         return "undefined";
     }
 
-    std::string toString( const eJointType& type )
+    std::string ToString( const eJointType& type )
     {
         if ( type == eJointType::FREE ) return "free";
         if ( type == eJointType::FIXED ) return "fixed";
@@ -28,7 +28,7 @@ namespace loco
         return "undefined";
     }
 
-    std::string toString( const eDynamicsType& type )
+    std::string ToString( const eDynamicsType& type )
     {
         if ( type == eDynamicsType::DYNAMIC ) return "dynamic";
         if ( type == eDynamicsType::STATIC ) return "static";
@@ -37,7 +37,7 @@ namespace loco
         return "undefined";
     }
 
-    std::string toString( const eSensorType& type )
+    std::string ToString( const eSensorType& type )
     {
         if ( type ==  eSensorType::PROP_JOINT ) return "proprioceptive_joint";
         if ( type ==  eSensorType::PROP_BODY ) return "proprioceptive_body";
@@ -50,7 +50,7 @@ namespace loco
         return "undefined";
     }
 
-    std::string toString( const eActuatorType& type )
+    std::string ToString( const eActuatorType& type )
     {
         if ( type == eActuatorType::TORQUE ) return "torque";
         if ( type == eActuatorType::POSITION ) return "position";
@@ -60,7 +60,7 @@ namespace loco
         return "undefined";
     }
 
-    std::string toString( const eBodyClassType& type )
+    std::string ToString( const eBodyClassType& type )
     {
         if ( type == eBodyClassType::NONE ) return "none";
         if ( type == eBodyClassType::SINGLE_BODY ) return "single_body";
@@ -111,18 +111,18 @@ namespace loco
         return eActuatorType::TORQUE;
     }
 
-    std::string toString( const TShapeData& shapeData )
+    std::string ToString( const TShapeData& shapeData )
     {
         std::string _res;
 
-        _res += "type       : " + toString( shapeData.type ) + "\n\r";
-        _res += "size       : " + loco::toString( shapeData.size ) + "\n\r";
-        _res += "localTf    : \n\r" + loco::toString( shapeData.localTransform ) + "\n\r";
+        _res += "type       : " + ToString( shapeData.type ) + "\n\r";
+        _res += "size       : " + ToString( shapeData.size ) + "\n\r";
+        _res += "localTf    : \n\r" + ToString( shapeData.localTransform ) + "\n\r";
 
         return _res;
     }
 
-    TScalar computeVolumeFromShape( const TShapeData& shapeData )
+    TScalar ComputeVolumeFromShape( const TShapeData& shapeData )
     {
         TScalar _volume = 0.1f;
 
@@ -159,7 +159,7 @@ namespace loco
         }
         else if ( shapeData.type == eShapeType::MESH )
         {
-            std::pair<TVec3, TVec3> _aabb = computeMeshAABB( shapeData.filename );
+            std::pair<TVec3, TVec3> _aabb = ComputeMeshAABB( shapeData.filename );
             _volume = std::abs( ( _aabb.second.x() - _aabb.first.x() ) * shapeData.size.x() *
                                 ( _aabb.second.y() - _aabb.first.y() ) * shapeData.size.y() *
                                 ( _aabb.second.z() - _aabb.first.z() ) * shapeData.size.z() );
@@ -170,13 +170,13 @@ namespace loco
         }
         else
         {
-            LOCO_CORE_WARN( "Unsupported type \"{0}\" for volume computation", loco::toString( shapeData.type ) );
+            LOCO_CORE_WARN( "Unsupported type \"{0}\" for volume computation", ToString( shapeData.type ) );
         }
 
         return _volume;
     }
 
-    std::pair<TVec3, TVec3> computeMeshAABB( const std::string& filename )
+    std::pair<TVec3, TVec3> ComputeMeshAABB( const std::string& filename )
     {
         static std::unordered_map<std::string, std::pair< TVec3, TVec3 >> _cachedBounds;
         if ( _cachedBounds.find( filename ) != _cachedBounds.end() )

@@ -62,16 +62,16 @@ namespace loco
         KINEMATIC_TREE_BODY
     };
 
-    std::string toString( const eShapeType& type );
-    std::string toString( const eJointType& type );
-    std::string toString( const eDynamicsType& type );
-    std::string toString( const eSensorType& type );
-    std::string toString( const eActuatorType& type );
-    std::string toString( const eBodyClassType& type );
+    std::string ToString( const eShapeType& type );
+    std::string ToString( const eJointType& type );
+    std::string ToString( const eDynamicsType& type );
+    std::string ToString( const eSensorType& type );
+    std::string ToString( const eActuatorType& type );
+    std::string ToString( const eBodyClassType& type );
 
-    eShapeType toEnumShape( const std::string& shape );
-    eJointType toEnumJoint( const std::string& type );
-    eActuatorType toEnumActuator( const std::string& type );
+    eShapeType ToEnumShape( const std::string& shape );
+    eJointType ToEnumJoint( const std::string& type );
+    eActuatorType ToEnumActuator( const std::string& type );
 
     struct THeightFieldData
     {
@@ -89,8 +89,9 @@ namespace loco
         TMat4               localTransform;     // relative transform of this shape (visual|collision) w.r.t. owner (body)
     };
 
-    std::string toString( const TShapeData& shapeData );
+    std::string ToString( const TShapeData& shapeData );
 
+    // @todo: Add contructor that expects type, to construct an initialized joint (nqpos, nqvel)
     struct TJointData
     {
         eJointType  type;           // type of joint (see enum above)
@@ -111,9 +112,9 @@ namespace loco
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TJointData @ {0}", loco::pointerToHexAddress( this ) );
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TJointData @ {0}", loco::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Created TJointData @ " << loco::pointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Created TJointData @ " << loco::PointerToHexAddress( this ) << std::endl;
         #endif
         }
 
@@ -121,9 +122,9 @@ namespace loco
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TJointData @ {0}", loco::pointerToHexAddress( this ) );
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TJointData @ {0}", loco::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TJointData @ " << loco::pointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TJointData @ " << loco::PointerToHexAddress( this ) << std::endl;
         #endif
         }
     };
@@ -141,9 +142,9 @@ namespace loco
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TCollisionData @ {0}", loco::pointerToHexAddress( this ) );
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TCollisionData @ {0}", loco::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Created TCollisionData @ " << loco::pointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Created TCollisionData @ " << loco::PointerToHexAddress( this ) << std::endl;
         #endif
         }
 
@@ -151,9 +152,9 @@ namespace loco
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TVisualData @ {0}", loco::pointerToHexAddress( this ) );
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TVisualData @ {0}", loco::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TVisualData @ " << loco::pointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TVisualData @ " << loco::PointerToHexAddress( this ) << std::endl;
         #endif
         }
     };
@@ -176,9 +177,9 @@ namespace loco
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TVisualData @ {0}", loco::pointerToHexAddress( this ) );
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TVisualData @ {0}", loco::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Created TVisualData @ " << loco::pointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Created TVisualData @ " << loco::PointerToHexAddress( this ) << std::endl;
         #endif
         }
 
@@ -186,9 +187,9 @@ namespace loco
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TVisualData @ {0}", loco::pointerToHexAddress( this ) );
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TVisualData @ {0}", loco::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TVisualData @ " << loco::pointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TVisualData @ " << loco::PointerToHexAddress( this ) << std::endl;
         #endif
         }
     };
@@ -208,9 +209,9 @@ namespace loco
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TActuatorData @ {0}", loco::pointerToHexAddress( this ) );
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TActuatorData @ {0}", loco::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Created TActuatorData @ " << loco::pointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Created TActuatorData @ " << loco::PointerToHexAddress( this ) << std::endl;
         #endif
         }
 
@@ -218,9 +219,9 @@ namespace loco
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TActuatorData @ {0}", loco::pointerToHexAddress( this ) );
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TActuatorData @ {0}", loco::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TActuatorData @ " << loco::pointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TActuatorData @ " << loco::PointerToHexAddress( this ) << std::endl;
         #endif
         }
     };
@@ -235,9 +236,9 @@ namespace loco
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TSensorData @ {0}", loco::pointerToHexAddress( this ) );
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TSensorData @ {0}", loco::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Created TSensorData @ " << loco::pointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Created TSensorData @ " << loco::PointerToHexAddress( this ) << std::endl;
         #endif
         }
 
@@ -245,9 +246,9 @@ namespace loco
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSensorData @ {0}", loco::pointerToHexAddress( this ) );
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSensorData @ {0}", loco::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TSensorData @ " << loco::pointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TSensorData @ " << loco::PointerToHexAddress( this ) << std::endl;
         #endif
         }
     };
@@ -269,9 +270,9 @@ namespace loco
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TInertialData @ {0}", loco::pointerToHexAddress( this ) );
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TInertialData @ {0}", loco::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Created TInertialData @ " << loco::pointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Created TInertialData @ " << loco::PointerToHexAddress( this ) << std::endl;
         #endif
         }
 
@@ -279,9 +280,9 @@ namespace loco
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TInertialData @ {0}", loco::pointerToHexAddress( this ) );
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TInertialData @ {0}", loco::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TInertialData @ " << loco::pointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TInertialData @ " << loco::PointerToHexAddress( this ) << std::endl;
         #endif
         }
     };
@@ -298,9 +299,9 @@ namespace loco
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TBodyData @ {0}", loco::pointerToHexAddress( this ) );
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TBodyData @ {0}", loco::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Created TBodyData @ " << loco::pointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Created TBodyData @ " << loco::PointerToHexAddress( this ) << std::endl;
         #endif
         }
 
@@ -308,13 +309,13 @@ namespace loco
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TBodyData @ {0}", loco::pointerToHexAddress( this ) );
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TBodyData @ {0}", loco::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TBodyData @ " << loco::pointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TBodyData @ " << loco::PointerToHexAddress( this ) << std::endl;
         #endif
         }
     };
 
-    TScalar computeVolumeFromShape( const TShapeData& shapeData );
-    std::pair<TVec3, TVec3> computeMeshAABB( const std::string& filename );
+    TScalar ComputeVolumeFromShape( const TShapeData& shapeData );
+    std::pair<TVec3, TVec3> ComputeMeshAABB( const std::string& filename );
 }

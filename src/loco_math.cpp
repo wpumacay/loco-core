@@ -3,18 +3,17 @@
 
 namespace loco
 {
-
-    TScalar rad2degrees( const TScalar& rads )
+    TScalar Rad2degrees( const TScalar& rads )
     {
         return rads * 180.0 / loco::PI;
     }
 
-    TScalar degrees2rad( const TScalar& degrees )
+    TScalar Degrees2rad( const TScalar& degrees )
     {
         return degrees * loco::PI / 180.0;
     }
 
-    std::string toString( const TVec2& vec )
+    std::string ToString( const TVec2& vec )
     {
         std::string _strrep;
 
@@ -25,7 +24,7 @@ namespace loco
         return _strrep;
     }
 
-    std::string toString( const TVec3& vec )
+    std::string ToString( const TVec3& vec )
     {
         std::string _strrep;
 
@@ -37,7 +36,7 @@ namespace loco
         return _strrep;
     }
 
-    std::string toString( const TVec4& vec )
+    std::string ToString( const TVec4& vec )
     {
         std::string _strrep;
 
@@ -50,7 +49,7 @@ namespace loco
         return _strrep;
     }
 
-    std::string toString( const TMat2& mat )
+    std::string ToString( const TMat2& mat )
     {
         std::string _strrep;
 
@@ -67,7 +66,7 @@ namespace loco
         return _strrep;
     }
 
-    std::string toString( const TMat3& mat )
+    std::string ToString( const TMat3& mat )
     {
         std::string _strrep;
 
@@ -85,7 +84,7 @@ namespace loco
         return _strrep;
     }
 
-    std::string toString( const TMat4& mat )
+    std::string ToString( const TMat4& mat )
     {
         std::string _strrep;
 
@@ -104,8 +103,8 @@ namespace loco
         return _strrep;
     }
 
-    //// Extracted from bullet btQuaternion implementation (where they use the gameprogramminggems (v1?) 2.10 impl.)
-    TVec4 shortestArcQuat( const TVec3& v, const TVec3& vTarget )
+    // Extracted from bullet btQuaternion implementation (where they use the gameprogramminggems (v1?) 2.10 impl.)
+    TVec4 ShortestArcQuat( const TVec3& v, const TVec3& vTarget )
     {
         TVec4 _quatres;
 
@@ -155,7 +154,7 @@ namespace loco
         return _quatres;
     }
 
-    TVec3 rearrange( const TVec3& vec, const std::string& worldUp )
+    TVec3 Rearrange( const TVec3& vec, const std::string& worldUp )
     {
         if ( worldUp == "y" )
             return TVec3( vec.z(), vec.x(), vec.y() );
@@ -163,5 +162,4 @@ namespace loco
             return TVec3( vec.y(), vec.z(), vec.x() );
         return vec;
     }
-
 }

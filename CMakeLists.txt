@@ -99,17 +99,17 @@ set( LOCO_CORE_SRCS
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent/formats/kintree_format_rlsim.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent/formats/kintree_format_urdf.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent_wrapper.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/data.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/collision.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/visual.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/joint.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/body.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/loco_data.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/loco_collision.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/loco_visual.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/loco_joint.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/loco_body_base.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/compounds/compound.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/compounds/compound_body.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/model_loader.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/primitives/single_body.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/primitives/loco_single_body.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/runtime.cpp"
-     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/scenario.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_scenario.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/sensor_base.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/types/sensor_agent_intrinsics.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/types/sensor_terrain_sections.cpp"
@@ -155,9 +155,9 @@ target_link_libraries( loco_core
 #### # Configure glviz @todo: add option to select if visualizer is enabled or not
 #### add_subdirectory( glviz )
 
-if ( LOCO_CORE_BUILD_PYTHON_BINDINGS )
-    add_subdirectory( bindings )
-endif()
+#### if ( LOCO_CORE_BUILD_PYTHON_BINDINGS )
+####     add_subdirectory( bindings )
+#### endif()
 
 #### if ( LOCO_CORE_IS_MASTER_PROJECT AND LOCO_CORE_BUILD_DOCS )
 ####     add_subdirectory( docs )

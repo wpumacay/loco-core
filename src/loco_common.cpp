@@ -9,7 +9,7 @@ namespace loco
     ////                                                                                        ////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::vector< std::string > split( const std::string &txt, char separator )
+    std::vector< std::string > Split( const std::string &txt, char separator )
     {
         std::vector< std::string > _res;
 
@@ -35,7 +35,7 @@ namespace loco
         return _res;
     }
 
-    std::string pointerToHexAddress( const void* ptr )
+    std::string PointerToHexAddress( const void* ptr )
     {
         auto ptr_casted = reinterpret_cast<std::intptr_t>( ptr );
         std::stringstream _ss;
@@ -49,23 +49,23 @@ namespace loco
     ////                                                                                        ////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::string getFilenameFromFilePath(  const std::string& filepath )
+    std::string GetFilenameFromFilePath(  const std::string& filepath )
     {
-        return split( filepath, '/' ).back();
+        return Split( filepath, '/' ).back();
     }
 
-    std::string getFoldernameFromFilePath(  const std::string& filepath )
+    std::string GetFoldernameFromFilePath(  const std::string& filepath )
     {
-        auto _pathParts = split( filepath, '/' );
+        auto _pathParts = Split( filepath, '/' );
         if ( _pathParts.size() < 2 )
             return "./";
 
         return _pathParts[_pathParts.size() - 2];
     }
 
-    std::string getFolderpathFromFilePath( const std::string& filepath )
+    std::string GetFolderpathFromFilePath( const std::string& filepath )
     {
-        auto _pathParts = split( filepath, '/' );
+        auto _pathParts = Split( filepath, '/' );
         if ( _pathParts.size() < 2 )
             return "./";
 
@@ -76,9 +76,9 @@ namespace loco
         return _ss.str();
     }
 
-    std::string getFilenameNoExtensionFromFilePath(  const std::string& filepath )
+    std::string GetFilenameNoExtensionFromFilePath(  const std::string& filepath )
     {
-        return split( split( filepath, '/' ).back(), '.' ).front();
+        return Split( Split( filepath, '/' ).back(), '.' ).front();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,19 +87,19 @@ namespace loco
     ////                                                                                        ////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    void TGenericParams::set( const std::string& name, int val )
+    void TGenericParams::Set( const std::string& name, int val )
     {
         m_ints[name] = val;
         m_keys.insert( name );
     }
 
-    void TGenericParams::set( const std::string& name, float val )
+    void TGenericParams::Set( const std::string& name, float val )
     {
         m_floats[name] = val;
         m_keys.insert( name );
     }
 
-    void TGenericParams::set( const std::string& name, const TVec2& vec )
+    void TGenericParams::Set( const std::string& name, const TVec2& vec )
     {
         m_sizefs[name].ndim = 2;
         m_sizefs[name][0] = vec.x();
@@ -107,7 +107,7 @@ namespace loco
         m_keys.insert( name );
     }
 
-    void TGenericParams::set( const std::string& name, const TVec3& vec )
+    void TGenericParams::Set( const std::string& name, const TVec3& vec )
     {
         m_sizefs[name].ndim = 3;
         m_sizefs[name][0] = vec.x();
@@ -116,7 +116,7 @@ namespace loco
         m_keys.insert( name );
     }
 
-    void TGenericParams::set( const std::string& name, const TVec4& vec )
+    void TGenericParams::Set( const std::string& name, const TVec4& vec )
     {
         m_sizefs[name].ndim = 4;
         m_sizefs[name][0] = vec.x();
@@ -126,30 +126,30 @@ namespace loco
         m_keys.insert( name );
     }
 
-    void TGenericParams::set( const std::string& name, const TSizei& sizei )
+    void TGenericParams::Set( const std::string& name, const TSizei& sizei )
     {
         m_sizeis[name] = sizei;
         m_keys.insert( name );
     }
 
-    void TGenericParams::set( const std::string& name, const TSizef& sizef )
+    void TGenericParams::Set( const std::string& name, const TSizef& sizef )
     {
         m_sizefs[name] = sizef;
         m_keys.insert( name );
     }
 
-    void TGenericParams::set( const std::string& name, const std::string& str )
+    void TGenericParams::Set( const std::string& name, const std::string& str )
     {
         m_strings[name] = str;
         m_keys.insert( name );
     }
 
-    bool TGenericParams::hasParam( const std::string& name ) const
+    bool TGenericParams::HasParam( const std::string& name ) const
     {
         return m_keys.find( name ) != m_keys.end();
     }
 
-    int TGenericParams::getInt( const std::string& name, int def ) const
+    int TGenericParams::GetInt( const std::string& name, int def ) const
     {
         if ( m_ints.find( name ) != m_ints.end() )
             return m_ints.at( name );
@@ -157,7 +157,7 @@ namespace loco
         return def;
     }
 
-    float TGenericParams::getFloat( const std::string& name, float def ) const
+    float TGenericParams::GetFloat( const std::string& name, float def ) const
     {
         if ( m_floats.find( name ) != m_floats.end() )
             return m_floats.at( name );
@@ -165,7 +165,7 @@ namespace loco
         return def;
     }
 
-    TVec2 TGenericParams::getVec2( const std::string& name, const TVec2& def ) const
+    TVec2 TGenericParams::GetVec2( const std::string& name, const TVec2& def ) const
     {
         TVec2 _res = def;
 
@@ -180,7 +180,7 @@ namespace loco
         return _res;
     }
 
-    TVec3 TGenericParams::getVec3( const std::string& name, const TVec3& def ) const
+    TVec3 TGenericParams::GetVec3( const std::string& name, const TVec3& def ) const
     {
         TVec3 _res = def;
 
@@ -196,7 +196,7 @@ namespace loco
         return _res;
     }
 
-    TVec4 TGenericParams::getVec4( const std::string& name, const TVec4& def ) const
+    TVec4 TGenericParams::GetVec4( const std::string& name, const TVec4& def ) const
     {
         TVec4 _res = def;
 
@@ -213,7 +213,7 @@ namespace loco
         return _res;
     }
 
-    TSizei TGenericParams::getSizei( const std::string& name, const TSizei& def ) const
+    TSizei TGenericParams::GetSizei( const std::string& name, const TSizei& def ) const
     {
         if ( m_sizeis.find( name ) != m_sizeis.end() )
             return m_sizeis.at( name );
@@ -221,7 +221,7 @@ namespace loco
         return def;
     }
 
-    TSizef TGenericParams::getSizef( const std::string& name, const TSizef& def ) const
+    TSizef TGenericParams::GetSizef( const std::string& name, const TSizef& def ) const
     {
         if ( m_sizefs.find( name ) != m_sizefs.end() )
             return m_sizefs.at( name );
@@ -229,7 +229,7 @@ namespace loco
         return def;
     }
 
-    std::string TGenericParams::getString( const std::string& name, const std::string& def ) const
+    std::string TGenericParams::GetString( const std::string& name, const std::string& def ) const
     {
         if ( m_strings.find( name ) != m_strings.end() )
             return m_strings.at( name );
@@ -237,12 +237,12 @@ namespace loco
         return def;
     }
 
-    std::unordered_map< std::string, float > TGenericParams::floats() const
+    std::unordered_map< std::string, float > TGenericParams::GetFloats() const
     {
         return m_floats;
     }
 
-    std::unordered_map< std::string, TVec3 > TGenericParams::vec3s() const
+    std::unordered_map< std::string, TVec3 > TGenericParams::GetVec3s() const
     {
         std::unordered_map< std::string, TVec3 > _vec3s;
 

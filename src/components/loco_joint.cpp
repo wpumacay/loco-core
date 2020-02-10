@@ -1,5 +1,5 @@
 
-#include <components/joint.h>
+#include <components/loco_joint.h>
 
 namespace loco
 {
@@ -92,27 +92,27 @@ namespace loco
         m_ownerParentRef = nullptr;
     }
 
-    void TJoint::setOwnerBody( TIBody* ownerRef )
+    void TJoint::SetOwnerBody( TIBody* ownerRef )
     {
         m_ownerRef = ownerRef;
     }
 
-    void TJoint::setOwnerParent( TIBody* ownerParentRef )
+    void TJoint::SetOwnerParent( TIBody* ownerParentRef )
     {
         m_ownerParentRef = ownerParentRef;
     }
 
-    void TJoint::setAdapter( TIJointAdapter* jointImplRef )
+    void TJoint::SetAdapter( TIJointAdapter* jointImplRef )
     {
         m_jointImplRef = jointImplRef;
     }
 
-    void TJoint::setDrawable( TIDrawable* drawableImplRef )
+    void TJoint::SetDrawable( TIDrawable* drawableImplRef )
     {
         m_drawableImplRef = drawableImplRef;
     }
 
-    void TJoint::setLocalPosition( const TVec3& localPosition )
+    void TJoint::SetLocalPosition( const TVec3& localPosition )
     {
         /* update local-transform for this joint */
         m_localTf.set( localPosition, 3 );
@@ -122,13 +122,13 @@ namespace loco
             m_tf = m_ownerRef->tf() * m_localTf;
 
         if ( m_jointImplRef )
-            m_jointImplRef->setLocalTransform( m_localTf );
+            m_jointImplRef->SetLocalTransform( m_localTf );
 
         if ( m_drawableImplRef )
-            m_drawableImplRef->setWorldTransform( m_tf );
+            m_drawableImplRef->SetWorldTransform( m_tf );
     }
 
-    void TJoint::setLocalRotation( const TMat3& localRotation )
+    void TJoint::SetLocalRotation( const TMat3& localRotation )
     {
         /* update local-transform for this joint */
         m_localTf.set( localRotation );
@@ -138,13 +138,13 @@ namespace loco
             m_tf = m_ownerRef->tf() * m_localTf;
 
         if ( m_jointImplRef )
-            m_jointImplRef->setLocalTransform( m_localTf );
+            m_jointImplRef->SetLocalTransform( m_localTf );
 
         if ( m_drawableImplRef )
-            m_drawableImplRef->setWorldTransform( m_tf );
+            m_drawableImplRef->SetWorldTransform( m_tf );
     }
 
-    void TJoint::setLocalEuler( const TVec3& localEuler )
+    void TJoint::SetLocalEuler( const TVec3& localEuler )
     {
         /* update local-transform for this joint */
         m_localTf.set( tinymath::rotation( localEuler ) );
@@ -154,13 +154,13 @@ namespace loco
             m_tf = m_ownerRef->tf() * m_localTf;
 
         if ( m_jointImplRef )
-            m_jointImplRef->setLocalTransform( m_localTf );
+            m_jointImplRef->SetLocalTransform( m_localTf );
 
         if ( m_drawableImplRef )
-            m_drawableImplRef->setWorldTransform( m_tf );
+            m_drawableImplRef->SetWorldTransform( m_tf );
     }
 
-    void TJoint::setLocalQuat( const TVec4& localQuaternion )
+    void TJoint::SetLocalQuat( const TVec4& localQuaternion )
     {
         /* update local-transform for this joint */
         m_localTf.set( tinymath::rotation( localQuaternion ) );
@@ -170,13 +170,13 @@ namespace loco
             m_tf = m_ownerRef->tf() * m_localTf;
 
         if ( m_jointImplRef )
-            m_jointImplRef->setLocalTransform( m_localTf );
+            m_jointImplRef->SetLocalTransform( m_localTf );
 
         if ( m_drawableImplRef )
-            m_drawableImplRef->setWorldTransform( m_tf );
+            m_drawableImplRef->SetWorldTransform( m_tf );
     }
 
-    void TJoint::setLocalTransform( const TMat4& localTransform )
+    void TJoint::SetLocalTransform( const TMat4& localTransform )
     {
         /* @note: the current design allows joints to be placed wherever the user wants. However,
                   the owner body is not expected to change its own transform to keep the constraint
@@ -194,13 +194,13 @@ namespace loco
             m_tf = m_ownerRef->tf() * m_localTf;
 
         if ( m_jointImplRef )
-            m_jointImplRef->setLocalTransform( m_localTf );
+            m_jointImplRef->SetLocalTransform( m_localTf );
 
         if ( m_drawableImplRef )
-            m_drawableImplRef->setWorldTransform( m_tf );
+            m_drawableImplRef->SetWorldTransform( m_tf );
     }
 
-    void TJoint::setQpos( const std::vector< TScalar >& qpos )
+    void TJoint::SetQpos( const std::vector< TScalar >& qpos )
     {
         if ( qpos.size() != m_nqpos )
         {
@@ -213,10 +213,10 @@ namespace loco
             m_qpos[i] = qpos[i];
 
         if ( m_jointImplRef )
-            m_jointImplRef->setQpos( m_qpos );
+            m_jointImplRef->SetQpos( m_qpos );
     }
 
-    void TJoint::setQvel( const std::vector< TScalar >& qvel )
+    void TJoint::SetQvel( const std::vector< TScalar >& qvel )
     {
         if ( qvel.size() != m_nqvel )
         {
@@ -229,10 +229,10 @@ namespace loco
             m_qvel[i] = qvel[i];
 
         if ( m_jointImplRef )
-            m_jointImplRef->setQvel( m_qvel );
+            m_jointImplRef->SetQvel( m_qvel );
     }
 
-    std::vector< TScalar > TJoint::getQpos() const
+    std::vector< TScalar > TJoint::GetQpos() const
     {
         std::vector< TScalar > _qpos( m_nqpos, 0.0f );
         for ( size_t i = 0; i < m_nqpos; i++ )
@@ -241,7 +241,7 @@ namespace loco
         return _qpos;
     }
 
-    std::vector< TScalar > TJoint::getQpos0() const
+    std::vector< TScalar > TJoint::GetQpos0() const
     {
         std::vector< TScalar > _qpos( m_nqpos, 0.0f );
         for ( size_t i = 0; i < m_nqpos; i++ )
@@ -250,7 +250,7 @@ namespace loco
         return _qpos;
     }
 
-    std::vector< TScalar > TJoint::getQvel() const
+    std::vector< TScalar > TJoint::GetQvel() const
     {
         std::vector< TScalar > _qvel( m_nqvel, 0.0f );
         for ( size_t i = 0; i < m_nqvel; i++ )
@@ -259,7 +259,7 @@ namespace loco
         return _qvel;
     }
 
-    std::vector< TScalar > TJoint::getQvel0() const
+    std::vector< TScalar > TJoint::GetQvel0() const
     {
         std::vector< TScalar > _qvel( m_nqvel, 0.0f );
         for ( size_t i = 0; i < m_nqvel; i++ )
@@ -268,54 +268,66 @@ namespace loco
         return _qvel;
     }
 
-    void TJoint::changeLimits( const TVec2& limits )
+    void TJoint::ChangeLimits( const TVec2& limits )
     {
         m_data.limits = limits;
 
         if ( m_jointImplRef )
-            m_jointImplRef->changeLimits( limits );
+            m_jointImplRef->ChangeLimits( limits );
     }
 
-    void TJoint::preStep()
+    void TJoint::Initialize()
+    {
+        LOCO_CORE_ASSERT( m_ownerRef, "Joint::Initialize >>> joint \"{0}\" isn't attached to an owner body", m_name );
+
+        if ( m_jointImplRef )
+        {
+            m_jointImplRef->Initialize();
+            m_jointImplRef->GetQpos( m_qpos );
+            m_jointImplRef->GetQvel( m_qvel );
+        }
+    }
+
+    void TJoint::PreStep()
     {
         LOCO_CORE_ASSERT( m_ownerRef, "Joint >>> joint \"{0}\" isn't attached to an owner body", m_name );
 
         if ( m_jointImplRef )
-            m_jointImplRef->preStep();
+            m_jointImplRef->PreStep();
     }
 
-    void TJoint::postStep()
+    void TJoint::PostStep()
     {
         LOCO_CORE_ASSERT( m_ownerRef, "Joint >>> joint \"{0}\" isn't attached to an owner body", m_name );
 
         if ( m_jointImplRef )
         {
-            m_jointImplRef->postStep();
-            m_jointImplRef->getQpos( m_qpos );
-            m_jointImplRef->getQvel( m_qvel );
+            m_jointImplRef->PostStep();
+            m_jointImplRef->GetQpos( m_qpos );
+            m_jointImplRef->GetQvel( m_qvel );
         }
 
         m_tf = m_ownerRef->tf() * m_localTf;
 
         if ( m_drawableImplRef )
-            m_drawableImplRef->setWorldTransform( m_tf );
+            m_drawableImplRef->SetWorldTransform( m_tf );
     }
 
-    void TJoint::reset()
+    void TJoint::Reset()
     {
         LOCO_CORE_ASSERT( m_ownerRef, "Joint >>> joint \"{0}\" isn't attached to an owner body", m_name );
 
         if ( m_jointImplRef )
         {
-            m_jointImplRef->reset();
-            m_jointImplRef->getQpos( m_qpos );
-            m_jointImplRef->getQvel( m_qvel );
+            m_jointImplRef->Reset();
+            m_jointImplRef->GetQpos( m_qpos );
+            m_jointImplRef->GetQvel( m_qvel );
         }
 
         // @todo: check resets when qpos0 changes, which changes zero|rest configuration
         m_tf = m_ownerRef->tf() * m_localTf;
 
         if ( m_drawableImplRef )
-            m_drawableImplRef->setWorldTransform( m_tf );
+            m_drawableImplRef->SetWorldTransform( m_tf );
     }
 }

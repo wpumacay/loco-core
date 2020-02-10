@@ -13,6 +13,9 @@ set( TINYMATH_BUILD_PYTHON_BINDINGS ON CACHE BOOL "Build tinymath's python-bindi
 #### # build tiny_renderer without examples
 #### set( CAT1_BUILD_EXAMPLES OFF CACHE BOOL "Do not build tiny_renderer examples" )
 
+# build imgui without examples
+set( IMGUI_BUILD_EXAMPLES CACHE BOOL "Don't build ImGui examples" )
+
 add_subdirectory( imgui )
 add_subdirectory( spdlog )
 add_subdirectory( pybind11 )

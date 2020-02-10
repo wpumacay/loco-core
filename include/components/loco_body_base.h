@@ -2,11 +2,10 @@
 
 #include <loco_common.h>
 
-#include <components/data.h>
-#include <components/collision.h>
-#include <components/visual.h>
-
-#include <adapters/body_adapter.h>
+#include <components/loco_data.h>
+#include <components/loco_collision.h>
+#include <components/loco_visual.h>
+#include <adapters/loco_body_adapter.h>
 
 namespace loco
 {
@@ -14,33 +13,24 @@ namespace loco
     class TVisual;
     class TIBodyAdapter;
 
-    /**
-    *   Body object interface, defining base functionality for any body-type
-    *
-    *   This class provides an interface|specification of the minimum functionality
-    *   and resources required by bodies in the framework, namely the following three 
-    *   types (which implement this interface):
-    *
-    *       > Single-body: defines bodies that for primitives that can lay around in
-    *                      the scenario. These are used as obstacles, simple parts of
-    *                      terrain, and primitives for terrain generation.
-    *       > Compound-body: defines bodies that can be connected to form chains (compounds) by
-    *                        using joints to link them, whose degrees of freedom can be set 
-    *                        according to the user. Use these to create doors, conveyors, etc.
-    *       > Kintree-body: defines bodies that are used to create agents (kinematic trees) used
-    *                       for locomotion tasks. This comes in handy to separate some internal
-    *                       backend APIs that provide both Minimal Coordinates (usually through a 
-    *                       Featherstone implementation) and Maximal Coordinates (usually using
-    *                       recursive Newton-Euler).
-    *
-    *   Notes:
-    *       - We're still unsure about the way we're handling this hierarchy is the correct way
-    *         to do the job. So far, all functionality is baked into this single interface, and
-    *         disabled|extended according to the class-type used.
-    *       - We're open to suggestions, this seems to work, but it's not elegant to just place
-    *         everything under the same interface, even though some objects don't actually fully
-    *         use nor expose this functionality
-    */
+    /// @brief Body object interface, defining the common API for all body-types
+    ///
+    /// @details
+    /// This class provides an interface|specification of the minimum functionality
+    /// and resources required by bodies in the framework, namely the following three 
+    /// types (which implement this interface):
+    ///
+    ///    > Single-body: defines bodies that for primitives that can lay around in
+    ///                   the scenario. These are used as obstacles, simple parts of
+    ///                   terrain, and primitives for terrain generation.
+    ///    > Compound-body: defines bodies that can be connected to form chains (compounds) by
+    ///                     using joints to link them, whose degrees of freedom can be set 
+    ///                     according to the user. Use these to create doors, conveyors, etc.
+    ///    > Kintree-body: defines bodies that are used to create agents (kinematic trees) used
+    ///                    for locomotion tasks. This comes in handy to separate some internal
+    ///                    backend APIs that provide both Minimal Coordinates (usually through a 
+    ///                    Featherstone implementation) and Maximal Coordinates (usually using
+    ///                    recursive Newton-Euler).
     class TIBody
     {
 
@@ -51,17 +41,19 @@ namespace loco
 
         virtual ~TIBody();
 
-        void setAdapter( TIBodyAdapter* bodyImplRef );
+        void SetAdapter( TIBodyAdapter* bodyImplRef );
 
-        void setCollision( std::unique_ptr< TCollision > collisionObj );
+        void SetCollision( std::unique_ptr< TCollision > collisionObj );
 
-        void setVisual( std::unique_ptr< TVisual > visualObj );
+        void SetVisual( std::unique_ptr< TVisual > visualObj );
 
-        void preStep();
+        void Initialize();
 
-        void postStep();
+        void PreStep();
 
-        void reset();
+        void PostStep();
+
+        void Reset();
 
         //------------------------------------------------------------------------------------------
         // World-space setters: use these to set the world-space pose of the body in 
@@ -72,15 +64,15 @@ namespace loco
         //   > kintree-body: disabled, to allow access only through kintree-api
         //------------------------------------------------------------------------------------------
 
-        void setPosition( const TVec3& position );
+        void SetPosition( const TVec3& position );
 
-        void setRotation( const TMat3& rotation );
+        void SetRotation( const TMat3& rotation );
 
-        void setEuler( const TVec3& euler );
+        void SetEuler( const TVec3& euler );
 
-        void setQuaternion( const TVec4& quat );
+        void SetQuaternion( const TVec4& quat );
 
-        void setTransform( const TMat4& transform );
+        void SetTransform( const TMat4& transform );
 
         //------------------------------------------------------------------------------------------
         // Local-space setters: use these to set the relative pose of the body in question 
@@ -91,15 +83,15 @@ namespace loco
         //   > kintree-body: disabled, to allow access only through kintree-api
         //------------------------------------------------------------------------------------------
 
-        void setLocalPosition( const TVec3& localPosition );
+        void SetLocalPosition( const TVec3& localPosition );
 
-        void setLocalRotation( const TMat3& localRotation );
+        void SetLocalRotation( const TMat3& localRotation );
 
-        void setLocalEuler( const TVec3& localEuler );
+        void SetLocalEuler( const TVec3& localEuler );
 
-        void setLocalQuaternion( const TVec4& localQuat );
+        void SetLocalQuaternion( const TVec4& localQuat );
 
-        void setLocalTransform( const TMat4& localTransform );
+        void SetLocalTransform( const TMat4& localTransform );
 
         //------------------------------------------------------------------------------------------
         //                                 World-space getters
@@ -177,54 +169,55 @@ namespace loco
 
     protected :
 
-        virtual void _preStepInternal() = 0;
+        virtual void _InitializeInternal() = 0;
 
-        virtual void _postStepInternal() = 0;
+        virtual void _PreStepInternal() = 0;
 
-        virtual void _resetInternal() = 0;
+        virtual void _PostStepInternal() = 0;
 
-        virtual void _setPositionInternal( const TVec3& position ) = 0;
+        virtual void _ResetInternal() = 0;
 
-        virtual void _setRotationInternal( const TMat3& rotation ) = 0;
+        virtual void _SetPositionInternal( const TVec3& position ) = 0;
 
-        virtual void _setEulerInternal( const TVec3& euler ) = 0;
+        virtual void _SetRotationInternal( const TMat3& rotation ) = 0;
 
-        virtual void _setQuaternionInternal( const TVec4& quat ) = 0;
+        virtual void _SetEulerInternal( const TVec3& euler ) = 0;
 
-        virtual void _setTransformInternal( const TMat4& transform ) = 0;
+        virtual void _SetQuaternionInternal( const TVec4& quat ) = 0;
 
-        virtual void _setLocalPositionInternal( const TVec3& localPosition ) = 0;
+        virtual void _SetTransformInternal( const TMat4& transform ) = 0;
 
-        virtual void _setLocalRotationInternal( const TMat3& localRotation ) = 0;
+        virtual void _SetLocalPositionInternal( const TVec3& localPosition ) = 0;
 
-        virtual void _setLocalEulerInternal( const TVec3& localEuler ) = 0;
+        virtual void _SetLocalRotationInternal( const TMat3& localRotation ) = 0;
 
-        virtual void _setLocalQuaternionInternal( const TVec4& localQuat ) = 0;
+        virtual void _SetLocalEulerInternal( const TVec3& localEuler ) = 0;
 
-        virtual void _setLocalTransformInternal( const TMat4& localTransform ) = 0;
+        virtual void _SetLocalQuaternionInternal( const TVec4& localQuat ) = 0;
+
+        virtual void _SetLocalTransformInternal( const TMat4& localTransform ) = 0;
 
     protected :
 
-        /// Unique name identifier
+        // Unique name identifier
         std::string m_name;
-        /// Type of body (single|compound|kintree)
+        // Type of body (single|compound|kintree)
         eBodyClassType m_classType;
-        /// Transform in world-space
+        // Transform in world-space
         TMat4 m_tf;
-        /// Initial transform in world-space
+        // Initial transform in world-space
         TMat4 m_tf0;
-        /// Relative transform w.r.t. parent (if applicable)
+        // Relative transform w.r.t. parent (if applicable)
         TMat4 m_localTf;
-        /// Initial relative transform w.r.t. parent (if applicable)
+        // Initial relative transform w.r.t. parent (if applicable)
         TMat4 m_localTf0;
-        /// Properties(struct) of this body
+        // Properties(struct) of this body
         TBodyData m_data;
-        /// Adapter-object that gives access to the low-level API for a specific backend
+        // Adapter-object that gives access to the low-level API for a specific backend
         TIBodyAdapter* m_bodyImplRef;
-        /// Single collider (collision object) associated with this body
+        // Single collider (collision object) associated with this body
         std::unique_ptr< TCollision > m_collision;
-        /// Single visual (viewer object) associated with this body
+        // Single visual (viewer object) associated with this body
         std::unique_ptr< TVisual > m_visual;
     };
-
 }

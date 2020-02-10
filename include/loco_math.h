@@ -17,8 +17,8 @@ namespace loco
     /// Eps value (same precision as in tinymath library)
     const TScalar EPS = TINYMATH_EPS;
 
-    TScalar rad2degrees( const TScalar& rads );
-    TScalar degrees2rad( const TScalar& degrees );
+    TScalar Rad2degrees( const TScalar& rads );
+    TScalar Degrees2rad( const TScalar& degrees );
 
     /// Vector2f alias in the library
     typedef tinymath::Vector<TScalar, 2 > TVec2;
@@ -35,14 +35,14 @@ namespace loco
     typedef tinymath::Matrix<TScalar, 4 > TMat4;
 
     // redefine VectorXY toString methods (just for easier migration)
-    std::string toString( const TVec2& vec );
-    std::string toString( const TVec3& vec );
-    std::string toString( const TVec4& vec );
+    std::string ToString( const TVec2& vec );
+    std::string ToString( const TVec3& vec );
+    std::string ToString( const TVec4& vec );
 
     // redefine MatrixXY toString methods (just for easier migration)
-    std::string toString( const TMat2& mat );
-    std::string toString( const TMat3& mat );
-    std::string toString( const TMat4& mat );
+    std::string ToString( const TMat2& mat );
+    std::string ToString( const TMat3& mat );
+    std::string ToString( const TMat4& mat );
 
     // extend define vector[max-buff-size] as TSize
     template< typename T >
@@ -54,7 +54,7 @@ namespace loco
     };
 
     template< typename T >
-    std::string toString( const TSize<T>& tsize )
+    std::string ToString( const TSize<T>& tsize )
     {
         auto _strrep = std::string( "(" );
         for ( ssize_t i = 0; i < tsize.ndim; i++ )
@@ -67,9 +67,9 @@ namespace loco
     typedef TSize<int> TSizei;
 
     /// returns the "shortest" quaternion that transforms the given vector to the given target
-    TVec4 shortestArcQuat( const TVec3& v, const TVec3& vTarget );
+    TVec4 ShortestArcQuat( const TVec3& v, const TVec3& vTarget );
 
     /// Rearranges the elements of a TVec3 from a format where the z vector is given by "worldUp"
     /// into the standard format where the world z is Up. @todo: replace string for enum
-    TVec3 rearrange( const TVec3& vec, const std::string& worldUp );
+    TVec3 Rearrange( const TVec3& vec, const std::string& worldUp );
 }

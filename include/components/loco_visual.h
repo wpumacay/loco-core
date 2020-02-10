@@ -2,10 +2,9 @@
 
 #include <loco_common.h>
 
-#include <components/data.h>
-#include <components/body.h>
-
-#include <viz/drawable.h>
+#include <components/loco_data.h>
+#include <components/loco_body_base.h>
+#include <viz/loco_drawable.h>
 
 namespace loco
 {
@@ -13,7 +12,6 @@ namespace loco
 
     class TVisual
     {
-
     public :
 
         TVisual( const std::string& name,
@@ -21,49 +19,51 @@ namespace loco
 
         ~TVisual();
 
-        void setParentBody( TIBody* parentBodyRef );
+        void SetParentBody( TIBody* parentBodyRef );
 
-        void setDrawable( TIDrawable* drawableImplRef );
+        void SetDrawable( TIDrawable* drawableImplRef );
 
-        void show( bool visible );
+        void SetVisible( bool visible );
 
-        void wireframe( bool wireframe );
+        void SetWireframe( bool wireframe );
 
-        void preStep();
+        void Initialize();
 
-        void postStep();
+        void PreStep();
 
-        void reset();
+        void PostStep();
 
-        void setLocalPosition( const TVec3& localPosition );
+        void Reset();
 
-        void setLocalRotation( const TMat3& localRotation );
+        void SetLocalPosition( const TVec3& localPosition );
 
-        void setLocalEuler( const TVec3& localEuler );
+        void SetLocalRotation( const TMat3& localRotation );
 
-        void setLocalQuat( const TVec4& localQuaternion );
+        void SetLocalEuler( const TVec3& localEuler );
 
-        void setLocalTransform( const TMat4& transform );
+        void SetLocalQuat( const TVec4& localQuaternion );
 
-        void changeSize( const TVec3& newSize );
+        void SetLocalTransform( const TMat4& transform );
 
-        void changeElevationData( const std::vector< float >& heightData );
+        void ChangeSize( const TVec3& newSize );
 
-        void changeColor( const TVec3& newFullColor );
+        void ChangeElevationData( const std::vector< float >& heightData );
 
-        void changeAmbientColor( const TVec3& newAmbientColor );
+        void ChangeColor( const TVec3& newFullColor );
 
-        void changeDiffuseColor( const TVec3& newDiffuseColor );
+        void ChangeAmbientColor( const TVec3& newAmbientColor );
 
-        void changeSpecularColor( const TVec3& newSpecularColor );
+        void ChangeDiffuseColor( const TVec3& newDiffuseColor );
 
-        void changeShininess( const TScalar& shininess );
+        void ChangeSpecularColor( const TVec3& newSpecularColor );
+
+        void ChangeShininess( const TScalar& shininess );
 
         std::string name() const { return m_name; }
 
-        bool isVisible() const;
+        bool visible() const;
 
-        bool isWireframe() const;
+        bool wireframe() const;
 
         TVec3 pos() const { return TVec3( m_tf.col( 3 ) ); }
 
@@ -111,17 +111,17 @@ namespace loco
 
     protected :
 
-        /// Unique name identifier
+        // Unique name identifier
         std::string m_name;
-        /// Transform in world-space
+        // Transform in world-space
         TMat4 m_tf;
-        /// Relative transform w.r.t. parent body
+        // Relative transform w.r.t. parent body
         TMat4 m_localTf;
-        /// Reference to the parent-body of this collision object
+        // Reference to the parent-body of this collision object
         TIBody* m_parentBodyRef;
-        /// Construction data of this visual object
+        // Construction data of this visual object
         TVisualData m_data;
-        /// Reference to the drawable resource used for visualization
+        // Reference to the drawable resource used for visualization
         TIDrawable* m_drawableImplRef;
     };
 }

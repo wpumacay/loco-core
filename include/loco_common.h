@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <utility>
+#include <memory>
 #include <vector>
 #include <deque>
 #include <stack>
@@ -65,41 +66,41 @@ namespace loco
     /// Default density value (1000kg/m3 - water density) used for mass calculation (if no mass given)
     const TScalar DEFAULT_DENSITY = 1000.0f;
 
-    std::vector< std::string > split( const std::string &txt, char separator = '/' );
+    std::vector< std::string > Split( const std::string &txt, char separator = '/' );
 
-    std::string pointerToHexAddress( const void* ptr );
+    std::string PointerToHexAddress( const void* ptr );
 
-    std::string getFilenameFromFilePath( const std::string& filepath );
-    std::string getFoldernameFromFilePath( const std::string& filepath );
-    std::string getFolderpathFromFilePath( const std::string& filepath );
-    std::string getFilenameNoExtensionFromFilePath( const std::string& filepath );
+    std::string GetFilenameFromFilePath( const std::string& filepath );
+    std::string GetFoldernameFromFilePath( const std::string& filepath );
+    std::string GetFolderpathFromFilePath( const std::string& filepath );
+    std::string GetFilenameNoExtensionFromFilePath( const std::string& filepath );
 
     class TGenericParams
     {
     public :
 
-        void set( const std::string& name, int val );
-        void set( const std::string& name, float val );
-        void set( const std::string& name, const TVec2& vec );
-        void set( const std::string& name, const TVec3& vec );
-        void set( const std::string& name, const TVec4& vec );
-        void set( const std::string& name, const TSizei& sizei );
-        void set( const std::string& name, const TSizef& sizef );
-        void set( const std::string& name, const std::string& str );
+        void Set( const std::string& name, int val );
+        void Set( const std::string& name, float val );
+        void Set( const std::string& name, const TVec2& vec );
+        void Set( const std::string& name, const TVec3& vec );
+        void Set( const std::string& name, const TVec4& vec );
+        void Set( const std::string& name, const TSizei& sizei );
+        void Set( const std::string& name, const TSizef& sizef );
+        void Set( const std::string& name, const std::string& str );
 
-        bool hasParam( const std::string& name ) const;
+        bool HasParam( const std::string& name ) const;
 
-        int getInt( const std::string& name, int def = 0 ) const;
-        float getFloat( const std::string& name, float def = 0.0f ) const;
-        TVec2 getVec2( const std::string& name, const TVec2& def = TVec2( 0.0f, 0.0f ) ) const;
-        TVec3 getVec3( const std::string& name, const TVec3& def = TVec3( 0.0f, 0.0f, 0.0f ) ) const;
-        TVec4 getVec4( const std::string& name, const TVec4& def = TVec4( 0.0f, 0.0f, 0.0f, 1.0f ) ) const;
-        TSizei getSizei( const std::string& name, const TSizei& def = TSizei() ) const;
-        TSizef getSizef( const std::string& name, const TSizef& def = TSizef() ) const;
-        std::string getString( const std::string& name, const std::string& def = "undefined" ) const;
+        int GetInt( const std::string& name, int def = 0 ) const;
+        float GetFloat( const std::string& name, float def = 0.0f ) const;
+        TVec2 GetVec2( const std::string& name, const TVec2& def = TVec2( 0.0f, 0.0f ) ) const;
+        TVec3 GetVec3( const std::string& name, const TVec3& def = TVec3( 0.0f, 0.0f, 0.0f ) ) const;
+        TVec4 GetVec4( const std::string& name, const TVec4& def = TVec4( 0.0f, 0.0f, 0.0f, 1.0f ) ) const;
+        TSizei GetSizei( const std::string& name, const TSizei& def = TSizei() ) const;
+        TSizef GetSizef( const std::string& name, const TSizef& def = TSizef() ) const;
+        std::string GetString( const std::string& name, const std::string& def = "undefined" ) const;
 
-        std::unordered_map< std::string, float > floats() const;
-        std::unordered_map< std::string, TVec3 > vec3s() const;
+        std::unordered_map< std::string, float > GetFloats() const;
+        std::unordered_map< std::string, TVec3 > GetVec3s() const;
 
     private :
 
@@ -111,3 +112,21 @@ namespace loco
         std::unordered_map< std::string, std::string > m_strings;
     };
 }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+#ifndef UNIQUE_PTR_EXTENSION
+#define UNIQUE_PTR_EXTENSION
+namespace std
+{
+    // make_unique implementation from Herb Sutter's blog
+    // url: https://herbsutter.com/gotw/_102/
+    template<typename T, typename ...Args>
+    std::unique_ptr<T> make_unique( Args&& ...args )
+    {
+        return std::unique_ptr<T>( new T( std::forward<Args>(args)... ) );
+    }
+}
+#endif /* UNIQUE_PTR_EXTENSION */
+
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
