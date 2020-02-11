@@ -183,61 +183,111 @@ namespace loco
 
     const TSingleBody* TScenario::GetSingleBodyByName( const std::string& name ) const
     {
-        LOCO_CORE_ASSERT( HasSingleBodyNamed( name ), "TScenario::GetSingleBodyByName >>> single-body with name {0} not found", name );
+        if( !HasSingleBodyNamed( name ) )
+        {
+            LOCO_CORE_ERROR( "TScenario::GetSingleBodyByName >>> single-body with name {0} not found", name );
+            return nullptr;
+        }
+
         return _get_singleBody( m_singleBodiesMap.at( name ) );
     }
 
 ////     const TCompound* TScenario::GetCompoundBodyByName( const std::string& name ) const
 ////     {
-////         LOCO_CORE_ASSERT( HasCompoundBodyNamed( name ), "TScenario::GetCompoundBodyByName >>> compound with name {0} not found", name );
+////         if( !HasCompoundBodyNamed( name ) )
+////         {
+////             LOCO_CORE_ERROR( "TScenario::GetTerrainGeneratorByName >>> terrainGenerator with name {0} not found", name );
+////             return nullptr;
+////         }
+//// 
 ////         return _get_compound( m_compoundsMap.at( name ) );
 ////     }
 //// 
 ////     const TKinTreeAgent* TScenario::GetKinTreeAgentByName( const std::string& name ) const
 ////     {
-////         LOCO_CORE_ASSERT( HasKinTreeAgentNamed( name ), "TScenario::GetKinTreeAgentByName >>> kintreeAgent with name {0} not found", name );
+////         if( !HasKinTreeAgentNamed( name ) )
+////         {
+////             LOCO_CORE_ERROR( "TScenario::GetKinTreeAgentByName >>> kintreeAgent with name {0} not found", name );
+////             return nullptr;
+////         }
+//// 
 ////         return _get_kintreeAgent( m_kintreeAgentsMap.at( name ) );
 ////     }
 //// 
 ////     const TKinTreeSensor* TScenario::GetKinTreeSensorByName( const std::string& name ) const
 ////     {
-////         LOCO_CORE_ASSERT( HasKinTreeSensorNamed( name ), "TScenario::GetKinTreeSensorByName >>> kintreeSensor with name {0} not found", name );
+////         if( !HasKinTreeSensorNamed( name ) )
+////         {
+////             LOCO_CORE_ERROR( "TScenario::GetKinTreeSensorByName >>> kintreeSensor with name {0} not found", name );
+////             return nullptr;
+////         }
+//// 
 ////         return _get_kintreeSensor( m_kintreeSensorsMap.at( name ) );
 ////     }
 //// 
 ////     const TTerrainGenerator* TScenario::GetTerrainGeneratorByName( const std::string& name ) const
 ////     {
-////         LOCO_CORE_ASSERT( HasTerrainGeneratorNamed( name ), "TScenario::GetTerrainGeneratorByName >>> terrainGenerator with name {0} not found", name );
+////         if( !HasTerrainGeneratorNamed( name ) )
+////         {
+////             LOCO_CORE_ERROR( "TScenario::GetTerrainGeneratorByName >>> terrainGenerator with name {0} not found", name );
+////             return nullptr;
+////         }
+//// 
 ////         return _get_terrainGenerator( m_terrainGeneratorsMap.at( name ) );
 ////     }
 
     TSingleBody* TScenario::GetSingleBodyByName( const std::string& name )
     {
-        LOCO_CORE_ASSERT( HasSingleBodyNamed( name ), "TScenario::GetSingleBodyByName >>> single-body with name {0} not found", name );
+        if( !HasSingleBodyNamed( name ) )
+        {
+            LOCO_CORE_ERROR( "TScenario::GetSingleBodyByName >>> single-body with name {0} not found", name );
+            return nullptr;
+        }
+
         return _get_mutable_singleBody( m_singleBodiesMap.at( name ) );
     }
 
 ////     TCompound* TScenario::GetCompoundBodyByName( const std::string& name )
 ////     {
-////         LOCO_CORE_ASSERT( HasCompoundBodyNamed( name ), "TScenario::GetCompoundBodyByName >>> compound with name {0} not found", name );
+////         if( !HasCompoundBodyNamed( name ) )
+////         {
+////             LOCO_CORE_ERROR( "TScenario::GetCompoundBodyByName >>> compound with name {0} not found", name );
+////             return nullptr;
+////         }
+//// 
 ////         return _get_mutable_compound( m_compoundsMap.at( name ) );
 ////     }
 //// 
 ////     TKinTreeAgent* TScenario::GetKinTreeAgentByName( const std::string& name )
 ////     {
-////         LOCO_CORE_ASSERT( HasKinTreeAgentNamed( name ), "TScenario::GetKinTreeAgentByName >>> kintreeAgent with name {0} not found", name );
+////         if( !HasKinTreeAgentNamed( name ) )
+////         {
+////             LOCO_CORE_ERROR( "TScenario::GetKinTreeAgentByName >>> kintreeAgent with name {0} not found", name );
+////             return nullptr;
+////         }
+//// 
 ////         return _get_mutable_kintreeAgent( m_kintreeAgentsMap.at( name ) );
 ////     }
 //// 
 ////     TKinTreeSensor* TScenario::GetKinTreeSensorByName( const std::string& name )
 ////     {
-////         LOCO_CORE_ASSERT( HasKinTreeSensorNamed( name ), "TScenario::GetKinTreeSensorByName >>> kintreeSensor with name {0} not found", name );
+////         if( !HasKinTreeSensorNamed( name ) )
+////         {
+////             LOCO_CORE_ERROR( "TScenario::GetKinTreeSensorByName >>> kintreeSensor with name {0} not found", name );
+////             return nullptr;
+////         }
+//// 
 ////         return _get_mutable_kintreeSensor( m_kintreeSensorsMap.at( name ) );
 ////     }
 //// 
 ////     TTerrainGenerator* TScenario::GetTerrainGeneratorByName( const std::string& name )
 ////     {
-////         LOCO_CORE_ASSERT( HasTerrainGeneratorNamed( name ), "TScenario::GetTerrainGeneratorByName >>> terrainGenerator with name {0} not found", name );
+////         if( !HasTerrainGeneratorNamed( name ) )
+////         {
+////             LOCO_CORE_ERROR( "TScenario::GetTerrainGeneratorByName >>> terrainGenerator with name {0} not found", name );
+////             return nullptr;
+////         }
+//// 
 ////         return _get_mutable_terrainGenerator( m_terrainGeneratorsMap.at( name ) );
 ////     }
 

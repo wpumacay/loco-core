@@ -5,8 +5,6 @@ import tinymath as tm
 import numpy as np
 import gc
 
-from IPython.core.debugger import set_trace
-
 def rotationMatrix_axisX( angle ) :
     mat = np.identity( 3 )
     mat[1, 1] = np.cos( angle ); mat[1 ,2] = -np.sin( angle );
