@@ -1,6 +1,6 @@
 
 #include <loco_common_py.h>
-#include <components/data.h>
+#include <components/loco_data.h>
 
 namespace py = pybind11;
 
@@ -75,7 +75,7 @@ namespace loco
                 .def( "__repr__", []( const THeightFieldData* self )
                     {
                         auto _strrep = std::string( "HeightFieldData(\n" );
-                        _strrep += "cpp-address     : " + loco::pointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address     : " + loco::PointerToHexAddress( self ) + "\n";
                         _strrep += "nWidthSamples   : " + std::to_string( self->nWidthSamples ) + "\n";
                         _strrep += "nDepthSamples   : " + std::to_string( self->nDepthSamples ) + "\n";
                         _strrep += ")";
@@ -108,11 +108,11 @@ namespace loco
                 .def( "__repr__", []( const TShapeData* self )
                     {
                         auto _strrep = std::string( "ShapeData(\n" );
-                        _strrep += "cpp-address : " + loco::pointerToHexAddress( self ) + "\n";
-                        _strrep += "type        : " + loco::toString( self->type ) + "\n";
-                        _strrep += "size        : " + loco::toString( self->size ) + "\n";
+                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "type        : " + loco::ToString( self->type ) + "\n";
+                        _strrep += "size        : " + loco::ToString( self->size ) + "\n";
                         _strrep += "filename    : " + self->filename + "\n";
-                        _strrep += "localTf     : \n" + loco::toString( self->localTransform ) + "\n";
+                        _strrep += "localTf     : \n" + loco::ToString( self->localTransform ) + "\n";
                         _strrep += ")";
                         return _strrep;
                     } );
@@ -137,14 +137,14 @@ namespace loco
                 .def( "__repr__", []( const TCollisionData* self )
                     {
                         auto _strrep = std::string( "CollisionData(\n" );
-                        _strrep += "cpp-address : " + loco::pointerToHexAddress( self ) + "\n";
-                        _strrep += "type        : " + loco::toString( self->type ) + "\n";
-                        _strrep += "size        : " + loco::toString( self->size ) + "\n";
+                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "type        : " + loco::ToString( self->type ) + "\n";
+                        _strrep += "size        : " + loco::ToString( self->size ) + "\n";
                         _strrep += "filename    : " + self->filename + "\n";
-                        _strrep += "localTf     : \n" + loco::toString( self->localTransform ) + "\n";
+                        _strrep += "localTf     : \n" + loco::ToString( self->localTransform ) + "\n";
                         _strrep += "colGroup    : " + std::to_string( self->collisionGroup ) + "\n";
                         _strrep += "colMask     : " + std::to_string( self->collisionMask ) + "\n";
-                        _strrep += "friction    : " + loco::toString( self->friction ) + "\n";
+                        _strrep += "friction    : " + loco::ToString( self->friction ) + "\n";
                         _strrep += "density     : " + std::to_string( self->density ) + "\n";
                         _strrep += ")";
                         return _strrep;
@@ -185,14 +185,14 @@ namespace loco
                 .def( "__repr__", []( const TVisualData* self )
                     {
                         auto _strrep = std::string( "VisualData(\n" );
-                        _strrep += "cpp-address : " + loco::pointerToHexAddress( self ) + "\n";
-                        _strrep += "type        : " + loco::toString( self->type ) + "\n";
-                        _strrep += "size        : " + loco::toString( self->size ) + "\n";
+                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "type        : " + loco::ToString( self->type ) + "\n";
+                        _strrep += "size        : " + loco::ToString( self->size ) + "\n";
                         _strrep += "filename    : " + self->filename + "\n";
-                        _strrep += "localTf     : \n" + loco::toString( self->localTransform ) + "\n";
-                        _strrep += "ambient     : " + loco::toString( self->ambient ) + "\n";
-                        _strrep += "diffuse     : " + loco::toString( self->diffuse ) + "\n";
-                        _strrep += "specular    : " + loco::toString( self->specular ) + "\n";
+                        _strrep += "localTf     : \n" + loco::ToString( self->localTransform ) + "\n";
+                        _strrep += "ambient     : " + loco::ToString( self->ambient ) + "\n";
+                        _strrep += "diffuse     : " + loco::ToString( self->diffuse ) + "\n";
+                        _strrep += "specular    : " + loco::ToString( self->specular ) + "\n";
                         _strrep += "shininess   : " + std::to_string( self->shininess ) + "\n";
                         _strrep += "texture     : " + self->texture + "\n";
                         _strrep += "useMeshMatrl: " + std::string( self->usesMaterialFromMesh ? "True" : "False" ) + "\n";
@@ -245,17 +245,17 @@ namespace loco
                 .def( "__repr__", []( const TJointData* self )
                     {
                         auto _strrep = std::string( "JointData(\n" );
-                        _strrep += "cpp-address : " + loco::pointerToHexAddress( self ) + "\n";
-                        _strrep += "type        : " + loco::toString( self->type ) + "\n";
-                        _strrep += "axis        : " + loco::toString( self->axis ) + "\n";
-                        _strrep += "limits      : " + loco::toString( self->limits ) + "\n";
+                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "type        : " + loco::ToString( self->type ) + "\n";
+                        _strrep += "axis        : " + loco::ToString( self->axis ) + "\n";
+                        _strrep += "limits      : " + loco::ToString( self->limits ) + "\n";
                         _strrep += "stiffness   : " + std::to_string( self->stiffness ) + "\n";
                         _strrep += "armature    : " + std::to_string( self->armature ) + "\n";
                         _strrep += "damping     : " + std::to_string( self->damping ) + "\n";
                         _strrep += "ref         : " + std::to_string( self->ref ) + "\n";
                         _strrep += "nqpos       : " + std::to_string( self->nqpos ) + "\n";
                         _strrep += "nqvel       : " + std::to_string( self->nqvel ) + "\n";
-                        _strrep += "localTf     : \n" + loco::toString( self->localTransform ) + "\n";
+                        _strrep += "localTf     : \n" + loco::ToString( self->localTransform ) + "\n";
                         _strrep += ")";
                         return _strrep;
                     } );
@@ -295,13 +295,13 @@ namespace loco
                 .def( "__repr__", []( const TActuatorData* self )
                     {
                         auto _strrep = std::string( "ActuatorData(\n" );
-                        _strrep += "cpp-address : " + loco::pointerToHexAddress( self ) + "\n";
-                        _strrep += "type        : " + loco::toString( self->type ) + "\n";
-                        _strrep += "limits      : " + loco::toString( self->limits ) + "\n";
-                        _strrep += "gear        : " + loco::toString( self->gear ) + "\n";
+                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "type        : " + loco::ToString( self->type ) + "\n";
+                        _strrep += "limits      : " + loco::ToString( self->limits ) + "\n";
+                        _strrep += "gear        : " + loco::ToString( self->gear ) + "\n";
                         _strrep += "kp          : " + std::to_string( self->kp ) + "\n";
                         _strrep += "kv          : " + std::to_string( self->kv ) + "\n";
-                        _strrep += "localTf     : \n" + loco::toString( self->localTransform ) + "\n";
+                        _strrep += "localTf     : \n" + loco::ToString( self->localTransform ) + "\n";
                         _strrep += ")";
                         return _strrep;
                     } );
@@ -321,9 +321,9 @@ namespace loco
                 .def( "__repr__", []( const TSensorData* self )
                     {
                         auto _strrep = std::string( "SensorData(\n" );
-                        _strrep += "cpp-address : " + loco::pointerToHexAddress( self ) + "\n";
-                        _strrep += "type        : " + loco::toString( self->type ) + "\n";
-                        _strrep += "localTf     : \n" + loco::toString( self->localTransform ) + "\n";
+                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "type        : " + loco::ToString( self->type ) + "\n";
+                        _strrep += "localTf     : \n" + loco::ToString( self->localTransform ) + "\n";
                         _strrep += ")";
                         return _strrep;
                     } );
@@ -349,7 +349,7 @@ namespace loco
                 .def( "__repr__", []( const TInertialData* self )
                     {
                         auto _strrep = std::string( "InertialData(\n" );
-                        _strrep += "cpp-address : " + loco::pointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
                         _strrep += "mass        : " + std::to_string( self->mass ) + "\n";
                         _strrep += "ixx         : " + std::to_string( self->ixx ) + "\n";
                         _strrep += "ixy         : " + std::to_string( self->ixy ) + "\n";
@@ -357,7 +357,7 @@ namespace loco
                         _strrep += "iyy         : " + std::to_string( self->iyy ) + "\n";
                         _strrep += "iyz         : " + std::to_string( self->iyz ) + "\n";
                         _strrep += "izz         : " + std::to_string( self->izz ) + "\n";
-                        _strrep += "localTf     : \n" + loco::toString( self->localTransform ) + "\n";
+                        _strrep += "localTf     : \n" + loco::ToString( self->localTransform ) + "\n";
                         _strrep += ")";
                         return _strrep;
                     } );
@@ -380,9 +380,9 @@ namespace loco
                 .def( "__repr__", []( const TBodyData* self )
                     {
                         auto _strrep = std::string( "BodyData(\n" );
-                        _strrep += "cpp-address : " + loco::pointerToHexAddress( self ) + "\n";
-                        _strrep += "dyntype     : " + loco::toString( self->dyntype ) + "\n";
-                        _strrep += "localTf0    : \n" + loco::toString( self->localTransformZero ) + "\n";
+                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "dyntype     : " + loco::ToString( self->dyntype ) + "\n";
+                        _strrep += "localTf0    : \n" + loco::ToString( self->localTransformZero ) + "\n";
                         _strrep += ")";
                         return _strrep;
                     } );

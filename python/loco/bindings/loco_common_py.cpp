@@ -45,7 +45,7 @@ namespace loco
         return stdvec;
     }
 
-    std::string toString( const std::vector<TScalar>& stdvec )
+    std::string ToString( const std::vector<TScalar>& stdvec )
     {
         std::string _strrep = "( ";
         for ( size_t i = 0; i < stdvec.size(); i++ )

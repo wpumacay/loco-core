@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import loco.sim as sim
+import loco
 import numpy as np
 
 def create_heights_data( nWidthSamples, nDepthSamples ) :
@@ -12,7 +12,7 @@ def create_heights_data( nWidthSamples, nDepthSamples ) :
     return zz.ravel()
 
 def test_components_hfieldData() :
-    hfdata = sim.HeightFieldData()
+    hfdata = loco.sim.HeightFieldData()
     hfdata.nWidthSamples = 10
     hfdata.nDepthSamples = 20
     # try assigning (will check for row-major format, so default nparray should work)
@@ -22,12 +22,12 @@ def test_components_hfieldData() :
     print( hfdata )
 
 def test_components_shapeData() :
-    shapeData = sim.ShapeData()
-    shapeData.type = sim.ShapeType.BOX
+    shapeData = loco.sim.ShapeData()
+    shapeData.type = loco.sim.ShapeType.BOX
     shapeData.size = [0.1, 0.2, 0.3]
     shapeData.filename = ''
     shapeData.localTf = np.identity(4)
-    shapeData.hdata = sim.HeightFieldData()
+    shapeData.hdata = loco.sim.HeightFieldData()
     shapeData.hdata.nWidthSamples = 10
     shapeData.hdata.nDepthSamples = 20
     shapeData.hdata.heights = create_heights_data( shapeData.hdata.nWidthSamples,

@@ -2,19 +2,53 @@
 
 import os
 import sys
+import glob
 import subprocess
 
 from setuptools import find_packages, setup, Extension
 from setuptools.command.build_ext import build_ext
+from setuptools.command.install import install
 
-DEBUG = True
+VERSION_MAJOR = 0
+VERSION_MINOR = 0
+VERSION_MICRO = 1
+VERSION = '%d.%d.%d' % ( VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO )
+PREFIX = 'wp_loco_%s_' % ( VERSION )
 
-def buildBindings( sourceDir, buildDir, cmakeArgs, buildArgs, env ):
+def BuildBindings( sourceDir, buildDir, cmakeArgs, buildArgs, env ):
     if not os.path.exists( buildDir ) :
         os.makedirs( buildDir )
 
     subprocess.call( ['cmake', sourceDir] + cmakeArgs, cwd=buildDir, env=env )
     subprocess.call( ['cmake', '--build', '.'] + buildArgs, cwd=buildDir )
+
+# get installation path: https://stackoverflow.com/questions/36187264/how-to-get-installation-directory-using-setuptools-and-pkg-ressources
+def GetInstallationDir() :
+    py_version = '%s.%s' % ( sys.version_info[0], sys.version_info[1] )
+    install_path_candidates = ( path % (py_version) for path in (
+                        sys.prefix + '/lib/python%s/dist-packages/',
+                        sys.prefix + '/lib/python%s/site-packages/',
+                        sys.prefix + '/local/lib/python%s/dist-packages/',
+                        sys.prefix + '/local/lib/python%s/site-packages/',
+                        '/Library/Python/%s/site-packages/' ) )
+    for path_candidate in install_path_candidates :
+        if os.path.exists( path_candidate ) :
+            return path_candidate
+
+    print( 'ERROR >>> No installation path found', file=sys.stderr )
+    return None
+
+def GetFilesUnderPath( path, extension ) :
+    cwd_path = os.getcwd()
+    target_path = os.path.join( cwd_path, path )
+    if not os.path.exists( target_path ) :
+        return ( '', [] )
+
+    os.chdir( target_path )
+    files = glob.glob( '**/*.%s' % ( extension ), recursive=True )
+    files_paths = [ os.path.join( target_path, fpath ) for fpath in files ]
+    os.chdir( cwd_path )
+    return ( PREFIX + path, files_paths )
 
 class CMakeExtension( Extension ) :
 
@@ -23,6 +57,17 @@ class CMakeExtension( Extension ) :
         self.sourceDir = os.path.abspath( sourceDir )
 
 class BuildCommand( build_ext ) :
+
+    user_options = [ ( 'visualizer=', None, 'Whether to build using visualizer or not' ),
+                     ( 'headless=', None, 'Whether to build visualizer in headless mode (uses EGL) or not (uses GLFW)' ),
+                     ( 'debug=', None, 'Whether to build in debug-mode or not' ) ]
+    boolean_options = [ 'visualizer', 'headless', 'debug' ]
+
+    def initialize_options( self ) :
+        super( BuildCommand, self ).initialize_options()
+        self.visualizer = 1 # Build without a visualizer by default
+        self.headless = 0 # Build using non-headless mode (GLFW) by default
+        self.debug = 1 # Build in release mode by default
 
     def run( self ) :
         try:
@@ -40,12 +85,19 @@ class BuildCommand( build_ext ) :
         _extensionDirName = os.path.dirname( _extensionFullPath )
         _extensionDirPath = os.path.abspath( _extensionDirName )
 
-        self.debug = True if DEBUG else False
         _cfg = 'Debug' if self.debug else 'Release'
+        _visualizer = 'ON' if self.visualizer else 'OFF'
+        _headless = 'ON' if self.headless else 'OFF'
         _buildArgs = ['--config', _cfg, '--', '-j4']
         _cmakeArgs = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + _extensionDirPath,
+                      '-DCMAKE_BUILD_RPATH=' + GetInstallationDir(),
+                      '-DCMAKE_INSTALL_RPATH=' + GetInstallationDir(),
                       '-DPYTHON_EXECUTABLE=' + sys.executable,
                       '-DCMAKE_BUILD_TYPE=' + _cfg,
+                      '-DLOCO_CORE_RESOURCES_PATH=' + sys.prefix + '/' + PREFIX + 'res/',
+                      '-DLOCO_CORE_LIBRARIES_PATH=' + GetInstallationDir(),
+                      '-DLOCO_CORE_BUILD_VISUALIZER=' + _visualizer,
+                      '-DLOCO_CORE_BUILD_HEADLESS_VISUALIZER=' + _headless,
                       '-DLOCO_CORE_BUILD_DOCS=OFF',
                       '-DLOCO_CORE_BUILD_EXAMPLES=OFF',
                       '-DLOCO_CORE_BUILD_PYTHON_BINDINGS=ON',
@@ -59,7 +111,23 @@ class BuildCommand( build_ext ) :
         _sourceDir = extension.sourceDir
         _buildDir = self.build_temp
 
-        buildBindings( _sourceDir, _buildDir, _cmakeArgs, _buildArgs, _env )
+        BuildBindings( _sourceDir, _buildDir, _cmakeArgs, _buildArgs, _env )
+
+class InstallCommand( install ) :
+
+    user_options = install.user_options + BuildCommand.user_options
+    boolean_options = install.boolean_options + BuildCommand.boolean_options
+
+    def initialize_options( self ) :
+        super( InstallCommand, self ).initialize_options()
+        self.visualizer = 1 # Build without a visualizer by default
+        self.headless = 0 # Build using non-headless mode (GLFW) by default
+        self.debug = 1 # Build in release mode by default
+
+    def run( self ) :
+        self.reinitialize_command( 'build_ext', headless=self.headless, debug=self.debug, visualizer=self.visualizer )
+        self.run_command( 'build_ext' )
+        super( InstallCommand, self ).run()
 
 with open( 'README.md', 'r' ) as fh :
     longDescriptionData = fh.read()
@@ -69,38 +137,39 @@ with open( 'requirements.txt', 'r' ) as fh :
 
 setup(
     name                    = 'wp-loco',
+    version                 = VERSION,
     description             = 'Core functionality for a backend-agnostic locomotion framework',
     author                  = 'Wilbert Santos Pumacay Huallpa',
     license                 = 'MIT License',
     author_email            = 'wpumacay@gmail.com',
     url                     = 'https://github.com/wpumacay/tysoc',
     keywords                = 'locomotion control simulation',
-    packages                = find_packages(),
     zip_safe                = False,
     install_requires        = requiredPackages,
-    package_data            = {
-                                'pytysoc': [ '../res/templates/mjcf/*.xml',
-                                             '../res/templates/urdf/*.urdf',
-                                             '../res/templates/rlsim/*.json',
-                                             '../res/meshes/*.stl',
-                                             '../res/meshes/*.dae',
-                                             '../res/meshes/*.obj',
-                                             '../res/xml/*.xml',
-                                             '../res/xml/baxter_meshes/*.stl',
-                                             '../res/xml/baxter_meshes/*.obj',
-                                             '../res/xml/laikago_meshes/*.stl',
-                                             '../res/xml/laikago_meshes/*.obj',
-                                             '../res/xml/nao_meshes/*.stl',
-                                             '../res/xml/nao_meshes/*.obj',
-                                             '../res/xml/r2d2_meshes/*.stl',
-                                             '../res/xml/r2d2_meshes/*.obj',
-                                             '../res/xml/sawyer_meshes/*.stl',
-                                             '../res/xml/sawyer_meshes/*.obj' ]
-                              },
+    package_dir             = { '' : './python' },
+    packages                = find_packages( './python' ),
+    data_files              = [ GetFilesUnderPath( 'res/templates/mjcf', 'xml' ),
+                                GetFilesUnderPath( 'res/templates/urdf', 'urdf' ),
+                                GetFilesUnderPath( 'res/templates/rlsim', 'json' ),
+                                GetFilesUnderPath( 'res/meshes', 'stl' ),
+                                GetFilesUnderPath( 'res/meshes', 'dae' ),
+                                GetFilesUnderPath( 'res/meshes', 'obj' ),
+                                GetFilesUnderPath( 'res/xml', 'xml' ),
+                                GetFilesUnderPath( 'res/xml/baxter_meshes', 'stl' ),
+                                GetFilesUnderPath( 'res/xml/baxter_meshes', 'obj' ),
+                                GetFilesUnderPath( 'res/xml/laikago_meshes', 'stl' ),
+                                GetFilesUnderPath( 'res/xml/laikago_meshes', 'obj' ),
+                                GetFilesUnderPath( 'res/xml/nao_meshes', 'stl' ),
+                                GetFilesUnderPath( 'res/xml/nao_meshes', 'obj' ),
+                                GetFilesUnderPath( 'res/xml/r2d2_meshes', 'stl' ),
+                                GetFilesUnderPath( 'res/xml/r2d2_meshes', 'obj' ),
+                                GetFilesUnderPath( 'res/xml/sawyer_meshes', 'stl' ),
+                                GetFilesUnderPath( 'res/xml/sawyer_meshes', 'obj' ) ],
     ext_modules             = [
-                                CMakeExtension( 'loco_bindings', '.' )
+                                CMakeExtension( 'loco_sim', '.' )
                               ],
     cmdclass                = {
-                                'build_ext': BuildCommand
+                                'build_ext': BuildCommand,
+                                'install': InstallCommand
                               }
 )

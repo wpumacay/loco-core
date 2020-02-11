@@ -10,13 +10,11 @@ namespace loco
     extern void bindings_components_elements( py::module& m );
 }
 
-PYBIND11_MODULE( loco, m )
+PYBIND11_MODULE( loco_sim, m )
 {
-    py::module m_sim = m.def_submodule( "sim", "Simulation module of 'Loco'" );
-
-    loco::bindings_common( m_sim );
-    loco::bindings_components_data( m_sim );
-    loco::bindings_components_elements( m_sim );
+    loco::bindings_common( m );
+    loco::bindings_components_data( m );
+    loco::bindings_components_elements( m );
 
     m.attr( "__version__" ) = "0.0.1";
 }

@@ -49,5 +49,5 @@ namespace loco
     std::vector<TScalar> nparray_to_stdvec( const py::array_t<TScalar>& arr_stdvec );
 
     // Returns string-representation of an std-vector
-    std::string toString( const std::vector<TScalar>& stdvec );
+    std::string ToString( const std::vector<TScalar>& stdvec );
 }
