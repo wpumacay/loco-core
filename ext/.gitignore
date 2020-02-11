@@ -5,3 +5,4 @@ spdlog*
 pybind11*
 tiny_math*
 tiny_renderer*
+googletest*

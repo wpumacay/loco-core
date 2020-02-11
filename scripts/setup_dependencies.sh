@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-GIT_DEPS_REPO=(tiny_math pybind11 imgui spdlog tiny_renderer)
-GIT_DEPS_USER=(wpumacay RobotLocomotion wpumacay gabime wpumacay)
-GIT_DEPS_BRANCH=(master drake docking v1.x master)
+GIT_DEPS_REPO=(tiny_math pybind11 imgui spdlog tiny_renderer googletest)
+GIT_DEPS_USER=(wpumacay RobotLocomotion wpumacay gabime wpumacay google)
+GIT_DEPS_BRANCH=(master drake docking v1.x master master)
 
-for i in {0..4}
+for i in {0..5}
 do
     USER=${GIT_DEPS_USER[$i]}
     REPO=${GIT_DEPS_REPO[$i]}

@@ -20,4 +20,12 @@ add_subdirectory( imgui )
 add_subdirectory( spdlog )
 add_subdirectory( pybind11 )
 add_subdirectory( tiny_math )
-#### add_subdirectory( tiny_renderer )
+
+#### if ( LOCO_CORE_BUILD_VISUALIZER )
+####     add_subdirectory( tiny_renderer )
+#### endif()
+
+if ( LOCO_CORE_BUILD_TESTS )
+    add_subdirectory( googletest )
+endif()
+
