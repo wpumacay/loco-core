@@ -23,11 +23,25 @@ namespace loco
 
         // Make sure our type is single-body
         m_classType = eBodyClassType::SINGLE_BODY;
+
+        #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+            if ( TLogger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBody {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+            else
+                std::cout << "Loco::Allocs: Created TSingleBody " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+        #endif
     }
 
     TSingleBody::~TSingleBody()
     {
         // nothing extra to delete for now
+
+        #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+            if ( TLogger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSingleBody {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+            else
+                std::cout << "Loco::Allocs: Destroyed TSingleBody " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+        #endif
     }
 
     void TSingleBody::_InitializeInternal()

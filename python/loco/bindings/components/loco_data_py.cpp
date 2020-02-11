@@ -66,11 +66,11 @@ namespace loco
                 .def_property( "heights",
                     []( const THeightFieldData* self ) -> py::array_t<float>
                         {
-                            return loco::vecgrid_to_nparray<float>( self->heightData );
+                            return loco::vecgrid_to_nparray<float>( self->heights );
                         },
                     []( THeightFieldData* self, const py::array_t<float>& arr_heightData ) -> void
                         {
-                            self->heightData = loco::nparray_to_vecgrid<float>( arr_heightData );
+                            self->heights = loco::nparray_to_vecgrid<float>( arr_heightData );
                         } )
                 .def( "__repr__", []( const THeightFieldData* self )
                     {

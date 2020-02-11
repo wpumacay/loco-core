@@ -61,10 +61,6 @@ namespace loco
 
         std::string name() const { return m_name; }
 
-        bool visible() const;
-
-        bool wireframe() const;
-
         TVec3 pos() const { return TVec3( m_tf.col( 3 ) ); }
 
         TMat3 rot() const { return TMat3( m_tf ); }
@@ -75,7 +71,7 @@ namespace loco
 
         TMat4 tf() const { return m_tf; }
 
-        TVec3 localPos() const { return TVec3( m_tf.col( 3 ) ); }
+        TVec3 localPos() const { return TVec3( m_localTf.col( 3 ) ); }
 
         TMat3 localRot() const { return TMat3( m_localTf ); }
 
@@ -96,6 +92,10 @@ namespace loco
         TVec3 specular() const { return m_data.specular; }
 
         TScalar shininess() const { return m_data.shininess; }
+
+        bool visible() const { return m_visible; }
+
+        bool wireframe() const { return m_wireframe; }
 
         TVisualData data() const { return m_data; }
 
@@ -123,5 +123,9 @@ namespace loco
         TVisualData m_data;
         // Reference to the drawable resource used for visualization
         TIDrawable* m_drawableImplRef;
+        // Flag that indicates visual's drawable visibility
+        bool m_visible;
+        // Flag that indicates visual's drawable wireframe-mode
+        bool m_wireframe;
     };
 }

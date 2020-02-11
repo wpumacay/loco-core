@@ -558,6 +558,15 @@ namespace loco
                         {
                             self->SetQuaternion( tinymath::nparray_to_vector<TScalar, 4>( arr_quat ) );
                         } )
+                .def_property( "tf",
+                    []( const TIBody* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::matrix_to_nparray<TScalar, 4>( self->tf() );
+                        },
+                    []( TIBody* self, const py::array_t<TScalar>& arr_tf )
+                        {
+                            self->SetTransform( tinymath::nparray_to_matrix<TScalar, 4>( arr_tf ) );
+                        } )
                 .def_property( "localPos",
                     []( const TIBody* self ) -> py::array_t<TScalar>
                         {
@@ -593,6 +602,15 @@ namespace loco
                     []( TIBody* self, const py::array_t<TScalar>& arr_localQuat )
                         {
                             self->SetLocalQuaternion( tinymath::nparray_to_vector<TScalar, 4>( arr_localQuat ) );
+                        } )
+                .def_property( "localTf",
+                    []( const TIBody* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::matrix_to_nparray<TScalar, 4>( self->localTf() );
+                        },
+                    []( TIBody* self, const py::array_t<TScalar>& arr_localTf )
+                        {
+                            self->SetLocalTransform( tinymath::nparray_to_matrix<TScalar, 4>( arr_localTf ) );
                         } )
                 .def_property_readonly( "localPos0",
                     []( const TIBody* self ) -> py::array_t<TScalar>

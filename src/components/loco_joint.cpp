@@ -82,6 +82,13 @@ namespace loco
         {
             LOCO_CORE_ERROR( "Joint \"{0}\" has unsupported type \"{1}\"", m_name, loco::toString( _jointType ) );
         }
+
+        #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+            if ( TLogger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TJoint @ {0}", loco::PointerToHexAddress( this ) );
+            else
+                std::cout << "Loco::Allocs: Created TJoint @ " << loco::PointerToHexAddress( this ) << std::endl;
+        #endif
     }
 
     TJoint::~TJoint()
@@ -90,6 +97,13 @@ namespace loco
         m_drawableImplRef = nullptr;
         m_ownerRef = nullptr;
         m_ownerParentRef = nullptr;
+
+        #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+            if ( TLogger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TJoint @ {0}", loco::PointerToHexAddress( this ) );
+            else
+                std::cout << "Loco::Allocs: Destroyed TJoint @ " << loco::PointerToHexAddress( this ) << std::endl;
+        #endif
     }
 
     void TJoint::SetOwnerBody( TIBody* ownerRef )

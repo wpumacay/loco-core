@@ -77,7 +77,7 @@ namespace loco
     {
         int                     nWidthSamples;  // number of samples of the grid in the x-dimension (extent is given by size.x)
         int                     nDepthSamples;  // number of samples of the grid on the y-dimension (extent is given by size.y)
-        std::vector< float >    heightData;     // height values (row-major format) in [0-1], scaled to actual height by size.z component
+        std::vector< float >    heights;        // height values (row-major format) in [0-1], scaled to actual height by size.z component
     };
 
     struct TShapeData
@@ -152,9 +152,9 @@ namespace loco
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TVisualData @ {0}", loco::PointerToHexAddress( this ) );
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TCollisionData @ {0}", loco::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TVisualData @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TCollisionData @ " << loco::PointerToHexAddress( this ) << std::endl;
         #endif
         }
     };

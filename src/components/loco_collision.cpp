@@ -8,10 +8,20 @@ namespace loco
     {
         m_name = name;
         m_data = collisionData;
+        m_localTf = m_data.localTransform;
+        m_visible = true;
+        m_wireframe = false;
 
         m_parentBodyRef = nullptr;
         m_collisionImplRef = nullptr;
         m_drawableImplRef = nullptr;
+
+        #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+            if ( TLogger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TCollision {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+            else
+                std::cout << "Loco::Allocs: Created TCollision " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+        #endif
     }
 
     TCollision::~TCollision()
@@ -19,6 +29,13 @@ namespace loco
         m_parentBodyRef = nullptr;
         m_drawableImplRef = nullptr;
         m_collisionImplRef = nullptr;
+
+        #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+            if ( TLogger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TCollision {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+            else
+                std::cout << "Loco::Allocs: Destroyed TCollision " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+        #endif
     }
 
     void TCollision::SetParentBody( TIBody* parentBodyRef )
@@ -52,12 +69,16 @@ namespace loco
 
     void TCollision::SetVisible( bool visible )
     {
+        m_visible = visible;
+
         if ( m_drawableImplRef )
             m_drawableImplRef->SetVisible( visible );
     }
 
     void TCollision::SetWireframe( bool wireframe )
     {
+        m_wireframe = wireframe;
+
         if ( m_drawableImplRef )
             m_drawableImplRef->SetWireframe( wireframe );
     }
@@ -194,7 +215,7 @@ namespace loco
         }
 
         // Change the internal elevation data
-        m_data.hdata.heightData = heightData;
+        m_data.hdata.heights = heightData;
 
         // Tell the backend resource to change the elevation data internally
         if ( m_collisionImplRef )
@@ -221,21 +242,5 @@ namespace loco
         // Tell the backend resource to change the collisionMask internally
         if ( m_collisionImplRef )
             m_collisionImplRef->ChangeCollisionMask( collisionMask );
-    }
-
-    bool TCollision::visible() const
-    {
-        if ( !m_drawableImplRef )
-            return false;
-
-        return m_drawableImplRef->visible();
-    }
-
-    bool TCollision::wireframe() const
-    {
-        if ( !m_drawableImplRef )
-            return false;
-
-        return m_drawableImplRef->wireframe();
     }
 }

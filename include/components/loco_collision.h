@@ -60,10 +60,6 @@ namespace loco
 
         std::string name() const { return m_name; }
 
-        bool visible() const;
-
-        bool wireframe() const;
-
         TVec3 pos() const { return TVec3( m_tf.col( 3 ) ); }
 
         TMat3 rot() const { return TMat3( m_tf ); }
@@ -91,6 +87,10 @@ namespace loco
         int collisionGroup() const { return m_data.collisionGroup; }
 
         int collisionMask() const { return m_data.collisionMask; }
+
+        bool visible() const { return m_visible; }
+
+        bool wireframe() const { return m_wireframe; }
 
         TCollisionData data() const { return m_data; }
 
@@ -120,5 +120,9 @@ namespace loco
         TIDrawable* m_drawableImplRef;
         // Adapter object that gives access to the low-level API for a specific backend
         TICollisionAdapter* m_collisionImplRef;
+        // Flag that indicates collision's drawable visibility
+        bool m_visible;
+        // Flag that indicates collision's drawable wireframe-mode
+        bool m_wireframe;
     };
 }

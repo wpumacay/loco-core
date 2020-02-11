@@ -8,15 +8,32 @@ namespace loco
     {
         m_name = name;
         m_data = visualData;
+        m_localTf = m_data.localTransform;
+        m_visible = true;
+        m_wireframe = false;
 
         m_parentBodyRef = nullptr;
         m_drawableImplRef = nullptr;
+
+        #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+            if ( TLogger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TVisual {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+            else
+                std::cout << "Loco::Allocs: Created TVisual " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+        #endif
     }
 
     TVisual::~TVisual()
     {
         m_parentBodyRef = nullptr;
         m_drawableImplRef = nullptr;
+
+        #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+            if ( TLogger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TVisual {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+            else
+                std::cout << "Loco::Allocs: Destroyed TVisual " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+        #endif
     }
 
     void TVisual::SetParentBody( TIBody* parentBodyRef )
@@ -42,12 +59,16 @@ namespace loco
 
     void TVisual::SetVisible( bool visible )
     {
+        m_visible = visible;
+
         if ( m_drawableImplRef )
             m_drawableImplRef->SetVisible( visible );
     }
 
     void TVisual::SetWireframe( bool wireframe )
     {
+        m_wireframe = wireframe;
+
         if ( m_drawableImplRef )
             m_drawableImplRef->SetWireframe( wireframe );
     }
@@ -155,7 +176,7 @@ namespace loco
         }
 
         // Change the internal elevation data
-        m_data.hdata.heightData = heightData;
+        m_data.hdata.heights = heightData;
 
         // Set the new elevation data of the drawable resource
         if ( m_drawableImplRef )
@@ -164,47 +185,43 @@ namespace loco
 
     void TVisual::ChangeColor( const TVec3& newFullColor )
     {
+        m_data.ambient = newFullColor;
+        m_data.diffuse = newFullColor;
+        m_data.specular = newFullColor;
+
         if ( m_drawableImplRef )
             m_drawableImplRef->SetColor( newFullColor );
     }
 
     void TVisual::ChangeAmbientColor( const TVec3& newAmbientColor )
     {
+        m_data.ambient = newAmbientColor;
+
         if ( m_drawableImplRef )
             m_drawableImplRef->SetAmbientColor( newAmbientColor );
     }
 
     void TVisual::ChangeDiffuseColor( const TVec3& newDiffuseColor )
     {
+        m_data.diffuse = newDiffuseColor;
+
         if ( m_drawableImplRef )
             m_drawableImplRef->SetDiffuseColor( newDiffuseColor );
     }
 
     void TVisual::ChangeSpecularColor( const TVec3& newSpecularColor )
     {
+        m_data.specular = newSpecularColor;
+
         if ( m_drawableImplRef )
             m_drawableImplRef->SetSpecularColor( newSpecularColor );
     }
 
     void TVisual::ChangeShininess( const TScalar& shininess )
     {
+        m_data.shininess = shininess;
+
         if ( m_drawableImplRef )
             m_drawableImplRef->SetShininess( shininess );
-    }
-
-    bool TVisual::visible() const
-    {
-        if ( !m_drawableImplRef )
-            return false;
-
-        return m_drawableImplRef->visible();
-    }
-
-    bool TVisual::wireframe() const
-    {
-        if ( !m_drawableImplRef )
-            return false;
-
-        return m_drawableImplRef->wireframe();
     }
 }
