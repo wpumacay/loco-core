@@ -5,8 +5,6 @@ import tinymath as tm
 import numpy as np
 import gc
 
-from IPython.core.debugger import set_trace
-
 def test_scenario_constructor() :
     scenario = loco.sim.Scenario()
     scenario.Initialize()
@@ -35,11 +33,12 @@ def test_scenario_primitives() :
     body_obj = loco.sim.SingleBody( "body_0", body_data, [ 1.0, 1.0, 1.0 ], np.identity( 3 ) )
     scenario = loco.sim.Scenario()
     scenario.AddSingleBody( body_obj )
-    assert ( scenario.HasSingleBodyNamed( 'body_0' ) == True )
-    assert ( scenario.GetSingleBodyByName( 'body_0' ) != None )
-    assert ( len( scenario.GetSingleBodiesList() ) == 1 )
-    assert ( scenario.GetSingleBodiesList()[0].name == 'body_0' )
-    assert ( scenario.GetNumSingleBodies() == 1 )
+    assert ( len( gc.get_referrers( scenario ) ) == 1 ), 'test_scenario_primitives >>> num-referrers to scenario should have remain constant'
+    assert ( scenario.HasSingleBodyNamed( 'body_0' ) == True ), 'test_scenario_primitives >>> issue with method \'HasSingleBodyNamed\''
+    assert ( scenario.GetSingleBodyByName( 'body_0' ) != None ), 'test_scenario_primitives >>> issue with method \'GetSingleBodyByName\''
+    assert ( len( scenario.GetSingleBodiesList() ) == 1 ), 'test_scenario_primitives >>> issue with method \'GetSingleBodiesList\''
+    assert ( scenario.GetSingleBodiesList()[0].name == 'body_0' ), 'test_scenario_primitives >>> issue with values returned by \'GetSingleBodiesList\''
+    assert ( scenario.GetNumSingleBodies() == 1 ), 'test_scenario_primitives >>> issue with method \'GetNumSingleBodies\''
     print( scenario )
 
 if __name__ == '__main__' :

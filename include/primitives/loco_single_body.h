@@ -36,6 +36,5 @@ namespace loco
         void _SetLocalEulerInternal( const TVec3& localEuler ) override;
         void _SetLocalQuaternionInternal( const TVec4& localQuat ) override;
         void _SetLocalTransformInternal( const TMat4& localTransform ) override;
-
     };
 }

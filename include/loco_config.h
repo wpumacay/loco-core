@@ -18,13 +18,14 @@ namespace config {
 
     namespace rendering
     {
+        const std::string NONE = ""; // creates null-obj visualizer (dummy)
         const std::string GLVIZ = LOCO_BACKEND_GRAPHICS_GLVIZ;
     }
 
+    // Add available physics backend in this namespace
     namespace physics
     {
-        // Add available physics backend in this namespace
-        const std::string NONE = "";
+        const std::string NONE = ""; // creates null-obj backend (dummy)
     }
 
 }}

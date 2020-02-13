@@ -2,16 +2,18 @@
 #pragma once
 
 #include <loco_logger.h>
-#include <simulation_base.h>
-#include <viz/viz.h>
+#include <loco_simulation.h>
+#include <visualizer/loco_visualizer.h>
 
-#include <adapters/body_adapter.h>
-#include <adapters/collision_adapter.h>
+#include <adapters/loco_body_adapter.h>
+#include <adapters/loco_collision_adapter.h>
 
 #include <dlfcn.h>
 
-namespace tysoc {
+// @firsttodo : reimplement this class
 
+namespace loco
+{
     class TRuntime
     {
 
@@ -47,7 +49,7 @@ namespace tysoc {
         /* Loading function: loads functions from library to fcn pointers above */
         void _loadLibraryFcns();
 
-        /* Loads a single function from the simulation library, given its name */
+        /* Loads a single function from the simulation library, given its name */ // @firsttodo: move to impl.hpp
         template< typename FunctionTypePtr >
         FunctionTypePtr _loadFcnFromLibrarySim( const std::string& fcnName )
         {

@@ -125,7 +125,7 @@ set( LOCO_CORE_SRCS
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/sensor_base.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/types/sensor_agent_intrinsics.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/types/sensor_terrain_sections.cpp"
-     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/simulation_base.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_simulation.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/terrain/terrain_base.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/terrain/types/sections/terrain_sections_base.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/terrain/types/sections/terrain_sections_blocky.cpp"
@@ -144,7 +144,9 @@ set( LOCO_CORE_SRCS
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/parsers/urdf/urdf.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/parsers/urdf/urdf_elements.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/primitives_spawner.cpp"
-     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/viz/viz.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/visualizer/loco_visualizer_camera.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/visualizer/loco_visualizer_light.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/visualizer/loco_visualizer.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/ext/tinyxml2/tinyxml2.cpp"
 )
 

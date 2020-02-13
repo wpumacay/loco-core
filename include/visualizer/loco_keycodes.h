@@ -1,9 +1,9 @@
 #pragma once
 
-/* keycodes based on glfw3 keycodes (default windowing library). For other windowing 
-   backends create a helper mapping function to map your keycodes to these keycodes */
+// Keycodes based on glfw3 keycodes (default windowing library). For other windowing
+// backends create a helper mapping function to map your keycodes to these keycodes
 
-namespace tysoc {
+namespace loco {
 namespace keys {
 
     const int KEY_SPACE         = 32;
@@ -128,5 +128,4 @@ namespace keys {
     const int KEY_RIGHT_ALT     = 346;
     const int KEY_RIGHT_SUPER   = 347;
     const int KEY_MENU          = 348;
-
 }}
