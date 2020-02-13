@@ -100,6 +100,7 @@ class BuildCommand( build_ext ) :
                       '-DLOCO_CORE_BUILD_HEADLESS_VISUALIZER=' + _headless,
                       '-DLOCO_CORE_BUILD_DOCS=OFF',
                       '-DLOCO_CORE_BUILD_EXAMPLES=OFF',
+                      '-DLOCO_CORE_BUILD_TESTS=OFF',
                       '-DLOCO_CORE_BUILD_PYTHON_BINDINGS=ON',
                       '-DLOCO_CORE_BUILD_WITH_LOGS=OFF',
                       '-DLOCO_CORE_BUILD_WITH_TRACK_ALLOCS=OFF']

@@ -13,3 +13,4 @@
 #include <visualizer/loco_visualizer_camera.h>
 #include <visualizer/loco_visualizer_light.h>
 #include <visualizer/loco_visualizer.h>
+#include <loco_runtime.h>

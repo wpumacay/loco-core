@@ -1,16 +1,12 @@
-
 #pragma once
 
+#include <loco_config.h>
 #include <loco_logger.h>
 #include <loco_simulation.h>
 #include <visualizer/loco_visualizer.h>
-
 #include <adapters/loco_body_adapter.h>
-#include <adapters/loco_collision_adapter.h>
-
+// @todo-windows: search for alternative in windows-platform
 #include <dlfcn.h>
-
-// @firsttodo : reimplement this class
 
 namespace loco
 {
@@ -19,89 +15,62 @@ namespace loco
 
     public :
 
-        /**
-        *   Creates a runtime with a specific type. It loads the library .so ...
-        *   (or .dll) accordingly.
-        *
-        *   @param dlpathSim    Path to the library for simulation
-        *   @param dlpathViz    Path to the library for visualization
-        */
+        /// Creates a runtime with a specific type. It loads the library .so (or .dll) accordingly
+        ///
+        /// @param dlpathSim    Path to the library for simulation
+        /// @param dlpathViz    Path to the library for visualization
         TRuntime( const std::string& dlpathSim,
                   const std::string& dlpathViz );
+
         ~TRuntime();
 
-        void step();
+        TISimulation* CreateSimulation( TScenario* scenarioRef );
 
-        TISimulation* createSimulation( TScenario* scenarioPtr = nullptr );
+        TIVisualizer* CreateVisualizer( TScenario* scenarioRef );
 
-        TAgentWrapper* createAgent( TAgent* agentPtr );
+        void DestroySimulation();
 
-        TTerrainGenWrapper* createTerrainGen( TITerrainGenerator* terrainGenPtr );
+        void DestroyVisualizer();
 
-        TIVisualizer* createVisualizer( TScenario* scenarioPtr = nullptr );
+        std::string dlpathSim() const { return m_dlpathSimulation; }
 
-        void destroySimulation();
+        std::string dlpathViz() const { return m_dlpathVisualizer; }
 
-        void destroyVisualizer();
+        TISimulation* GetCurrentSimulation() { return m_simulation.get(); }
+
+        const TISimulation* GetCurrentSimulation() const { return m_simulation.get(); }
+
+        TIVisualizer* GetCurrentVisualizer() { return m_visualizer.get(); }
+
+        const TIVisualizer* GetCurrentVisualizer() const { return m_visualizer.get(); }
 
     protected :
 
-        /* Loading function: loads functions from library to fcn pointers above */
-        void _loadLibraryFcns();
+        // Loads required symbols|functions from shared libraries
+        void _LoadLibraryFunctions( const std::string& dlpathSim,
+                                    const std::string& dlpathViz );
 
-        /* Loads a single function from the simulation library, given its name */ // @firsttodo: move to impl.hpp
-        template< typename FunctionTypePtr >
-        FunctionTypePtr _loadFcnFromLibrarySim( const std::string& fcnName )
-        {
-            auto _fcnPtr = ( FunctionTypePtr ) dlsym( m_libraryHandleSim, fcnName.c_str() );
-            if ( !_fcnPtr )
-            {
-                LOCO_CORE_ERROR( "Couldn't load simulation-symbol: {0}. Error message: {1}", fcnName, dlerror() );
-                return nullptr;
-            }
+        // Load a single symbol from the simulation library given its name
+        void* _LoadFcnFromSimulationLibrary( const std::string& fcnName );
 
-            LOCO_CORE_INFO( "Successfully loaded simulation-symbol: {0}", fcnName );
-            return _fcnPtr;
-        }
+        // Load a single symbol from the visualizer library given its name
+        void* _LoadFcnFromVisualizerLibrary( const std::string& fcnName );
 
-        /* Loads a single function from the visualization, given its name */
-        template< typename FunctionTypePtr >
-        FunctionTypePtr _loadFcnFromLibraryViz( const std::string& fcnName )
-        {
-            auto _fcnPtr = ( FunctionTypePtr ) dlsym( m_libraryHandleViz, fcnName.c_str() );
-            if ( !_fcnPtr )
-            {
-                LOCO_CORE_ERROR( "Couldn't load visualization-symbol: {0}. Error message: {1}", fcnName, dlerror() );
-                return nullptr;
-            }
-
-            LOCO_CORE_INFO( "Successfully loaded visualization-symbol: {0}", fcnName );
-            return _fcnPtr;
-        }
-
-        FcnCreateSim* m_fcnCreateSim;
-
-        FcnCreateViz* m_fcnCreateViz;
-        FcnCreateVizDrawable* m_fcnCreateVizDrawable;
-
-        FcnCreateBodyAdapter*         m_fcnCreateBodyAdapter;
-        FcnCreateCollisionAdapter*    m_fcnCreateCollisionAdapter;
-
-        FcnCreateAgent*        m_fcnCreateAgent;
-        FcnCreateTerrainGen*   m_fcnCreateTerrainGen;
-
-        /* Handle to the simulation library */
-        void* m_libraryHandleSim;
-        /* Path to the simulation library to be loaded */
-        std::string m_dlpathSim;
-
-        /* Handle to the visualization library */
-        void* m_libraryHandleViz;
-        /* Path to the visualization library to be loaded */
-        std::string m_dlpathViz;
-
-        TIVisualizer* m_visualizerPtr;
-        TISimulation* m_simulationPtr;
+        // Function-pointer (loaded from sim-library) that creates a backend-specific simulation
+        FcnCreateSim* m_fcnCreateSimulation;
+        // Function pointer (loaded from viz-library) that creates a backend-specific visualizer
+        FcnCreateViz* m_fcnCreateVisualizer;
+        // Handle to the shared library that contains backend-specific simulation symbols
+        void* m_libHandleSimulation;
+        // Handle to the shared library that contains backend-specific visualization symbols
+        void* m_libHandleVisualizer;
+        // Path to the shared library (.so,.dll,.dylib) that contains backend-specific simulation symbols
+        std::string m_dlpathSimulation;
+        // Path to the shared library (.so,.dll,.dylib) that contains backend-specific visualization library
+        std::string m_dlpathVisualizer;
+        // Simulation object (loaded from a specific backend)
+        std::unique_ptr<TISimulation> m_simulation;
+        // Visualizer object (loaded from a specific backend)
+        std::unique_ptr<TIVisualizer> m_visualizer;
     };
-
 }

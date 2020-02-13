@@ -40,6 +40,8 @@ TEST( TestLocoNullVisualizer, TestNullVisualizerFunctionality )
     lightRef->SetPosition( { 0.0f, 0.0f, 7.0f } );
     lightRef->ChangeIntensity( 0.9f );
 
+    EXPECT_FALSE( visualizer->HasCameraNamed( "foooooooo" ) );
+    EXPECT_FALSE( visualizer->HasLightNamed( "fuuuuuuuu" ) );
     EXPECT_TRUE( visualizer->HasCameraNamed( "cam_orbit_0" ) );
     EXPECT_TRUE( visualizer->HasLightNamed( "light_point_0" ) );
     EXPECT_TRUE( visualizer->GetCameraByName( "cam_orbit_0" ) != nullptr );

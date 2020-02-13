@@ -74,24 +74,32 @@ endif()
 add_definitions( -DLOCO_PATH_RESOURCES="${LOCO_CORE_RESOURCES_PATH}" )
 set_property( GLOBAL PROPERTY PROP_LOCO_PATH_RESOURCES "${LOCO_CORE_RESOURCES_PATH}" )
 if ( WIN32 )
-    add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ="${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlviz.dll" )
-    set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ "${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlviz.dll" )
+    add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ_GLFW="${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizGLFW.dll" )
+    add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ_EGL="${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizEGL.dll" )
+    set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_GLFW "${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizGLFW.dll" )
+    set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_EGL "${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizEGL.dll" )
 elseif ( UNIX )
     if ( APPLE )
-        add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ="${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlviz.dylib" )
-        set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ "${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlviz.dylib" )
+        add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ_GLFW="${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizGLFW.dylib" )
+        add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ_EGL="${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizEGL.dylib" )
+        set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_GLFW "${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizGLFW.dylib" )
+        set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_EGL "${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizEGL.dylib" )
     else ()
-        add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ="${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlviz.so" )
-        set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ "${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlviz.so" )
+        add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ_GLFW="${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizGLFW.so" )
+        add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ_EGL="${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizEGL.so" )
+        set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_GLFW "${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizGLFW.so" )
+        set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_EGL "${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizEGL.so" )
     endif ()
 endif()
 
 # Test that properties point where they should -----------------------------------------------------
 get_property( VAR_LOCO_PATH_RESOURCES GLOBAL PROPERTY PROP_LOCO_PATH_RESOURCES )
-get_property( VAR_LOCO_BACKEND_GRAPHICS_GLVIZ GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ )
+get_property( VAR_LOCO_BACKEND_GRAPHICS_GLVIZ_GLFW GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_GLFW )
+get_property( VAR_LOCO_BACKEND_GRAPHICS_GLVIZ_EGL GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_EGL )
 
-message( "PROP_LOCO_PATH_RESOURCES           : ${VAR_LOCO_PATH_RESOURCES}" )
-message( "PROP_LOCO_BACKEND_GRAPHICS_GLVIZ   : ${VAR_LOCO_BACKEND_GRAPHICS_GLVIZ}" )
+message( "PROP_LOCO_PATH_RESOURCES              : ${VAR_LOCO_PATH_RESOURCES}" )
+message( "PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_GLFW : ${VAR_LOCO_BACKEND_GRAPHICS_GLVIZ_GLFW}" )
+message( "PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_EGL  : ${VAR_LOCO_BACKEND_GRAPHICS_GLVIZ_EGL}" )
 # --------------------------------------------------------------------------------------------------
 
 if ( LOCO_CORE_IS_MASTER_PROJECT )
@@ -120,12 +128,12 @@ set( LOCO_CORE_SRCS
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/compounds/compound_body.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/model_loader.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/primitives/loco_single_body.cpp"
-     #### "${CMAKE_CURRENT_SOURCE_DIR}/src/runtime.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_scenario.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/sensor_base.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/types/sensor_agent_intrinsics.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/types/sensor_terrain_sections.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_simulation.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_runtime.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/terrain/terrain_base.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/terrain/types/sections/terrain_sections_base.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/terrain/types/sections/terrain_sections_blocky.cpp"

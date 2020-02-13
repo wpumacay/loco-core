@@ -8,6 +8,7 @@ namespace loco
         m_scenarioRef = scenarioRef;
         m_currentCameraIndex = -1;
         m_currentLightIndex = -1;
+        m_backendId = "none";
     }
 
     TIVisualizer::~TIVisualizer()
@@ -330,6 +331,8 @@ namespace loco
     TNullVisualizer::TNullVisualizer( TScenario* scenarioRef )
         : TIVisualizer( scenarioRef )
     {
+        m_backendId = "null";
+
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
         if ( TLogger::IsActive() )
             LOCO_CORE_TRACE( "Loco::Allocs: Created TNullVisualizer @ {0}", loco::PointerToHexAddress( this ) );

@@ -73,6 +73,12 @@ namespace loco
         void DrawSolidArrowY( float length, const TMat4& transform, const TVec4& color);
         void DrawSolidArrowZ( float length, const TMat4& transform, const TVec4& color);
 
+        TScenario* scenario() { return m_scenarioRef; }
+
+        const TScenario* scenario() const { return m_scenarioRef; }
+
+        std::string backendId() const { return m_backendId; }
+
     protected :
 
         virtual void _ChangeScenarioInternal() = 0;
@@ -102,6 +108,8 @@ namespace loco
         virtual void _ChangeCurrentLightInternal( TVizLight* lightRef ) = 0;
 
     protected :
+
+        std::string m_backendId;
 
         TScenario* m_scenarioRef;
 
