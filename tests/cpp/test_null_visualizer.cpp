@@ -20,7 +20,7 @@ TEST( TestLocoNullVisualizer, TestNullVisualizerFunctionality )
     auto scenario = std::make_unique<loco::TScenario>();
     scenario->AddSingleBody( std::move( body_obj ) );
 
-    auto visualizer = std::make_unique<loco::TNullVisualizer>( scenario.get() );
+    auto visualizer = std::make_unique<loco::TNullVisualizer>( scenario.get(), 1024, 768, true, false );
     auto cameraRef = visualizer->CreateCamera( "cam_orbit_0", 
                                                loco::eVizCameraType::ORBIT,
                                                { 3.0f, 3.0f, 3.0f },

@@ -394,7 +394,12 @@ namespace loco
                     } );
 
             py::class_<TNullVisualizer, TIVisualizer>( m, "NullVisualizer" )
-                .def( py::init<TScenario*>(), py::arg( "scenario" ) ); // no ownership nor nurse-patient required
+                .def( py::init<TScenario*,size_t, size_t, bool, bool>(), 
+                      py::arg( "scenario" ),
+                      py::arg( "windowWidth" ) = 1024,
+                      py::arg( "windowHeight" ) = 768,
+                      py::arg( "windowResizable" ) = true,
+                      py::arg( "renderOffscreen" ) = false ); // no ownership nor nurse-patient required
         }
 
         // Bindings for TRuntime
@@ -414,7 +419,11 @@ namespace loco
                       py::arg( "scenario" ), py::return_value_policy::reference )
                 .def( "CreateVisualizer",
                       &TRuntime::CreateVisualizer,
-                      py::arg( "scenario" ), py::return_value_policy::reference )
+                      py::arg( "scenario" ),
+                      py::arg( "windowWidth" ) = 1024,
+                      py::arg( "windowHeight" ) = 768,
+                      py::arg( "windowResizable" ) = true,
+                      py::arg( "renderOffscreen" ) = false, py::return_value_policy::reference )
                 .def( "DestroySimulation", &TRuntime::DestroySimulation )
                 .def( "DestroyVisualizer", &TRuntime::DestroyVisualizer )
                 .def( "__repr__", []( const TRuntime* self )

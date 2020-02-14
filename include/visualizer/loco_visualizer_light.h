@@ -56,6 +56,9 @@ namespace loco
         std::string name() const { return m_name; }
         eVizLightType type() const { return m_type; }
 
+        TVizLightAdapter* adapter() { return m_adapterRef; }
+        const TVizLightAdapter* adapter() const { return m_adapterRef; }
+
     private :
 
         // Unique identifier of this light on the visualizer
@@ -110,9 +113,13 @@ namespace loco
         virtual void ChangeInnerCutoff( float innerCutoff ) = 0;
         virtual void ChangeOuterCutoff( float outerCutoff ) = 0;
 
+        bool IsAwaitingDeletion() const { return m_awaitingDeletion; }
+
     protected :
 
         // Handle to the light-object the user is exposed to
         TVizLight* m_lightRef;
+        // Whether or not the adapter is ready to be freed
+        bool m_awaitingDeletion;
     };
 }

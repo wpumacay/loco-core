@@ -58,16 +58,16 @@ class CMakeExtension( Extension ) :
 
 class BuildCommand( build_ext ) :
 
-    user_options = [ ( 'visualizer=', None, 'Whether to build using visualizer or not' ),
-                     ( 'headless=', None, 'Whether to build visualizer in headless mode (uses EGL) or not (uses GLFW)' ),
+    user_options = [ ( 'windowed=', None, 'Whether to build with OpenGL-GLFW backend support' ),
+                     ( 'headless=', None, 'Whether to build with OpenGL-EGL backend support' ),
                      ( 'debug=', None, 'Whether to build in debug-mode or not' ) ]
-    boolean_options = [ 'visualizer', 'headless', 'debug' ]
+    boolean_options = [ 'windowed', 'headless', 'debug' ]
 
     def initialize_options( self ) :
         super( BuildCommand, self ).initialize_options()
-        self.visualizer = 1 # Build without a visualizer by default
-        self.headless = 0 # Build using non-headless mode (GLFW) by default
-        self.debug = 1 # Build in release mode by default
+        self.windowed = 1 # Build with windowed-visualizer (openglviz-GLFW) by default
+        self.headless = 1 # Build with headless-visualizer (openglviz-EGL) by default
+        self.debug = 1 # Build in debug mode by default
 
     def run( self ) :
         try:
@@ -86,9 +86,9 @@ class BuildCommand( build_ext ) :
         _extensionDirPath = os.path.abspath( _extensionDirName )
 
         _cfg = 'Debug' if self.debug else 'Release'
-        _visualizer = 'ON' if self.visualizer else 'OFF'
+        _windowed = 'ON' if self.windowed else 'OFF'
         _headless = 'ON' if self.headless else 'OFF'
-        _buildArgs = ['--config', _cfg, '--', '-j4']
+        _buildArgs = ['--config', _cfg, '--', '-j8']
         _cmakeArgs = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + _extensionDirPath,
                       '-DCMAKE_BUILD_RPATH=' + GetInstallationDir(),
                       '-DCMAKE_INSTALL_RPATH=' + GetInstallationDir(),
@@ -96,7 +96,7 @@ class BuildCommand( build_ext ) :
                       '-DCMAKE_BUILD_TYPE=' + _cfg,
                       '-DLOCO_CORE_RESOURCES_PATH=' + sys.prefix + '/' + PREFIX + 'res/',
                       '-DLOCO_CORE_LIBRARIES_PATH=' + GetInstallationDir(),
-                      '-DLOCO_CORE_BUILD_VISUALIZER=' + _visualizer,
+                      '-DLOCO_CORE_BUILD_WINDOWED_VISUALIZER=' + _windowed,
                       '-DLOCO_CORE_BUILD_HEADLESS_VISUALIZER=' + _headless,
                       '-DLOCO_CORE_BUILD_DOCS=OFF',
                       '-DLOCO_CORE_BUILD_EXAMPLES=OFF',
@@ -121,12 +121,12 @@ class InstallCommand( install ) :
 
     def initialize_options( self ) :
         super( InstallCommand, self ).initialize_options()
-        self.visualizer = 1 # Build without a visualizer by default
-        self.headless = 0 # Build using non-headless mode (GLFW) by default
-        self.debug = 1 # Build in release mode by default
+        self.windowed = 1 # Build with windowed-visualizer (openglviz-GLFW) by default
+        self.headless = 1 # Build with headless-visualizer (openglviz-EGL) by default
+        self.debug = 1 # Build in debug mode by default
 
     def run( self ) :
-        self.reinitialize_command( 'build_ext', headless=self.headless, debug=self.debug, visualizer=self.visualizer )
+        self.reinitialize_command( 'build_ext', headless=self.headless, debug=self.debug, windowed=self.windowed )
         self.run_command( 'build_ext' )
         super( InstallCommand, self ).run()
 

@@ -3,7 +3,11 @@
 
 namespace loco
 {
-    TIVisualizer::TIVisualizer( TScenario* scenarioRef )
+    TIVisualizer::TIVisualizer( TScenario* scenarioRef,
+                                size_t windowWidth,
+                                size_t windowHeight,
+                                bool windowResizable,
+                                bool renderOffscreen )
     {
         m_scenarioRef = scenarioRef;
         m_currentCameraIndex = -1;
@@ -328,8 +332,12 @@ namespace loco
     *                               Null-visualizer impl                            *
     ********************************************************************************/
 
-    TNullVisualizer::TNullVisualizer( TScenario* scenarioRef )
-        : TIVisualizer( scenarioRef )
+    TNullVisualizer::TNullVisualizer( TScenario* scenarioRef,
+                                      size_t windowWidth,
+                                      size_t windowHeight,
+                                      bool windowResizable,
+                                      bool renderOffscreen )
+        : TIVisualizer( scenarioRef, windowWidth, windowHeight, windowResizable, renderOffscreen )
     {
         m_backendId = "null";
 

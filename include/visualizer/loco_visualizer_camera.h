@@ -39,6 +39,9 @@ namespace loco
         std::string name() const { return m_name; }
         eVizCameraType type() const { return m_type; }
 
+        TVizCameraAdapter* adapter() { return m_adapterRef; }
+        const TVizCameraAdapter* adapter() const { return m_adapterRef; }
+
     private :
 
         // Unique identifier of this camera on the visualizer
@@ -61,7 +64,7 @@ namespace loco
     {
     public :
 
-        TVizCameraAdapter( TVizCamera* cameraRef ) : m_cameraRef( cameraRef ) {}
+        TVizCameraAdapter( TVizCamera* cameraRef ) : m_cameraRef( cameraRef ), m_awaitingDeletion( false ) {}
         virtual ~TVizCameraAdapter() {}
 
         virtual void Build() = 0;
@@ -74,9 +77,13 @@ namespace loco
         virtual void GetPosition( TVec3& dstPosition ) = 0;
         virtual void GetTarget( TVec3& dstTarget ) = 0;
 
+        bool IsAwaitingDeletion() const { return m_awaitingDeletion; }
+
     protected :
 
         // Handle to the camera-object the user is exposed to
         TVizCamera* m_cameraRef;
+        // Whether or not the adapter is ready to be freed
+        bool m_awaitingDeletion;
     };
 }

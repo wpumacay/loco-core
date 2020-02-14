@@ -26,7 +26,11 @@ namespace loco
 
         TISimulation* CreateSimulation( TScenario* scenarioRef );
 
-        TIVisualizer* CreateVisualizer( TScenario* scenarioRef );
+        TIVisualizer* CreateVisualizer( TScenario* scenarioRef,
+                                        size_t windowWidth = 1024,
+                                        size_t windowHeight = 768,
+                                        bool windowResizable = true,
+                                        bool renderOffscreen = false );
 
         void DestroySimulation();
 

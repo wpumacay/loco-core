@@ -21,8 +21,8 @@ if ( NOT CMAKE_BUILD_TYPE )
     set( CMAKE_BUILD_TYPE Debug )
 endif()
 
-option( LOCO_CORE_BUILD_VISUALIZER "Build OpenGL-based visualizer" ON )
-option( LOCO_CORE_BUILD_HEADLESS_VISUALIZER "Build visualizer in headless mode" OFF )
+option( LOCO_CORE_BUILD_WINDOWED_VISUALIZER "Build OpenGL-based windowed(GLFW) visualizer" ON )
+option( LOCO_CORE_BUILD_HEADLESS_VISUALIZER "Build OpenGL-based headless(EGL) visualizer" ON )
 option( LOCO_CORE_BUILD_DOCS "Build documentation (requires Doxygen)" ON )
 option( LOCO_CORE_BUILD_EXAMPLES "Build C/C++ examples" ON )
 option( LOCO_CORE_BUILD_TESTS "Build C/C++ tests" ON )
@@ -174,8 +174,9 @@ target_link_libraries( loco_core
                        spdlog
                        dl )
 
-#### # Configure glviz @todo: add option to select if visualizer is enabled or not
-#### add_subdirectory( glviz )
+if ( LOCO_CORE_BUILD_WINDOWED_VISUALIZER OR LOCO_CORE_BUILD_HEADLESS_VISUALIZER )
+    add_subdirectory( opengl_viz )
+endif()
 
 if ( LOCO_CORE_BUILD_PYTHON_BINDINGS )
     add_subdirectory( python/loco/bindings )
@@ -202,7 +203,7 @@ message( "CMAKE_BUILD_RPATH                     : ${CMAKE_BUILD_RPATH}" )
 message( "CMAKE_INSTALL_RPATH                   : ${CMAKE_INSTALL_RPATH}" )
 message( "LOCO_CORE_RESOURCES_PATH              : ${LOCO_CORE_RESOURCES_PATH}" )
 message( "LOCO_CORE_LIBRARIES_PATH              : ${LOCO_CORE_LIBRARIES_PATH}" )
-message( "LOCO_CORE_BUILD_VISUALIZER            : ${LOCO_CORE_BUILD_VISUALIZER}" )
+message( "LOCO_CORE_BUILD_WINDOWED_VISUALIZER   : ${LOCO_CORE_BUILD_WINDOWED_VISUALIZER}" )
 message( "LOCO_CORE_BUILD_HEADLESS_VISUALIZER   : ${LOCO_CORE_BUILD_HEADLESS_VISUALIZER}" )
 message( "LOCO_CORE_BUILD_DOCS                  : ${LOCO_CORE_BUILD_DOCS}" )
 message( "LOCO_CORE_BUILD_EXAMPLES              : ${LOCO_CORE_BUILD_EXAMPLES}" )

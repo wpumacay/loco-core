@@ -26,7 +26,7 @@ namespace loco
 
         virtual void SetSpecularColor( const TVec3& specularColor ) = 0;
 
-        virtual void SetShininess( const TScalar& shininess ) = 0;
+        virtual void SetShininess( float shininess ) = 0;
 
         virtual void SetTexture( const std::string& textureName ) = 0;
 
@@ -38,12 +38,9 @@ namespace loco
 
         virtual void SetWireframe( bool wireframe ) = 0;
 
-        // @todo: required for backend to handle dynamic deletion (when detached from a TVisual)
         virtual void Detach() {}
 
-        virtual bool visible() = 0;
-
-        virtual bool wireframe() = 0;
+        bool IsAwaitingDeletion() const { return m_awaitingDeletion; }
 
     protected :
 
@@ -58,8 +55,8 @@ namespace loco
 
         // Type of shape that this drawable represents
         eShapeType  m_type;
-    };
 
-    /* dl-function to be loaded from the renderer support */
-    typedef TIDrawable* FcnCreateVizDrawable( const TShapeData& data );
+        // Whether or not the adapter is ready to be freed
+        bool m_awaitingDeletion;
+    };
 }

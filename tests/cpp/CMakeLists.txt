@@ -1,7 +1,6 @@
 message( "LOCO::CORE::tests::cpp >>> Configuring C/C++ tests" )
 
 include_directories( "${LOCO_CORE_INCLUDE_DIRS}" )
-#### include_directories( "${CMAKE_SOURCE_DIR}/ext/googletest/googletest/include" )
 
 function( FcnBuildTest pSourcesList pExecutableName )
     add_executable( ${pExecutableName} ${pSourcesList} )

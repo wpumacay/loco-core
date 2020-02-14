@@ -12,7 +12,9 @@ namespace loco
     {
     public :
 
-        TIVisualizer( TScenario* scenarioRef );
+        TIVisualizer( TScenario* scenarioRef,
+                      size_t windowWidth, size_t windowHeight,
+                      bool windowResizable, bool renderOffscreen );
         virtual ~TIVisualizer();
 
         void ChangeScenario( TScenario* scenarioRef );
@@ -127,13 +129,17 @@ namespace loco
         ssize_t m_currentLightIndex;
     };
 
-    typedef TIVisualizer* FcnCreateViz( TScenario* scenarioRef );
+    typedef TIVisualizer* FcnCreateViz( TScenario* scenarioRef,
+                                        size_t windowWidth, size_t windowHeight,
+                                        bool windowResizable, bool renderOffscreen );
 
     class TNullVisualizer : public TIVisualizer
     {
     public :
 
-        TNullVisualizer( TScenario* scenarioRef );
+        TNullVisualizer( TScenario* scenarioRef,
+                         size_t windowWidth, size_t windowHeight,
+                         bool windowResizable, bool renderOffscreen );
 
         ~TNullVisualizer();
 

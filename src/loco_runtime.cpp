@@ -142,7 +142,9 @@ namespace loco
         return m_simulation.get();
     }
 
-    TIVisualizer* TRuntime::CreateVisualizer( TScenario* scenarioRef )
+    TIVisualizer* TRuntime::CreateVisualizer( TScenario* scenarioRef,
+                                              size_t windowWidth, size_t windowHeight,
+                                              bool windowResizable, bool renderOffscreen )
     {
         if ( !m_fcnCreateVisualizer )
         {
@@ -150,7 +152,9 @@ namespace loco
                 LOCO_CORE_ERROR( "TRuntime::CreateVisualizer >>> tried creating a visualizer without proper \
                                  backend-fcnPointer. Creating dummy visualizer instead." );
 
-            m_visualizer = std::make_unique<TNullVisualizer>( scenarioRef );
+            m_visualizer = std::make_unique<TNullVisualizer>( scenarioRef,
+                                                              windowWidth, windowHeight,
+                                                              windowResizable, renderOffscreen );
         }
         else
         {
@@ -160,7 +164,9 @@ namespace loco
                 m_visualizer = nullptr;
             }
 
-            m_visualizer = std::unique_ptr<TIVisualizer>( m_fcnCreateVisualizer( scenarioRef ) );
+            m_visualizer = std::unique_ptr<TIVisualizer>( m_fcnCreateVisualizer( scenarioRef,
+                                                                                 windowWidth, windowHeight,
+                                                                                 windowResizable, renderOffscreen ) );
         }
 
         return m_visualizer.get();
