@@ -13,17 +13,21 @@ set( LOCO_VISUALIZER_OPENGL_SRCS
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_visualizer_opengl_drawable.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_visualizer_opengl.cpp" )
 
-add_library( locoRenderingGlvizGLFW SHARED
-             ${LOCO_VISUALIZER_OPENGL_SRCS} )
-target_link_libraries( locoRenderingGlvizGLFW
-                       tinyrenderer_cpp_lib_glfw
-                       loco_core
-                       imgui )
-target_compile_definitions( locoRenderingGlvizGLFW PRIVATE LOCO_OPENGL_VISUALIZER_WINDOWED=1 )
+if ( LOCO_CORE_BUILD_WINDOWED_VISUALIZER )
+    add_library( locoRenderingGlvizGLFW SHARED
+                 ${LOCO_VISUALIZER_OPENGL_SRCS} )
+    target_link_libraries( locoRenderingGlvizGLFW
+                           tinyrenderer_cpp_lib_glfw
+                           loco_core
+                           imgui )
+    target_compile_definitions( locoRenderingGlvizGLFW PRIVATE LOCO_OPENGL_VISUALIZER_WINDOWED=1 )
+endif()
 
-add_library( locoRenderingGlvizEGL SHARED
-             ${LOCO_VISUALIZER_OPENGL_SRCS} )
-target_link_libraries( locoRenderingGlvizEGL
-                       tinyrenderer_cpp_lib_egl
-                       loco_core )
-target_compile_definitions( locoRenderingGlvizEGL PRIVATE LOCO_OPENGL_VISUALIZER_HEADLESS=1 )
+if ( LOCO_CORE_BUILD_HEADLESS_VISUALIZER )
+    add_library( locoRenderingGlvizEGL SHARED
+                 ${LOCO_VISUALIZER_OPENGL_SRCS} )
+    target_link_libraries( locoRenderingGlvizEGL
+                           tinyrenderer_cpp_lib_egl
+                           loco_core )
+    target_compile_definitions( locoRenderingGlvizEGL PRIVATE LOCO_OPENGL_VISUALIZER_HEADLESS=1 )
+endif()
