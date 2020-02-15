@@ -2,15 +2,6 @@ cmake_minimum_required( VERSION 3.0.0 )
 
 #### aka Tysoc-Core project
 project( LocoCore )
-message( "|---------------------------------------------------------|" )
-message( "|               LOCOMOTION SIMULATION TOOLKIT             |" )
-message( "|---------------------------------------------------------|" )
-message( "
-                               .--~~,__
-                  :-....,-------`~~'._.'
-                   `-,,,  ,_      ;'~U'
-                    _,-' ,'`-__; '--.
-                   (_/'~~      ''''(;" )
 
 set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wno-format-security" )
@@ -76,32 +67,37 @@ set_property( GLOBAL PROPERTY PROP_LOCO_PATH_RESOURCES "${LOCO_CORE_RESOURCES_PA
 if ( WIN32 )
     add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ_GLFW="${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizGLFW.dll" )
     add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ_EGL="${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizEGL.dll" )
-    set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_GLFW "${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizGLFW.dll" )
-    set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_EGL "${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizEGL.dll" )
+    add_definitions( -DLOCO_BACKEND_PHYSICS_MUJOCO="${LOCO_CORE_LIBRARIES_PATH}liblocoPhysicsMUJOCO.dll" )
+    add_definitions( -DLOCO_BACKEND_PHYSICS_BULLET="${LOCO_CORE_LIBRARIES_PATH}liblocoPhysicsBULLET.dll" )
+    add_definitions( -DLOCO_BACKEND_PHYSICS_RAISIM="${LOCO_CORE_LIBRARIES_PATH}liblocoPhysicsRAISIM.dll" )
+    add_definitions( -DLOCO_BACKEND_PHYSICS_DART="${LOCO_CORE_LIBRARIES_PATH}liblocoPhysicsDART.dll" )
 elseif ( UNIX )
     if ( APPLE )
         add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ_GLFW="${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizGLFW.dylib" )
         add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ_EGL="${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizEGL.dylib" )
-        set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_GLFW "${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizGLFW.dylib" )
-        set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_EGL "${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizEGL.dylib" )
+        add_definitions( -DLOCO_BACKEND_PHYSICS_MUJOCO="${LOCO_CORE_LIBRARIES_PATH}liblocoPhysicsMUJOCO.dylib" )
+        add_definitions( -DLOCO_BACKEND_PHYSICS_BULLET="${LOCO_CORE_LIBRARIES_PATH}liblocoPhysicsBULLET.dylib" )
+        add_definitions( -DLOCO_BACKEND_PHYSICS_RAISIM="${LOCO_CORE_LIBRARIES_PATH}liblocoPhysicsRAISIM.dylib" )
+        add_definitions( -DLOCO_BACKEND_PHYSICS_DART="${LOCO_CORE_LIBRARIES_PATH}liblocoPhysicsDART.dylib" )
     else ()
         add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ_GLFW="${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizGLFW.so" )
         add_definitions( -DLOCO_BACKEND_GRAPHICS_GLVIZ_EGL="${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizEGL.so" )
-        set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_GLFW "${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizGLFW.so" )
-        set_property( GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_EGL "${LOCO_CORE_LIBRARIES_PATH}liblocoRenderingGlvizEGL.so" )
+        add_definitions( -DLOCO_BACKEND_PHYSICS_MUJOCO="${LOCO_CORE_LIBRARIES_PATH}liblocoPhysicsMUJOCO.so" )
+        add_definitions( -DLOCO_BACKEND_PHYSICS_BULLET="${LOCO_CORE_LIBRARIES_PATH}liblocoPhysicsBULLET.so" )
+        add_definitions( -DLOCO_BACKEND_PHYSICS_RAISIM="${LOCO_CORE_LIBRARIES_PATH}liblocoPhysicsRAISIM.so" )
+        add_definitions( -DLOCO_BACKEND_PHYSICS_DART="${LOCO_CORE_LIBRARIES_PATH}liblocoPhysicsDART.so" )
     endif ()
 endif()
 
 # Test that properties point where they should -----------------------------------------------------
 get_property( VAR_LOCO_PATH_RESOURCES GLOBAL PROPERTY PROP_LOCO_PATH_RESOURCES )
-get_property( VAR_LOCO_BACKEND_GRAPHICS_GLVIZ_GLFW GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_GLFW )
-get_property( VAR_LOCO_BACKEND_GRAPHICS_GLVIZ_EGL GLOBAL PROPERTY PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_EGL )
 
 message( "PROP_LOCO_PATH_RESOURCES              : ${VAR_LOCO_PATH_RESOURCES}" )
 message( "PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_GLFW : ${VAR_LOCO_BACKEND_GRAPHICS_GLVIZ_GLFW}" )
 message( "PROP_LOCO_BACKEND_GRAPHICS_GLVIZ_EGL  : ${VAR_LOCO_BACKEND_GRAPHICS_GLVIZ_EGL}" )
 # --------------------------------------------------------------------------------------------------
 
+# Add external dependencies only if master project. If not, parent project must configure it
 if ( LOCO_CORE_IS_MASTER_PROJECT )
     add_subdirectory( ext )
 endif()
@@ -163,7 +159,7 @@ set( LOCO_CORE_INCLUDE_DIRS
      "${CMAKE_CURRENT_SOURCE_DIR}/ext/tinyxml2"
      "${CMAKE_CURRENT_SOURCE_DIR}/ext/json"
      "${CMAKE_SOURCE_DIR}/ext/spdlog/include"
-     "${CMAKE_SOURCE_DIR}/ext/tinymath/include" )
+     "${CMAKE_SOURCE_DIR}/ext/tiny_math/include" )
 include_directories( ${LOCO_CORE_INCLUDE_DIRS} )
 
 add_library( loco_core SHARED
@@ -193,6 +189,18 @@ endif()
 if ( LOCO_CORE_BUILD_TESTS )
     enable_testing()
     add_subdirectory( tests )
+endif()
+
+if ( LOCO_CORE_IS_MASTER_PROJECT )
+    message( "|---------------------------------------------------------|" )
+    message( "|               LOCOMOTION SIMULATION TOOLKIT             |" )
+    message( "|---------------------------------------------------------|" )
+    message( "
+                                   .--~~,__
+                      :-....,-------`~~'._.'
+                       `-,,,  ,_      ;'~U'
+                        _,-' ,'`-__; '--.
+                       (_/'~~      ''''(;" )
 endif()
 
 message( "***************************************************************************************" )
