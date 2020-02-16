@@ -3,6 +3,18 @@
 
 namespace loco
 {
+    //// @sanitycheck
+    //// How the simulation-creation process works :
+    ////    * The key functions are both the constructor and _InitializeInternal method
+    ////    * Within the constructor, the specific backend implementation can choose to instantiate
+    ////      the resources it needs (e.g. create Rainsim::World object, or similar) or just declare
+    ////      which resources will be used and later create them.
+    ////    * Within the _InitializeInternal method, extra backend-resources can be created (e.g. create
+    ////      MuJoCo's mjModel and mjData), but keep in mind that any backend-resources that need to be
+    ////      created by the adapters (on their "Build" methods) might (or might not) need to use some
+    ////      handle an initialize backend (Raisim requires a handle to its raisim::World object to
+    ////      create resources like bodies and articulated systems).
+
     TISimulation::TISimulation( TScenario* scenarioRef )
     {
         LOCO_CORE_ASSERT( scenarioRef, "TISimulation >>> given nullptr for scenario-reference" );
