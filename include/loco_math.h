@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <string>
 
 // tinymath-library
@@ -16,6 +17,8 @@ namespace loco
     const TScalar PI = TINYMATH_PI;
     /// Eps value (same precision as in tinymath library)
     const TScalar EPS = TINYMATH_EPS;
+    /// Max. number of entries in array-ints and array-floats
+    const size_t MAX_NDIM = 10;
 
     TScalar Rad2degrees( const TScalar& rads );
     TScalar Degrees2rad( const TScalar& degrees );
@@ -46,17 +49,17 @@ namespace loco
 
     // extend define vector[max-buff-size] as TSize
     template< typename T >
-    struct TSize : public tinymath::Vector<T, 10>
+    struct TSize : public tinymath::Vector<T, MAX_NDIM>
     {
         int ndim;
 
-        TSize() : tinymath::Vector<T, 10>(), ndim( 0 ) {}
+        TSize() : tinymath::Vector<T, MAX_NDIM>(), ndim( 0 ) {}
     };
 
     template< typename T >
     std::string ToString( const TSize<T>& tsize )
     {
-        auto _strrep = std::string( "(" );
+        std::string _strrep = "(";
         for ( ssize_t i = 0; i < tsize.ndim; i++ )
             _strrep += " " + std::to_string( tsize[i] );
         _strrep += " )";
@@ -64,7 +67,7 @@ namespace loco
     }
 
     typedef TSize<float> TSizef;
-    typedef TSize<int> TSizei;
+    typedef TSize<int32_t> TSizei;
 
     /// returns the "shortest" quaternion that transforms the given vector to the given target
     TVec4 ShortestArcQuat( const TVec3& v, const TVec3& vTarget );

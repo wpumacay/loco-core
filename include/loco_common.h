@@ -10,7 +10,6 @@
 #include <deque>
 #include <stack>
 #include <cassert>
-#include <cstdint>
 #include <cmath>
 #include <set>
 #include <map>
