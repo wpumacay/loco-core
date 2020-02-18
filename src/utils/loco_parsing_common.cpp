@@ -79,7 +79,7 @@ namespace parsing {
 
 namespace xml
 {
-    std::string GetAttributeString( tinyxml2::XMLElement* element,
+    std::string GetAttributeString( const tinyxml2::XMLElement* element,
                                     const std::string& attribName,
                                     const std::string& def_str )
     {
@@ -88,7 +88,7 @@ namespace xml
         return def_str;
     }
 
-    TVec3 GetAttributeVec3( tinyxml2::XMLElement* element,
+    TVec3 GetAttributeVec3( const tinyxml2::XMLElement* element,
                             const std::string& attribName,
                             const TVec3& def_vec3 )
     {
@@ -97,7 +97,7 @@ namespace xml
         return def_vec3;
     }
 
-    TVec4 GetAttributeVec4( tinyxml2::XMLElement* element,
+    TVec4 GetAttributeVec4( const tinyxml2::XMLElement* element,
                             const std::string& attribName,
                             const TVec4& def_vec4 )
     {
@@ -106,7 +106,7 @@ namespace xml
         return def_vec4;
     }
 
-    TSizei GetAttributeArrayInt( tinyxml2::XMLElement* element,
+    TSizei GetAttributeArrayInt( const tinyxml2::XMLElement* element,
                                  const std::string& attribName,
                                  const TSizei& def_arrint )
     {
@@ -115,7 +115,7 @@ namespace xml
         return def_arrint;
     }
 
-    TSizef GetAttributeArrayFloat( tinyxml2::XMLElement* element,
+    TSizef GetAttributeArrayFloat( const tinyxml2::XMLElement* element,
                                    const std::string& attribName,
                                    const TSizef& def_arrfloat )
     {
@@ -124,7 +124,7 @@ namespace xml
         return def_arrfloat;
     }
 
-    int32_t GetAttributeInt( tinyxml2::XMLElement* element,
+    int32_t GetAttributeInt( const tinyxml2::XMLElement* element,
                              const std::string& attribName,
                              int32_t def_int )
     {
@@ -133,7 +133,7 @@ namespace xml
         return def_int;
     }
 
-    TScalar GetAttributeFloat( tinyxml2::XMLElement* element,
+    TScalar GetAttributeFloat( const tinyxml2::XMLElement* element,
                                const std::string& attribName,
                                TScalar def_float )
     {

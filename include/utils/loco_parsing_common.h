@@ -57,7 +57,7 @@ namespace xml
     /// @param[in] attribName   Name of the string attribute to be extracted
     /// @param[in] def_str      Default string value in case the attribute is not found
     /// @returns A string copy of the requested attribute
-    std::string GetAttributeString( tinyxml2::XMLElement* element,
+    std::string GetAttributeString( const tinyxml2::XMLElement* element,
                                     const std::string& attribName,
                                     const std::string& def_str = "" );
 
@@ -66,7 +66,7 @@ namespace xml
     /// @param[in] attribName   Name of the vector-3 attribute to be extracted
     /// @param[in] def_vec3     Default vector-3 in case the attribute is not found
     /// @returns A vector-3 copy of the requested attribute
-    TVec3 GetAttributeVec3( tinyxml2::XMLElement* element,
+    TVec3 GetAttributeVec3( const tinyxml2::XMLElement* element,
                             const std::string& attribName,
                             const TVec3& def_vec3 = TVec3( 0.0f, 0.0f, 0.0f ) );
 
@@ -75,7 +75,7 @@ namespace xml
     /// @param[in] attribName   Name of the vector-4 attribute to be extracted
     /// @param[in] def_vec4     Default vector-4 in case the attribute is not found
     /// @returns A vector-4 copy of the requested attribute
-    TVec4 GetAttributeVec4( tinyxml2::XMLElement* element,
+    TVec4 GetAttributeVec4( const tinyxml2::XMLElement* element,
                             const std::string& attribName,
                             const TVec4& def_vec4 = TVec4( 0.0f, 0.0f, 0.0f, 1.0f ) );
 
@@ -84,7 +84,7 @@ namespace xml
     /// @param[in] attribName   Name of the array-int attribute to be extracted
     /// @param[in] def_arrint   Default array-int in case the attribute is not found
     /// @returns A array-int copy of the requested attribute
-    TSizei GetAttributeArrayInt( tinyxml2::XMLElement* element,
+    TSizei GetAttributeArrayInt( const tinyxml2::XMLElement* element,
                                  const std::string& attribName,
                                  const TSizei& def_arrint = TSizei() );
 
@@ -93,7 +93,7 @@ namespace xml
     /// @param[in] attribName   Name of the array-float attribute to be extracted
     /// @param[in] def_arrfloat Default array-float in case the attribute is not found
     /// @returns A array-float copy of the requested attribute
-    TSizef GetAttributeArrayFloat( tinyxml2::XMLElement* element,
+    TSizef GetAttributeArrayFloat( const tinyxml2::XMLElement* element,
                                    const std::string& attribName,
                                    const TSizef& def_arrfloat = TSizef() );
 
@@ -102,7 +102,7 @@ namespace xml
     /// @param[in] attribName   Name of the int attribute to be extracted
     /// @param[in] def_int      Default int value in case the attribute is not found
     /// @returns An int copy of the requested attribute
-    int32_t GetAttributeInt( tinyxml2::XMLElement* element,
+    int32_t GetAttributeInt( const tinyxml2::XMLElement* element,
                              const std::string& attribName,
                              int32_t def_int = 0 );
 
@@ -111,7 +111,7 @@ namespace xml
     /// @param[in] attribName   Name of the float attribute to be extracted
     /// @param[in] def_float    Default float value in case the attribute is not found
     /// @returns A float copy of the requested attribute
-    TScalar GetAttributeFloat( tinyxml2::XMLElement* element,
+    TScalar GetAttributeFloat( const tinyxml2::XMLElement* element,
                                const std::string& attribName,
                                TScalar def_float = 0.0f );
 }

@@ -11,9 +11,10 @@
 #include <stack>
 #include <cassert>
 #include <cmath>
-#include <set>
 #include <map>
+#include <set>
 #include <unordered_map>
+#include <unordered_set>
 
 #include <loco_math.h>
 #include <loco_logger.h>
