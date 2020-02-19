@@ -174,6 +174,15 @@ namespace parsing {
         }
     }
 
+    std::unique_ptr<TMjcfSchema> TMjcfSchema::s_Instance = nullptr;
+
+    TMjcfSchema* TMjcfSchema::GetInstance()
+    {
+        if ( !TMjcfSchema::s_Instance )
+            TMjcfSchema::s_Instance = std::make_unique<TMjcfSchema>( loco::PATH_RESOURCES + "xml/schema_mjcf.xml" );
+        return TMjcfSchema::s_Instance.get();
+    }
+
     /***********************************************************************************************
     *                                     TUrdfSchema impl.                                        *
     ************************************************************************************************/
@@ -293,6 +302,15 @@ namespace parsing {
 
             xml_element = xml_element->NextSiblingElement();
         }
+    }
+
+    std::unique_ptr<TUrdfSchema> TUrdfSchema::s_Instance = nullptr;
+
+    TUrdfSchema* TUrdfSchema::GetInstance()
+    {
+        if ( !TUrdfSchema::s_Instance )
+            TUrdfSchema::s_Instance = std::make_unique<TUrdfSchema>( loco::PATH_RESOURCES + "xml/schema_urdf.xml" );
+        return TUrdfSchema::s_Instance.get();
     }
 
 }}

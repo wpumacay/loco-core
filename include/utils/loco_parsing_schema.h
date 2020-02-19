@@ -76,6 +76,12 @@ namespace parsing {
 
         ~TMjcfSchema() = default;
 
+        static TMjcfSchema* GetInstance();
+
+    private :
+
+        // Instance of MJCF schema (for parsing-elements to use)
+        static std::unique_ptr<TMjcfSchema> s_Instance;
     };
 
     class TUrdfSchema : public TISchema
@@ -90,6 +96,12 @@ namespace parsing {
 
         ~TUrdfSchema() = default;
 
+        static TUrdfSchema* GetInstance();
+
+    private :
+
+        // Instance of URDF schema (for parsing-elements to use)
+        static std::unique_ptr<TUrdfSchema> s_Instance;
     };
 
 }}
