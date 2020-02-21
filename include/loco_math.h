@@ -54,6 +54,12 @@ namespace loco
         int ndim;
 
         TSize() : tinymath::Vector<T, MAX_NDIM>(), ndim( 0 ) {}
+        TSize( std::initializer_list<T> values ) : ndim( values.size() )
+        {
+            size_t i = 0;
+            for ( auto val : values )
+                this->m_buff[i++] = val;
+        }
     };
 
     template< typename T >

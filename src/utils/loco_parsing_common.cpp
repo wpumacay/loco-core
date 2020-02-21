@@ -111,7 +111,7 @@ namespace xml
                                  const TSizei& def_arrint )
     {
         if ( auto attrib = element->Attribute( attribName.c_str() ) )
-            return parsing::StringToArrayInt( attribName );
+            return parsing::StringToArrayInt( attrib );
         return def_arrint;
     }
 
@@ -120,7 +120,7 @@ namespace xml
                                    const TSizef& def_arrfloat )
     {
         if ( auto attrib = element->Attribute( attribName.c_str() ) )
-            return parsing::StringToArrayFloat( attribName );
+            return parsing::StringToArrayFloat( attrib );
         return def_arrfloat;
     }
 
