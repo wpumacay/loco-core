@@ -80,7 +80,7 @@ namespace loco
         }
         else
         {
-            LOCO_CORE_ERROR( "Joint \"{0}\" has unsupported type \"{1}\"", m_name, loco::toString( _jointType ) );
+            LOCO_CORE_ERROR( "Joint \"{0}\" has unsupported type \"{1}\"", m_name, loco::ToString( _jointType ) );
         }
 
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )

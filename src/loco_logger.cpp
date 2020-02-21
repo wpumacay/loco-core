@@ -11,8 +11,11 @@ namespace loco
 
     void TLogger::Init()
     {
+        if ( TLogger::s_IsActive )
+            return;
+
         spdlog::set_pattern( "%^[%T] %n: %v%$" );
-    #if defined( LOCO_CORE_BUILD_WITH_LOGS )
+    #if defined( LOCO_CORE_USE_LOGS )
         s_CoreLogger = spdlog::stdout_color_mt( "TYSOC" );
         s_CoreLogger->set_level( spdlog::level::trace );
 

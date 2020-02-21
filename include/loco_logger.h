@@ -115,29 +115,29 @@ namespace loco
     };
 }
 
-#if defined( LOCO_CORE_BUILD_WITH_LOGS )
-    #define LOCO_CORE_TRACE(...)      ::engine::TLogger::CoreTrace(__VA_ARGS__)
-    #define LOCO_CORE_INFO(...)       ::engine::TLogger::CoreInfo(__VA_ARGS__)
-    #define LOCO_CORE_WARN(...)       ::engine::TLogger::CoreWarn(__VA_ARGS__)
-    #define LOCO_CORE_ERROR(...)      ::engine::TLogger::CoreError(__VA_ARGS__)
-    #define LOCO_CORE_CRITICAL(...)   ::engine::TLogger::CoreCritical(__VA_ARGS__)
+#if defined( LOCO_CORE_USE_LOGS )
+    #define LOCO_CORE_TRACE(...)      ::loco::TLogger::CoreTrace(__VA_ARGS__)
+    #define LOCO_CORE_INFO(...)       ::loco::TLogger::CoreInfo(__VA_ARGS__)
+    #define LOCO_CORE_WARN(...)       ::loco::TLogger::CoreWarn(__VA_ARGS__)
+    #define LOCO_CORE_ERROR(...)      ::loco::TLogger::CoreError(__VA_ARGS__)
+    #define LOCO_CORE_CRITICAL(...)   ::loco::TLogger::CoreCritical(__VA_ARGS__)
     #define LOCO_CORE_ASSERT(x, ...) \
         {                                                                               \
-            if( !x )                                                                    \
+            if( !(x) )                                                                  \
             {                                                                           \
                 LOCO_CORE_CRITICAL( "Failed due to assertion: {0}", __VA_ARGS__ );      \
                 exit( EXIT_FAILURE );                                                   \
             }                                                                           \
         }
 
-    #define LOCO_TRACE(...)       ::engine::TLogger::ClientTrace(__VA_ARGS__)
-    #define LOCO_INFO(...)        ::engine::TLogger::ClientInfo(__VA_ARGS__)
-    #define LOCO_WARN(...)        ::engine::TLogger::ClientWarn(__VA_ARGS__)
-    #define LOCO_ERROR(...)       ::engine::TLogger::ClientError(__VA_ARGS__)
-    #define LOCO_CRITICAL(...)    ::engine::TLogger::ClientCritical(__VA_ARGS__)
+    #define LOCO_TRACE(...)       ::loco::TLogger::ClientTrace(__VA_ARGS__)
+    #define LOCO_INFO(...)        ::loco::TLogger::ClientInfo(__VA_ARGS__)
+    #define LOCO_WARN(...)        ::loco::TLogger::ClientWarn(__VA_ARGS__)
+    #define LOCO_ERROR(...)       ::loco::TLogger::ClientError(__VA_ARGS__)
+    #define LOCO_CRITICAL(...)    ::loco::TLogger::ClientCritical(__VA_ARGS__)
     #define LOCO_ASSERT(x, ...) \
         {                                                                       \
-            if( !x )                                                            \
+            if( !(x) )                                                          \
             {                                                                   \
                 LOCO_CRITICAL( "Failed due to assertion: {0}", __VA_ARGS__ );   \
                 exit( EXIT_FAILURE );                                           \
@@ -151,7 +151,7 @@ namespace loco
     #define LOCO_CORE_CRITICAL(...) ((void)0)
     #define LOCO_CORE_ASSERT(x, ...) \
         {                               \
-            if( !x )                    \
+            if( !(x) )                  \
             {                           \
                 exit( EXIT_FAILURE );   \
             }                           \
@@ -164,7 +164,7 @@ namespace loco
     #define LOCO_CRITICAL(...) ((void)0)
     #define LOCO_ASSERT(x, ...) \
         {                               \
-            if( !x )                    \
+            if( !(x) )                  \
             {                           \
                 exit( EXIT_FAILURE );   \
             }                           \
