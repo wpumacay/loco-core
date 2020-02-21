@@ -17,13 +17,14 @@ namespace parsing {
 
         TElement& operator= ( const TElement& other ) = delete;
 
-        virtual ~TElement() = default;
+        ~TElement();
 
-        TElement* Add( const std::string& childType );
+        TElement& Add( const std::string& childElementType );
 
         void LoadFromXml( const std::string& filepath );
         void SaveToXml( const std::string& filepath );
-        void CollectAttribs( tinyxml2::XMLElement* xml_element );
+        void CollectAttributes( const tinyxml2::XMLElement* xml_element );
+        void InsertAttributes( tinyxml2::XMLElement* xml_element );
 
         void SetInt( const std::string& attribId, int32_t value );
         void SetFloat( const std::string& attribId, TScalar value );
@@ -41,6 +42,7 @@ namespace parsing {
         TVec2 GetVec2( const std::string& attribId, const TVec2& def_vec2 = TVec2( 0.0f, 0.0f ) ) const;
         TVec3 GetVec3( const std::string& attribId, const TVec3& def_vec3 = TVec3( 0.0f, 0.0f, 0.0f ) ) const;
         TVec4 GetVec4( const std::string& attribId, const TVec4& def_vec4 = TVec4( 0.0f, 0.0f, 0.0f, 1.0f ) ) const;
+        std::string GetString( const std::string& attribId, const std::string& def_string = "" ) const;
 
         bool HasAttributeInt( const std::string& attribId ) const;
         bool HasAttributeFloat( const std::string& attribId ) const;
@@ -50,13 +52,17 @@ namespace parsing {
         bool HasAttributeVec3( const std::string& attribId ) const;
         bool HasAttributeVec4( const std::string& attribId ) const;
 
-        std::vector<TElement*> children() const;
+        size_t num_children() const { return m_children.size(); }
+
+        TElement& get_child( size_t index );
+
+        const TElement& get_child( size_t index ) const;
 
         std::string elementType() const { return m_elementType; }
 
         eSchemaType schemaType() const { return m_schemaType; }
 
-        TISchema* schema() const { return m_schema; }
+        const TISchema* schema() const { return m_schemaRef; }
 
     private :
 
@@ -64,9 +70,9 @@ namespace parsing {
 
         eSchemaType m_schemaType;
 
-        TElement* m_parent;
+        TElement* m_parentRef;
 
-        TISchema* m_schema;
+        TISchema* m_schemaRef;
 
         std::vector<std::unique_ptr<TElement>> m_children;
 

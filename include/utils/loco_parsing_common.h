@@ -114,6 +114,16 @@ namespace xml
     TScalar GetAttributeFloat( const tinyxml2::XMLElement* element,
                                const std::string& attribName,
                                TScalar def_float = 0.0f );
+
+    /// Returns the string representation of an array of ints for serialization into an xml-attribute
+    /// @param[in] array_int    Array of integers to be serialized into a string
+    /// @returns A string corresponding of space-separated string representations of the elements of the array
+    std::string SerializeToString( const TSizei& array_int );
+
+    /// Returns the string representation of an array of floats for serialization into an xml-attribute
+    /// @param[in] array_float  Array of floats to be serialized into a string
+    /// @returns A string corresponding of space-separated string representations of the elements of the array
+    std::string SerializeToString( const TSizef& array_float );
 }
 
 namespace json

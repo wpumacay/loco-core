@@ -141,6 +141,22 @@ namespace xml
             return std::stof( attrib );
         return def_float;
     }
+
+    std::string SerializeToString( const TSizei& array_int )
+    {
+        std::string _strrep;
+        for ( size_t i = 0; i < array_int.ndim; i++ )
+            _strrep += std::to_string( array_int[i] ) + ( ( i != array_int.ndim ) ? " " : "" );
+        return _strrep;
+    }
+
+    std::string SerializeToString( const TSizef& array_float )
+    {
+        std::string _strrep;
+        for ( size_t i = 0; i < array_float.ndim; i++ )
+            _strrep += std::to_string( array_float[i] ) + ( ( i != array_float.ndim ) ? " " : "" );
+        return _strrep;
+    }
 }
 
 namespace json

@@ -150,6 +150,7 @@ set( LOCO_CORE_SRCS
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/primitives_spawner.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/loco_parsing_common.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/loco_parsing_schema.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/loco_parsing_element.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/visualizer/loco_visualizer_camera.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/visualizer/loco_visualizer_light.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/visualizer/loco_visualizer.cpp"
