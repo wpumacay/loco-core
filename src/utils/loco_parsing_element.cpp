@@ -46,7 +46,7 @@ namespace parsing {
         return std::move( element );
     }
 
-    TElement& TElement::Add( const std::string& childElementType )
+    TElement* TElement::Add( const std::string& childElementType )
     {
         if ( !m_schemaRef->HasChild( m_elementType, childElementType ) )
             throw std::runtime_error( "TElement::Add >>> element (" + m_elementType + ") doesn't accept \
@@ -55,7 +55,7 @@ namespace parsing {
         auto child_element = std::make_unique<TElement>( childElementType, m_schemaType );
         child_element->m_parentRef = this;
         m_children.push_back( std::move( child_element ) );
-        return *m_children.back().get();
+        return m_children.back().get();
     }
 
     void TElement::LoadFromXmlString( const std::string& xml_string )
@@ -272,37 +272,35 @@ namespace parsing {
 
     int32_t TElement::GetInt( const std::string& attribId, int32_t def_int ) const
     {
-        if ( m_attribsInts.find( attribId ) == m_attribsInts.end() )
+        if ( !HasAttributeInt( attribId ) )
             return def_int;
         return m_attribsInts.at( attribId );
     }
 
     TScalar TElement::GetFloat( const std::string& attribId, TScalar def_float ) const
     {
-        if ( m_attribsFloats.find( attribId ) == m_attribsFloats.end() )
+        if ( !HasAttributeFloat( attribId ) )
             return def_float;
         return m_attribsFloats.at( attribId );
     }
 
     TSizei TElement::GetArrayInt( const std::string& attribId, const TSizei& def_arrint ) const
     {
-        if ( m_attribsArrayInts.find( attribId ) == m_attribsArrayInts.end() )
+        if ( !HasAttributeArrayInt( attribId ) )
             return def_arrint;
         return m_attribsArrayInts.at( attribId );
     }
 
     TSizef TElement::GetArrayFloat( const std::string& attribId, const TSizef& def_arrfloat ) const
     {
-        if ( m_attribsArrayFloats.find( attribId ) == m_attribsArrayFloats.end() )
+        if ( !HasAttributeArrayFloat( attribId ) )
             return def_arrfloat;
         return m_attribsArrayFloats.at( attribId );
     }
 
     TVec2 TElement::GetVec2( const std::string& attribId, const TVec2& def_vec2 ) const
     {
-        if ( m_attribsArrayFloats.find( attribId ) == m_attribsArrayFloats.end() )
-            return def_vec2;
-        if ( m_attribsArrayFloats.at( attribId ).ndim != 2 )
+        if ( !HasAttributeVec2( attribId ) )
             return def_vec2;
 
         auto& array_float = m_attribsArrayFloats.at( attribId );
@@ -311,9 +309,7 @@ namespace parsing {
 
     TVec3 TElement::GetVec3( const std::string& attribId, const TVec3& def_vec3 ) const
     {
-        if ( m_attribsArrayFloats.find( attribId ) == m_attribsArrayFloats.end() )
-            return def_vec3;
-        if ( m_attribsArrayFloats.at( attribId ).ndim != 3 )
+        if ( !HasAttributeVec3( attribId ) )
             return def_vec3;
 
         auto& array_float = m_attribsArrayFloats.at( attribId );
@@ -322,9 +318,7 @@ namespace parsing {
 
     TVec4 TElement::GetVec4( const std::string& attribId, const TVec4& def_vec4 ) const
     {
-        if ( m_attribsArrayFloats.find( attribId ) == m_attribsArrayFloats.end() )
-            return def_vec4;
-        if ( m_attribsArrayFloats.at( attribId ).ndim != 4 )
+        if ( !HasAttributeVec4( attribId ) )
             return def_vec4;
 
         auto& array_float = m_attribsArrayFloats.at( attribId );
@@ -333,9 +327,105 @@ namespace parsing {
 
     std::string TElement::GetString( const std::string& attribId, const std::string& def_string ) const
     {
-        if ( m_attribsStrings.find( attribId ) == m_attribsStrings.end() )
+        if ( !HasAttributeString( attribId ) )
             return def_string;
         return m_attribsStrings.at( attribId );
+    }
+
+    bool TElement::HasAttributeInt( const std::string& attribId ) const
+    {
+        return m_attribsInts.find( attribId ) != m_attribsInts.end();
+    }
+
+    bool TElement::HasAttributeFloat( const std::string& attribId ) const
+    {
+        return m_attribsFloats.find( attribId ) != m_attribsFloats.end();
+    }
+
+    bool TElement::HasAttributeArrayInt( const std::string& attribId ) const
+    {
+        return m_attribsArrayInts.find( attribId ) != m_attribsArrayInts.end();
+    }
+
+    bool TElement::HasAttributeArrayFloat( const std::string& attribId ) const
+    {
+        return m_attribsArrayFloats.find( attribId ) != m_attribsArrayFloats.end();
+    }
+
+    bool TElement::HasAttributeVec2( const std::string& attribId ) const
+    {
+        if ( !HasAttributeArrayFloat( attribId ) )
+            return false;
+        return m_attribsArrayFloats.at( attribId ).ndim == 2;
+    }
+
+    bool TElement::HasAttributeVec3( const std::string& attribId ) const
+    {
+        if ( !HasAttributeArrayFloat( attribId ) )
+            return false;
+        return m_attribsArrayFloats.at( attribId ).ndim == 3;
+    }
+
+    bool TElement::HasAttributeVec4( const std::string& attribId ) const
+    {
+        if ( !HasAttributeArrayFloat( attribId ) )
+            return false;
+        return m_attribsArrayFloats.at( attribId ).ndim == 4;
+    }
+
+    bool TElement::HasAttributeString( const std::string& attribId ) const
+    {
+        return m_attribsStrings.find( attribId ) != m_attribsStrings.end();
+    }
+
+    TElement* TElement::GetFirstChildOfType( const std::string& childType )
+    {
+        if ( m_children.size() < 1 )
+        {
+            LOCO_CORE_WARN( "TElement::GetFirstChildOfType >>> element has no children" );
+            return nullptr;
+        }
+
+        for ( size_t i = 0; i < m_children.size(); i++ )
+            if ( m_children[i]->elementType() == childType )
+                return m_children[i].get();
+
+        LOCO_CORE_WARN( "TElement::GetFirstChildOfType >>> element {0} has no child of type {1}", m_elementType, childType );
+        return nullptr;
+    }
+
+    const TElement* TElement::GetFirstChildOfType( const std::string& childType ) const
+    {
+        if ( m_children.size() < 1 )
+        {
+            LOCO_CORE_WARN( "TElement::GetFirstChildOfType >>> element has no children" );
+            return nullptr;
+        }
+
+        for ( size_t i = 0; i < m_children.size(); i++ )
+            if ( m_children[i]->elementType() == childType )
+                return m_children[i].get();
+
+        LOCO_CORE_WARN( "TElement::GetFirstChildOfType >>> element {0} has no child of type {1}", m_elementType, childType );
+        return nullptr;
+    }
+
+    std::vector<TElement*> TElement::GetChildrenOfType( const std::string& childrenType )
+    {
+        std::vector<TElement*> vec_children;
+        for ( size_t i = 0; i < m_children.size(); i++ )
+            if ( m_children[i]->elementType() == childrenType )
+                vec_children.push_back( m_children[i].get() );
+        return vec_children;
+    }
+
+    std::vector<const TElement*> TElement::GetChildrenOfType( const std::string& childrenType ) const
+    {
+        std::vector<const TElement*> vec_children;
+        for ( size_t i = 0; i < m_children.size(); i++ )
+            if ( m_children[i]->elementType() == childrenType )
+                vec_children.push_back( m_children[i].get() );
+        return vec_children;
     }
 
     std::string TElement::ToString() const
@@ -417,18 +507,18 @@ namespace parsing {
         return _strrep;
     }
 
-    TElement& TElement::get_child( size_t index )
+    TElement* TElement::get_child( size_t index )
     {
         LOCO_CORE_ASSERT( ( index >= 0 && index < m_children.size() ), "TElement::get_child >>> index \
                           {0} out of range [0,...{1}]", index, m_children.size() );
-        return *m_children[index].get();
+        return m_children[index].get();
     }
 
-    const TElement& TElement::get_child( size_t index ) const
+    const TElement* TElement::get_child( size_t index ) const
     {
         LOCO_CORE_ASSERT( ( index >= 0 && index < m_children.size() ), "TElement::get_child >>> index \
                           {0} out of range [0,...{1}]", index, m_children.size() );
-        return *m_children[index].get();
+        return m_children[index].get();
     }
 
 }}

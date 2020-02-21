@@ -24,7 +24,7 @@ namespace parsing {
         static std::unique_ptr<TElement> CreateFromXmlFile( const eSchemaType& schemaType,
                                                             const std::string& xml_filepath );
 
-        TElement& Add( const std::string& childElementType );
+        TElement* Add( const std::string& childElementType );
 
         void LoadFromXmlString( const std::string& xml_string );
         void LoadFromXmlFile( const std::string& xml_filepath );
@@ -57,14 +57,23 @@ namespace parsing {
         bool HasAttributeVec2( const std::string& attribId ) const;
         bool HasAttributeVec3( const std::string& attribId ) const;
         bool HasAttributeVec4( const std::string& attribId ) const;
+        bool HasAttributeString( const std::string& attribId ) const;
+
+        TElement* GetFirstChildOfType( const std::string& childType );
+
+        const TElement* GetFirstChildOfType( const std::string& childType ) const;
+
+        std::vector<TElement*> GetChildrenOfType( const std::string& childrenType );
+
+        std::vector<const TElement*> GetChildrenOfType( const std::string& childrenType ) const;
 
         std::string ToString() const;
 
         size_t num_children() const { return m_children.size(); }
 
-        TElement& get_child( size_t index );
+        TElement* get_child( size_t index );
 
-        const TElement& get_child( size_t index ) const;
+        const TElement* get_child( size_t index ) const;
 
         std::string elementType() const { return m_elementType; }
 
