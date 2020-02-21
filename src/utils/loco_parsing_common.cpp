@@ -197,7 +197,7 @@ namespace json
             return def_vec4;
         if ( !element[attribName].is_array() )
             return def_vec4;
-        if ( element[attribName].size() != 3 )
+        if ( element[attribName].size() != 4 )
             return def_vec4;
 
         return TVec4( element[attribName][0],
