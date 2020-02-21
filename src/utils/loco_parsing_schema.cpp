@@ -30,6 +30,9 @@ namespace parsing {
 
     std::unordered_map<std::string, eAttributeType> TISchema::GetPossibleAttributes( const std::string& elementName ) const
     {
+        if ( !HasElement( elementName ) )
+            return std::unordered_map<std::string, eAttributeType >();
+
         return m_attribsMap.at( elementName );
     }
 
@@ -45,6 +48,9 @@ namespace parsing {
 
     std::unordered_set<std::string> TISchema::GetPossibleChildren( const std::string& elementName ) const
     {
+        if ( !HasElement( elementName ) )
+            return std::unordered_set<std::string>();
+
         return m_childrenMap.at( elementName );
     }
 
@@ -282,7 +288,7 @@ namespace parsing {
             // Collect children elements (all: similar to sequence?)
             if ( auto xml_all = xml_element->FirstChildElement( "xs:all" ) )
             {
-                auto xml_child_element = xml_all->FirstChildElement( "xs:all" );
+                auto xml_child_element = xml_all->FirstChildElement( "xs:element" );
                 while ( xml_child_element )
                 {
                     auto xml_child_name = xml_child_element->Attribute( "name" );
@@ -302,6 +308,8 @@ namespace parsing {
 
             xml_element = xml_element->NextSiblingElement();
         }
+
+        LOCO_CORE_TRACE( "Finished parsing urdf-schema" );
     }
 
     std::unique_ptr<TUrdfSchema> TUrdfSchema::s_Instance = nullptr;

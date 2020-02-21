@@ -297,28 +297,25 @@
   </xs:complexType>
 
   <!-- root node is always robot -->
-  <xs:element name="robot">
-    <xs:complexType>
-      <xs:sequence minOccurs="0" maxOccurs="unbounded">
-    <xs:element name="joint"
-            type="joint" minOccurs="0" maxOccurs="unbounded" />
-    <xs:element name="link"
-            type="link" minOccurs="0" maxOccurs="unbounded" />
+  <xs:complexType name="robot">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="joint"
+                type="joint" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="link"
+                type="link" minOccurs="0" maxOccurs="unbounded" />
+        <!-- FIXME: this is used but undocumented -->
+        <xs:element name="material"
+                type="material_global" minOccurs="0" maxOccurs="unbounded" />
 
-    <!-- FIXME: this is used but undocumented -->
-    <xs:element name="material"
-            type="material_global" minOccurs="0" maxOccurs="unbounded" />
+        <!-- FIXME: this is used but undocumented -->
+        <xs:element name="transmission"
+                type="transmission" minOccurs="0" maxOccurs="unbounded" />
 
-    <!-- FIXME: this is used but undocumented -->
-    <xs:element name="transmission"
-            type="transmission" minOccurs="0" maxOccurs="unbounded" />
+        <!-- FIXME: gazebo extension not supported -->
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
 
-    <!-- FIXME: gazebo extension not supported -->
-      </xs:sequence>
-      <xs:attribute name="name" type="xs:string" use="required" />
-
-      <!-- TM: I suggest adding the following attribute. -->
-      <xs:attribute name="version" type="xs:string" default="1.0" />
-    </xs:complexType>
-  </xs:element>
+    <!-- TM: I suggest adding the following attribute. -->
+    <xs:attribute name="version" type="xs:string" default="1.0" />
+  </xs:complexType>
 </xs:schema>

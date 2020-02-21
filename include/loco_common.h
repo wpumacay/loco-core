@@ -33,9 +33,9 @@
 namespace loco
 {
     const std::string PATH_RESOURCES = LOCO_PATH_RESOURCES;
-    const std::string PATH_TEMPLATES_MJCF = PATH_RESOURCES + "templates/mjcf";
-    const std::string PATH_TEMPLATES_URDF = PATH_RESOURCES + "templates/urdf";
-    const std::string PATH_TEMPLATES_RLSIM = PATH_RESOURCES + "templates/rlsim";
+    const std::string PATH_TEMPLATES_MJCF = PATH_RESOURCES + "templates/mjcf/";
+    const std::string PATH_TEMPLATES_URDF = PATH_RESOURCES + "templates/urdf/";
+    const std::string PATH_TEMPLATES_RLSIM = PATH_RESOURCES + "templates/rlsim/";
 
     const std::string PREFIX_BODY     = "body_";
     const std::string PREFIX_JOINT    = "joint_";

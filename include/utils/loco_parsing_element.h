@@ -19,9 +19,15 @@ namespace parsing {
 
         ~TElement();
 
+        static std::unique_ptr<TElement> CreateFromXmlString( const eSchemaType& schemaType,
+                                                              const std::string& xml_string );
+        static std::unique_ptr<TElement> CreateFromXmlFile( const eSchemaType& schemaType,
+                                                            const std::string& xml_filepath );
+
         TElement& Add( const std::string& childElementType );
 
-        void LoadFromXml( const std::string& filepath );
+        void LoadFromXmlString( const std::string& xml_string );
+        void LoadFromXmlFile( const std::string& xml_filepath );
         void SaveToXml( const std::string& filepath );
         void CollectAttributes( const tinyxml2::XMLElement* xml_element );
         void InsertAttributes( tinyxml2::XMLElement* xml_element );
@@ -52,6 +58,8 @@ namespace parsing {
         bool HasAttributeVec3( const std::string& attribId ) const;
         bool HasAttributeVec4( const std::string& attribId ) const;
 
+        std::string ToString() const;
+
         size_t num_children() const { return m_children.size(); }
 
         TElement& get_child( size_t index );
@@ -64,7 +72,11 @@ namespace parsing {
 
         const TISchema* schema() const { return m_schemaRef; }
 
-    private :
+    protected :
+
+        void _LoadFromXmlElement( const tinyxml2::XMLElement* xml_root_element );
+
+    protected :
 
         std::string m_elementType;
 

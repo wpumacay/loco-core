@@ -30,11 +30,27 @@ namespace parsing {
         m_attribsStrings.clear();
     }
 
+    std::unique_ptr<TElement> TElement::CreateFromXmlString( const eSchemaType& schemaType,
+                                                             const std::string& xml_string )
+    {
+        auto element = std::make_unique<TElement>( "", schemaType );
+        element->LoadFromXmlString( xml_string );
+        return std::move( element );
+    }
+
+    std::unique_ptr<TElement> TElement::CreateFromXmlFile( const eSchemaType& schemaType,
+                                                           const std::string& xml_filepath )
+    {
+        auto element = std::make_unique<TElement>( "", schemaType );
+        element->LoadFromXmlFile( xml_filepath );
+        return std::move( element );
+    }
+
     TElement& TElement::Add( const std::string& childElementType )
     {
         if ( !m_schemaRef->HasChild( m_elementType, childElementType ) )
             throw std::runtime_error( "TElement::Add >>> element (" + m_elementType + ") doesn't accept \
-                                       children of type (" + childElementType + ") for schema " + ToString( m_schemaType ) );
+                                       children of type (" + childElementType + ") for schema " + loco::parsing::ToString( m_schemaType ) );
 
         auto child_element = std::make_unique<TElement>( childElementType, m_schemaType );
         child_element->m_parentRef = this;
@@ -42,21 +58,36 @@ namespace parsing {
         return *m_children.back().get();
     }
 
-    void TElement::LoadFromXml( const std::string& filepath )
+    void TElement::LoadFromXmlString( const std::string& xml_string )
     {
         tinyxml2::XMLDocument xml_doc;
-        if ( xml_doc.LoadFile( filepath.c_str() ) != tinyxml2::XML_SUCCESS )
+        if ( xml_doc.Parse( xml_string.c_str() ) != tinyxml2::XML_SUCCESS )
         {
-            LOCO_CORE_ERROR( "TElement::LoadFromXml >>> coulnd't load xml-file @ {0}", filepath );
+            LOCO_CORE_ERROR( "TElement::LoadFromXmlString >>> couldn't parse given xml-string: \n{0}", xml_string );
             return;
         }
+        _LoadFromXmlElement( xml_doc.FirstChildElement() );
+    }
 
+    void TElement::LoadFromXmlFile( const std::string& xml_filepath )
+    {
+        tinyxml2::XMLDocument xml_doc;
+        if ( xml_doc.LoadFile( xml_filepath.c_str() ) != tinyxml2::XML_SUCCESS )
+        {
+            LOCO_CORE_ERROR( "TElement::LoadFromXml >>> couldn't load xml-file @ {0}", xml_filepath );
+            return;
+        }
+        _LoadFromXmlElement( xml_doc.FirstChildElement() );
+    }
+
+    void TElement::_LoadFromXmlElement( const tinyxml2::XMLElement* xml_root_element )
+    {
         // "This" element is the "root" element, so collect its attributes before traversing
-        auto root_element = xml_doc.FirstChildElement();
-        CollectAttributes( root_element );
+        m_elementType = std::string( xml_root_element->Value() );
+        CollectAttributes( xml_root_element );
         // Add all children of the root to start the dfs-traversal (pair <=> (xml_element, element_parent))
         std::stack< std::pair<const tinyxml2::XMLElement*, TElement*> > dfs_xml_elements;
-        auto root_child = root_element->FirstChildElement();
+        auto root_child = xml_root_element->FirstChildElement();
         while ( root_child )
         {
             dfs_xml_elements.push( { root_child, this } );
@@ -79,8 +110,12 @@ namespace parsing {
             element->m_parentRef = element_parent;
             element_parent->m_children.push_back( std::move( element ) );
             // Add children for next traversal
-            dfs_xml_elements.push( { xml_element->NextSiblingElement(),
-                                     element_parent->m_children.back().get() } );
+            auto xml_child_element = xml_element->FirstChildElement();
+            while ( xml_child_element )
+            {
+                dfs_xml_elements.push( { xml_child_element, element_parent->m_children.back().get() } );
+                xml_child_element = xml_child_element->NextSiblingElement();
+            }
         }
     }
 
@@ -191,6 +226,7 @@ namespace parsing {
             return;
 
         TSizef array_float;
+        array_float.ndim = 2;
         array_float[0] = value.x();
         array_float[1] = value.y();
 
@@ -203,6 +239,7 @@ namespace parsing {
             return;
 
         TSizef array_float;
+        array_float.ndim = 3;
         array_float[0] = value.x();
         array_float[1] = value.y();
         array_float[2] = value.z();
@@ -216,6 +253,7 @@ namespace parsing {
             return;
 
         TSizef array_float;
+        array_float.ndim = 4;
         array_float[0] = value.x();
         array_float[1] = value.y();
         array_float[2] = value.z();
@@ -298,6 +336,85 @@ namespace parsing {
         if ( m_attribsStrings.find( attribId ) == m_attribsStrings.end() )
             return def_string;
         return m_attribsStrings.at( attribId );
+    }
+
+    std::string TElement::ToString() const
+    {
+        const bool has_children = ( m_children.size() > 0 );
+        std::string _strrep;
+        _strrep += "<" + m_elementType + " ";
+        for ( const auto& kv_pair : m_attribsInts )
+            _strrep += kv_pair.first + "=" + std::to_string( kv_pair.second ) + " ";
+        for ( const auto& kv_pair : m_attribsFloats )
+            _strrep += kv_pair.first + "=" + std::to_string( kv_pair.second ) + " ";
+        for ( const auto& kv_pair : m_attribsArrayInts )
+            _strrep += kv_pair.first + "=" + loco::parsing::xml::SerializeToString( kv_pair.second ) + " ";
+        for ( const auto& kv_pair : m_attribsArrayFloats )
+            _strrep += kv_pair.first + "=" + loco::parsing::xml::SerializeToString( kv_pair.second ) + " ";
+        for ( const auto& kv_pair : m_attribsStrings )
+            _strrep += kv_pair.first + "=" + kv_pair.second + " ";
+        _strrep += ( has_children ? ">" : "/>" );
+
+        if ( !has_children )
+            return _strrep;
+
+        struct TraversalNode
+        {
+            const TElement* element;
+            const TElement* element_parent;
+            size_t element_depth;
+            bool element_closes;
+        };
+
+        // Do a traversal over all children (pair <=> (element_ptr, element_depth))
+        std::stack< TraversalNode > dfs_elements;
+        dfs_elements.push( { this, nullptr, 0, true } );
+        for ( size_t i = 0; i < m_children.size(); i++ )
+            dfs_elements.push( { m_children[i].get(), this, 1, false } );
+        while ( dfs_elements.size() > 0 )
+        {
+            auto dfs_node = dfs_elements.top();
+            auto element = dfs_node.element;
+            auto parent = dfs_node.element_parent;
+            auto depth = dfs_node.element_depth;
+            auto element_closes = dfs_node.element_closes;
+            bool elm_has_children = ( element->num_children() > 0 );
+            dfs_elements.pop();
+            if ( !element )
+                continue;
+
+            _strrep += "\n";
+            for ( size_t i = 0; i < depth; i++ )
+                _strrep += "\t";
+
+            if ( element_closes )
+            {
+                _strrep += "<" + element->elementType() + "/>";
+                continue;
+            }
+
+            _strrep += "<" + element->elementType() + " ";
+            for ( const auto& kv_pair : element->m_attribsInts )
+                _strrep += kv_pair.first + "=" + std::to_string( kv_pair.second ) + " ";
+            for ( const auto& kv_pair : element->m_attribsFloats )
+                _strrep += kv_pair.first + "=" + std::to_string( kv_pair.second ) + " ";
+            for ( const auto& kv_pair : element->m_attribsArrayInts )
+                _strrep += kv_pair.first + "=" + loco::parsing::xml::SerializeToString( kv_pair.second ) + " ";
+            for ( const auto& kv_pair : element->m_attribsArrayFloats )
+                _strrep += kv_pair.first + "=" + loco::parsing::xml::SerializeToString( kv_pair.second ) + " ";
+            for ( const auto& kv_pair : element->m_attribsStrings )
+                _strrep += kv_pair.first + "=" + kv_pair.second + " ";
+            _strrep += ( elm_has_children ? ">" : "/>" );
+
+            if ( elm_has_children )
+            {
+                dfs_elements.push( { element, nullptr, depth, true } );
+                for ( size_t i = 0; i < element->m_children.size(); i++ )
+                    dfs_elements.push( { element->m_children[i].get(), element, depth + 1, false } );
+            }
+        }
+
+        return _strrep;
     }
 
     TElement& TElement::get_child( size_t index )

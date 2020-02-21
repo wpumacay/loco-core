@@ -15,4 +15,5 @@
 #include <visualizer/loco_visualizer.h>
 #include <utils/loco_parsing_common.h>
 #include <utils/loco_parsing_schema.h>
+#include <utils/loco_parsing_element.h>
 #include <loco_runtime.h>
