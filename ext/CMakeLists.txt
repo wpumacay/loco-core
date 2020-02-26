@@ -31,6 +31,12 @@ if ( LOCO_CORE_BUILD_WINDOWED_VISUALIZER OR LOCO_CORE_BUILD_HEADLESS_VISUALIZER 
         set( TINYRENDERER_BUILD_HEADLESS_EGL OFF CACHE BOOL "Don't build tiny-renderer headless-backend (egl)" )
     endif()
 
+    if ( LOCO_CORE_BUILD_FFMPEG_VISUALIZER_UTILS )
+        set( TINYRENDERER_BUILD_WITH_FFMPEG_UTILS ON CACHE BOOL "Build tinyrenderer's ffmpeg utils" )
+    else()
+        set( TINYRENDERER_BUILD_WITH_FFMPEG_UTILS OFF CACHE BOOL "Don't build tinyrenderer's ffmpeg utils" )
+    endif()
+
     set( TINYRENDERER_BUILD_DOCS OFF CACHE BOOL "Don't build tinyrenderer's documentation" )
     set( TINYRENDERER_BUILD_EXAMPLES OFF CACHE BOOL "Don't build tinyrenderer's examples" )
     set( TINYRENDERER_BUILD_PYTHON_BINDINGS OFF CACHE BOOL "Don't build tinyrenderer's python bindings" )
