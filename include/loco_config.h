@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -23,6 +22,46 @@
     #endif
 #endif
 
+#ifndef LOCO_BACKEND_PHYSICS_MUJOCO
+    #if defined( _WIN32 )
+        #define LOCO_BACKEND_PHYSICS_MUJOCO "./libs/liblocoPhysicsMUJOCO.dll"
+    #elif defined( __APPLE__ )
+        #define LOCO_BACKEND_PHYSICS_MUJOCO "./libs/liblocoPhysicsMUJOCO.dylib"
+    #else
+        #define LOCO_BACKEND_PHYSICS_MUJOCO "./libs/liblocoPhysicsMUJOCO.so"
+    #endif
+#endif
+
+#ifndef LOCO_BACKEND_PHYSICS_BULLET
+    #if defined( _WIN32 )
+        #define LOCO_BACKEND_PHYSICS_BULLET "./libs/liblocoPhysicsBULLET.dll"
+    #elif defined( __APPLE__ )
+        #define LOCO_BACKEND_PHYSICS_BULLET "./libs/liblocoPhysicsBULLET.dylib"
+    #else
+        #define LOCO_BACKEND_PHYSICS_BULLET "./libs/liblocoPhysicsBULLET.so"
+    #endif
+#endif
+
+#ifndef LOCO_BACKEND_PHYSICS_RAISIM
+    #if defined( _WIN32 )
+        #define LOCO_BACKEND_PHYSICS_RAISIM "./libs/liblocoPhysicsRAISIM.dll"
+    #elif defined( __APPLE__ )
+        #define LOCO_BACKEND_PHYSICS_RAISIM "./libs/liblocoPhysicsRAISIM.dylib"
+    #else
+        #define LOCO_BACKEND_PHYSICS_RAISIM "./libs/liblocoPhysicsRAISIM.so"
+    #endif
+#endif
+
+#ifndef LOCO_BACKEND_PHYSICS_DART
+    #if defined( _WIN32 )
+        #define LOCO_BACKEND_PHYSICS_DART "./libs/liblocoPhysicsDART.dll"
+    #elif defined( __APPLE__ )
+        #define LOCO_BACKEND_PHYSICS_DART "./libs/liblocoPhysicsDART.dylib"
+    #else
+        #define LOCO_BACKEND_PHYSICS_DART "./libs/liblocoPhysicsDART.so"
+    #endif
+#endif
+
 namespace loco {
 namespace config {
 
@@ -36,7 +75,11 @@ namespace config {
     // Add available physics backend in this namespace
     namespace physics
     {
-        const std::string NONE = "null"; // creates null-obj backend (dummy)
+        const std::string NONE = "null"; // null-obj backend (dummy)
+        const std::string MUJOCO = LOCO_BACKEND_PHYSICS_MUJOCO; // mujoco-obj backend
+        const std::string BULLET = LOCO_BACKEND_PHYSICS_BULLET; // bullet-obj backend
+        const std::string RAISIM = LOCO_BACKEND_PHYSICS_RAISIM; // raisim-obj backend
+        const std::string DART = LOCO_BACKEND_PHYSICS_DART; // dart-obj backend
     }
 
 }}

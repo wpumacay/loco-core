@@ -50,6 +50,26 @@ def GetFilesUnderPath( path, extension ) :
     os.chdir( cwd_path )
     return ( PREFIX + path, files_paths )
 
+# @hack: get resources path (should replace with proper find functionality)
+def GetResourcesDir() :
+    py_version = '%s.%s' % ( sys.version_info[0], sys.version_info[1] )
+    install_path_candidates = ( path % (py_version) for path in (
+                        sys.prefix + '/lib/python%s/dist-packages/',
+                        sys.prefix + '/lib/python%s/site-packages/',
+                        sys.prefix + '/local/lib/python%s/dist-packages/',
+                        sys.prefix + '/local/lib/python%s/site-packages/',
+                        '/Library/Python/%s/site-packages/' ) )
+
+    for path_candidate in install_path_candidates :
+        if os.path.exists( path_candidate ) :
+            if path_candidate.find( 'local' ) != -1 :
+                return sys.prefix + '/local/' + PREFIX + 'res/'
+            else :
+                return sys.prefix + '/' + PREFIX + 'res/'
+
+    print( 'ERROR >>> No resources path found', file=sys.stderr )
+    return None
+
 class CMakeExtension( Extension ) :
 
     def __init__( self, name, sourceDir ) :

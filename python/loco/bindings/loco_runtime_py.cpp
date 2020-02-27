@@ -408,8 +408,11 @@ namespace loco
             m.attr( "RENDERING_GLVIZ_GLFW" ) = loco::config::rendering::GLVIZ_GLFW;
             m.attr( "RENDERING_GLVIZ_EGL" ) = loco::config::rendering::GLVIZ_EGL;
 
-            // @firsttodo: should I add all possible physics backends in here?
             m.attr( "PHYSICS_NONE" ) = loco::config::physics::NONE;
+            m.attr( "PHYSICS_MUJOCO" ) = loco::config::physics::MUJOCO;
+            m.attr( "PHYSICS_BULLET" ) = loco::config::physics::BULLET;
+            m.attr( "PHYSICS_RAISIM" ) = loco::config::physics::RAISIM;
+            m.attr( "PHYSICS_DART" ) = loco::config::physics::DART;
 
             py::class_<TRuntime>( m, "Runtime" )
                 .def( py::init<const std::string&, const std::string&>(),

@@ -19,4 +19,7 @@ PYBIND11_MODULE( loco_sim, m )
     loco::bindings_components_elements( m );
     loco::bindings_primitives( m );
     loco::bindings_runtime_and_components( m );
+
+    // Execute some required initialization steps
+    loco::TLogger::Init();
 }
