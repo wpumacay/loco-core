@@ -24,6 +24,8 @@ namespace parsing {
         static std::unique_ptr<TElement> CreateFromXmlFile( const eSchemaType& schemaType,
                                                             const std::string& xml_filepath );
 
+        static std::unique_ptr<TElement> CloneElement( const TElement* other );
+
         TElement* Add( const std::string& childElementType );
 
         void LoadFromXmlString( const std::string& xml_string );
@@ -80,6 +82,12 @@ namespace parsing {
         eSchemaType schemaType() const { return m_schemaType; }
 
         const TISchema* schema() const { return m_schemaRef; }
+
+        std::unordered_map<std::string, int32_t> ints() const { return m_attribsInts; }
+        std::unordered_map<std::string, TScalar> floats() const { return m_attribsFloats; }
+        std::unordered_map<std::string, TSizei> array_ints() const { return m_attribsArrayInts; }
+        std::unordered_map<std::string, TSizef> array_floats() const { return m_attribsArrayFloats; }
+        std::unordered_map<std::string, std::string> strings() const { return m_attribsStrings; }
 
     protected :
 

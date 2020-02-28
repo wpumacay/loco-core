@@ -23,8 +23,8 @@ TEST( TestLocoUtilsXmlElement, TestXmlElementMjcfLoadString )
         "    </body>\n"
         "  </worldbody>\n"
         "</mujoco>\n";
-    auto root = loco::parsing::TElement::CreateFromXmlString( loco::parsing::eSchemaType::MJCF,
-                                                              sample_mjcf );
+    auto root = loco::parsing::TElement::CreateFromXmlString( loco::parsing::eSchemaType::MJCF, sample_mjcf );
+
     EXPECT_EQ( root->GetString( "model" ), "template_ball" );
     auto world_body = root->get_child( 0 );
     EXPECT_EQ( world_body->num_children(), 1 );
@@ -40,6 +40,61 @@ TEST( TestLocoUtilsXmlElement, TestXmlElementMjcfLoadString )
     EXPECT_TRUE( tinymath::allclose( geom->GetVec3( "size" ), { 0.1, 0.1, 0.1 } ) );
 
     LOCO_TRACE( "root:\n{0}", root->ToString() );
+}
+
+TEST( TestLocoUtilsXmlElement, TestXmlElementMjcfClone )
+{
+    loco::TLogger::Init();
+    const std::string sample_mjcf =
+        "<mujoco model=\"template_ball\">\n"
+        "  <worldbody>\n"
+        "    <body name=\"sphere_body\" pos=\"1.0 1.0 2.0\">\n"
+        "      <joint name=\"sphere_freejoint\" type=\"free\"/>\n"
+        "      <geom name=\"sphere_geom\" pos=\"0 0 0\" size=\"0.1 0.1 0.1\"/>\n"
+        "    </body>\n"
+        "  </worldbody>\n"
+        "</mujoco>\n";
+    auto root = loco::parsing::TElement::CreateFromXmlString( loco::parsing::eSchemaType::MJCF, sample_mjcf );
+    auto root_cp = loco::parsing::TElement::CloneElement( root.get() );
+
+    std::stack< std::pair<loco::parsing::TElement*, loco::parsing::TElement*> > dfs_pairs;
+    dfs_pairs.push( { root.get(), root_cp.get() } );
+    while ( dfs_pairs.size() > 0 )
+    {
+        auto orig_copy_pair = dfs_pairs.top();
+        auto orig_element = orig_copy_pair.first;
+        auto copy_element = orig_copy_pair.second;
+        dfs_pairs.pop();
+        if ( !orig_element || !copy_element )
+            continue;
+
+        EXPECT_EQ( orig_element->elementType(), copy_element->elementType() );
+        EXPECT_EQ( orig_element->schemaType(), copy_element->schemaType() );
+        EXPECT_EQ( orig_element->num_children(), copy_element->num_children() );
+
+        for ( auto kvpair : orig_element->ints() )
+            EXPECT_EQ( kvpair.second, copy_element->GetInt( kvpair.first ) );
+
+        for ( auto kvpair : orig_element->floats() )
+            EXPECT_TRUE( std::abs( kvpair.second - copy_element->GetFloat( kvpair.first ) ) < 1e-6 );
+
+        for ( auto kvpair : orig_element->strings() )
+            EXPECT_EQ( kvpair.second, copy_element->GetString( kvpair.first ) );
+
+        for ( auto kvpair : orig_element->array_ints() )
+            for ( size_t i = 0; i < orig_element->GetArrayInt( kvpair.first ).ndim; i++ )
+                EXPECT_EQ( orig_element->GetArrayInt( kvpair.first )[i], copy_element->GetArrayInt( kvpair.first )[i] );
+
+        for ( auto kvpair : orig_element->array_floats() )
+            for ( size_t i = 0; i < orig_element->GetArrayFloat( kvpair.first ).ndim; i++ )
+                EXPECT_TRUE( std::abs( orig_element->GetArrayFloat( kvpair.first )[i] - copy_element->GetArrayFloat( kvpair.first )[i] ) < 1e-6 );
+
+        for ( size_t i = 0; i < orig_element->num_children(); i++ )
+            dfs_pairs.push( { orig_element->get_child( i ), copy_element->get_child( i ) } );
+    }
+
+    LOCO_TRACE( "original:\n{0}", root->ToString() );
+    LOCO_TRACE( "clone:\n{0}", root_cp->ToString() );
 }
 
 // Just tests that this functionality doesn't crash
@@ -150,6 +205,42 @@ TEST( TestLocoUtilsXmlElement, TestXmlElementUrdfString )
     EXPECT_TRUE( tinymath::allclose( collision_geom_box->GetVec3( "size" ), { 1., 1., 1. } ) );
 
     LOCO_TRACE( "root:\n{0}", root->ToString() );
+}
+
+TEST( TestLocoUtilsXmlElement, TestXmlElementUrdffClone )
+{
+    loco::TLogger::Init();
+    const std::string sample_urdf =
+        "<robot name=\"cube\">\n"
+        "  <link name=\"baseLink\">\n"
+        "    <inertial>\n"
+        "      <origin rpy=\"0.01 0.02 0.03\" xyz=\"0.01 0.02 0.03\"/>\n"
+        "      <mass value=\"1.0\"/>\n"
+        "      <inertia ixx=\"1\" ixy=\"0\" ixz=\"0\" iyy=\"1\" iyz=\"0\" izz=\"1\"/>\n"
+        "    </inertial>\n"
+        "    <visual>\n"
+        "      <origin rpy=\"0.01 0.02 0.03\" xyz=\"0.01 0.02 0.03\"/>\n"
+        "      <geometry>\n"
+        "        <mesh filename=\"cube.obj\" scale=\"1 1 1\"/>\n"
+        "      </geometry>\n"
+        "      <material name=\"white\">\n"
+        "        <color rgba=\"1 1 1 1\"/>\n"
+        "      </material>\n"
+        "    </visual>\n"
+        "    <collision>\n"
+        "      <origin rpy=\"0.01 0.02 0.03\" xyz=\"0.01 0.02 0.03\"/>\n"
+        "      <geometry>\n"
+        "        <box size=\"1 1 1\"/>\n"
+        "      </geometry>\n"
+        "    </collision>\n"
+        "  </link>\n"
+        "</robot>\n";
+
+    auto root = loco::parsing::TElement::CreateFromXmlString( loco::parsing::eSchemaType::URDF, sample_urdf );
+    auto root_cp = loco::parsing::TElement::CloneElement( root.get() );
+
+    LOCO_TRACE( "original:\n{0}", root->ToString() );
+    LOCO_TRACE( "clone:\n{0}", root_cp->ToString() );
 }
 
 // Just tests that this functionality doesn't crash

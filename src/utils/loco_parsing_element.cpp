@@ -46,6 +46,40 @@ namespace parsing {
         return std::move( element );
     }
 
+    std::unique_ptr<TElement> TElement::CloneElement( const TElement* other )
+    {
+        auto element_cp = std::make_unique<TElement>( other->elementType(), other->schemaType() );
+        // Stack for DFS: pair <=> (dst-element, src-element)
+        std::stack< std::pair<TElement*, const TElement*> > dfs_copy_pairs;
+        dfs_copy_pairs.push( { element_cp.get(), other } );
+        while ( dfs_copy_pairs.size() > 0 )
+        {
+            auto dst_src_pair = dfs_copy_pairs.top();
+            auto dst_element = dst_src_pair.first;
+            auto src_element = dst_src_pair.second;
+
+            dst_element->m_attribsInts = src_element->m_attribsInts;
+            dst_element->m_attribsFloats = src_element->m_attribsFloats;
+            dst_element->m_attribsArrayInts = src_element->m_attribsArrayInts;
+            dst_element->m_attribsArrayFloats = src_element->m_attribsArrayFloats;
+            dst_element->m_attribsStrings = src_element->m_attribsStrings;
+
+            dfs_copy_pairs.pop();
+
+            if ( !dst_element || !src_element )
+                continue;
+
+            for ( size_t i = 0; i < src_element->num_children(); i++ )
+            {
+                auto src_child_element = src_element->get_child( i );
+                auto dst_child_element = dst_element->Add( src_child_element->elementType() );
+                dfs_copy_pairs.push( { dst_child_element, src_child_element } );
+            }
+        }
+
+        return std::move( element_cp );
+    }
+
     TElement* TElement::Add( const std::string& childElementType )
     {
         if ( !m_schemaRef->HasChild( m_elementType, childElementType ) )
