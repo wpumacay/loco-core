@@ -22,7 +22,10 @@ namespace loco
                 .def( "PreStep", &TCollision::PreStep )
                 .def( "PostStep", &TCollision::PostStep )
                 .def( "Reset", &TCollision::Reset )
-                .def( "data", &TCollision::data )
+                .def( "data", []( TCollision* self ) -> TCollisionData&
+                    {
+                        return self->data();
+                    }, py::return_value_policy::reference )
                 .def( "parent", []( TCollision* self ) -> TIBody*
                         {
                             return self->parent();
@@ -176,7 +179,10 @@ namespace loco
                 .def( "PreStep", &TVisual::PreStep )
                 .def( "PostStep", &TVisual::PostStep )
                 .def( "Reset", &TVisual::Reset )
-                .def( "data", &TVisual::data )
+                .def( "data", []( TVisual* self ) -> TVisualData&
+                    {
+                        return self->data();
+                    }, py::return_value_policy::reference )
                 .def( "parent", []( TVisual* self ) -> TIBody*
                     {
                         return self->parent();
@@ -350,7 +356,10 @@ namespace loco
                 .def( "PreStep", &TJoint::PreStep )
                 .def( "PostStep", &TJoint::PostStep )
                 .def( "Reset", &TJoint::Reset )
-                .def( "data", &TJoint::data )
+                .def( "data", []( TJoint* self ) -> TJointData&
+                    {
+                        return self->data();
+                    }, py::return_value_policy::reference )
                 .def( "owner", []( TJoint* self ) -> TIBody*
                     {
                         return self->owner();
@@ -501,7 +510,10 @@ namespace loco
                 .def( "PreStep", &TIBody::PreStep )
                 .def( "PostStep", &TIBody::PostStep )
                 .def( "Reset", &TIBody::Reset )
-                .def( "data", &TIBody::data )
+                .def( "data", []( TIBody* self ) -> TBodyData&
+                    {
+                        return self->data();
+                    }, py::return_value_policy::reference )
                 .def_property( "collision",
                     []( TIBody* self ) -> TCollision*
                         {

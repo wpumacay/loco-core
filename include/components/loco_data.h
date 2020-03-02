@@ -73,11 +73,25 @@ namespace loco
     eJointType ToEnumJoint( const std::string& type );
     eActuatorType ToEnumActuator( const std::string& type );
 
+    // @todo: add mesh-data field in shape-data
+    struct TMeshData
+    {
+        // Absolute path to the mesh-resource (create from-file)
+        std::string filename;
+        // Buffer of user vertex-data for mesh-resource (create from user data)
+        std::vector<float> vertices;
+        // Buffer of user faces data for mesh resource (create from user data)
+        std::vector<int> faces;
+    };
+
     struct THeightFieldData
     {
-        int                     nWidthSamples;  // number of samples of the grid in the x-dimension (extent is given by size.x)
-        int                     nDepthSamples;  // number of samples of the grid on the y-dimension (extent is given by size.y)
-        std::vector< float >    heights;        // height values (row-major format) in [0-1], scaled to actual height by size.z component
+        // Number of samples of the grid in the x-dimension (extent is given by size.x)
+        int nWidthSamples;
+        // Number of samples of the grid on the y-dimension (extent is given by size.y)
+        int nDepthSamples;
+        // Height values (row-major format) in [0-1], scaled to actual height by size.z component
+        std::vector< float > heights;
     };
 
     struct TShapeData

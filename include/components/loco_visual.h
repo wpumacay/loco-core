@@ -97,11 +97,9 @@ namespace loco
 
         bool wireframe() const { return m_wireframe; }
 
-        TVisualData data() const { return m_data; }
+        TVisualData& data() { return m_data; }
 
-        TVisualData& dataRef() { return m_data; }
-
-        const TVisualData& dataRef() const { return m_data; }
+        const TVisualData& data() const { return m_data; }
 
         TIBody* parent() { return m_parentBodyRef; }
 

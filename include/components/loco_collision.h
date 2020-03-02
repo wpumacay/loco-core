@@ -92,11 +92,9 @@ namespace loco
 
         bool wireframe() const { return m_wireframe; }
 
-        TCollisionData data() const { return m_data; }
+        TCollisionData& data() { return m_data; }
 
-        TCollisionData& dataRef() { return m_data; }
-
-        const TCollisionData& dataRef() const { return m_data; }
+        const TCollisionData& data() const { return m_data; }
 
         TIBody* parent() { return m_parentBodyRef; }
 

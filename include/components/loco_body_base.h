@@ -161,11 +161,9 @@ namespace loco
 
         TIBodyAdapter* adapter() { return m_bodyImplRef; }
 
-        TBodyData data() const { return m_data; }
+        TBodyData& data() { return m_data; }
 
-        TBodyData& dataRef() { return m_data; }
-
-        const TBodyData& dataRef() const { return m_data; }
+        const TBodyData& data() const { return m_data; }
 
     protected :
 

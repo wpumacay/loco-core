@@ -113,9 +113,9 @@ namespace loco
 
         std::string name() const { return m_name; }
 
-        TJointData& dataRef() { return m_data; }
+        TJointData& data() { return m_data; }
 
-        TJointData data() const { return m_data; }
+        const TJointData& data() const { return m_data; }
 
         eJointType type() const { return m_data.type; }
 
