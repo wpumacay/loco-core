@@ -173,7 +173,7 @@ namespace parsing {
         xml_doc.InsertEndChild( xml_root_element );
         // Add all children of the root(this) to start the traversal (pair <=> (parent_xml, child_element))
         std::stack< std::pair<tinyxml2::XMLElement*, TElement*> > dfs_traversal;
-        for ( size_t i = 0; i < m_children.size(); i++ )
+        for ( ssize_t i = ( m_children.size() - 1 ); i >= 0; i-- )
             dfs_traversal.push( { xml_root_element, m_children[i].get() } );
         // Traverse over all children in a dfs-like fashion
         while ( dfs_traversal.size() > 0 )
@@ -189,7 +189,7 @@ namespace parsing {
             child_element->InsertAttributes( xml_child_element );
             xml_parent->InsertEndChild( xml_child_element );
 
-            for ( size_t i = 0; i < child_element->m_children.size(); i++ )
+            for ( ssize_t i = ( child_element->m_children.size() - 1 ); i >= 0; i-- )
                 dfs_traversal.push( { xml_child_element, child_element->m_children[i].get() } );
         }
         xml_doc.SaveFile( filepath.c_str() );
