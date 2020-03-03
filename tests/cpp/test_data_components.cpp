@@ -60,7 +60,7 @@ TEST( TestLocoDataComponents, TestCoreComponents )
 
     auto body_data = loco::TBodyData();
     body_data.dyntype = loco::eDynamicsType::DYNAMIC;
-    body_data.inertialData = inertia_data;
+    body_data.inertia = inertia_data;
     body_data.localTransformZero = tinymath::Matrix4f( tinymath::Matrix3f(), tinymath::Vector3f( -0.01f, 0.02f, -0.03f ) );
     body_data.collision = col_data;
     body_data.visual = vis_data;

@@ -269,7 +269,7 @@ namespace loco
 
     struct TInertialData
     {
-        TScalar     mass;               // mass of the body (if equal to 0.0, then inertial props come from colliders)
+        TScalar     mass;               // mass of the body (if negative then inertial props come from colliders)
         TScalar     ixx;                // elements of the inertia matrix
         TScalar     ixy;
         TScalar     ixz;
@@ -279,8 +279,8 @@ namespace loco
         TMat4       localTransform;     // relative transform w.r.t. owner (body) of the inertial frame
 
         TInertialData()
-            : mass( 0.0f ), ixx( 0.0f ), ixy( 0.0f ), ixz( 0.0f ),
-              iyy( 0.0f ), iyz( 0.0f ), izz( 0.0f )
+            : mass( -1.0f ), ixx( -1.0f ), ixy( -1.0f ), ixz( -1.0f ),
+              iyy( -1.0f ), iyz( -1.0f ), izz( -1.0f )
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( TLogger::IsActive() )
@@ -304,7 +304,7 @@ namespace loco
     struct TBodyData
     {
         eDynamicsType   dyntype;            // dynamics type used to instantiate either static, kinematic or dynamic bodies
-        TInertialData   inertialData;       // inertial properties of this body
+        TInertialData   inertia;            // inertial properties of this body
         TMat4           localTransformZero; // relative transform at zero-configuration of this body w.r.t. parent body
         TCollisionData  collision;          // collisions owned by this body
         TVisualData     visual;             // visuals owned by this body

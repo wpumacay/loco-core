@@ -112,18 +112,18 @@ def test_core_components_data() :
 
     body = loco.sim.BodyData()
     body.dyntype = loco.sim.DynamicsType.DYNAMIC
-    body.inertialData = inertia
+    body.inertia = inertia
     body.localTf0 = tm.Matrix4f( np.identity( 3 ), [ -0.01, 0.02, -0.03 ] )
     body.collision = col
     body.visual = vis
     assert body.dyntype == loco.sim.DynamicsType.DYNAMIC, "test_core_components_data >>> couldn't set body-param 'dyntype'"
-    assert np.allclose( body.inertialData.mass, 10.0 ), "test_core_components_data >>> couldn't set body-param 'inertia.mass'"
-    assert np.allclose( body.inertialData.ixx, 0.1 ), "test_core_components_data >>> couldn't set body-param 'inertia.ixx'"
-    assert np.allclose( body.inertialData.iyy, 0.2 ), "test_core_components_data >>> couldn't set body-param 'inertia.iyy'"
-    assert np.allclose( body.inertialData.izz, 0.1 ), "test_core_components_data >>> couldn't set body-param 'inertia.izz'"
-    assert np.allclose( body.inertialData.ixy, 0.001 ), "test_core_components_data >>> couldn't set body-param 'inertia.ixy'"
-    assert np.allclose( body.inertialData.ixz, 0.002 ), "test_core_components_data >>> couldn't set body-param 'inertia.ixz'"
-    assert np.allclose( body.inertialData.iyz, 0.003 ), "test_core_components_data >>> couldn't set body-param 'inertia.iyz'"
+    assert np.allclose( body.inertia.mass, 10.0 ), "test_core_components_data >>> couldn't set body-param 'inertia.mass'"
+    assert np.allclose( body.inertia.ixx, 0.1 ), "test_core_components_data >>> couldn't set body-param 'inertia.ixx'"
+    assert np.allclose( body.inertia.iyy, 0.2 ), "test_core_components_data >>> couldn't set body-param 'inertia.iyy'"
+    assert np.allclose( body.inertia.izz, 0.1 ), "test_core_components_data >>> couldn't set body-param 'inertia.izz'"
+    assert np.allclose( body.inertia.ixy, 0.001 ), "test_core_components_data >>> couldn't set body-param 'inertia.ixy'"
+    assert np.allclose( body.inertia.ixz, 0.002 ), "test_core_components_data >>> couldn't set body-param 'inertia.ixz'"
+    assert np.allclose( body.inertia.iyz, 0.003 ), "test_core_components_data >>> couldn't set body-param 'inertia.iyz'"
     assert np.allclose( body.localTf0, tm.Matrix4f( np.identity( 3 ), [ -0.01, 0.02, -0.03 ] ) ), "test_core_components_data >>> couldn't set body-param 'localTf0'"
     assert np.allclose( body.collision.size, [ 0.1, 0.1, 0.1 ] ), "test_core_components_data >>> couldn't set body-param 'col.size'"
     assert np.allclose( body.collision.friction, [ 1.0, 0.01, 0.001 ] ), "test_core_components_data >>> couldn't set body-param 'col.friction'"
@@ -140,11 +140,11 @@ def test_core_components_data() :
     print( 'num_referrers(inertia): {}'.format( len( gc.get_referrers( inertia ) ) ) )
     print( 'num_referrers(body.col): {}'.format( len( gc.get_referrers( body.collision ) ) ) )
     print( 'num_referrers(body.vis): {}'.format( len( gc.get_referrers( body.visual ) ) ) )
-    print( 'num_referrers(body.inertia): {}'.format( len( gc.get_referrers( body.inertialData ) ) ) )
+    print( 'num_referrers(body.inertia): {}'.format( len( gc.get_referrers( body.inertia ) ) ) )
 
     ref_col = body.collision
     ref_vis = body.visual
-    ref_int = body.inertialData
+    ref_int = body.inertia
 
     # Get number of referrers to component objects after getting references (should stay the same py_reference)
     print( 'num_referrers(col): {}'.format( len( gc.get_referrers( col ) ) ) )
@@ -152,7 +152,7 @@ def test_core_components_data() :
     print( 'num_referrers(inertia): {}'.format( len( gc.get_referrers( inertia ) ) ) )
     print( 'num_referrers(body.col): {}'.format( len( gc.get_referrers( body.collision ) ) ) )
     print( 'num_referrers(body.vis): {}'.format( len( gc.get_referrers( body.visual ) ) ) )
-    print( 'num_referrers(body.inertia): {}'.format( len( gc.get_referrers( body.inertialData ) ) ) )
+    print( 'num_referrers(body.inertia): {}'.format( len( gc.get_referrers( body.inertia ) ) ) )
     print( 'num_referrers(body): {}'.format( len( gc.get_referrers( body ) ) ) )
 
 if __name__ == '__main__' :

@@ -92,6 +92,17 @@ namespace parsing {
         return m_children.back().get();
     }
 
+    TElement* TElement::Add( std::unique_ptr<TElement> childElement )
+    {
+        if ( !m_schemaRef->HasChild( m_elementType, childElement->elementType() ) )
+            throw std::runtime_error( "TElement::Add >>> element (" + m_elementType + ") doesn't accept \
+                                       children of type (" + childElement->elementType() + ") for schema " + loco::parsing::ToString( m_schemaType ) );
+
+        childElement->m_parentRef = this;
+        m_children.push_back( std::move( childElement ) );
+        return m_children.back().get();
+    }
+
     void TElement::LoadFromXmlString( const std::string& xml_string )
     {
         tinyxml2::XMLDocument xml_doc;

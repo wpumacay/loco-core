@@ -6,11 +6,13 @@ namespace loco
     std::string ToString( const eShapeType& type )
     {
         if ( type == eShapeType::BOX ) return "box";
+        if ( type == eShapeType::PLANE ) return "plane";
         if ( type == eShapeType::SPHERE ) return "sphere";
         if ( type == eShapeType::CYLINDER ) return "cylinder";
         if ( type == eShapeType::CAPSULE ) return "capsule";
         if ( type == eShapeType::MESH ) return "mesh";
         if ( type == eShapeType::HFIELD ) return "hfield";
+        if ( type == eShapeType::ELLIPSOID ) return "ellipsoid";
         if ( type == eShapeType::NONE ) return "none";
 
         return "undefined";
@@ -32,7 +34,6 @@ namespace loco
     {
         if ( type == eDynamicsType::DYNAMIC ) return "dynamic";
         if ( type == eDynamicsType::STATIC ) return "static";
-        if ( type == eDynamicsType::KINEMATIC ) return "kinematic";
 
         return "undefined";
     }

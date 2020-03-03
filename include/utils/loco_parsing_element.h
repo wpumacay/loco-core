@@ -27,6 +27,7 @@ namespace parsing {
         static std::unique_ptr<TElement> CloneElement( const TElement* other );
 
         TElement* Add( const std::string& childElementType );
+        TElement* Add( std::unique_ptr<TElement> childElement );
 
         void LoadFromXmlString( const std::string& xml_string );
         void LoadFromXmlFile( const std::string& xml_filepath );

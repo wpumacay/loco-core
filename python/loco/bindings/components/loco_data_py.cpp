@@ -31,8 +31,7 @@ namespace loco
 
             py::enum_< loco::eDynamicsType >( m, "DynamicsType", py::arithmetic() )
                 .value( "DYNAMIC", loco::eDynamicsType::DYNAMIC )
-                .value( "STATIC", loco::eDynamicsType::STATIC )
-                .value( "KINEMATIC", loco::eDynamicsType::KINEMATIC );
+                .value( "STATIC", loco::eDynamicsType::STATIC );
 
             py::enum_< loco::eSensorType >( m, "SensorType", py::arithmetic() )
                 .value( "NONE", loco::eSensorType::NONE )
@@ -365,7 +364,7 @@ namespace loco
             py::class_< TBodyData >( m, "BodyData" )
                 .def( py::init<>() )
                 .def_readwrite( "dyntype", &TBodyData::dyntype )
-                .def_readwrite( "inertialData", &TBodyData::inertialData, py::return_value_policy::reference )
+                .def_readwrite( "inertia", &TBodyData::inertia, py::return_value_policy::reference )
                 .def_property( "localTf0",
                     []( const TBodyData* self ) -> py::array_t<TScalar>
                         {
