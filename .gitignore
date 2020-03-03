@@ -12,10 +12,12 @@
 # folder-exclusions
 build/
 dist/
-_legacy/
 __pycache__/
 .vscode/
 *.egg-info/
 _build/
 _static/
 _templates/
+
+# @todo: delete once porting+refactoring has been completed
+## _legacy/
