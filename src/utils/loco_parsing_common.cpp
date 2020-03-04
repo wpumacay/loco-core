@@ -146,7 +146,7 @@ namespace xml
     {
         std::string _strrep;
         for ( size_t i = 0; i < array_int.ndim; i++ )
-            _strrep += std::to_string( array_int[i] ) + ( ( i != array_int.ndim ) ? " " : "" );
+            _strrep += std::to_string( array_int[i] ) + ( ( i != ( array_int.ndim - 1 ) ) ? " " : "" );
         return _strrep;
     }
 
@@ -154,7 +154,7 @@ namespace xml
     {
         std::string _strrep;
         for ( size_t i = 0; i < array_float.ndim; i++ )
-            _strrep += std::to_string( array_float[i] ) + ( ( i != array_float.ndim ) ? " " : "" );
+            _strrep += std::to_string( array_float[i] ) + ( ( i != ( array_float.ndim - 1 ) ) ? " " : "" );
         return _strrep;
     }
 }

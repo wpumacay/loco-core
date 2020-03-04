@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 #include <deque>
+#include <queue>
 #include <stack>
 #include <cassert>
 #include <cmath>

@@ -130,21 +130,21 @@ namespace parsing {
         // "This" element is the "root" element, so collect its attributes before traversing
         m_elementType = std::string( xml_root_element->Value() );
         CollectAttributes( xml_root_element );
-        // Add all children of the root to start the dfs-traversal (pair <=> (xml_element, element_parent))
-        std::stack< std::pair<const tinyxml2::XMLElement*, TElement*> > dfs_xml_elements;
+        // Add all children of the root to start the bfs-traversal (pair <=> (xml_element, element_parent))
+        std::queue< std::pair<const tinyxml2::XMLElement*, TElement*> > bfs_xml_elements;
         auto root_child = xml_root_element->FirstChildElement();
         while ( root_child )
         {
-            dfs_xml_elements.push( { root_child, this } );
+            bfs_xml_elements.push( { root_child, this } );
             root_child = root_child->NextSiblingElement();
         }
         // Traverse over all elements in the xml-tree in a dfs-fashion
-        while ( dfs_xml_elements.size() > 0 )
+        while ( bfs_xml_elements.size() > 0 )
         {
-            auto xmlelement_parent_pair = dfs_xml_elements.top();
+            auto xmlelement_parent_pair = bfs_xml_elements.front();
             auto xml_element = xmlelement_parent_pair.first;
             auto element_parent = xmlelement_parent_pair.second;
-            dfs_xml_elements.pop();
+            bfs_xml_elements.pop();
             if ( !xml_element || !element_parent )
                 continue;
 
@@ -158,7 +158,7 @@ namespace parsing {
             auto xml_child_element = xml_element->FirstChildElement();
             while ( xml_child_element )
             {
-                dfs_xml_elements.push( { xml_child_element, element_parent->m_children.back().get() } );
+                bfs_xml_elements.push( { xml_child_element, element_parent->m_children.back().get() } );
                 xml_child_element = xml_child_element->NextSiblingElement();
             }
         }
