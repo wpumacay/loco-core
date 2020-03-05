@@ -186,9 +186,9 @@ endif()
 ####     add_subdirectory( docs )
 #### endif()
 
-#### if ( LOCO_CORE_IS_MASTER_PROJECT AND LOCO_CORE_BUILD_EXAMPLES )
-####     add_subdirectory( examples )
-#### endif()
+if ( LOCO_CORE_BUILD_EXAMPLES )
+    add_subdirectory( examples )
+endif()
 
 if ( LOCO_CORE_BUILD_TESTS )
     enable_testing()
