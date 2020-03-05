@@ -40,9 +40,9 @@ TEST( TestLocoDataBase, TestShapeDataBase )
     auto shapeData = loco::TShapeData();
     shapeData.type = loco::eShapeType::HFIELD;
     shapeData.size = { 1.0f, 1.0f, 2.0f };
-    shapeData.filename = "";
     shapeData.localTransform.setIdentity();
-    shapeData.hdata.nWidthSamples = nWidthSamples;
-    shapeData.hdata.nDepthSamples = nDepthSamples;
-    shapeData.hdata.heights = create_heights_data( nWidthSamples, nDepthSamples );
+    shapeData.mesh_data.filename = "";
+    shapeData.hfield_data.nWidthSamples = nWidthSamples;
+    shapeData.hfield_data.nDepthSamples = nDepthSamples;
+    shapeData.hfield_data.heights = create_heights_data( nWidthSamples, nDepthSamples );
 }

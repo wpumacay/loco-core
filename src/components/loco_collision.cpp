@@ -195,35 +195,35 @@ namespace loco
             m_drawableImplRef->ChangeSize( newSize );
     }
 
-    void TCollision::ChangeElevationData( const std::vector< float >& heightData )
+    void TCollision::ChangeElevationData( const std::vector< float >& heights )
     {
         if ( m_data.type != eShapeType::HFIELD )
         {
             LOCO_CORE_WARN( "TCollision::ChangeElevationData >>> collision shape {0} is not a hfield", m_name );
             return;
         }
-
+        auto& hfield_data = m_data.hfield_data;
         // sanity check: make sure that both internal and given buffers have same num-elements
-        if( ( m_data.hdata.nWidthSamples * m_data.hdata.nDepthSamples ) != heightData.size() )
+        if( ( hfield_data.nWidthSamples * hfield_data.nDepthSamples ) != heights.size() )
         {
             LOCO_CORE_WARN( "TCollision::ChangeElevationData >>> given buffer doesn't match expected size of collision shape {0}", m_name );
-            LOCO_CORE_WARN( "\tnx-samples    : {0}", m_data.hdata.nWidthSamples );
-            LOCO_CORE_WARN( "\tny-samples    : {0}", m_data.hdata.nDepthSamples );
-            LOCO_CORE_WARN( "\tinternal-size : {0}", ( m_data.hdata.nWidthSamples * m_data.hdata.nDepthSamples ) );
-            LOCO_CORE_WARN( "\tgiven-size    : {0}", heightData.size() );
+            LOCO_CORE_WARN( "\tnx-samples    : {0}", hfield_data.nWidthSamples );
+            LOCO_CORE_WARN( "\tny-samples    : {0}", hfield_data.nDepthSamples );
+            LOCO_CORE_WARN( "\tinternal-size : {0}", ( hfield_data.nWidthSamples * hfield_data.nDepthSamples ) );
+            LOCO_CORE_WARN( "\tgiven-size    : {0}", heights.size() );
             return;
         }
 
         // Change the internal elevation data
-        m_data.hdata.heights = heightData;
+        hfield_data.heights = heights;
 
         // Tell the backend resource to change the elevation data internally
         if ( m_collisionImplRef )
-            m_collisionImplRef->ChangeElevationData( heightData );
+            m_collisionImplRef->ChangeElevationData( heights );
 
         // Tell the rendering resource to change the elevation data internally
         if ( m_drawableImplRef )
-            m_drawableImplRef->ChangeElevationData( heightData );
+            m_drawableImplRef->ChangeElevationData( heights );
     }
 
     void TCollision::ChangeCollisionGroup( int collisionGroup )

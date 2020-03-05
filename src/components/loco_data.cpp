@@ -160,7 +160,11 @@ namespace loco
         }
         else if ( shapeData.type == eShapeType::MESH )
         {
-            std::pair<TVec3, TVec3> _aabb = ComputeMeshAABB( shapeData.filename );
+            std::pair<TVec3, TVec3> _aabb;
+            if ( shapeData.mesh_data.filename != "" )
+                _aabb = ComputeMeshAABB( shapeData.mesh_data.filename );
+            else
+                _aabb = ComputeMeshAABB( shapeData.mesh_data.vertices );
             _volume = std::abs( ( _aabb.second.x() - _aabb.first.x() ) * shapeData.size.x() *
                                 ( _aabb.second.y() - _aabb.first.y() ) * shapeData.size.y() *
                                 ( _aabb.second.z() - _aabb.first.z() ) * shapeData.size.z() );
@@ -238,5 +242,27 @@ namespace loco
 
         _cachedBounds[filename] = { _aabbMin, _aabbMax };
         return _cachedBounds[filename];
+    }
+
+    std::pair<TVec3, TVec3> ComputeMeshAABB( const std::vector<float>& vertices )
+    {
+        if ( vertices.size() % 3 != 0 )
+            LOCO_CORE_ERROR( "ComputeMeshAABB >>> there must be 3 elements per vertex" );
+
+        TVec3 _aabbMin, _aabbMax;
+        const size_t num_vertices = vertices.size() / 3;
+        for ( size_t i = 0; i < num_vertices; i++ )
+        {
+            TVec3 vertex( vertices[3 * i + 0], vertices[3 * i + 1], vertices[3 * i + 2] );
+            _aabbMin.x() = std::min( (float) vertex.x(), _aabbMin.x() );
+            _aabbMin.y() = std::min( (float) vertex.y(), _aabbMin.y() );
+            _aabbMin.z() = std::min( (float) vertex.z(), _aabbMin.z() );
+
+            _aabbMax.x() = std::max( (float) vertex.x(), _aabbMax.x() );
+            _aabbMax.y() = std::max( (float) vertex.y(), _aabbMax.y() );
+            _aabbMax.z() = std::max( (float) vertex.z(), _aabbMax.z() );
+        }
+
+        return { _aabbMin, _aabbMax };
     }
 }

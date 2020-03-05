@@ -73,7 +73,6 @@ namespace loco
     eJointType ToEnumJoint( const std::string& type );
     eActuatorType ToEnumActuator( const std::string& type );
 
-    // @todo: add mesh-data field in shape-data
     struct TMeshData
     {
         // Absolute path to the mesh-resource (create from-file)
@@ -98,8 +97,8 @@ namespace loco
     {
         eShapeType          type;               // type of collision shape (see enum above)
         TVec3               size;               // size of the collision shape (e.g. x->radius for sphere shapes)
-        std::string         filename;           // in case of a mesh shape, abs-path for the resource
-        THeightFieldData    hdata;              // heightfield struct with required data for hfield-type objects
+        TMeshData           mesh_data;          // struct with required data for mesh-type objects
+        THeightFieldData    hfield_data;        // struct with required data for hfield-type objects
         TMat4               localTransform;     // relative transform of this shape (visual|collision) w.r.t. owner (body)
     };
 
@@ -332,4 +331,5 @@ namespace loco
 
     TScalar ComputeVolumeFromShape( const TShapeData& shapeData );
     std::pair<TVec3, TVec3> ComputeMeshAABB( const std::string& filename );
+    std::pair<TVec3, TVec3> ComputeMeshAABB( const std::vector<float>& vertices );
 }

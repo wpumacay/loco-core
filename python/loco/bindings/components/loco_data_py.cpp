@@ -93,8 +93,8 @@ namespace loco
                         {
                             self->size = tinymath::nparray_to_vector<TScalar, 3>( arr_size );
                         } )
-                .def_readwrite( "filename", &TShapeData::filename )
-                .def_readwrite( "hdata", &TShapeData::hdata, py::return_value_policy::reference )
+                .def_readwrite( "mesh_data", &TShapeData::mesh_data, py::return_value_policy::reference )
+                .def_readwrite( "hfield_data", &TShapeData::hfield_data, py::return_value_policy::reference )
                 .def_property( "localTf",
                     []( const TShapeData* self ) -> py::array_t<TScalar>
                         {
@@ -110,7 +110,19 @@ namespace loco
                         _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
                         _strrep += "type        : " + loco::ToString( self->type ) + "\n";
                         _strrep += "size        : " + loco::ToString( self->size ) + "\n";
-                        _strrep += "filename    : " + self->filename + "\n";
+                        if ( self->type == eShapeType::MESH )
+                        {
+                            auto& mesh_data = self->mesh_data;
+                            _strrep += "mesh-file   : " + mesh_data.filename + "\n";
+                            _strrep += "mesh-nverts : " + std::to_string( mesh_data.vertices.size() ) + "\n";
+                            _strrep += "mesh-nfaces : " + std::to_string( mesh_data.faces.size() ) + "\n";
+                        }
+                        if ( self->type == eShapeType::HFIELD )
+                        {
+                            auto& hfield_data = self->hfield_data;
+                            _strrep += "nwidth-sampl: " + std::to_string( hfield_data.nWidthSamples ) + "\n";
+                            _strrep += "ndepth-sampl: " + std::to_string( hfield_data.nDepthSamples ) + "\n";
+                        }
                         _strrep += "localTf     : \n" + loco::ToString( self->localTransform ) + "\n";
                         _strrep += ")";
                         return _strrep;
@@ -139,7 +151,19 @@ namespace loco
                         _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
                         _strrep += "type        : " + loco::ToString( self->type ) + "\n";
                         _strrep += "size        : " + loco::ToString( self->size ) + "\n";
-                        _strrep += "filename    : " + self->filename + "\n";
+                        if ( self->type == eShapeType::MESH )
+                        {
+                            auto& mesh_data = self->mesh_data;
+                            _strrep += "mesh-file   : " + mesh_data.filename + "\n";
+                            _strrep += "mesh-nverts : " + std::to_string( mesh_data.vertices.size() ) + "\n";
+                            _strrep += "mesh-nfaces : " + std::to_string( mesh_data.faces.size() ) + "\n";
+                        }
+                        if ( self->type == eShapeType::HFIELD )
+                        {
+                            auto& hfield_data = self->hfield_data;
+                            _strrep += "nwidth-sampl: " + std::to_string( hfield_data.nWidthSamples ) + "\n";
+                            _strrep += "ndepth-sampl: " + std::to_string( hfield_data.nDepthSamples ) + "\n";
+                        }
                         _strrep += "localTf     : \n" + loco::ToString( self->localTransform ) + "\n";
                         _strrep += "colGroup    : " + std::to_string( self->collisionGroup ) + "\n";
                         _strrep += "colMask     : " + std::to_string( self->collisionMask ) + "\n";
@@ -187,7 +211,19 @@ namespace loco
                         _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
                         _strrep += "type        : " + loco::ToString( self->type ) + "\n";
                         _strrep += "size        : " + loco::ToString( self->size ) + "\n";
-                        _strrep += "filename    : " + self->filename + "\n";
+                        if ( self->type == eShapeType::MESH )
+                        {
+                            auto& mesh_data = self->mesh_data;
+                            _strrep += "mesh-file   : " + mesh_data.filename + "\n";
+                            _strrep += "mesh-nverts : " + std::to_string( mesh_data.vertices.size() ) + "\n";
+                            _strrep += "mesh-nfaces : " + std::to_string( mesh_data.faces.size() ) + "\n";
+                        }
+                        if ( self->type == eShapeType::HFIELD )
+                        {
+                            auto& hfield_data = self->hfield_data;
+                            _strrep += "nwidth-sampl: " + std::to_string( hfield_data.nWidthSamples ) + "\n";
+                            _strrep += "ndepth-sampl: " + std::to_string( hfield_data.nDepthSamples ) + "\n";
+                        }
                         _strrep += "localTf     : \n" + loco::ToString( self->localTransform ) + "\n";
                         _strrep += "ambient     : " + loco::ToString( self->ambient ) + "\n";
                         _strrep += "diffuse     : " + loco::ToString( self->diffuse ) + "\n";

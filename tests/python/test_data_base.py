@@ -25,17 +25,17 @@ def test_components_shapeData() :
     shapeData = loco.sim.ShapeData()
     shapeData.type = loco.sim.ShapeType.BOX
     shapeData.size = [0.1, 0.2, 0.3]
-    shapeData.filename = ''
     shapeData.localTf = np.identity(4)
-    shapeData.hdata = loco.sim.HeightFieldData()
-    shapeData.hdata.nWidthSamples = 10
-    shapeData.hdata.nDepthSamples = 20
-    shapeData.hdata.heights = create_heights_data( shapeData.hdata.nWidthSamples,
-                                                   shapeData.hdata.nDepthSamples )
+    shapeData.mesh_data.filename = ''
+    shapeData.hfield_data = loco.sim.HeightFieldData()
+    shapeData.hfield_data.nWidthSamples = 10
+    shapeData.hfield_data.nDepthSamples = 20
+    shapeData.hfield_data.heights = create_heights_data( shapeData.hfield_data.nWidthSamples,
+                                                         shapeData.hfield_data.nDepthSamples )
     print( shapeData )
-    print( shapeData.hdata )
+    print( shapeData.hfield_data )
 
-    assert np.allclose( shapeData.hdata.heights, create_heights_data( 10, 20 ) ), "test_components_shapeData >>> height values don't match"
+    assert np.allclose( shapeData.hfield_data.heights, create_heights_data( 10, 20 ) ), "test_components_shapeData >>> height values don't match"
 
 if __name__ == '__main__' :
     _ = input( 'Press ENTER to start test : test_components_hfieldData' )

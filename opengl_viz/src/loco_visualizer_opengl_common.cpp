@@ -150,18 +150,24 @@ namespace glviz {
             }
             case loco::eShapeType::MESH :
             {
-                renderable = engine::CMeshBuilder::createModelFromFile( data.filename );
+                auto& mesh_data = data.mesh_data;
+                if ( mesh_data.filename != "" )
+                    renderable = engine::CMeshBuilder::createModelFromFile( mesh_data.filename );
+                else if ( mesh_data.vertices.size() > 0 && mesh_data.faces.size() > 0 )
+                    renderable = CreateMeshFromData( mesh_data.vertices, mesh_data.faces );
+                else
+                    LOCO_CORE_ERROR( "CreateRenderable >>> couldn't create mesh-renderable (no filename, no data)" );
                 break;
             }
             case loco::eShapeType::HFIELD :
             {
                 // Unnormalize the heights data (use data.size.z() as scaler)
-                auto heightsScaled = data.hdata.heights;
+                auto heightsScaled = data.hfield_data.heights;
                 for ( size_t i = 0; i < heightsScaled.size(); i++ )
                     heightsScaled[i] *= data.size.z();
 
-                renderable = engine::CMeshBuilder::createHeightField( data.hdata.nWidthSamples,
-                                                                      data.hdata.nDepthSamples,
+                renderable = engine::CMeshBuilder::createHeightField( data.hfield_data.nWidthSamples,
+                                                                      data.hfield_data.nDepthSamples,
                                                                       data.size.x(), data.size.y(),
                                                                       data.size.x() / 2.0f,
                                                                       data.size.y() / 2.0f,
@@ -173,5 +179,54 @@ namespace glviz {
         }
 
         return std::move( renderable );
+    }
+
+    std::unique_ptr<engine::CMesh> CreateMeshFromData( const std::vector<float>& vertices,
+                                                       const std::vector<int>& indices )
+    {
+        if ( vertices.size() % 3 != 0 )
+            LOCO_CORE_ERROR( "CreateMeshFromData >>> there must be 3 elements per vertex" );
+        if ( indices.size() % 3 != 0 )
+            LOCO_CORE_ERROR( "CreateMeshFromData >>> there must be 3 elements per face" );
+
+        const size_t num_vertices = vertices.size() / 3;
+        const size_t num_indices = indices.size() / 3;
+        std::vector<engine::CVec3> mesh_vertices( num_vertices );
+        std::vector<engine::CVec3> mesh_normals( num_vertices );
+        std::vector<engine::CVec2> mesh_texcoords( num_vertices );
+        std::vector<engine::CInd3> mesh_indices( num_indices );
+
+        for ( size_t v = 0; v < num_vertices; v++ )
+        {
+            mesh_vertices[v] = { vertices[3 * v + 0], vertices[3 * v + 1], vertices[3 * v + 2] };
+            mesh_texcoords[v] = { 1.0f, 1.0f }; // dummy uv-coordinates
+        }
+
+        for ( size_t f = 0; f < num_indices; f++ )
+        {
+            mesh_indices[f] = { indices[3 * f + 0], indices[3 * f + 1], indices[3 * f + 2] };
+            // Compute the normals (flat-normals, assuming winding order is 0-1-2 <=> out-normal )
+            TVec3 v0, v1, v2;
+            if ( indices[3 * f + 0] < num_vertices && indices[3 * f + 1] < num_vertices && indices[3 * f + 2] < num_vertices )
+            {
+                v0 = mesh_vertices[indices[3 * f + 0]];
+                v1 = mesh_vertices[indices[3 * f + 1]];
+                v2 = mesh_vertices[indices[3 * f + 2]];
+
+                const auto flat_normal = tinymath::cross( v1 - v0, v2 - v0 );
+                mesh_normals[indices[3 * f + 0]] = flat_normal;
+                mesh_normals[indices[3 * f + 1]] = flat_normal;
+                mesh_normals[indices[3 * f + 2]] = flat_normal;
+            }
+            else
+            {
+                LOCO_CORE_ERROR( "CreateMeshFromData >>> one of the given indices is out of range" );
+            }
+        }
+
+        static size_t num_meshes = 0;
+        auto mesh = std::make_unique<engine::CMesh>( "mesh_" + std::to_string( num_meshes++ ),
+                                                     mesh_vertices, mesh_normals, mesh_texcoords, mesh_indices );
+        return std::move( mesh );
     }
 }}
