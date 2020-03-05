@@ -317,6 +317,10 @@ namespace loco
                     // Create drawable adapter and link it to the adaptee (user visual)
                     auto gl_drawableAdapter = std::make_unique<TOpenGLDrawableAdapter>( visual->data(), gl_renderableRef );
                     visual->SetDrawable( gl_drawableAdapter.get() );
+                    gl_drawableAdapter->SetAmbientColor( visual->data().ambient );
+                    gl_drawableAdapter->SetDiffuseColor( visual->data().diffuse );
+                    gl_drawableAdapter->SetSpecularColor( visual->data().specular );
+                    gl_drawableAdapter->SetShininess( visual->data().shininess );
                     // Keep ownership of the drawable adapter
                     m_vizDrawableAdapters.push_back( std::move( gl_drawableAdapter ) );
                 }
