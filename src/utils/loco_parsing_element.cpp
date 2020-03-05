@@ -423,6 +423,16 @@ namespace parsing {
         return m_attribsStrings.find( attribId ) != m_attribsStrings.end();
     }
 
+    bool TElement::HasChildOfType( const std::string& childType ) const
+    {
+        if ( m_children.size() < 1 )
+            return false;
+        for ( size_t i = 0; i < m_children.size(); i++ )
+            if ( m_children[i]->elementType() == childType )
+                return true;
+        return false;
+    }
+
     TElement* TElement::GetFirstChildOfType( const std::string& childType )
     {
         if ( m_children.size() < 1 )

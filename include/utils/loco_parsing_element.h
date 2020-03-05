@@ -62,6 +62,8 @@ namespace parsing {
         bool HasAttributeVec4( const std::string& attribId ) const;
         bool HasAttributeString( const std::string& attribId ) const;
 
+        bool HasChildOfType( const std::string& childType ) const;
+
         TElement* GetFirstChildOfType( const std::string& childType );
 
         const TElement* GetFirstChildOfType( const std::string& childType ) const;
