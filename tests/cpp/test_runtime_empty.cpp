@@ -52,6 +52,9 @@ TEST( TestLocoRuntimeEmpty, TestRuntimeNullObjs )
     EXPECT_TRUE( tinymath::allclose( visualizerRef->GetCameraByName( "cam_orbit_0" )->position(), cameraRef->position() ) );
     EXPECT_TRUE( tinymath::allclose( visualizerRef->GetLightByName( "light_point_0" )->ambient(), lightRef->ambient() ) );
 
+    EXPECT_TRUE( simulationRef->visualizer() != nullptr );
+    EXPECT_TRUE( visualizerRef->simulation() != nullptr );
+
     runtime->DestroySimulation();
     runtime->DestroyVisualizer();
 }

@@ -10,6 +10,7 @@ namespace loco
                                 bool renderOffscreen )
     {
         m_scenarioRef = scenarioRef;
+        m_simulationRef = nullptr;
         m_currentCameraIndex = -1;
         m_currentLightIndex = -1;
         m_backendId = "none";
@@ -22,7 +23,8 @@ namespace loco
         m_vizCameraAdapters.clear();
         m_vizLightAdapters.clear();
         m_vizDrawableAdapters.clear();
-        m_scenarioRef   = nullptr;
+        m_scenarioRef = nullptr;
+        m_simulationRef = nullptr;
     }
 
     void TIVisualizer::ChangeScenario( TScenario* scenarioRef )
@@ -99,6 +101,11 @@ namespace loco
         return m_vizLights.back().get();
     }
 
+    void TIVisualizer::SetSimulation( TISimulation* simulationRef )
+    {
+        m_simulationRef = simulationRef;
+        _SetSimulationInternal( simulationRef );
+    }
 
     TVizCamera* TIVisualizer::GetCurrentCamera()
     {

@@ -21,6 +21,7 @@ namespace loco
 
         m_backendId = "none";
         m_scenarioRef = scenarioRef;
+        m_visualizerRef = nullptr;
         m_running = false;
 
         /* DERIVED simulations should create adapters (from the scenario) as they see fit */
@@ -29,6 +30,7 @@ namespace loco
     TISimulation::~TISimulation()
     {
         m_scenarioRef = nullptr;
+        m_visualizerRef = nullptr;
         m_collisionAdapters.clear();
         m_jointAdapters.clear();
         m_singleBodyAdapters.clear();
@@ -100,6 +102,12 @@ namespace loco
     void TISimulation::Resume()
     {
         m_running = true;
+    }
+
+    void TISimulation::SetVisualizer( TIVisualizer* visualizerRef )
+    {
+        m_visualizerRef = visualizerRef;
+        _SetVisualizerInternal( m_visualizerRef );
     }
 
     /********************************************************************************

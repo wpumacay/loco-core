@@ -8,13 +8,11 @@
 //// #include <adapters/loco_compound_adapter.h>
 //// #include <adapters/loco_kintree_agent_adapter.h>
 //// #include <adapters/loco_terrain_generator_adapter.h>
-//// #include <visualizer/loco_visualizer.h>
+#include <visualizer/loco_visualizer.h>
 
 namespace loco
 {
-
-    //// class TIVisualizer;
-    //// class TKinTreeAgentAdapter;
+    class TIVisualizer;
 
     /// @brief Simulation interface for all backend-specific simulations
     ///
@@ -47,11 +45,17 @@ namespace loco
 
         void Resume();
 
+        void SetVisualizer( TIVisualizer* visualizerRef );
+
         bool running() const { return m_running; }
 
         TScenario* scenario() { return m_scenarioRef; }
 
         const TScenario* scenario() const { return m_scenarioRef; }
+
+        TIVisualizer* visualizer() { return m_visualizerRef; }
+
+        const TIVisualizer* visualizer() const { return m_visualizerRef; }
 
         std::string backendId() const { return m_backendId; }
 
@@ -73,6 +77,8 @@ namespace loco
 
         virtual void _ResetInternal() = 0;
 
+        virtual void _SetVisualizerInternal( TIVisualizer* visualizerRef ) {};
+
     protected :
 
         // Identifier of the backend being used (mujoco|bullet|raisim|dart|...)
@@ -80,6 +86,9 @@ namespace loco
 
         // A reference to the scenario being instantiated (we don't take ownership)
         TScenario* m_scenarioRef;
+
+        // A reference to the visualizer (if available) (we don't take ownership)
+        TIVisualizer* m_visualizerRef;
 
         // Collision adapters of the colliders in the scenario
         std::vector< std::unique_ptr<TICollisionAdapter> > m_collisionAdapters;

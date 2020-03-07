@@ -5,9 +5,13 @@
 #include <visualizer/loco_drawable.h>
 #include <visualizer/loco_visualizer_light.h>
 #include <visualizer/loco_visualizer_camera.h>
+#include <loco_simulation.h>
+
 
 namespace loco
 {
+    class TISimulation;
+
     class TIVisualizer
     {
     public :
@@ -32,6 +36,8 @@ namespace loco
                                 const TVec3& ambient,
                                 const TVec3& diffuse,
                                 const TVec3& specular );
+
+        void SetSimulation( TISimulation* simulationRef );
 
         TVizCamera* GetCurrentCamera();
         TVizLight* GetCurrentLight();
@@ -79,6 +85,10 @@ namespace loco
 
         const TScenario* scenario() const { return m_scenarioRef; }
 
+        TISimulation* simulation() { return m_simulationRef; }
+
+        const TISimulation* simulation() const { return m_simulationRef; }
+
         std::string backendId() const { return m_backendId; }
 
     protected :
@@ -87,6 +97,7 @@ namespace loco
         virtual void _InitializeInternal() = 0;
         virtual void _UpdateInternal() = 0;
         virtual void _ResetInternal() = 0;
+        virtual void _SetSimulationInternal( TISimulation* simulationRef ) {};
 
         virtual void _DrawLineInternal( const TVec3& start, const TVec3& end, const TVec3& color ) = 0;
         virtual void _DrawAABBInternal( const TVec3& aabbMin, const TVec3& aabbMax, const TMat4& aabbWorldTransform, const TVec3& color ) = 0;
@@ -114,6 +125,7 @@ namespace loco
         std::string m_backendId;
 
         TScenario* m_scenarioRef;
+        TISimulation* m_simulationRef;
 
         std::vector< std::unique_ptr< TVizCamera > > m_vizCameras;
         std::vector< std::unique_ptr< TVizLight > > m_vizLights;

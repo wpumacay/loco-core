@@ -139,6 +139,12 @@ namespace loco
             m_simulation = std::unique_ptr<TISimulation>( m_fcnCreateSimulation( scenarioRef ) );
         }
 
+        if ( m_simulation && m_visualizer )
+        {
+            m_simulation->SetVisualizer( m_visualizer.get() );
+            m_visualizer->SetSimulation( m_simulation.get() );
+        }
+
         return m_simulation.get();
     }
 
@@ -167,6 +173,12 @@ namespace loco
             m_visualizer = std::unique_ptr<TIVisualizer>( m_fcnCreateVisualizer( scenarioRef,
                                                                                  windowWidth, windowHeight,
                                                                                  windowResizable, renderOffscreen ) );
+        }
+
+        if ( m_simulation && m_visualizer )
+        {
+            m_simulation->SetVisualizer( m_visualizer.get() );
+            m_visualizer->SetSimulation( m_simulation.get() );
         }
 
         return m_visualizer.get();
