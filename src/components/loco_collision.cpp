@@ -204,18 +204,19 @@ namespace loco
         }
         auto& hfield_data = m_data.hfield_data;
         // sanity check: make sure that both internal and given buffers have same num-elements
-        if( ( hfield_data.nWidthSamples * hfield_data.nDepthSamples ) != heights.size() )
+        const ssize_t num_samples = hfield_data.nWidthSamples * hfield_data.nDepthSamples;
+        if( num_samples != heights.size() )
         {
             LOCO_CORE_WARN( "TCollision::ChangeElevationData >>> given buffer doesn't match expected size of collision shape {0}", m_name );
             LOCO_CORE_WARN( "\tnx-samples    : {0}", hfield_data.nWidthSamples );
             LOCO_CORE_WARN( "\tny-samples    : {0}", hfield_data.nDepthSamples );
-            LOCO_CORE_WARN( "\tinternal-size : {0}", ( hfield_data.nWidthSamples * hfield_data.nDepthSamples ) );
+            LOCO_CORE_WARN( "\tinternal-size : {0}", num_samples );
             LOCO_CORE_WARN( "\tgiven-size    : {0}", heights.size() );
             return;
         }
 
-        // Change the internal elevation data
-        hfield_data.heights = heights;
+        // Change the internal elevation data (memcpy to avoid destroying and creating internal buffer)
+        memcpy( hfield_data.heights.data(), heights.data(), sizeof(float) * num_samples );
 
         // Tell the backend resource to change the elevation data internally
         if ( m_collisionImplRef )
