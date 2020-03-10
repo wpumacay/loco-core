@@ -157,6 +157,8 @@ namespace glviz {
                     renderable = CreateMeshFromData( mesh_data.vertices, mesh_data.faces );
                 else
                     LOCO_CORE_ERROR( "CreateRenderable >>> couldn't create mesh-renderable (no filename, no data)" );
+                if ( renderable )
+                    renderable->scale = { data.size.x(), data.size.y(), data.size.z() };
                 break;
             }
             case loco::eShapeType::HFIELD :

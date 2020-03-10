@@ -3,6 +3,30 @@
 
 std::string PHYSICS_BACKEND = loco::config::physics::NONE;
 
+std::unique_ptr<loco::TSingleBody> create_mesh( const std::string& name,
+                                                const loco::TVec3& scale,
+                                                const std::string& mesh_filepath_collider,
+                                                const std::string& mesh_filepath_visual,
+                                                const loco::TVec3& position,
+                                                const loco::TVec3& euler )
+{
+    auto col_data = loco::TCollisionData();
+    col_data.type = loco::eShapeType::MESH;
+    col_data.size = scale;
+    col_data.mesh_data.filename = mesh_filepath_collider;
+    auto vis_data = loco::TVisualData();
+    vis_data.type = loco::eShapeType::MESH;
+    vis_data.size = scale;
+    vis_data.mesh_data.filename = mesh_filepath_visual;
+    auto body_data = loco::TBodyData();
+    body_data.collision = col_data;
+    body_data.visual = vis_data;
+    body_data.dyntype = loco::eDynamicsType::DYNAMIC;
+
+    auto body_obj = std::make_unique<loco::TSingleBody>( name, body_data, position, tinymath::rotation( euler ) );
+    return std::move( body_obj );
+}
+
 std::unique_ptr<loco::TSingleBody> create_body( const std::string& name,
                                                 const loco::eShapeType& shape,
                                                 const loco::TVec3& size,
@@ -65,6 +89,10 @@ int main( int argc, char* argv[] )
                                           loco::eDynamicsType::DYNAMIC, { 1.0f, 1.0f, 2.0f }, orientation ) );
     scenario->AddSingleBody( create_body( "ellipsoid", loco::eShapeType::ELLIPSOID, { 0.2f, 0.3f, 0.4f },
                                           loco::eDynamicsType::DYNAMIC, { 0.0f, 0.0f, 2.0f }, orientation ) );
+    scenario->AddSingleBody( create_mesh( "monkey", { 0.25, 0.25, 0.25 }, 
+                                          loco::PATH_RESOURCES + "meshes/monkey.stl",
+                                          loco::PATH_RESOURCES + "meshes/monkey.obj",
+                                          { 2.0f, 2.0f, 2.0f }, orientation ) );
 
     auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, loco::config::rendering::GLVIZ_GLFW );
     auto simulation = runtime->CreateSimulation( scenario.get() );
