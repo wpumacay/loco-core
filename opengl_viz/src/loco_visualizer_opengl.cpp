@@ -347,7 +347,7 @@ namespace loco
 ////     {
 //// 
 ////     }
-
+#ifndef LOCO_OPENGL_VISUALIZER_EDITOR
     extern "C" TIVisualizer* visualizer_create( TScenario* scenarioRef,
                                                 size_t windowWidth, size_t windowHeight,
                                                 bool windowResizable, bool renderOffscreen )
@@ -356,4 +356,5 @@ namespace loco
                                       windowWidth, windowHeight,
                                       windowResizable, renderOffscreen );
     }
+#endif /* LOCO_OPENGL_VISUALIZER_EDITOR */
 }

@@ -94,7 +94,7 @@ int main( int argc, char* argv[] )
                                           loco::PATH_RESOURCES + "meshes/monkey.obj",
                                           { 2.0f, 2.0f, 2.0f }, orientation ) );
 
-    auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, loco::config::rendering::GLVIZ_GLFW );
+    auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, loco::config::rendering::GLVIZ_EDITOR );
     auto simulation = runtime->CreateSimulation( scenario.get() );
     auto visualizer = runtime->CreateVisualizer( scenario.get() );
 

@@ -54,8 +54,6 @@ namespace loco
                                     bool windowResizable,
                                     bool renderOffscreen );
 
-    private :
-
         void _CollectSingleBodies();
         //// void _CollectCompounds();
         //// void _CollectKintreeAgents();
@@ -67,8 +65,9 @@ namespace loco
         // Rendering application object
         std::unique_ptr<engine::CApplication> m_glApplication;
     };
-
+#ifndef LOCO_OPENGL_VISUALIZER_EDITOR
     extern "C" TIVisualizer* visualizer_create( TScenario* scenarioRef,
                                                 size_t windowWidth, size_t windowHeight,
                                                 bool windowResizable, bool renderOffscreen );
+#endif /* LOCO_OPENGL_VISUALIZER_EDITOR */
 }

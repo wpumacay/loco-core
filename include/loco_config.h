@@ -22,6 +22,16 @@
     #endif
 #endif
 
+#ifndef LOCO_BACKEND_GRAPHICS_GLVIZ_EDITOR
+    #if defined( _WIN32 )
+        #define LOCO_BACKEND_GRAPHICS_GLVIZ_EDITOR "./libs/liblocoRenderingGlvizEditor.dll"
+    #elif defined( __APPLE__ )
+        #define LOCO_BACKEND_GRAPHICS_GLVIZ_EDITOR "./libs/liblocoRenderingGlvizEditor.dylib"
+    #else
+        #define LOCO_BACKEND_GRAPHICS_GLVIZ_EDITOR "./libs/liblocoRenderingGlvizEditor.so"
+    #endif
+#endif
+
 #ifndef LOCO_BACKEND_PHYSICS_MUJOCO
     #if defined( _WIN32 )
         #define LOCO_BACKEND_PHYSICS_MUJOCO "./libs/liblocoPhysicsMUJOCO.dll"
@@ -70,6 +80,7 @@ namespace config {
         const std::string NONE = "null"; // creates null-obj visualizer (dummy)
         const std::string GLVIZ_GLFW = LOCO_BACKEND_GRAPHICS_GLVIZ_GLFW;
         const std::string GLVIZ_EGL = LOCO_BACKEND_GRAPHICS_GLVIZ_EGL;
+        const std::string GLVIZ_EDITOR = LOCO_BACKEND_GRAPHICS_GLVIZ_EDITOR;
     }
 
     // Add available physics backend in this namespace

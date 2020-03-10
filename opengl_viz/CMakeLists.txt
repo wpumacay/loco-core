@@ -11,7 +11,8 @@ set( LOCO_VISUALIZER_OPENGL_SRCS
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_visualizer_opengl_camera.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_visualizer_opengl_light.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_visualizer_opengl_drawable.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_visualizer_opengl.cpp" )
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_visualizer_opengl.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/editor/loco_visualizer_opengl_editor.cpp" )
 
 if ( LOCO_CORE_BUILD_WINDOWED_VISUALIZER )
     add_library( locoRenderingGlvizGLFW SHARED
@@ -21,6 +22,14 @@ if ( LOCO_CORE_BUILD_WINDOWED_VISUALIZER )
                            loco_core
                            imgui )
     target_compile_definitions( locoRenderingGlvizGLFW PRIVATE LOCO_OPENGL_VISUALIZER_WINDOWED=1 )
+
+    add_library( locoRenderingGlvizEditor SHARED
+                 ${LOCO_VISUALIZER_OPENGL_SRCS} )
+    target_link_libraries( locoRenderingGlvizEditor
+                           tinyrenderer_cpp_lib_glfw
+                           loco_core
+                           imgui )
+    target_compile_definitions( locoRenderingGlvizEditor PRIVATE LOCO_OPENGL_VISUALIZER_WINDOWED=1 LOCO_OPENGL_VISUALIZER_EDITOR=1 )
 endif()
 
 if ( LOCO_CORE_BUILD_HEADLESS_VISUALIZER )
