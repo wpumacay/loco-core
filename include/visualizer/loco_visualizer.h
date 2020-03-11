@@ -6,11 +6,13 @@
 #include <visualizer/loco_visualizer_light.h>
 #include <visualizer/loco_visualizer_camera.h>
 #include <loco_simulation.h>
+#include <loco_runtime.h>
 
 
 namespace loco
 {
     class TISimulation;
+    class TRuntime;
 
     class TIVisualizer
     {
@@ -38,6 +40,7 @@ namespace loco
                                 const TVec3& specular );
 
         void SetSimulation( TISimulation* simulationRef );
+        void SetRuntime( TRuntime* runtimeRef );
 
         TVizCamera* GetCurrentCamera();
         TVizLight* GetCurrentLight();
@@ -98,6 +101,7 @@ namespace loco
         virtual void _UpdateInternal() = 0;
         virtual void _ResetInternal() = 0;
         virtual void _SetSimulationInternal( TISimulation* simulationRef ) {};
+        virtual void _SetRuntimeInternal( TRuntime* runtimeRef ) {};
 
         virtual void _DrawLineInternal( const TVec3& start, const TVec3& end, const TVec3& color ) = 0;
         virtual void _DrawAABBInternal( const TVec3& aabbMin, const TVec3& aabbMax, const TMat4& aabbWorldTransform, const TVec3& color ) = 0;
@@ -126,6 +130,7 @@ namespace loco
 
         TScenario* m_scenarioRef;
         TISimulation* m_simulationRef;
+        TRuntime* m_runtimeRef;
 
         std::vector< std::unique_ptr< TVizCamera > > m_vizCameras;
         std::vector< std::unique_ptr< TVizLight > > m_vizLights;

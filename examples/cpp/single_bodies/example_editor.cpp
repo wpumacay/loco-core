@@ -2,7 +2,7 @@
 #include <loco.h>
 
 std::string PHYSICS_BACKEND = loco::config::physics::NONE;
-std::string RENDERING_BACKEND = loco::config::rendering::GLVIZ_GLFW;
+std::string RENDERING_BACKEND = loco::config::rendering::GLVIZ_EDITOR;
 
 std::unique_ptr<loco::TSingleBody> create_mesh( const std::string& name,
                                                 const loco::TVec3& scale,
@@ -58,21 +58,6 @@ int main( int argc, char* argv[] )
 {
     loco::TLogger::Init();
 
-    if ( argc > 1 )
-    {
-        std::string choice_backend = argv[1];
-        if ( choice_backend == "mujoco" )
-            PHYSICS_BACKEND = loco::config::physics::MUJOCO;
-        else if ( choice_backend == "bullet" )
-            PHYSICS_BACKEND = loco::config::physics::BULLET;
-        else if ( choice_backend == "dart" )
-            PHYSICS_BACKEND = loco::config::physics::DART;
-        else if ( choice_backend == "raisim" )
-            PHYSICS_BACKEND = loco::config::physics::RAISIM;
-        else if ( choice_backend == "none" )
-            PHYSICS_BACKEND = loco::config::physics::NONE;
-    }
-
     LOCO_TRACE( "Physics-Backend: {0}", PHYSICS_BACKEND );
     LOCO_TRACE( "Rendering-Backend: {0}", RENDERING_BACKEND );
 
@@ -99,17 +84,16 @@ int main( int argc, char* argv[] )
                                           { 2.0f, 2.0f, 2.0f }, orientation ) );
 
     auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, RENDERING_BACKEND );
-    auto simulation = runtime->CreateSimulation( scenario.get() );
     auto visualizer = runtime->CreateVisualizer( scenario.get() );
 
     while ( visualizer->IsActive() )
     {
         if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_ESCAPE ) )
             break;
-        else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_R ) )
-            simulation->Reset();
 
-        simulation->Step();
+        if ( auto simulation = runtime->GetCurrentSimulation() )
+            simulation->Step();
+
         visualizer->Update();
     }
 

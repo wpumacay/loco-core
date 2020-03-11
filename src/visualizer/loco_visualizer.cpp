@@ -11,6 +11,7 @@ namespace loco
     {
         m_scenarioRef = scenarioRef;
         m_simulationRef = nullptr;
+        m_runtimeRef = nullptr;
         m_currentCameraIndex = -1;
         m_currentLightIndex = -1;
         m_backendId = "none";
@@ -25,6 +26,7 @@ namespace loco
         m_vizDrawableAdapters.clear();
         m_scenarioRef = nullptr;
         m_simulationRef = nullptr;
+        m_runtimeRef = nullptr;
     }
 
     void TIVisualizer::ChangeScenario( TScenario* scenarioRef )
@@ -105,6 +107,12 @@ namespace loco
     {
         m_simulationRef = simulationRef;
         _SetSimulationInternal( simulationRef );
+    }
+
+    void TIVisualizer::SetRuntime( TRuntime* runtimeRef )
+    {
+        m_runtimeRef = runtimeRef;
+        _SetRuntimeInternal( runtimeRef );
     }
 
     TVizCamera* TIVisualizer::GetCurrentCamera()

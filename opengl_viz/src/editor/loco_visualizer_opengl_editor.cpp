@@ -14,6 +14,7 @@ namespace loco
     {
         m_editorRef = editorRef;
         m_scenarioRef = scenarioRef;
+        m_runtimeRef = nullptr;
         m_glApplicationRef = glApplicationRef;
         m_wantsToCaptureMouse = false;
 
@@ -28,6 +29,13 @@ namespace loco
     {
         m_editorRef = nullptr;
         m_scenarioRef = nullptr;
+        m_runtimeRef = nullptr;
+        m_glApplicationRef = nullptr;
+    }
+
+    void TOpenGLEditorLayer::SetRuntimeRef( TRuntime* runtimeRef )
+    {
+        m_runtimeRef = runtimeRef;
     }
 
     void TOpenGLEditorLayer::update()
@@ -320,6 +328,35 @@ namespace loco
         auto fbo_texture_id = fbo_texture->openglId();
 
         ImGui::Begin( "Scenario" );
+        static int simulation_option = 2;
+        ImGui::RadioButton( "Play##simulation_option", &simulation_option, 0 ); ImGui::SameLine();
+        ImGui::RadioButton( "Pause##simulation_option", &simulation_option, 1 ); ImGui::SameLine();
+        ImGui::RadioButton( "Stop##simulation_option", &simulation_option, 2 );
+        ImGui::Spacing();
+
+        if ( m_runtimeRef )
+        {
+            if ( simulation_option == 2 ) // stop simulation (destroy current simulaton)
+            {
+                LOCO_CORE_TRACE( "option 2 >>> destroy !!!" );
+                m_runtimeRef->DestroySimulation();
+            }
+            else if ( simulation_option == 1 ) // pause current simulation
+            {
+                LOCO_CORE_TRACE( "option 1 >>> pause !!!" );
+                if ( auto simulation = m_runtimeRef->GetCurrentSimulation() )
+                    simulation->Pause();
+            }
+            else if ( simulation_option == 0 )
+            {
+                LOCO_CORE_TRACE( "option 0 >>> play !!!" );
+                if ( auto simulation = m_runtimeRef->GetCurrentSimulation() )
+                    simulation->Resume();
+                else
+                    m_runtimeRef->CreateSimulation( m_scenarioRef );
+            }
+        }
+
         const float curr_window_width = ImGui::GetWindowWidth();
         const float curr_window_height = ImGui::GetWindowHeight();
         const float window_x = ImGui::GetWindowPos().x;
@@ -403,6 +440,11 @@ namespace loco
     TOpenGLEditor::~TOpenGLEditor()
     {
         m_guiEditorLayerRef = nullptr;
+    }
+
+    void TOpenGLEditor::_SetRuntimeInternal( TRuntime* runtimeRef )
+    {
+        m_guiEditorLayerRef->SetRuntimeRef( runtimeRef );
     }
 
 #if defined( LOCO_OPENGL_VISUALIZER_EDITOR )

@@ -16,6 +16,8 @@ namespace loco
 
         ~TOpenGLEditorLayer();
 
+        void SetRuntimeRef( TRuntime* runtimeRef );
+
         void update() override;
 
         void render() override;
@@ -42,6 +44,8 @@ namespace loco
         TScenario* m_scenarioRef;
         // Reference to the editor
         TOpenGLEditor* m_editorRef;
+        // Reference to the runtime
+        TRuntime* m_runtimeRef;
         // Reference to the gl-application (to grab render-target)
         engine::CApplication* m_glApplicationRef;
         // Checks if events are consumed by this layer
@@ -75,6 +79,10 @@ namespace loco
                        bool windowResizable,
                        bool renderOffscreen );
         ~TOpenGLEditor();
+
+    protected :
+
+        void _SetRuntimeInternal( TRuntime* runtimeRef );
 
     private :
 

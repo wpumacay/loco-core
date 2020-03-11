@@ -145,6 +145,7 @@ namespace loco
             m_visualizer->SetSimulation( m_simulation.get() );
         }
 
+        m_simulation->Initialize();
         return m_simulation.get();
     }
 
@@ -181,6 +182,10 @@ namespace loco
             m_visualizer->SetSimulation( m_simulation.get() );
         }
 
+        scenarioRef->PreStep();
+        scenarioRef->PostStep();
+        m_visualizer->SetRuntime( this );
+        m_visualizer->Initialize();
         return m_visualizer.get();
     }
 

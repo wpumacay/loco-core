@@ -10,6 +10,14 @@
 
 namespace loco
 {
+    class TISimulation;
+    class TIVisualizer;
+
+    typedef TISimulation* FcnCreateSim( TScenario* scenarioRef );
+    typedef TIVisualizer* FcnCreateViz( TScenario* scenarioRef,
+                                        size_t windowWidth, size_t windowHeight,
+                                        bool windowResizable, bool renderOffscreen );
+
     class TRuntime
     {
 
