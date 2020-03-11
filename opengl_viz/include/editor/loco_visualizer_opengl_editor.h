@@ -25,9 +25,11 @@ namespace loco
 
         void _WindowObjects();
 
-        void _WindowScenarioView();
-
         void _WindowInspector();
+        void _WindowInspectorSingleBody( TSingleBody* single_body_ref );
+        //// void _WindowInspectorCompound( TCompound* compound_ref );
+        //// void _WindowInspectorKinematicTree( TKinematicTree* kinematic_tree_ref );
+        //// void _WindowInspectorTerrainGenerator( TTerrainGenerator* terrain_generator_ref );
 
         void _WindowTools();
 
@@ -39,6 +41,23 @@ namespace loco
         TOpenGLEditor* m_editorRef;
         // Checks if events are consumed by this layer
         bool m_wantsToCaptureMouse;
+        // Selection State
+        enum class eSelectionType : uint8_t
+        {
+            NONE = 0,
+            SINGLE_BODY,
+            COMPOUND,
+            KINEMATIC_TREE,
+            TERRAIN_GENERATOR
+        };
+        struct TEditorSelectionState
+        {
+            eSelectionType selection_type;
+            std::string name_single_body;
+            std::string name_compound;
+            std::string name_kinematic_tree;
+            std::string name_terrain_generator;
+        } m_selectionState;
     };
 
     class TOpenGLEditor : public TOpenGLVisualizer
