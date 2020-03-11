@@ -11,7 +11,8 @@ namespace loco
     public :
 
         TOpenGLEditorLayer( TOpenGLEditor* editorRef,
-                            TScenario* scenarioRef );
+                            TScenario* scenarioRef,
+                            engine::CApplication* glApplicationRef );
 
         ~TOpenGLEditorLayer();
 
@@ -31,6 +32,8 @@ namespace loco
         //// void _WindowInspectorKinematicTree( TKinematicTree* kinematic_tree_ref );
         //// void _WindowInspectorTerrainGenerator( TTerrainGenerator* terrain_generator_ref );
 
+        void _WindowScenario();
+
         void _WindowTools();
 
     private :
@@ -39,6 +42,8 @@ namespace loco
         TScenario* m_scenarioRef;
         // Reference to the editor
         TOpenGLEditor* m_editorRef;
+        // Reference to the gl-application (to grab render-target)
+        engine::CApplication* m_glApplicationRef;
         // Checks if events are consumed by this layer
         bool m_wantsToCaptureMouse;
         // Selection State

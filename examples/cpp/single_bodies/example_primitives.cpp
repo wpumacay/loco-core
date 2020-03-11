@@ -2,6 +2,7 @@
 #include <loco.h>
 
 std::string PHYSICS_BACKEND = loco::config::physics::NONE;
+std::string RENDERING_BACKEND = loco::config::rendering::GLVIZ_GLFW;
 
 std::unique_ptr<loco::TSingleBody> create_mesh( const std::string& name,
                                                 const loco::TVec3& scale,
@@ -68,9 +69,22 @@ int main( int argc, char* argv[] )
             PHYSICS_BACKEND = loco::config::physics::DART;
         else if ( choice_backend == "raisim" )
             PHYSICS_BACKEND = loco::config::physics::RAISIM;
+        else if ( choice_backend == "none" )
+            PHYSICS_BACKEND = loco::config::physics::NONE;
+    }
+    if ( argc > 2 )
+    {
+        std::string choice_backend = argv[2];
+        if ( choice_backend == "glfw" )
+            RENDERING_BACKEND = loco::config::rendering::GLVIZ_GLFW;
+        else if ( choice_backend == "editor" )
+            RENDERING_BACKEND = loco::config::rendering::GLVIZ_EDITOR;
+        else if ( choice_backend == "none" )
+            RENDERING_BACKEND = loco::config::rendering::NONE;
     }
 
-    LOCO_TRACE( "Backend: {0}", PHYSICS_BACKEND );
+    LOCO_TRACE( "Physics-Backend: {0}", PHYSICS_BACKEND );
+    LOCO_TRACE( "Rendering-Backend: {0}", RENDERING_BACKEND );
 
     const loco::TVec3 orientation = { loco::PI / 3, loco::PI / 4, loco::PI / 6 };
     //// const loco::TVec3 orientation = { loco::PI / 2, 0.0f, 0.0f };
@@ -94,7 +108,7 @@ int main( int argc, char* argv[] )
                                           loco::PATH_RESOURCES + "meshes/monkey.obj",
                                           { 2.0f, 2.0f, 2.0f }, orientation ) );
 
-    auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, loco::config::rendering::GLVIZ_EDITOR );
+    auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, RENDERING_BACKEND );
     auto simulation = runtime->CreateSimulation( scenario.get() );
     auto visualizer = runtime->CreateVisualizer( scenario.get() );
 

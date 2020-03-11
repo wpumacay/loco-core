@@ -3,12 +3,18 @@
 
 namespace loco
 {
+    /***********************************************************************************************
+    *                                     Editor-GUI Impl.                                         *
+    ***********************************************************************************************/
+
     TOpenGLEditorLayer::TOpenGLEditorLayer( TOpenGLEditor* editorRef,
-                                            TScenario* scenarioRef )
+                                            TScenario* scenarioRef,
+                                            engine::CApplication* glApplicationRef )
         : engine::CImGuiLayer( "editor_layer" )
     {
         m_editorRef = editorRef;
         m_scenarioRef = scenarioRef;
+        m_glApplicationRef = glApplicationRef;
         m_wantsToCaptureMouse = false;
 
         m_selectionState.selection_type = eSelectionType::NONE;
@@ -34,6 +40,7 @@ namespace loco
         m_wantsToCaptureMouse = false;
 
         _WindowObjects();
+        _WindowScenario();
         _WindowInspector();
         _WindowTools();
 
@@ -304,7 +311,67 @@ namespace loco
                     }
                 }
             }
+        }
+    }
 
+    void TOpenGLEditorLayer::_WindowScenario()
+    {
+        auto fbo_texture = m_glApplicationRef->renderTarget()->getTextureAttachment( "color_attachment" );
+        auto fbo_texture_id = fbo_texture->openglId();
+
+        ImGui::Begin( "Scenario" );
+        const float curr_window_width = ImGui::GetWindowWidth();
+        const float curr_window_height = ImGui::GetWindowHeight();
+        const float window_x = ImGui::GetWindowPos().x;
+        const float window_y = ImGui::GetWindowPos().y;
+        const bool is_window_focused = ImGui::IsWindowFocused();
+        ImGui::Image( (void*)(intptr_t)fbo_texture_id,
+                      { curr_window_width, curr_window_height }, { 0.0f, 1.0f }, { 1.0f, 0.0f } );
+        ImGui::End();
+
+        static float last_width = curr_window_width;
+        static float last_height = curr_window_height;
+        const bool is_resizing = std::abs( last_width - curr_window_width ) > 0.0f ||
+                                 std::abs( last_height - curr_window_height ) > 0.0f;
+        if ( is_resizing )
+        {
+            m_glApplicationRef->scene()->Resize( curr_window_width, curr_window_height );
+            m_glApplicationRef->renderOptions().viewportWidth = curr_window_width;
+            m_glApplicationRef->renderOptions().viewportHeight = curr_window_height;
+            m_glApplicationRef->renderTarget()->resize( curr_window_width, curr_window_height );
+        }
+        last_width = curr_window_width;
+        last_height = curr_window_height;
+
+        const float cursor_x = ImGui::GetMousePos().x;
+        const float cursor_y = ImGui::GetMousePos().y;
+        const float dx = cursor_x - window_x;
+        const float dy = cursor_y - window_y;
+        const bool inside_window = ( dx > 0 && dx < curr_window_width ) && ( dy > 0 && dy < curr_window_height );
+        if ( !is_resizing && is_window_focused )
+        {
+
+            if ( inside_window && ImGui::IsMouseDown( 0 ) )
+            {
+                engine::CInputManager::Callback_mouse( engine::Mouse::BUTTON_LEFT, engine::MouseAction::BUTTON_PRESSED, dx, dy );
+            }
+            else if ( inside_window && ImGui::IsMouseDown( 1 ) )
+            {
+                engine::CInputManager::Callback_mouse( engine::Mouse::BUTTON_RIGHT, engine::MouseAction::BUTTON_PRESSED, dx, dy );
+            }
+            else
+            {
+                engine::CInputManager::Callback_mouse( engine::Mouse::BUTTON_LEFT, engine::MouseAction::BUTTON_RELEASED, dx, dy );
+                engine::CInputManager::Callback_mouse( engine::Mouse::BUTTON_RIGHT, engine::MouseAction::BUTTON_RELEASED, dx, dy );
+            }
+
+            if ( inside_window )
+                engine::CInputManager::Callback_mouseMove( dx, dy );
+        }
+        else
+        {
+                engine::CInputManager::Callback_mouse( engine::Mouse::BUTTON_LEFT, engine::MouseAction::BUTTON_RELEASED, dx, dy );
+                engine::CInputManager::Callback_mouse( engine::Mouse::BUTTON_RIGHT, engine::MouseAction::BUTTON_RELEASED, dx, dy );
         }
     }
 
@@ -315,6 +382,10 @@ namespace loco
         ImGui::End();
     }
 
+    /***********************************************************************************************
+    *                                       Editor Impl.                                           *
+    ***********************************************************************************************/
+
     TOpenGLEditor::TOpenGLEditor( TScenario* scenarioRef,
                                   size_t windowWidth,
                                   size_t windowHeight,
@@ -322,7 +393,10 @@ namespace loco
                                   bool renderOffscreen )
         : TOpenGLVisualizer( scenarioRef, windowWidth, windowHeight, windowResizable, renderOffscreen )
     {
-        auto editor_gui_layer = std::make_unique<TOpenGLEditorLayer>( this, m_scenarioRef );
+        // Render offscreen and show target on view-window
+        m_glApplication->setOffscreenRendering( true );
+
+        auto editor_gui_layer = std::make_unique<TOpenGLEditorLayer>( this, m_scenarioRef, m_glApplication.get() );
         m_guiEditorLayerRef = dynamic_cast<TOpenGLEditorLayer*>( m_glApplication->addGuiLayer( std::move( editor_gui_layer ) ) );
     }
 

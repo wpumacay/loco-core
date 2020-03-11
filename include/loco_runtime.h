@@ -27,8 +27,8 @@ namespace loco
         TISimulation* CreateSimulation( TScenario* scenarioRef );
 
         TIVisualizer* CreateVisualizer( TScenario* scenarioRef,
-                                        size_t windowWidth = 1024,
-                                        size_t windowHeight = 768,
+                                        size_t windowWidth = 1280,
+                                        size_t windowHeight = 800,
                                         bool windowResizable = true,
                                         bool renderOffscreen = false );
 
