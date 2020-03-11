@@ -203,6 +203,13 @@ namespace loco
             // scale according to height
             m_scale.z() = m_size.y() / m_size0.y();
         }
+        else if ( m_type == eShapeType::ELLIPSOID )
+        {
+            // scale every dimension
+            m_scale.x() = m_size.x() / m_size0.x();
+            m_scale.y() = m_size.y() / m_size0.y();
+            m_scale.z() = m_size.z() / m_size0.z();
+        }
         else if ( m_type == eShapeType::MESH )
         {
             // scale every dimension

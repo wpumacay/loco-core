@@ -128,26 +128,6 @@ namespace loco
 
     void TVisual::ChangeSize( const TVec3& newSize )
     {
-        if ( m_data.type == eShapeType::MESH )
-        {
-            LOCO_CORE_WARN( "TVisual::ChangeSize >>> for collision shape {0} of type mesh, changing \
-                             mesh sizes at runtime is not supported, as it requires recomputing the \
-                             vertex positions for this new size in various backend in some specific \
-                             way. Please set the initial scale of the mesh first, which does the \
-                             job during construction.", m_name );
-            return;
-        }
-
-        if ( m_data.type == eShapeType::HFIELD )
-        {
-            LOCO_CORE_WARN( "TVisual::ChangeSize >>> for collision shape {0} of type hfield, changing \
-                             hfield sizes at runtime is not supported (yet), as it requires recomputing \
-                             the elevation data every time. For now, set the size properties of the hfield \
-                             first (which will do the job, during construction), or use ChangeElevationData \
-                             instead to replace the internal data for a new buffer", m_name );
-            return;
-        }
-
         // Change the visual-data size property
         m_data.size = newSize;
 

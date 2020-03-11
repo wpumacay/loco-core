@@ -128,28 +128,184 @@ namespace loco
 
     void TOpenGLEditorLayer::_WindowInspectorSingleBody( TSingleBody* single_body_ref )
     {
-        if ( !ImGui::CollapsingHeader( "Transform" ) )
-            return;
+        if ( ImGui::CollapsingHeader( "Transform" ) )
+        {
+            // Transform.Position
+            ImGui::Text( "Position" );
+            auto position = single_body_ref->pos();
+            const float change_rate_position = 0.01f;
+            ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "x##position", &position.x(), change_rate_position ); ImGui::SameLine();
+            ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "y##position", &position.y(), change_rate_position ); ImGui::SameLine();
+            ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "z##position", &position.z(), change_rate_position );
+            single_body_ref->SetPosition( position );
+            // Transform.Euler
+            ImGui::Text( "Euler" );
+            auto euler = single_body_ref->euler();
+            const float change_rate_euler = 0.01f;
+            const float min_ex = -loco::PI + 1e-2,       max_ex = loco::PI - 1e-2;
+            const float min_ey = -loco::PI / 2.0 + 1e-2, max_ey = loco::PI / 2.0 - 1e-2;
+            const float min_ez = -loco::PI + 1e-2,       max_ez = loco::PI - 1e-2;
+            ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "x##euler", &euler.x(), change_rate_euler, min_ex, max_ex ); ImGui::SameLine();
+            ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "y##euler", &euler.y(), change_rate_euler, min_ey, max_ey ); ImGui::SameLine();
+            ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "z##euler", &euler.z(), change_rate_euler, min_ez, max_ez );
+            single_body_ref->SetEuler( euler );
+        }
 
-        // Transform.Position
-        ImGui::Text( "Position" );
-        auto position = single_body_ref->pos();
-        const float change_rate_position = 0.01f;
-        ImGui::SetNextItemWidth( 100 ); ImGui::DragFloat( "x", &position.x(), change_rate_position ); ImGui::SameLine();
-        ImGui::SetNextItemWidth( 100 ); ImGui::DragFloat( "y", &position.y(), change_rate_position ); ImGui::SameLine();
-        ImGui::SetNextItemWidth( 100 ); ImGui::DragFloat( "z", &position.z(), change_rate_position );
-        single_body_ref->SetPosition( position );
-        // Transform.Euler
-        ImGui::Text( "Euler" );
-        auto euler = single_body_ref->euler();
-        const float change_rate_euler = 0.01f;
-        const float min_ex = -loco::PI + 1e-2,       max_ex = loco::PI - 1e-2;
-        const float min_ey = -loco::PI / 2.0 + 1e-2, max_ey = loco::PI / 2.0 - 1e-2;
-        const float min_ez = -loco::PI + 1e-2,       max_ez = loco::PI - 1e-2;
-        ImGui::SetNextItemWidth( 100 ); ImGui::DragFloat( "e.x", &euler.x(), change_rate_euler, min_ex, max_ex ); ImGui::SameLine();
-        ImGui::SetNextItemWidth( 100 ); ImGui::DragFloat( "e.y", &euler.y(), change_rate_euler, min_ey, max_ey ); ImGui::SameLine();
-        ImGui::SetNextItemWidth( 100 ); ImGui::DragFloat( "e.z", &euler.z(), change_rate_euler, min_ez, max_ez );
-        single_body_ref->SetEuler( euler );
+        if ( ImGui::CollapsingHeader( "Shape" ) )
+        {
+            auto collider = single_body_ref->collision();
+            auto visual = single_body_ref->visual();
+            if ( collider && visual )
+            {
+                const bool have_same_shape = ( collider->shape() == visual->shape() );
+
+                static bool lock_visual_to_collider = have_same_shape;
+                if ( have_same_shape )
+                    ImGui::Checkbox( "Lock visual-to-collider size", &lock_visual_to_collider );
+                const float change_rate_size = 0.01f;
+                const float min_size = 1e-2f;
+                const float max_size = 1e2f;
+
+                ImGui::Text( "Collider: %s", ToString( collider->shape() ).c_str() );
+                auto collider_size = collider->size();
+                switch ( collider->shape() )
+                {
+                    case eShapeType::PLANE :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Width##C.Plane", &collider_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Depth##C.Plane", &collider_size.y(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                    case eShapeType::BOX :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Width##C.Box", &collider_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Depth##C.Box", &collider_size.y(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Height##C.Box", &collider_size.z(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                    case eShapeType::SPHERE :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Radius##C.Sph", &collider_size.x(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                    case eShapeType::CYLINDER :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Radius##C.Cyl", &collider_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Height##C.Cyl", &collider_size.y(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                    case eShapeType::CAPSULE :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Radius##C.Cap", &collider_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Height##C.Cap", &collider_size.y(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                    case eShapeType::ELLIPSOID :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Rad-x##C.Ell", &collider_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Rad-y##C.Ell", &collider_size.y(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Rad-z##C.Ell", &collider_size.z(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                    case eShapeType::MESH :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-x##C.Mesh", &collider_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-y##C.Mesh", &collider_size.y(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-z##C.Mesh", &collider_size.z(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                    case eShapeType::HFIELD :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Width##C.Hfield", &collider_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Depth##C.Hfield", &collider_size.y(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-height##C.Hfield", &collider_size.z(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                }
+                const bool change_collider_size = !tinymath::allclose( collider_size, collider->size(), 1e-4f );
+
+                ImGui::Text( "Visual: %s", ToString( visual->shape() ).c_str() );
+                auto visual_size = visual->size();
+                switch ( visual->shape() )
+                {
+                    case eShapeType::PLANE :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Width##V.Plane", &visual_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Depth##V.Plane", &visual_size.y(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                    case eShapeType::BOX :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Width##V.Box", &visual_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Depth##V.Box", &visual_size.y(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Height##V.Box", &visual_size.z(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                    case eShapeType::SPHERE :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Radius##V.Sph", &visual_size.x(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                    case eShapeType::CYLINDER :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Radius##V.Cyl", &visual_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Height##V.Cyl", &visual_size.y(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                    case eShapeType::CAPSULE :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Radius##V.Cap", &visual_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Height##V.Cap", &visual_size.y(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                    case eShapeType::ELLIPSOID :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Rad-x##V.Ell", &visual_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Rad-y##V.Ell", &visual_size.y(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Rad-z##V.Ell", &visual_size.z(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                    case eShapeType::MESH :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-x##V.Mesh", &visual_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-y##V.Mesh", &visual_size.y(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-z##V.Mesh", &visual_size.z(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                    case eShapeType::HFIELD :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Width##V.Hfield", &visual_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Depth##V.Hfield", &visual_size.y(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-height##V.Hfield", &visual_size.z(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                }
+                const bool change_visual_size = !tinymath::allclose( visual_size, visual->size(), 1e-4f );
+
+                if ( !lock_visual_to_collider )
+                {
+                    if ( change_collider_size )
+                        collider->ChangeSize( collider_size );
+                    if ( change_visual_size )
+                        visual->ChangeSize( visual_size );
+                }
+                else
+                {
+                    // User couldn't have changed both at the same time
+                    if ( change_collider_size )
+                    {
+                        collider->ChangeSize( collider_size );
+                        visual->ChangeSize( collider_size );
+                    }
+                    else if ( change_visual_size )
+                    {
+                        collider->ChangeSize( visual_size );
+                        visual->ChangeSize( visual_size );
+                    }
+                }
+            }
+
+        }
     }
 
     void TOpenGLEditorLayer::_WindowTools()
