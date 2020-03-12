@@ -249,7 +249,7 @@ namespace loco
         m_glRenderableRef->setWireframe( wireframe );
     }
 
-    void TOpenGLDrawableAdapter::Detach()
+    void TOpenGLDrawableAdapter::OnDetach()
     {
         m_awaitingDeletion = true;
 

@@ -99,6 +99,14 @@ namespace loco
         // Nothing extra to reset (for now)
     }
 
+    void TVisual::Detach()
+    {
+////         if ( m_drawableImplRef )
+////             m_drawableImplRef->OnDetach();
+//// 
+////         m_drawableImplRef = nullptr;
+    }
+
     void TVisual::SetLocalPosition( const TVec3& localPosition )
     {
         m_localTf.set( localPosition, 3 );

@@ -36,7 +36,7 @@ namespace loco
 
         void SetWireframe( bool wireframe ) override;
 
-        void Detach() override;
+        void OnDetach() override;
 
     private :
 

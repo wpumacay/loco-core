@@ -40,6 +40,8 @@ namespace loco
 
         void Reset();
 
+        void Detach();
+
         void SetLocalPosition( const TVec3& localPosition );
 
         void SetLocalRotation( const TMat3& localRotation );

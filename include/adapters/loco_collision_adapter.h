@@ -26,7 +26,7 @@ namespace loco
         virtual void Reset() = 0;
 
         // @todo: required for backend to handle dynamic deletion (when detached from a TCollision)
-        virtual void Detach() {}
+        virtual void OnDetach() {}
 
         virtual void SetLocalPosition( const TVec3& position ) = 0;
 

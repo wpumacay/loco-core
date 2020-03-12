@@ -92,9 +92,12 @@ namespace loco
         {
             // Reset the low-level resources through the adapter
             m_bodyImplRef->Reset();
-
             // Grab the world position|rotation information as well
             m_bodyImplRef->GetTransform( m_tf );
+        }
+        else
+        {
+            m_tf = m_tf0;
         }
 
         if ( m_collision )
@@ -108,6 +111,11 @@ namespace loco
             m_visual->Reset();
             m_visual->PostStep();
         }
+    }
+
+    void TSingleBody::_DetachInternal()
+    {
+        // Nothing extra to detach from
     }
 
     void TSingleBody::_SetPositionInternal( const TVec3& position )
@@ -182,6 +190,48 @@ namespace loco
             m_visual->PostStep();
     }
 
+    void TSingleBody::_SetInitialPositionInternal( const TVec3& position )
+    {
+        m_tf0.set( position, 3 );
+
+        if ( m_bodyImplRef )
+            m_bodyImplRef->SetInitialPosition( position );
+    }
+
+    void TSingleBody::_SetInitialRotationInternal( const TMat3& rotation )
+    {
+        m_tf0.set( rotation );
+
+        if ( m_bodyImplRef )
+            m_bodyImplRef->SetInitialRotation( rotation );
+    }
+
+    void TSingleBody::_SetInitialEulerInternal( const TVec3& euler )
+    {
+        auto rotation = tinymath::rotation( euler );
+        m_tf0.set( rotation );
+
+        if ( m_bodyImplRef )
+            m_bodyImplRef->SetInitialRotation( rotation );
+    }
+
+    void TSingleBody::_SetInitialQuaternionInternal( const TVec4& quat )
+    {
+        auto rotation = tinymath::rotation( quat );
+        m_tf0.set( rotation );
+
+        if ( m_bodyImplRef )
+            m_bodyImplRef->SetInitialRotation( rotation );
+    }
+
+    void TSingleBody::_SetInitialTransformInternal( const TMat4& transform )
+    {
+        m_tf0 = transform;
+
+        if ( m_bodyImplRef )
+            m_bodyImplRef->SetTransform( m_tf0 );
+    }
+
     void TSingleBody::_SetLocalPositionInternal( const TVec3& localPosition )
     {
         // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
@@ -203,6 +253,31 @@ namespace loco
     }
 
     void TSingleBody::_SetLocalTransformInternal( const TMat4& localTransform )
+    {
+        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
+    }
+
+    void TSingleBody::_SetInitialLocalPositionInternal( const TVec3& localPosition )
+    {
+        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
+    }
+
+    void TSingleBody::_SetInitialLocalRotationInternal( const TMat3& localRotation )
+    {
+        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
+    }
+
+    void TSingleBody::_SetInitialLocalEulerInternal( const TVec3& localEuler )
+    {
+        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
+    }
+
+    void TSingleBody::_SetInitialLocalQuaternionInternal( const TVec4& localQuat )
+    {
+        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
+    }
+
+    void TSingleBody::_SetInitialLocalTransformInternal( const TMat4& localTransform )
     {
         // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
     }

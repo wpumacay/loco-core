@@ -143,6 +143,9 @@ namespace loco
 
     void TOpenGLEditorLayer::_WindowInspectorSingleBody( TSingleBody* single_body_ref )
     {
+        if ( m_runtimeRef->GetCurrentSimulation() )
+            return;
+
         if ( ImGui::CollapsingHeader( "Transform" ) )
         {
             // Transform.Position
@@ -153,6 +156,7 @@ namespace loco
             ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "y##position", &position.y(), change_rate_position ); ImGui::SameLine();
             ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "z##position", &position.z(), change_rate_position );
             single_body_ref->SetPosition( position );
+            single_body_ref->SetInitialPosition( position );
             // Transform.Euler
             ImGui::Text( "Euler" );
             auto euler = single_body_ref->euler();
@@ -164,6 +168,7 @@ namespace loco
             ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "y##euler", &euler.y(), change_rate_euler, min_ey, max_ey ); ImGui::SameLine();
             ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "z##euler", &euler.z(), change_rate_euler, min_ez, max_ez );
             single_body_ref->SetEuler( euler );
+            single_body_ref->SetInitialEuler( euler );
         }
 
         if ( ImGui::CollapsingHeader( "Shape" ) )
@@ -328,32 +333,35 @@ namespace loco
         auto fbo_texture_id = fbo_texture->openglId();
 
         ImGui::Begin( "Scenario" );
-        static int simulation_option = 2;
-        ImGui::RadioButton( "Play##simulation_option", &simulation_option, 0 ); ImGui::SameLine();
-        ImGui::RadioButton( "Pause##simulation_option", &simulation_option, 1 ); ImGui::SameLine();
-        ImGui::RadioButton( "Stop##simulation_option", &simulation_option, 2 );
+        const bool option_play = ImGui::Button( "Play##simulation" ); ImGui::SameLine();
+        const bool option_pause = ImGui::Button( "Pause##simulation" ); ImGui::SameLine();
+        const bool option_stop = ImGui::Button( "Stop##simulation" );
         ImGui::Spacing();
 
         if ( m_runtimeRef )
         {
-            if ( simulation_option == 2 ) // stop simulation (destroy current simulaton)
+            if ( option_stop ) // stop simulation (destroy current simulaton)
             {
-                LOCO_CORE_TRACE( "option 2 >>> destroy !!!" );
+                m_scenarioRef->Detach();
+                m_scenarioRef->Reset();
                 m_runtimeRef->DestroySimulation();
             }
-            else if ( simulation_option == 1 ) // pause current simulation
+            else if ( option_pause ) // pause current simulation
             {
-                LOCO_CORE_TRACE( "option 1 >>> pause !!!" );
                 if ( auto simulation = m_runtimeRef->GetCurrentSimulation() )
                     simulation->Pause();
             }
-            else if ( simulation_option == 0 )
+            else if ( option_play )
             {
-                LOCO_CORE_TRACE( "option 0 >>> play !!!" );
                 if ( auto simulation = m_runtimeRef->GetCurrentSimulation() )
+                {
                     simulation->Resume();
+                }
                 else
+                {
+                    m_scenarioRef->Reset();
                     m_runtimeRef->CreateSimulation( m_scenarioRef );
+                }
             }
         }
 

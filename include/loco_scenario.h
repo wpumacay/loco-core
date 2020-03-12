@@ -19,6 +19,7 @@ namespace loco
         void PreStep();
         void PostStep();
         void Reset();
+        void Detach();
 
         TSingleBody* AddSingleBody( std::unique_ptr< TSingleBody > body );
         //// TCompound* AddCompound( std::unique_ptr< TCompound > compound );

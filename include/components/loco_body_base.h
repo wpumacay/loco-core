@@ -55,6 +55,8 @@ namespace loco
 
         void Reset();
 
+        void Detach();
+
         //------------------------------------------------------------------------------------------
         // World-space setters: use these to set the world-space pose of the body in 
         // question. Implementation varies among body types in the following way:
@@ -74,6 +76,16 @@ namespace loco
 
         void SetTransform( const TMat4& transform );
 
+        void SetInitialPosition( const TVec3& position );
+
+        void SetInitialRotation( const TMat3& rotation );
+
+        void SetInitialEuler( const TVec3& euler );
+
+        void SetInitialQuaternion( const TVec4& quat );
+
+        void SetInitialTransform( const TMat4& transform );
+
         //------------------------------------------------------------------------------------------
         // Local-space setters: use these to set the relative pose of the body in question 
         // w.r.t. a parent body. Implementation varies among body types in the following way:
@@ -92,6 +104,16 @@ namespace loco
         void SetLocalQuaternion( const TVec4& localQuat );
 
         void SetLocalTransform( const TMat4& localTransform );
+
+        void SetInitialLocalPosition( const TVec3& localPosition );
+
+        void SetInitialLocalRotation( const TMat3& localRotation );
+
+        void SetInitialLocalEuler( const TVec3& localEuler );
+
+        void SetInitialLocalQuaternion( const TVec4& localQuat );
+
+        void SetInitialLocalTransform( const TMat4& localTransform );
 
         //------------------------------------------------------------------------------------------
         //                                 World-space getters
@@ -175,6 +197,8 @@ namespace loco
 
         virtual void _ResetInternal() = 0;
 
+        virtual void _DetachInternal() = 0;
+
         virtual void _SetPositionInternal( const TVec3& position ) = 0;
 
         virtual void _SetRotationInternal( const TMat3& rotation ) = 0;
@@ -185,6 +209,16 @@ namespace loco
 
         virtual void _SetTransformInternal( const TMat4& transform ) = 0;
 
+        virtual void _SetInitialPositionInternal( const TVec3& position ) = 0;
+
+        virtual void _SetInitialRotationInternal( const TMat3& rotation ) = 0;
+
+        virtual void _SetInitialEulerInternal( const TVec3& euler ) = 0;
+
+        virtual void _SetInitialQuaternionInternal( const TVec4& quat ) = 0;
+
+        virtual void _SetInitialTransformInternal( const TMat4& transform ) = 0;
+
         virtual void _SetLocalPositionInternal( const TVec3& localPosition ) = 0;
 
         virtual void _SetLocalRotationInternal( const TMat3& localRotation ) = 0;
@@ -194,6 +228,16 @@ namespace loco
         virtual void _SetLocalQuaternionInternal( const TVec4& localQuat ) = 0;
 
         virtual void _SetLocalTransformInternal( const TMat4& localTransform ) = 0;
+
+        virtual void _SetInitialLocalPositionInternal( const TVec3& localPosition ) = 0;
+
+        virtual void _SetInitialLocalRotationInternal( const TMat3& localRotation ) = 0;
+
+        virtual void _SetInitialLocalEulerInternal( const TVec3& localEuler ) = 0;
+
+        virtual void _SetInitialLocalQuaternionInternal( const TVec4& localQuat ) = 0;
+
+        virtual void _SetInitialLocalTransformInternal( const TMat4& localTransform ) = 0;
 
     protected :
 

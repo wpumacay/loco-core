@@ -30,7 +30,7 @@ namespace loco
         virtual void Resume() { m_active = true; };
 
         // @todo: required for backend to handle dynamic deletion (when detached from a TIBody)
-        virtual void Detach() {}
+        virtual void OnDetach() {}
 
         /************************************************************
         *                 World-space functionality                 *
@@ -48,6 +48,12 @@ namespace loco
 
         virtual void GetTransform( TMat4& dstTransform ) = 0;
 
+        virtual void SetInitialPosition( const TVec3& position ) = 0;
+
+        virtual void SetInitialRotation( const TMat3& rotation ) = 0;
+
+        virtual void SetInitialTransform( const TMat4& transform ) = 0;
+
         /***********************************************************
         *                 Local-space functionality                *
         ***********************************************************/
@@ -63,6 +69,12 @@ namespace loco
         virtual void GetLocalRotation( TMat3& dstRotation ) = 0;
 
         virtual void GetLocalTransform( TMat4& dstTransform ) = 0;
+
+        virtual void SetInitialLocalPosition( const TVec3& position ) = 0;
+
+        virtual void SetInitialLocalRotation( const TMat3& rotation ) = 0;
+
+        virtual void SetInitialLocalTransform( const TMat4& transform ) = 0;
 
         bool active() const { return m_active; }
 

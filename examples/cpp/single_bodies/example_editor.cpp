@@ -58,6 +58,21 @@ int main( int argc, char* argv[] )
 {
     loco::TLogger::Init();
 
+    if ( argc > 1 )
+    {
+        std::string choice_backend = argv[1];
+        if ( choice_backend == "mujoco" )
+            PHYSICS_BACKEND = loco::config::physics::MUJOCO;
+        else if ( choice_backend == "bullet" )
+            PHYSICS_BACKEND = loco::config::physics::BULLET;
+        else if ( choice_backend == "dart" )
+            PHYSICS_BACKEND = loco::config::physics::DART;
+        else if ( choice_backend == "raisim" )
+            PHYSICS_BACKEND = loco::config::physics::RAISIM;
+        else if ( choice_backend == "none" )
+            PHYSICS_BACKEND = loco::config::physics::NONE;
+    }
+
     LOCO_TRACE( "Physics-Backend: {0}", PHYSICS_BACKEND );
     LOCO_TRACE( "Rendering-Backend: {0}", RENDERING_BACKEND );
 

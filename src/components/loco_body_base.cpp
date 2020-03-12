@@ -70,6 +70,21 @@ namespace loco
         _ResetInternal();
     }
 
+    void TIBody::Detach()
+    {
+        if ( m_bodyImplRef )
+            m_bodyImplRef->OnDetach();
+
+        m_bodyImplRef = nullptr;
+
+        if ( m_collision )
+            m_collision->Detach();
+        if ( m_visual )
+            m_visual->Detach();
+
+        _DetachInternal();
+    }
+
     ////////////////////////////////////////////////////////////
     //                   World-space setters                  //
     ////////////////////////////////////////////////////////////
@@ -99,6 +114,31 @@ namespace loco
         _SetTransformInternal( transform );
     }
 
+    void TIBody::SetInitialPosition( const TVec3& position )
+    {
+        _SetInitialPositionInternal( position );
+    }
+
+    void TIBody::SetInitialRotation( const TMat3& rotation )
+    {
+        _SetInitialRotationInternal( rotation );
+    }
+
+    void TIBody::SetInitialEuler( const TVec3& euler )
+    {
+        _SetInitialEulerInternal( euler );
+    }
+
+    void TIBody::SetInitialQuaternion( const TVec4& quat )
+    {
+        _SetInitialQuaternionInternal( quat );
+    }
+
+    void TIBody::SetInitialTransform( const TMat4& transform )
+    {
+        _SetInitialTransformInternal( transform );
+    }
+
     ////////////////////////////////////////////////////////////
     //                   Local-space setters                  //
     ////////////////////////////////////////////////////////////
@@ -126,5 +166,30 @@ namespace loco
     void TIBody::SetLocalTransform( const TMat4& localTransform )
     {
         _SetLocalTransformInternal( localTransform );
+    }
+
+    void TIBody::SetInitialLocalPosition( const TVec3& localPosition )
+    {
+        _SetInitialLocalPositionInternal( localPosition );
+    }
+
+    void TIBody::SetInitialLocalRotation( const TMat3& localRotation )
+    {
+        _SetInitialLocalRotationInternal( localRotation );
+    }
+
+    void TIBody::SetInitialLocalEuler( const TVec3& localEuler )
+    {
+        _SetInitialLocalEulerInternal( localEuler );
+    }
+
+    void TIBody::SetInitialLocalQuaternion( const TVec4& localQuat )
+    {
+        _SetInitialLocalQuaternionInternal( localQuat );
+    }
+
+    void TIBody::SetInitialLocalTransform( const TMat4& localTransform )
+    {
+        _SetInitialLocalTransformInternal( localTransform );
     }
 }

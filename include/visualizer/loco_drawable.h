@@ -38,7 +38,7 @@ namespace loco
 
         virtual void SetWireframe( bool wireframe ) = 0;
 
-        virtual void Detach() {}
+        virtual void OnDetach() {}
 
         bool IsAwaitingDeletion() const { return m_awaitingDeletion; }
 

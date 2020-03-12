@@ -119,6 +119,19 @@ namespace loco
             m_collisionImplRef->Reset();
     }
 
+    void TCollision::Detach()
+    {
+        if ( m_collisionImplRef )
+            m_collisionImplRef->OnDetach();
+
+        m_collisionImplRef = nullptr;
+
+        //// if ( m_drawableImplRef )
+        ////     m_drawableImplRef->OnDetach();
+
+        //// m_drawableImplRef = nullptr;
+    }
+
     void TCollision::SetLocalPosition( const TVec3& localPosition )
     {
         m_localTf.set( localPosition, 3 );
