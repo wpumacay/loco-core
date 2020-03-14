@@ -24,6 +24,7 @@
 // Assimp helper functionality
 #include <assimp/config.h>
 #include <assimp/cimport.h>
+#include <assimp/cexport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
