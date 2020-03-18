@@ -181,22 +181,40 @@ namespace loco
 ////             terrainGenerator->Reset();
     }
 
-    void TScenario::Detach()
+    void TScenario::DetachSim()
     {
         for ( auto& singleBody : m_singleBodies )
-            singleBody->Detach();
+            singleBody->DetachSim();
 
 ////         for ( auto& compound : m_compounds )
-////             compound->Detach();
+////             compound->DetachSim();
 //// 
 ////         for ( auto& kinTreeAgent : m_kinTreeAgents )
-////             kinTreeAgent->Detach();
+////             kinTreeAgent->DetachSim();
 //// 
 ////         for ( auto& kinTreeSensor : m_kinTreeSensors )
-////             kinTreeSensor->Detach();
+////             kinTreeSensor->DetachSim();
 //// 
 ////         for ( auto& terrainGenerator : m_terrainGenerators )
-////             terrainGenerator->Detach();
+////             terrainGenerator->DetachSim();
+    }
+
+    void TScenario::DetachViz()
+    {
+        for ( auto& singleBody : m_singleBodies )
+            singleBody->DetachViz();
+
+////         for ( auto& compound : m_compounds )
+////             compound->DetachViz();
+//// 
+////         for ( auto& kinTreeAgent : m_kinTreeAgents )
+////             kinTreeAgent->DetachViz();
+//// 
+////         for ( auto& kinTreeSensor : m_kinTreeSensors )
+////             kinTreeSensor->DetachViz();
+//// 
+////         for ( auto& terrainGenerator : m_terrainGenerators )
+////             terrainGenerator->DetachViz();
     }
 
     const TSingleBody* TScenario::GetSingleBodyByName( const std::string& name ) const

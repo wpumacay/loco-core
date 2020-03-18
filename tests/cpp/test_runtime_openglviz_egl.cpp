@@ -4,6 +4,7 @@
 
 TEST( TestLocoRuntimeOpenGLVizEGL, TestRuntimeOpenGLVizEGL )
 {
+#ifdef LOCO_OPENGL_VISUALIZER_HEADLESS
     auto vis_data = loco::TVisualData();
     vis_data.type = loco::eShapeType::CAPSULE;
     vis_data.size = { 0.1, 0.2, 0.1 };
@@ -54,4 +55,5 @@ TEST( TestLocoRuntimeOpenGLVizEGL, TestRuntimeOpenGLVizEGL )
 
     runtime->DestroySimulation();
     runtime->DestroyVisualizer();
+#endif
 }

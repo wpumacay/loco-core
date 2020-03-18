@@ -4,7 +4,6 @@
 #include <loco_logger.h>
 #include <loco_simulation.h>
 #include <visualizer/loco_visualizer.h>
-#include <adapters/loco_body_adapter.h>
 // @todo-windows: search for alternative in windows-platform
 #include <dlfcn.h>
 

@@ -2,9 +2,8 @@
 #pragma once
 
 #include <loco_scenario.h>
-#include <adapters/loco_collision_adapter.h>
-#include <adapters/loco_joint_adapter.h>
-#include <adapters/loco_body_adapter.h>
+#include <primitives/loco_single_body_adapter.h>
+#include <primitives/loco_single_body_collider_adapter.h>
 //// #include <adapters/loco_compound_adapter.h>
 //// #include <adapters/loco_kintree_agent_adapter.h>
 //// #include <adapters/loco_terrain_generator_adapter.h>
@@ -90,14 +89,9 @@ namespace loco
         // A reference to the visualizer (if available) (we don't take ownership)
         TIVisualizer* m_visualizerRef;
 
-        // Collision adapters of the colliders in the scenario
-        std::vector< std::unique_ptr<TICollisionAdapter> > m_collisionAdapters;
-
-        // Joint adapters of the joints in the scenario (from compounds or kintree-agents)
-        std::vector< std::unique_ptr<TIJointAdapter> > m_jointAdapters;
-
-        // Body adapters of the single-bodies in the scenario
-        std::vector< std::unique_ptr<TIBodyAdapter> > m_singleBodyAdapters;
+        // Adapters for single-body API
+        std::vector< std::unique_ptr<TISingleBodyAdapter> > m_singleBodyAdapters;
+        std::vector< std::unique_ptr<TISingleBodyColliderAdapter> > m_collisionAdapters;
 
         // Whether or not the simulation is running
         bool m_running;

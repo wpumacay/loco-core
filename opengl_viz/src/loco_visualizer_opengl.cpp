@@ -288,7 +288,7 @@ namespace loco
         auto singleBodiesList = m_scenarioRef->GetSingleBodiesList();
         for ( auto singleBody : singleBodiesList )
         {
-            auto collision = singleBody->collision();
+            auto collision = singleBody->collider();
             if ( collision )
             {
                 auto gl_renderable = loco::glviz::CreateRenderable( collision->data() );
@@ -297,16 +297,16 @@ namespace loco
                     // Add engine-renderable to the scene
                     auto gl_renderableRef = m_glApplication->scene()->AddRenderable( std::move( gl_renderable ) );
                     // Create drawable adapter and link it to the adaptee (user collision)
-                    auto gl_drawableAdapter = std::make_unique<TOpenGLDrawableAdapter>( collision->data(), gl_renderableRef );
+                    auto gl_drawableAdapter = std::make_unique<TOpenGLDrawableAdapter>( collision, collision->data(), gl_renderableRef );
                     gl_drawableAdapter->SetVisible( false );
                     gl_drawableAdapter->SetWireframe( true );
-                    collision->SetDrawable( gl_drawableAdapter.get() );
+                    collision->SetDrawableAdapter( gl_drawableAdapter.get() );
                     // Keep ownership of the drawable adapter
                     m_vizDrawableAdapters.push_back( std::move( gl_drawableAdapter ) );
                 }
             }
 
-            auto visual = singleBody->visual();
+            auto visual = singleBody->drawable();
             if ( visual )
             {
                 auto gl_renderable = loco::glviz::CreateRenderable( visual->data() );
@@ -315,8 +315,8 @@ namespace loco
                     // Add engine-renderable to the scene
                     auto gl_renderableRef = m_glApplication->scene()->AddRenderable( std::move( gl_renderable ) );
                     // Create drawable adapter and link it to the adaptee (user visual)
-                    auto gl_drawableAdapter = std::make_unique<TOpenGLDrawableAdapter>( visual->data(), gl_renderableRef );
-                    visual->SetDrawable( gl_drawableAdapter.get() );
+                    auto gl_drawableAdapter = std::make_unique<TOpenGLDrawableAdapter>( visual, visual->data(), gl_renderableRef );
+                    visual->SetDrawableAdapter( gl_drawableAdapter.get() );
                     gl_drawableAdapter->SetAmbientColor( visual->data().ambient );
                     gl_drawableAdapter->SetDiffuseColor( visual->data().diffuse );
                     gl_drawableAdapter->SetSpecularColor( visual->data().specular );
@@ -347,6 +347,7 @@ namespace loco
 ////     {
 //// 
 ////     }
+
 #ifndef LOCO_OPENGL_VISUALIZER_EDITOR
     extern "C" TIVisualizer* visualizer_create( TScenario* scenarioRef,
                                                 size_t windowWidth, size_t windowHeight,

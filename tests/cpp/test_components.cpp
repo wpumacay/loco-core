@@ -30,7 +30,7 @@ TEST( TestLocoComponents, TestCollisionObject )
     col_data.type = loco::eShapeType::BOX;
     col_data.size = { 0.1, 0.2, 0.3 };
 
-    auto col_obj = std::make_unique<loco::TCollision>( "col_0", col_data );
+    auto col_obj = std::make_unique<loco::TSingleBodyCollider>( "col_0", col_data );
     // Call methods (nothing should happen, as the collider is not in a simulation)
     col_obj->Initialize();
     col_obj->PreStep();
@@ -42,15 +42,11 @@ TEST( TestLocoComponents, TestCollisionObject )
     col_obj->ChangeSize( { 0.2, 0.2, 0.2 } );
     col_obj->ChangeCollisionGroup( 1 );
     col_obj->ChangeCollisionMask( 2 );
-    col_obj->SetLocalTransform( createTestTransform_local() );
     EXPECT_EQ( col_obj->visible(), true );
     EXPECT_EQ( col_obj->wireframe(), true );
     EXPECT_TRUE( tinymath::allclose( col_obj->size(), { 0.2, 0.2, 0.2 } ) );
     EXPECT_EQ( col_obj->collisionGroup(), 1 );
     EXPECT_EQ( col_obj->collisionMask(), 2 );
-    EXPECT_TRUE( tinymath::allclose( col_obj->localTf(), createTestTransform_local() ) );
-    EXPECT_TRUE( tinymath::allclose( col_obj->localRot(), rotationMatrix_axisX( loco::PI / 4 ) ) );
-    EXPECT_TRUE( tinymath::allclose( col_obj->localPos(), { -0.0, -0.1, -0.2 } ) );
 }
 
 TEST( TestLocoComponents, TestVisualObject )
@@ -59,7 +55,7 @@ TEST( TestLocoComponents, TestVisualObject )
     vis_data.type = loco::eShapeType::SPHERE;
     vis_data.size = { 0.1, 0.1, 0.1 };
 
-    auto vis_obj = std::make_unique<loco::TVisual>( "vis_0", vis_data );
+    auto vis_obj = std::make_unique<loco::TDrawable>( "vis_0", vis_data );
     // Call methods (nothing should happen, as the visual is not part of a visualizer)
     vis_obj->Initialize();
     vis_obj->PreStep();
@@ -81,9 +77,9 @@ TEST( TestLocoComponents, TestVisualObject )
     EXPECT_TRUE( tinymath::allclose( vis_obj->diffuse(), { 0.750, 0.550, 0.350 } ) );
     EXPECT_TRUE( tinymath::allclose( vis_obj->specular(), { 0.775, 0.575, 0.375 } ) );
     EXPECT_TRUE( std::abs( vis_obj->shininess() - 128.0 ) < 1e-6 );
-    EXPECT_TRUE( tinymath::allclose( vis_obj->localTf(), createTestTransform_local() ) );
-    EXPECT_TRUE( tinymath::allclose( vis_obj->localRot(), rotationMatrix_axisX( loco::PI / 4 ) ) );
-    EXPECT_TRUE( tinymath::allclose( vis_obj->localPos(), { -0.0, -0.1, -0.2 } ) );
+    EXPECT_TRUE( tinymath::allclose( vis_obj->local_tf(), createTestTransform_local() ) );
+    EXPECT_TRUE( tinymath::allclose( vis_obj->local_rot(), rotationMatrix_axisX( loco::PI / 4 ) ) );
+    EXPECT_TRUE( tinymath::allclose( vis_obj->local_pos(), { -0.0, -0.1, -0.2 } ) );
 }
 
 TEST( TestLocoComponents, TestSingleBodyObject )
@@ -95,7 +91,6 @@ TEST( TestLocoComponents, TestSingleBodyObject )
     auto col_data = loco::TCollisionData();
     col_data.type = loco::eShapeType::CAPSULE;
     col_data.size = { 0.1, 0.2, 0.1 };
-    col_data.localTransform = createTestTransform_local();
 
     auto body_data = loco::TBodyData();
     body_data.dyntype = loco::eDynamicsType::DYNAMIC;
@@ -111,19 +106,19 @@ TEST( TestLocoComponents, TestSingleBodyObject )
     // Check that all read_write properties work
     body_obj->SetTransform( createTestTransform_world() );
     EXPECT_EQ( body_obj->dyntype(), loco::eDynamicsType::DYNAMIC );
-    EXPECT_EQ( body_obj->classType(), loco::eBodyClassType::SINGLE_BODY );
     EXPECT_TRUE( tinymath::allclose( body_obj->tf(), createTestTransform_world() ) );
     EXPECT_TRUE( tinymath::allclose( body_obj->rot(), rotationMatrix_axisX( loco::PI / 6 ) ) );
     EXPECT_TRUE( tinymath::allclose( body_obj->pos(), { 0.0, 0.0, 2.0 } ) );
-    auto vis_ref = body_obj->visual();
-    auto col_ref = body_obj->collision();
-    auto expected_tf = body_obj->tf() * createTestTransform_local();
-    EXPECT_TRUE( tinymath::allclose( vis_ref->tf(), expected_tf ) );
-    EXPECT_TRUE( tinymath::allclose( vis_ref->pos(), tinymath::Vector3f( expected_tf.col( 3 ) ) ) );
-    EXPECT_TRUE( tinymath::allclose( vis_ref->rot(), tinymath::Matrix3f( expected_tf ) ) );
-    EXPECT_TRUE( tinymath::allclose( col_ref->tf(), expected_tf ) );
-    EXPECT_TRUE( tinymath::allclose( col_ref->pos(), tinymath::Vector3f( expected_tf.col( 3 ) ) ) );
-    EXPECT_TRUE( tinymath::allclose( col_ref->rot(), tinymath::Matrix3f( expected_tf ) ) );
+    auto vis_ref = body_obj->drawable();
+    auto col_ref = body_obj->collider();
+    auto expected_tf_drawable = body_obj->tf() * createTestTransform_local();
+    auto expected_tf_collider = body_obj->tf();
+    EXPECT_TRUE( tinymath::allclose( vis_ref->tf(), expected_tf_drawable ) );
+    EXPECT_TRUE( tinymath::allclose( vis_ref->pos(), tinymath::Vector3f( expected_tf_drawable.col( 3 ) ) ) );
+    EXPECT_TRUE( tinymath::allclose( vis_ref->rot(), tinymath::Matrix3f( expected_tf_drawable ) ) );
+    EXPECT_TRUE( tinymath::allclose( col_ref->tf(), expected_tf_collider ) );
+    EXPECT_TRUE( tinymath::allclose( col_ref->pos(), tinymath::Vector3f( expected_tf_collider.col( 3 ) ) ) );
+    EXPECT_TRUE( tinymath::allclose( col_ref->rot(), tinymath::Matrix3f( expected_tf_collider ) ) );
     // Check that changing visuals|collisions works fine
     auto vis_data_2 = loco::TVisualData();
     vis_data_2.type = loco::eShapeType::CYLINDER;
@@ -132,13 +127,13 @@ TEST( TestLocoComponents, TestSingleBodyObject )
     col_data_2.type = loco::eShapeType::CYLINDER;
     col_data_2.size = { 0.1, 0.2, 0.1 };
 
-    auto vis_obj_2 = std::make_unique<loco::TVisual>( "vis_2_replacement", vis_data_2 );
-    auto col_obj_2 = std::make_unique<loco::TCollision>( "col_2_replacement", col_data_2 );
-    body_obj->SetVisual( std::move( vis_obj_2 ) );
-    body_obj->SetCollision( std::move( col_obj_2 ) );
-    EXPECT_EQ( body_obj->visual()->name(), "vis_2_replacement" );
-    EXPECT_EQ( body_obj->collision()->name(), "col_2_replacement" );
+    auto vis_obj_2 = std::make_unique<loco::TDrawable>( "vis_2_replacement", vis_data_2 );
+    auto col_obj_2 = std::make_unique<loco::TSingleBodyCollider>( "col_2_replacement", col_data_2 );
+    body_obj->SetDrawable( std::move( vis_obj_2 ) );
+    body_obj->SetCollider( std::move( col_obj_2 ) );
+    EXPECT_EQ( body_obj->drawable()->name(), "vis_2_replacement" );
+    EXPECT_EQ( body_obj->collider()->name(), "col_2_replacement" );
     // Local transforms for these visual|collision are identity, so their 'tf' should be the same as their parents'
-    EXPECT_TRUE( tinymath::allclose( body_obj->visual()->tf(), createTestTransform_world() ) );
-    EXPECT_TRUE( tinymath::allclose( body_obj->collision()->tf(), createTestTransform_world() ) );
+    EXPECT_TRUE( tinymath::allclose( body_obj->drawable()->tf(), createTestTransform_world() ) );
+    EXPECT_TRUE( tinymath::allclose( body_obj->collider()->tf(), createTestTransform_world() ) );
 }

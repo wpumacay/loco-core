@@ -1,7 +1,6 @@
 #pragma once
 
-#include <loco_common.h>
-#include <components/loco_data.h>
+#include <loco_data.h>
 #include <visualizer/loco_visualizer_camera.h>
 #include <visualizer/loco_visualizer_light.h>
 #include <CEngine.h>

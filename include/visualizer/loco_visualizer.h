@@ -2,7 +2,7 @@
 
 #include <loco_scenario.h>
 #include <visualizer/loco_keycodes.h>
-#include <visualizer/loco_drawable.h>
+#include <visualizer/loco_visualizer_drawable.h>
 #include <visualizer/loco_visualizer_light.h>
 #include <visualizer/loco_visualizer_camera.h>
 #include <loco_simulation.h>
@@ -135,7 +135,7 @@ namespace loco
         std::vector< std::unique_ptr< TVizCamera > > m_vizCameras;
         std::vector< std::unique_ptr< TVizLight > > m_vizLights;
 
-        std::vector< std::unique_ptr< TIDrawable > > m_vizDrawableAdapters;
+        std::vector< std::unique_ptr< TIDrawableAdapter > > m_vizDrawableAdapters;
         std::vector< std::unique_ptr< TVizCameraAdapter > > m_vizCameraAdapters;
         std::vector< std::unique_ptr< TVizLightAdapter > > m_vizLightAdapters;
 

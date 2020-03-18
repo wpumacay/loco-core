@@ -173,8 +173,8 @@ namespace loco
 
         if ( ImGui::CollapsingHeader( "Shape" ) )
         {
-            auto collider = single_body_ref->collision();
-            auto visual = single_body_ref->visual();
+            auto collider = single_body_ref->collider();
+            auto visual = single_body_ref->drawable();
             if ( collider && visual )
             {
                 const bool have_same_shape = ( collider->shape() == visual->shape() );
@@ -342,7 +342,7 @@ namespace loco
         {
             if ( option_stop ) // stop simulation (destroy current simulaton)
             {
-                m_scenarioRef->Detach();
+                m_scenarioRef->DetachSim();
                 m_scenarioRef->Reset();
                 m_runtimeRef->DestroySimulation();
             }

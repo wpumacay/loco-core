@@ -1,28 +1,32 @@
 
-#include <loco_visualizer_opengl_drawable.h>
+#include <loco_visualizer_opengl_drawable_adapter.h>
 
 namespace loco
 {
-    TOpenGLDrawableAdapter::TOpenGLDrawableAdapter( const TShapeData& shapeData,
+    TOpenGLDrawableAdapter::TOpenGLDrawableAdapter( TObject* owner_ref,
+                                                    const TShapeData& shapeData,
                                                     engine::CIRenderable* gl_renderableRef )
-        : TIDrawable()
+        : TIDrawableAdapter( owner_ref )
     {
-        m_scale = { 1.0, 1.0, 1.0 };
-        m_size  = shapeData.size;
-        m_size0 = shapeData.size;
-        m_type  = shapeData.type;
+        m_Scale = { 1.0, 1.0, 1.0 };
+        m_Size  = shapeData.size;
+        m_Size0 = shapeData.size;
         m_data  = shapeData;
 
-        m_awaitingDeletion = false;
+        m_AwaitingDeletion = false;
         m_glRenderableRef = gl_renderableRef;
     }
 
     TOpenGLDrawableAdapter::~TOpenGLDrawableAdapter()
     {
+        if ( m_OwnerRef )
+            m_OwnerRef->DetachViz();
+
+        m_OwnerRef = nullptr;
         m_glRenderableRef = nullptr;
     }
 
-    void TOpenGLDrawableAdapter::SetWorldTransform( const TMat4& transform )
+    void TOpenGLDrawableAdapter::SetTransform( const TMat4& transform )
     {
         if ( !m_glRenderableRef )
             return;
@@ -165,64 +169,75 @@ namespace loco
         }
     }
 
-    void TOpenGLDrawableAdapter::ChangeSize( const TVec3& newSize )
+    void TOpenGLDrawableAdapter::ChangeSize( const TVec3& new_size )
     {
         if ( !m_glRenderableRef )
             return;
 
-        m_size = newSize;
-        if ( m_type == eShapeType::PLANE )
+        m_Size = new_size;
+        switch ( m_data.type )
         {
-            m_scale.x() = m_size.x() / m_size0.x();
-            m_scale.y() = m_size.y() / m_size0.y();
-        }
-        else if ( m_type == eShapeType::BOX )
-        {
-            m_scale = { m_size.x() / m_size0.x(),
-                        m_size.y() / m_size0.y(),
-                        m_size.z() / m_size0.z() };
-        }
-        else if ( m_type == eShapeType::SPHERE )
-        {
-            // scale according to radius
-            m_scale.x() = m_scale.y() = m_scale.z() = m_size.x() / m_size0.x();
-        }
-        else if ( m_type == eShapeType::CYLINDER )
-        {
-            // scale according to radius
-            m_scale.x() = m_size.x() / m_size0.x();
-            m_scale.y() = m_size.x() / m_size0.x();
-            // scale according to height
-            m_scale.z() = m_size.y() / m_size0.y();
-        }
-        else if ( m_type == eShapeType::CAPSULE )
-        {
-            // scale according to radius
-            m_scale.x() = m_size.x() / m_size0.x();
-            m_scale.y() = m_size.x() / m_size0.x();
-            // scale according to height
-            m_scale.z() = m_size.y() / m_size0.y();
-        }
-        else if ( m_type == eShapeType::ELLIPSOID )
-        {
-            // scale every dimension
-            m_scale.x() = m_size.x() / m_size0.x();
-            m_scale.y() = m_size.y() / m_size0.y();
-            m_scale.z() = m_size.z() / m_size0.z();
-        }
-        else if ( m_type == eShapeType::MESH )
-        {
-            // scale every dimension
-            m_scale.x() = m_size.x() / m_size0.x();
-            m_scale.y() = m_size.y() / m_size0.y();
-            m_scale.z() = m_size.z() / m_size0.z();
-        }
-        else if ( m_type == eShapeType::HFIELD )
-        {
-            LOCO_CORE_WARN( "TOpenGLDrawableAdapter::ChangeSize >>> Hfield shapes don't support changing the scale. Change the elevation data instead" );
+            case eShapeType::PLANE :
+            {
+                m_Scale.x() = m_Size.x() / m_Size0.x();
+                m_Scale.y() = m_Size.y() / m_Size0.y();
+                break;
+            }
+            case eShapeType::BOX :
+            {
+                m_Scale = { m_Size.x() / m_Size0.x(),
+                            m_Size.y() / m_Size0.y(),
+                            m_Size.z() / m_Size0.z() };
+                break;
+            }
+            case eShapeType::SPHERE :
+            {
+                // scale according to radius
+                m_Scale.x() = m_Scale.y() = m_Scale.z() = m_Size.x() / m_Size0.x();
+                break;
+            }
+            case eShapeType::CYLINDER :
+            {
+                // scale according to radius
+                m_Scale.x() = m_Size.x() / m_Size0.x();
+                m_Scale.y() = m_Size.x() / m_Size0.x();
+                // scale according to height
+                m_Scale.z() = m_Size.y() / m_Size0.y();
+                break;
+            }
+            case eShapeType::CAPSULE :
+            {
+                // scale according to radius
+                m_Scale.x() = m_Size.x() / m_Size0.x();
+                m_Scale.y() = m_Size.x() / m_Size0.x();
+                // scale according to height
+                m_Scale.z() = m_Size.y() / m_Size0.y();
+                break;
+            }
+            case eShapeType::ELLIPSOID :
+            {
+                // scale every dimension
+                m_Scale.x() = m_Size.x() / m_Size0.x();
+                m_Scale.y() = m_Size.y() / m_Size0.y();
+                m_Scale.z() = m_Size.z() / m_Size0.z();
+                break;
+            }
+            case eShapeType::MESH :
+            {
+                // scale every dimension
+                m_Scale.x() = m_Size.x() / m_Size0.x();
+                m_Scale.y() = m_Size.y() / m_Size0.y();
+                m_Scale.z() = m_Size.z() / m_Size0.z();
+                break;
+            }
+            case eShapeType::HFIELD :
+            {
+                LOCO_CORE_WARN( "TOpenGLDrawableAdapter::ChangeSize >>> Hfield shapes don't support changing the scale. Change the elevation data instead" );
+                break;
+            }
         }
 
-        m_glRenderableRef->scale = m_scale;
+        m_glRenderableRef->scale = m_Scale;
     }
 
     void TOpenGLDrawableAdapter::ChangeElevationData( const std::vector< float >& heightData )
@@ -251,7 +266,8 @@ namespace loco
 
     void TOpenGLDrawableAdapter::OnDetach()
     {
-        m_awaitingDeletion = true;
+        m_OwnerRef = nullptr;
+        m_AwaitingDeletion = true;
 
         if ( m_glRenderableRef )
             m_glRenderableRef->setVisibility( false );

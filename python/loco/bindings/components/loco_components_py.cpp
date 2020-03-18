@@ -171,157 +171,157 @@ namespace loco
                     } );
         }
 
-        // Bindings for TVisual class
+        // Bindings for TDrawable class
         {
-            py::class_< TVisual >( m, "Visual" )
+            py::class_< TDrawable >( m, "Visual" )
                 .def( py::init<const std::string&, const TVisualData&>() )
-                .def( "Initialize", &TVisual::Initialize )
-                .def( "PreStep", &TVisual::PreStep )
-                .def( "PostStep", &TVisual::PostStep )
-                .def( "Reset", &TVisual::Reset )
-                .def( "data", []( TVisual* self ) -> TVisualData&
+                .def( "Initialize", &TDrawable::Initialize )
+                .def( "PreStep", &TDrawable::PreStep )
+                .def( "PostStep", &TDrawable::PostStep )
+                .def( "Reset", &TDrawable::Reset )
+                .def( "data", []( TDrawable* self ) -> TVisualData&
                     {
                         return self->data();
                     }, py::return_value_policy::reference )
-                .def( "parent", []( TVisual* self ) -> TIBody*
+                .def( "parent", []( TDrawable* self ) -> TIBody*
                     {
                         return self->parent();
                     }, py::return_value_policy::reference )
-                .def( "ChangeElevationData", []( TVisual* self, const py::array_t<float>& arr_heights )
+                .def( "ChangeElevationData", []( TDrawable* self, const py::array_t<float>& arr_heights )
                     {
                         self->ChangeElevationData( loco::nparray_to_vecgrid<float>( arr_heights ) );
                     } )
                 .def_property( "size",
-                    []( const TVisual* self ) -> py::array_t<TScalar>
+                    []( const TDrawable* self ) -> py::array_t<TScalar>
                         {
                             return tinymath::vector_to_nparray<TScalar, 3>( self->size() );
                         },
-                    []( TVisual* self, const py::array_t<TScalar>& arr_size )
+                    []( TDrawable* self, const py::array_t<TScalar>& arr_size )
                         {
                             self->ChangeSize( tinymath::nparray_to_vector<TScalar, 3>( arr_size ) );
                         } )
                 .def_property( "visible",
-                    []( const TVisual* self )
+                    []( const TDrawable* self )
                         {
                             return self->visible();
                         },
-                    []( TVisual* self, bool visible )
+                    []( TDrawable* self, bool visible )
                         {
                             self->SetVisible( visible );
                         } )
                 .def_property( "wireframe",
-                    []( const TVisual* self )
+                    []( const TDrawable* self )
                         {
                             return self->wireframe();
                         },
-                    []( TVisual* self, bool wireframe )
+                    []( TDrawable* self, bool wireframe )
                         {
                             self->SetWireframe( wireframe );
                         } )
                 .def_property( "ambient",
-                    []( const TVisual* self ) -> py::array_t<TScalar>
+                    []( const TDrawable* self ) -> py::array_t<TScalar>
                         {
                             return tinymath::vector_to_nparray<TScalar, 3>( self->ambient() );
                         },
-                    []( TVisual* self, const py::array_t<TScalar>& arr_ambient )
+                    []( TDrawable* self, const py::array_t<TScalar>& arr_ambient )
                         {
                             self->ChangeAmbientColor( tinymath::nparray_to_vector<TScalar, 3>( arr_ambient ) );
                         } )
                 .def_property( "diffuse",
-                    []( const TVisual* self ) -> py::array_t<TScalar>
+                    []( const TDrawable* self ) -> py::array_t<TScalar>
                         {
                             return tinymath::vector_to_nparray<TScalar, 3>( self->diffuse() );
                         },
-                    []( TVisual* self, const py::array_t<TScalar>& arr_diffuse )
+                    []( TDrawable* self, const py::array_t<TScalar>& arr_diffuse )
                         {
                             self->ChangeDiffuseColor( tinymath::nparray_to_vector<TScalar, 3>( arr_diffuse ) );
                         } )
                 .def_property( "specular",
-                    []( const TVisual* self ) -> py::array_t<TScalar>
+                    []( const TDrawable* self ) -> py::array_t<TScalar>
                         {
                             return tinymath::vector_to_nparray<TScalar, 3>( self->specular() );
                         },
-                    []( TVisual* self, const py::array_t<TScalar>& arr_specular )
+                    []( TDrawable* self, const py::array_t<TScalar>& arr_specular )
                         {
                             self->ChangeSpecularColor( tinymath::nparray_to_vector<TScalar, 3>( arr_specular ) );
                         } )
                 .def_property( "shininess",
-                    []( const TVisual* self ) -> TScalar
+                    []( const TDrawable* self ) -> TScalar
                         {
                             return self->shininess();
                         },
-                    []( TVisual* self, TScalar shininess )
+                    []( TDrawable* self, TScalar shininess )
                         {
                             self->ChangeShininess( shininess );
                         } )
                 .def_property( "localPos",
-                    []( const TVisual* self ) -> py::array_t<TScalar>
+                    []( const TDrawable* self ) -> py::array_t<TScalar>
                         {
                             return tinymath::vector_to_nparray<TScalar, 3>( self->localPos() );
                         },
-                    []( TVisual* self, const py::array_t<TScalar>& arr_localPos ) -> void
+                    []( TDrawable* self, const py::array_t<TScalar>& arr_localPos ) -> void
                         {
                             self->SetLocalPosition( tinymath::nparray_to_vector<TScalar, 3>( arr_localPos ) );
                         } )
                 .def_property( "localRot",
-                    []( const TVisual* self ) -> py::array_t<TScalar>
+                    []( const TDrawable* self ) -> py::array_t<TScalar>
                         {
                             return tinymath::matrix_to_nparray<TScalar, 3>( self->localRot() );
                         },
-                    []( TVisual* self, const py::array_t<TScalar>& arr_localRot ) -> void
+                    []( TDrawable* self, const py::array_t<TScalar>& arr_localRot ) -> void
                         {
                             self->SetLocalRotation( tinymath::nparray_to_matrix<TScalar, 3>( arr_localRot ) );
                         } )
                 .def_property( "localEuler",
-                    []( const TVisual* self ) -> py::array_t<TScalar>
+                    []( const TDrawable* self ) -> py::array_t<TScalar>
                         {
                             return tinymath::vector_to_nparray<TScalar, 3>( self->localEuler() );
                         },
-                    []( TVisual* self, const py::array_t<TScalar>& arr_localEuler ) -> void
+                    []( TDrawable* self, const py::array_t<TScalar>& arr_localEuler ) -> void
                         {
                             self->SetLocalEuler( tinymath::nparray_to_vector<TScalar, 3>( arr_localEuler ) );
                         } )
                 .def_property( "localQuat",
-                    []( const TVisual* self ) -> py::array_t<TScalar>
+                    []( const TDrawable* self ) -> py::array_t<TScalar>
                         {
                             return tinymath::vector_to_nparray<TScalar, 4>( self->localQuat() );
                         },
-                    []( TVisual* self, const py::array_t<TScalar>& arr_localQuat ) -> void
+                    []( TDrawable* self, const py::array_t<TScalar>& arr_localQuat ) -> void
                         {
                             self->SetLocalQuat( tinymath::nparray_to_vector<TScalar, 4>( arr_localQuat ) );
                         } )
                 .def_property( "localTf",
-                    []( const TVisual* self ) -> py::array_t<TScalar>
+                    []( const TDrawable* self ) -> py::array_t<TScalar>
                         {
                             return tinymath::matrix_to_nparray<TScalar, 4>( self->localTf() );
                         },
-                    []( TVisual* self, const py::array_t<TScalar>& arr_localTf )
+                    []( TDrawable* self, const py::array_t<TScalar>& arr_localTf )
                         {
                             self->SetLocalTransform( tinymath::nparray_to_matrix<TScalar, 4>( arr_localTf ) );
                         } )
-                .def_property_readonly( "name", &TVisual::name )
-                .def_property_readonly( "shape", &TVisual::shape )
-                .def_property_readonly( "pos", []( const TVisual* self ) -> py::array_t<TScalar>
+                .def_property_readonly( "name", &TDrawable::name )
+                .def_property_readonly( "shape", &TDrawable::shape )
+                .def_property_readonly( "pos", []( const TDrawable* self ) -> py::array_t<TScalar>
                     {
                         return tinymath::vector_to_nparray<TScalar, 3>( self->pos() );
                     } )
-                .def_property_readonly( "rot", []( const TVisual* self ) -> py::array_t<TScalar>
+                .def_property_readonly( "rot", []( const TDrawable* self ) -> py::array_t<TScalar>
                     {
                         return tinymath::matrix_to_nparray<TScalar, 3>( self->rot() );
                     } )
-                .def_property_readonly( "euler", []( const TVisual* self ) -> py::array_t<TScalar>
+                .def_property_readonly( "euler", []( const TDrawable* self ) -> py::array_t<TScalar>
                     {
                         return tinymath::vector_to_nparray<TScalar, 3>( self->euler() );
                     } )
-                .def_property_readonly( "quat", []( const TVisual* self ) -> py::array_t<TScalar>
+                .def_property_readonly( "quat", []( const TDrawable* self ) -> py::array_t<TScalar>
                     {
                         return tinymath::vector_to_nparray<TScalar, 4>( self->quat() );
                     } )
-                .def_property_readonly( "tf", []( const TVisual* self ) -> py::array_t<TScalar>
+                .def_property_readonly( "tf", []( const TDrawable* self ) -> py::array_t<TScalar>
                     {
                         return tinymath::matrix_to_nparray<TScalar, 4>( self->tf() );
                     } )
-                .def( "__repr__", []( const TVisual* self )
+                .def( "__repr__", []( const TDrawable* self )
                     {
                         auto _strrep = std::string( "Collision(\n" );
                         _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
@@ -333,161 +333,6 @@ namespace loco
                         _strrep += "specular    : " + loco::ToString( self->specular() ) + "\n";
                         _strrep += "shininess   : " + std::to_string( self->shininess() ) + "\n";
                         _strrep += "parent      : " + ( self->parent() ? loco::PointerToHexAddress( self->parent() ) : std::string( "null" ) ) + "\n";
-                        _strrep += "position    : " + loco::ToString( self->pos() ) + "\n";
-                        _strrep += "rotation    :\n" + loco::ToString( self->rot() ) + "\n";
-                        _strrep += "euler       : " + loco::ToString( self->euler() ) + "\n";
-                        _strrep += "quaternion  : " + loco::ToString( self->quat() ) + "\n";
-                        _strrep += "tf          :\n" + loco::ToString( self->tf() ) + "\n";
-                        _strrep += "localPos    : " + loco::ToString( self->localPos() ) + "\n";
-                        _strrep += "localRot    :\n" + loco::ToString( self->localRot() ) + "\n";
-                        _strrep += "localEuler  : " + loco::ToString( self->localEuler() ) + "\n";
-                        _strrep += "localQuat   : " + loco::ToString( self->localQuat() ) + "\n";
-                        _strrep += "localTf     :\n" + loco::ToString( self->localTf() ) + "\n";
-                        _strrep += ")";
-                        return _strrep;
-                    } );
-        }
-
-        // Bindings for TJoint class
-        {
-            py::class_< TJoint >( m, "Joint" )
-                .def( py::init<const std::string&, const TJointData&>() )
-                .def( "Initialize", &TJoint::Initialize )
-                .def( "PreStep", &TJoint::PreStep )
-                .def( "PostStep", &TJoint::PostStep )
-                .def( "Reset", &TJoint::Reset )
-                .def( "data", []( TJoint* self ) -> TJointData&
-                    {
-                        return self->data();
-                    }, py::return_value_policy::reference )
-                .def( "owner", []( TJoint* self ) -> TIBody*
-                    {
-                        return self->owner();
-                    }, py::return_value_policy::reference )
-                .def( "ownerParent", []( TJoint* self ) -> TIBody*
-                    {
-                        return self->ownerParent();
-                    }, py::return_value_policy::reference )
-                .def_property( "limits",
-                    []( const TJoint* self ) -> py::array_t<TScalar>
-                        {
-                            return tinymath::vector_to_nparray<TScalar, 2>( self->limits() );
-                        },
-                    []( TJoint* self, const py::array_t<TScalar>& arr_limits )
-                        {
-                            self->ChangeLimits( tinymath::nparray_to_vector<TScalar, 2>( arr_limits ) );
-                        } )
-                .def_property( "qpos",
-                    []( const TJoint* self ) -> py::array_t<TScalar>
-                        {
-                            return loco::stdvec_to_nparray( self->GetQpos() );
-                        },
-                    []( TJoint* self, const py::array_t<TScalar>& arr_qpos )
-                        {
-                            self->SetQpos( loco::nparray_to_stdvec( arr_qpos ) );
-                        } )
-                .def_property( "qvel",
-                    []( const TJoint* self ) -> py::array_t<TScalar>
-                        {
-                            return loco::stdvec_to_nparray( self->GetQvel() );
-                        },
-                    []( TJoint* self, const py::array_t<TScalar>& arr_qvel )
-                        {
-                            self->SetQvel( loco::nparray_to_stdvec( arr_qvel ) );
-                        } )
-                .def_property( "localPos",
-                    []( const TJoint* self ) -> py::array_t<TScalar>
-                        {
-                            return tinymath::vector_to_nparray<TScalar, 3>( self->localPos() );
-                        },
-                    []( TJoint* self, const py::array_t<TScalar>& arr_localPos ) -> void
-                        {
-                            self->SetLocalPosition( tinymath::nparray_to_vector<TScalar, 3>( arr_localPos ) );
-                        } )
-                .def_property( "localRot",
-                    []( const TJoint* self ) -> py::array_t<TScalar>
-                        {
-                            return tinymath::matrix_to_nparray<TScalar, 3>( self->localRot() );
-                        },
-                    []( TJoint* self, const py::array_t<TScalar>& arr_localRot ) -> void
-                        {
-                            self->SetLocalRotation( tinymath::nparray_to_matrix<TScalar, 3>( arr_localRot ) );
-                        } )
-                .def_property( "localEuler",
-                    []( const TJoint* self ) -> py::array_t<TScalar>
-                        {
-                            return tinymath::vector_to_nparray<TScalar, 3>( self->localEuler() );
-                        },
-                    []( TJoint* self, const py::array_t<TScalar>& arr_localEuler ) -> void
-                        {
-                            self->SetLocalEuler( tinymath::nparray_to_vector<TScalar, 3>( arr_localEuler ) );
-                        } )
-                .def_property( "localQuat",
-                    []( const TJoint* self ) -> py::array_t<TScalar>
-                        {
-                            return tinymath::vector_to_nparray<TScalar, 4>( self->localQuat() );
-                        },
-                    []( TJoint* self, const py::array_t<TScalar>& arr_localQuat ) -> void
-                        {
-                            self->SetLocalQuat( tinymath::nparray_to_vector<TScalar, 4>( arr_localQuat ) );
-                        } )
-                .def_property( "localTf",
-                    []( const TJoint* self ) -> py::array_t<TScalar>
-                        {
-                            return tinymath::matrix_to_nparray<TScalar, 4>( self->localTf() );
-                        },
-                    []( TJoint* self, const py::array_t<TScalar>& arr_localTf )
-                        {
-                            self->SetLocalTransform( tinymath::nparray_to_matrix<TScalar, 4>( arr_localTf ) );
-                        } )
-                .def_property_readonly( "name", &TJoint::name )
-                .def_property_readonly( "type", &TJoint::type )
-                .def_property_readonly( "axis", []( const TJoint* self ) -> py::array_t<TScalar>
-                    {
-                        return tinymath::vector_to_nparray<TScalar, 3>( self->axis() );
-                    } )
-                .def_property_readonly( "qpos0", []( const TJoint* self ) -> py::array_t<TScalar>
-                    {
-                        return loco::stdvec_to_nparray( self->GetQpos0() );
-                    } )
-                .def_property_readonly( "qvel0", []( const TJoint* self ) -> py::array_t<TScalar>
-                    {
-                        return loco::stdvec_to_nparray( self->GetQvel0() );
-                    } )
-                .def_property_readonly( "pos", []( const TJoint* self ) -> py::array_t<TScalar>
-                    {
-                        return tinymath::vector_to_nparray<TScalar, 3>( self->pos() );
-                    } )
-                .def_property_readonly( "rot", []( const TJoint* self ) -> py::array_t<TScalar>
-                    {
-                        return tinymath::matrix_to_nparray<TScalar, 3>( self->rot() );
-                    } )
-                .def_property_readonly( "euler", []( const TJoint* self ) -> py::array_t<TScalar>
-                    {
-                        return tinymath::vector_to_nparray<TScalar, 3>( self->euler() );
-                    } )
-                .def_property_readonly( "quat", []( const TJoint* self ) -> py::array_t<TScalar>
-                    {
-                        return tinymath::vector_to_nparray<TScalar, 4>( self->quat() );
-                    } )
-                .def_property_readonly( "tf", []( const TJoint* self ) -> py::array_t<TScalar>
-                    {
-                        return tinymath::matrix_to_nparray<TScalar, 4>( self->tf() );
-                    } )
-                .def( "__repr__", []( const TJoint* self )
-                    {
-                        auto _strrep = std::string( "Joint(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
-                        _strrep += "name        : " + self->name() + "\n";
-                        _strrep += "type        : " + loco::ToString( self->type() ) + "\n";
-                        _strrep += "axis        : " + loco::ToString( self->axis() ) + "\n";
-                        _strrep += "limits      : " + loco::ToString( self->limits() ) + "\n";
-                        _strrep += "qpos        : " + loco::ToString( self->GetQpos() ) + "\n";
-                        _strrep += "qvel        : " + loco::ToString( self->GetQvel() ) + "\n";
-                        _strrep += "qpos0       : " + loco::ToString( self->GetQpos0() ) + "\n";
-                        _strrep += "qvel0       : " + loco::ToString( self->GetQvel0() ) + "\n";
-                        _strrep += "owner       : " + ( self->owner() ? loco::PointerToHexAddress( self->owner() ) : std::string( "null" ) ) + "\n";
-                        _strrep += "ownerParent : " + ( self->ownerParent() ? loco::PointerToHexAddress( self->ownerParent() ) : std::string( "null" ) ) + "\n";
                         _strrep += "position    : " + loco::ToString( self->pos() ) + "\n";
                         _strrep += "rotation    :\n" + loco::ToString( self->rot() ) + "\n";
                         _strrep += "euler       : " + loco::ToString( self->euler() ) + "\n";
@@ -525,11 +370,11 @@ namespace loco
                         },
                     py::return_value_policy::reference, py::keep_alive<1, 0>() )
                 .def_property( "visual",
-                    []( TIBody* self ) -> TVisual*
+                    []( TIBody* self ) -> TDrawable*
                         {
                             return self->visual();
                         },
-                    []( TIBody* self, std::unique_ptr<TVisual> visual )
+                    []( TIBody* self, std::unique_ptr<TDrawable> visual )
                         {
                             self->SetVisual( std::move( visual ) );
                         },

@@ -18,6 +18,7 @@
 #include <unordered_set>
 
 #include <loco_math.h>
+#include <loco_object.h>
 #include <loco_logger.h>
 #include <loco_config.h>
 
@@ -47,6 +48,9 @@ namespace loco
     const std::string PREFIX_ACTUATOR = "actuator_";
     const std::string PREFIX_CAMERA   = "camera_";
     const std::string PREFIX_MATERIAL = "material_";
+
+    const std::string SUFFIX_COLLIDER = "_col";
+    const std::string SUFFIX_DRAWABLE = "_vis";
 
     const TVec3 DEFAULT_AMBIENT_COLOR   = { 0.7f, 0.5f, 0.3f };
     const TVec3 DEFAULT_DIFFUSE_COLOR   = { 0.7f, 0.5f, 0.3f };

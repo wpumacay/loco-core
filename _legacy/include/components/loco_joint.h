@@ -1,7 +1,6 @@
 #pragma once
 
 #include <loco_common.h>
-#include <components/loco_data.h>
 #include <components/loco_body_base.h>
 #include <visualizer/loco_drawable.h>
 #include <adapters/loco_joint_adapter.h>

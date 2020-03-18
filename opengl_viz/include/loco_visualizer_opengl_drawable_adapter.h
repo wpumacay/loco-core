@@ -1,20 +1,21 @@
 #pragma once
 
-#include <visualizer/loco_drawable.h>
+#include <visualizer/loco_visualizer_drawable_adapter.h>
 #include <loco_visualizer_opengl_common.h>
 
 namespace loco
 {
-    class TOpenGLDrawableAdapter : public TIDrawable
+    class TOpenGLDrawableAdapter : public TIDrawableAdapter
     {
     public :
 
-        TOpenGLDrawableAdapter( const TShapeData& data,
+        TOpenGLDrawableAdapter( TObject* owner_ref,
+                                const TShapeData& data,
                                 engine::CIRenderable* gl_renderableRef );
 
         ~TOpenGLDrawableAdapter();
 
-        void SetWorldTransform( const TMat4& transform ) override;
+        void SetTransform( const TMat4& transform ) override;
 
         void SetColor( const TVec3& fullColor ) override;
 

@@ -4,7 +4,7 @@
 #include <loco_visualizer_opengl_common.h>
 #include <loco_visualizer_opengl_camera.h>
 #include <loco_visualizer_opengl_light.h>
-#include <loco_visualizer_opengl_drawable.h>
+#include <loco_visualizer_opengl_drawable_adapter.h>
 
 namespace loco
 {

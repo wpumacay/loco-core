@@ -32,7 +32,6 @@ namespace loco
         m_scenarioRef = nullptr;
         m_visualizerRef = nullptr;
         m_collisionAdapters.clear();
-        m_jointAdapters.clear();
         m_singleBodyAdapters.clear();
     }
 

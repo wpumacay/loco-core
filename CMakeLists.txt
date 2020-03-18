@@ -113,20 +113,18 @@ set( LOCO_CORE_SRCS
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_common.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_math.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_logger.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_object.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_data.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent/agent_base.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent/agent_components.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent/formats/kintree_format_mjcf.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent/formats/kintree_format_rlsim.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent/formats/kintree_format_urdf.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent_wrapper.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/loco_data.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/loco_collision.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/loco_visual.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/loco_joint.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/components/loco_body_base.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/compounds/compound.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/compounds/compound_body.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/primitives/loco_single_body.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/primitives/loco_single_body_collider.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_scenario.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/sensor_base.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/types/sensor_agent_intrinsics.cpp"
@@ -155,6 +153,7 @@ set( LOCO_CORE_SRCS
      "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/loco_parsing_common.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/loco_parsing_schema.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/utils/loco_parsing_element.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/visualizer/loco_visualizer_drawable.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/visualizer/loco_visualizer_camera.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/visualizer/loco_visualizer_light.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/visualizer/loco_visualizer.cpp"
@@ -181,9 +180,9 @@ if ( LOCO_CORE_BUILD_WINDOWED_VISUALIZER OR LOCO_CORE_BUILD_HEADLESS_VISUALIZER 
     add_subdirectory( opengl_viz )
 endif()
 
-if ( LOCO_CORE_BUILD_PYTHON_BINDINGS )
-    add_subdirectory( python/loco/bindings )
-endif()
+#### if ( LOCO_CORE_BUILD_PYTHON_BINDINGS )
+####     add_subdirectory( python/loco/bindings )
+#### endif()
 
 #### if ( LOCO_CORE_IS_MASTER_PROJECT AND LOCO_CORE_BUILD_DOCS )
 ####     add_subdirectory( docs )

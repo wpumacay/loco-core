@@ -10,7 +10,7 @@ set( LOCO_VISUALIZER_OPENGL_SRCS
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_visualizer_opengl_common.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_visualizer_opengl_camera.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_visualizer_opengl_light.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_visualizer_opengl_drawable.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_visualizer_opengl_drawable_adapter.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_visualizer_opengl.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/editor/loco_visualizer_opengl_editor.cpp" )
 

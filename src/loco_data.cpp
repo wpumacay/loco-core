@@ -1,5 +1,5 @@
 
-#include <components/loco_data.h>
+#include <loco_data.h>
 
 namespace loco
 {

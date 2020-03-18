@@ -7,278 +7,199 @@ namespace loco
                               const TBodyData& data,
                               const TVec3& position,
                               const TMat3& rotation )
-        : TIBody( name, data )
+        : TObject( name )
     {
-        // Set world-transform directly (world-space)
+        m_Data = data;
+        m_BodyAdapter = nullptr;
+
         m_tf.set( position, 3 );
         m_tf.set( rotation );
 
-        // Set initial world-transform directly (world-space)
         m_tf0.set( position, 3 );
         m_tf0.set( rotation );
 
-        // Set local pose (and friends) as Identity
-        m_localTf.setIdentity();
-        m_localTf0.setIdentity();
+        m_TotalForce = { 0.0, 0.0, 0.0 };
+        m_TotalTorque = { 0.0, 0.0, 0.0 };
+        m_LinearVelocity = { 0.0, 0.0, 0.0 };
+        m_AngularVelocity = { 0.0, 0.0, 0.0 };
+        m_LinearVelocity0 = { 0.0, 0.0, 0.0 };
+        m_AngularVelocity0 = { 0.0, 0.0, 0.0 };
 
-        // Make sure our type is single-body
-        m_classType = eBodyClassType::SINGLE_BODY;
+        m_Collider = std::make_unique<TSingleBodyCollider>( m_name + loco::SUFFIX_COLLIDER, m_Data.collision );
+        m_Drawable = std::make_unique<TDrawable>( m_name + loco::SUFFIX_DRAWABLE, m_Data.visual );
+        m_Collider->SetParentBody( this );
+        m_Drawable->SetParentObject( this );
 
-        #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBody {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
-            else
-                std::cout << "Loco::Allocs: Created TSingleBody " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
-        #endif
+    #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+        if ( TLogger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBody {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        else
+            std::cout << "Loco::Allocs: Created TSingleBody " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+    #endif
     }
 
     TSingleBody::~TSingleBody()
     {
-        // nothing extra to delete for now
+        DetachSim();
+        DetachViz();
 
-        #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSingleBody {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
-            else
-                std::cout << "Loco::Allocs: Destroyed TSingleBody " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
-        #endif
+        m_BodyAdapter = nullptr;
+        m_Collider = nullptr;
+        m_Drawable = nullptr;
+
+    #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+        if ( TLogger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSingleBody {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        else
+            std::cout << "Loco::Allocs: Destroyed TSingleBody " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+    #endif
+    }
+
+    void TSingleBody::SetBodyAdapter( TISingleBodyAdapter* body_adapter_ref )
+    {
+        m_BodyAdapter = body_adapter_ref;
+    }
+
+    void TSingleBody::SetCollider( std::unique_ptr<TSingleBodyCollider> collider )
+    {
+        LOCO_CORE_ASSERT( collider, "TSingleBody::SetCollider >>> tried adding nullptr to body {0}", m_name );
+
+        m_Collider = std::move( collider );
+        m_Collider->SetParentBody( this );
+        m_Data.collision = m_Collider->data();
+    }
+
+    void TSingleBody::SetDrawable( std::unique_ptr<TDrawable> drawable )
+    {
+        LOCO_CORE_ASSERT( drawable, "TSingleBody::SetDrawable >>> tried adding nullptr to body {0}", m_name );
+
+        m_Drawable = std::move( drawable );
+        m_Drawable->SetParentObject( this );
+        m_Data.visual = m_Drawable->data();
+    }
+
+    void TSingleBody::SetLinearVelocity( const TVec3& linear_vel )
+    {
+        m_LinearVelocity = linear_vel;
+        if ( m_BodyAdapter )
+            m_BodyAdapter->SetLinearVelocity( linear_vel );
+    }
+
+    void TSingleBody::SetAngularVelocity( const TVec3& angular_vel )
+    {
+        m_AngularVelocity = angular_vel;
+        if ( m_BodyAdapter )
+            m_BodyAdapter->SetAngularVelocity( angular_vel );
+    }
+
+    void TSingleBody::AddForceCOM( const TVec3& force )
+    {
+        m_TotalForce = m_TotalForce + force;
+    }
+
+    void TSingleBody::AddTorqueCOM( const TVec3& torque )
+    {
+        m_TotalTorque = m_TotalTorque + torque;
     }
 
     void TSingleBody::_InitializeInternal()
     {
-        // Tell the backend to initialize any required resources for simulation
-        if ( m_bodyImplRef )
-            m_bodyImplRef->Initialize();
+        if ( m_Collider )
+            m_Collider->Initialize();
+
+        if ( m_Drawable )
+            m_Drawable->Initialize();
+
+        if ( m_BodyAdapter )
+            m_BodyAdapter->Initialize();
     }
 
     void TSingleBody::_PreStepInternal()
     {
-        // Update any internal backend resources prior to a simulation step
-        if ( m_bodyImplRef )
-            m_bodyImplRef->PreStep();
+        if ( m_BodyAdapter )
+        {
+            m_BodyAdapter->SetForceCOM( m_TotalForce );
+            m_BodyAdapter->SetTorqueCOM( m_TotalTorque );
+        }
 
-        // Notify the collider to update any required resources prior to take a simulation step
-        if ( m_collision )
-            m_collision->PreStep();
+        if ( m_Collider )
+            m_Collider->PreStep();
 
-        // Notify the visual to update any required resources prior to take a simulation step
-        if ( m_visual )
-            m_visual->PreStep();
+        if ( m_Drawable )
+            m_Drawable->PreStep();
     }
 
     void TSingleBody::_PostStepInternal()
     {
-        // Update any internal backend resources (grab sim-state) after a sim. step has been taken
-        if ( m_bodyImplRef )
+        if ( m_BodyAdapter )
         {
-            m_bodyImplRef->PostStep();
-
-            // Grab the latest world-transform from the backend
-            m_bodyImplRef->GetTransform( m_tf );
+            m_BodyAdapter->GetLinearVelocity( m_LinearVelocity );
+            m_BodyAdapter->GetAngularVelocity( m_AngularVelocity );
+            m_BodyAdapter->GetTransform( m_tf );
         }
 
-        // Notify the collider to update any required resources after a simulation step was taken
-        if ( m_collision )
-            m_collision->PostStep();
+        if ( m_Collider )
+            m_Collider->PostStep();
 
-        // Notify the visual to update any required resources after a simulation step was taken
-        if ( m_visual )
-            m_visual->PostStep();
+        if ( m_Drawable )
+            m_Drawable->PostStep();
+
+        m_TotalForce = { 0.0, 0.0, 0.0 };
+        m_TotalTorque = { 0.0, 0.0, 0.0 };
     }
 
     void TSingleBody::_ResetInternal()
     {
-        if ( m_bodyImplRef )
-        {
-            // Reset the low-level resources through the adapter
-            m_bodyImplRef->Reset();
-            // Grab the world position|rotation information as well
-            m_bodyImplRef->GetTransform( m_tf );
-        }
-        else
-        {
-            m_tf = m_tf0;
-        }
+        if ( m_Collider )
+            m_Collider->Reset();
 
-        if ( m_collision )
-        {
-            m_collision->Reset();
-            m_collision->PostStep();
-        }
+        if ( m_Drawable )
+            m_Drawable->Reset();
 
-        if ( m_visual )
-        {
-            m_visual->Reset();
-            m_visual->PostStep();
-        }
+        SetTransform( m_tf0 );
+        SetLinearVelocity( m_LinearVelocity0 );
+        SetAngularVelocity( m_AngularVelocity0 );
+
+        if ( m_BodyAdapter )
+            m_BodyAdapter->Reset();
+
+        m_TotalForce = { 0.0, 0.0, 0.0 };
+        m_TotalTorque = { 0.0, 0.0, 0.0 };
     }
 
-    void TSingleBody::_DetachInternal()
+    void TSingleBody::_DetachSimInternal()
     {
-        // Nothing extra to detach from
+        if ( m_BodyAdapter )
+            m_BodyAdapter->OnDetach();
+        m_BodyAdapter = nullptr;
+
+        if ( m_Collider )
+            m_Collider->DetachSim();
+
+        if ( m_Drawable )
+            m_Drawable->DetachSim();
     }
 
-    void TSingleBody::_SetPositionInternal( const TVec3& position )
+    void TSingleBody::_DetachVizInternal()
     {
-        m_tf.set( position, 3 );
+        if ( m_Collider )
+            m_Collider->DetachViz();
 
-        if ( m_bodyImplRef )
-            m_bodyImplRef->SetPosition( position );
-
-        if ( m_collision )
-            m_collision->PostStep();
-
-        if ( m_visual )
-            m_visual->PostStep();
-    }
-
-    void TSingleBody::_SetRotationInternal( const TMat3& rotation )
-    {
-        m_tf.set( rotation );
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->SetRotation( rotation );
-
-        if ( m_collision )
-            m_collision->PostStep();
-
-        if ( m_visual )
-            m_visual->PostStep();
-    }
-
-    void TSingleBody::_SetEulerInternal( const TVec3& euler )
-    {
-        auto rotation = tinymath::rotation( euler );
-        m_tf.set( rotation );
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->SetRotation( rotation );
-
-        if ( m_collision )
-            m_collision->PostStep();
-
-        if ( m_visual )
-            m_visual->PostStep();
-    }
-
-    void TSingleBody::_SetQuaternionInternal( const TVec4& quat )
-    {
-        auto rotation = tinymath::rotation( quat );
-        m_tf.set( rotation );
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->SetRotation( rotation );
-
-        if ( m_collision )
-            m_collision->PostStep();
-
-        if ( m_visual )
-            m_visual->PostStep();
+        if ( m_Drawable )
+            m_Drawable->DetachViz();
     }
 
     void TSingleBody::_SetTransformInternal( const TMat4& transform )
     {
         m_tf = transform;
 
-        if ( m_bodyImplRef )
-            m_bodyImplRef->SetTransform( m_tf );
+        if ( m_BodyAdapter )
+            m_BodyAdapter->SetTransform( m_tf );
 
-        if ( m_collision )
-            m_collision->PostStep();
+        if ( m_Collider )
+            m_Collider->PostStep();
 
-        if ( m_visual )
-            m_visual->PostStep();
-    }
-
-    void TSingleBody::_SetInitialPositionInternal( const TVec3& position )
-    {
-        m_tf0.set( position, 3 );
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->SetInitialPosition( position );
-    }
-
-    void TSingleBody::_SetInitialRotationInternal( const TMat3& rotation )
-    {
-        m_tf0.set( rotation );
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->SetInitialRotation( rotation );
-    }
-
-    void TSingleBody::_SetInitialEulerInternal( const TVec3& euler )
-    {
-        auto rotation = tinymath::rotation( euler );
-        m_tf0.set( rotation );
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->SetInitialRotation( rotation );
-    }
-
-    void TSingleBody::_SetInitialQuaternionInternal( const TVec4& quat )
-    {
-        auto rotation = tinymath::rotation( quat );
-        m_tf0.set( rotation );
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->SetInitialRotation( rotation );
-    }
-
-    void TSingleBody::_SetInitialTransformInternal( const TMat4& transform )
-    {
-        m_tf0 = transform;
-
-        if ( m_bodyImplRef )
-            m_bodyImplRef->SetTransform( m_tf0 );
-    }
-
-    void TSingleBody::_SetLocalPositionInternal( const TVec3& localPosition )
-    {
-        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
-    }
-
-    void TSingleBody::_SetLocalRotationInternal( const TMat3& localRotation )
-    {
-        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
-    }
-
-    void TSingleBody::_SetLocalEulerInternal( const TVec3& localEuler )
-    {
-        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
-    }
-
-    void TSingleBody::_SetLocalQuaternionInternal( const TVec4& localQuat )
-    {
-        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
-    }
-
-    void TSingleBody::_SetLocalTransformInternal( const TMat4& localTransform )
-    {
-        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
-    }
-
-    void TSingleBody::_SetInitialLocalPositionInternal( const TVec3& localPosition )
-    {
-        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
-    }
-
-    void TSingleBody::_SetInitialLocalRotationInternal( const TMat3& localRotation )
-    {
-        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
-    }
-
-    void TSingleBody::_SetInitialLocalEulerInternal( const TVec3& localEuler )
-    {
-        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
-    }
-
-    void TSingleBody::_SetInitialLocalQuaternionInternal( const TVec4& localQuat )
-    {
-        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
-    }
-
-    void TSingleBody::_SetInitialLocalTransformInternal( const TMat4& localTransform )
-    {
-        // Do nothing, as not applicable for single-bodies (they're not part of a chain|compound)
+        if ( m_Drawable )
+            m_Drawable->PostStep();
     }
 }
