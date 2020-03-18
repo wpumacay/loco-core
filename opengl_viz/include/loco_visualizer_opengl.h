@@ -54,6 +54,7 @@ namespace loco
                                     bool windowResizable,
                                     bool renderOffscreen );
 
+        void _CollectDrawables();
         void _CollectSingleBodies();
         //// void _CollectCompounds();
         //// void _CollectKintreeAgents();

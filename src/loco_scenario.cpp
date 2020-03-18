@@ -29,6 +29,22 @@ namespace loco
     #endif
     }
 
+    TDrawable* TScenario::AddDrawable( std::unique_ptr< TDrawable > drawable )
+    {
+        LOCO_CORE_ASSERT( drawable, "TScenario::AddDrawable >>> tried adding nullptr" );
+
+        if ( HasDrawableNamed( drawable->name() ) )
+        {
+            LOCO_CORE_WARN( "TScenario::AddDrawable >>> drawable with name {0} already exists. \
+                             New one won't be added, returning nullptr instead.", drawable->name() );
+            return nullptr;
+        }
+
+        m_drawablesMap[drawable->name()] = m_drawables.size();
+        m_drawables.push_back( std::move( drawable ) );
+        return m_drawables.back().get();
+    }
+
     TSingleBody* TScenario::AddSingleBody( std::unique_ptr< TSingleBody > singleBody )
     {
         LOCO_CORE_ASSERT( singleBody, "TScenario::AddSingleBody >>> tried adding nullptr" );
@@ -111,6 +127,9 @@ namespace loco
 
     void TScenario::Initialize()
     {
+        for ( auto& drawable : m_drawables )
+            drawable->Initialize();
+
         for ( auto& singleBody : m_singleBodies )
             singleBody->Initialize();
 
@@ -129,6 +148,9 @@ namespace loco
 
     void TScenario::PreStep()
     {
+        for ( auto& drawable : m_drawables )
+            drawable->PreStep();
+
         for ( auto& singleBody : m_singleBodies )
             singleBody->PreStep();
 
@@ -147,6 +169,9 @@ namespace loco
 
     void TScenario::PostStep()
     {
+        for ( auto& drawable : m_drawables )
+            drawable->PostStep();
+
         for ( auto& singleBody : m_singleBodies )
             singleBody->PostStep();
 
@@ -165,6 +190,9 @@ namespace loco
 
     void TScenario::Reset()
     {
+        for ( auto& drawable : m_drawables )
+            drawable->Reset();
+
         for ( auto& singleBody : m_singleBodies )
             singleBody->Reset();
 
@@ -183,6 +211,9 @@ namespace loco
 
     void TScenario::DetachSim()
     {
+        for ( auto& drawable : m_drawables )
+            drawable->DetachSim();
+
         for ( auto& singleBody : m_singleBodies )
             singleBody->DetachSim();
 
@@ -201,6 +232,9 @@ namespace loco
 
     void TScenario::DetachViz()
     {
+        for ( auto& drawable : m_drawables )
+            drawable->DetachViz();
+
         for ( auto& singleBody : m_singleBodies )
             singleBody->DetachViz();
 
@@ -217,11 +251,22 @@ namespace loco
 ////             terrainGenerator->DetachViz();
     }
 
+    const TDrawable* TScenario::GetDrawableByName( const std::string& name ) const
+    {
+        if ( !HasDrawableNamed( name ) )
+        {
+            LOCO_CORE_ERROR( "TScenario::GetDrawableByName >>> drawable with name {0} not found in the scenario", name );
+            return nullptr;
+        }
+
+        return _get_drawable( m_drawablesMap.at( name ) );
+    }
+
     const TSingleBody* TScenario::GetSingleBodyByName( const std::string& name ) const
     {
         if( !HasSingleBodyNamed( name ) )
         {
-            LOCO_CORE_ERROR( "TScenario::GetSingleBodyByName >>> single-body with name {0} not found", name );
+            LOCO_CORE_ERROR( "TScenario::GetSingleBodyByName >>> single-body with name {0} not found in the scenario", name );
             return nullptr;
         }
 
@@ -271,6 +316,17 @@ namespace loco
 //// 
 ////         return _get_terrainGenerator( m_terrainGeneratorsMap.at( name ) );
 ////     }
+
+    TDrawable* TScenario::GetDrawableByName( const std::string& name )
+    {
+        if( !HasSingleBodyNamed( name ) )
+        {
+            LOCO_CORE_ERROR( "TScenario::GetSingleBodyByName >>> single-body with name {0} not found in the scenario", name );
+            return nullptr;
+        }
+
+        return _get_mutable_drawable( m_drawablesMap.at( name ) );
+    }
 
     TSingleBody* TScenario::GetSingleBodyByName( const std::string& name )
     {
@@ -327,6 +383,11 @@ namespace loco
 ////         return _get_mutable_terrainGenerator( m_terrainGeneratorsMap.at( name ) );
 ////     }
 
+    size_t TScenario::GetNumDrawables() const
+    {
+        return m_drawables.size();
+    }
+
     size_t TScenario::GetNumSingleBodies() const
     {
         return m_singleBodies.size();
@@ -352,6 +413,11 @@ namespace loco
 ////         return m_terrainGenerators.size();
 ////     }
 
+    bool TScenario::HasDrawableNamed( const std::string& name ) const
+    {
+        return m_drawablesMap.find( name ) != m_drawablesMap.end();
+    }
+
     bool TScenario::HasSingleBodyNamed( const std::string& name ) const
     {
         return m_singleBodiesMap.find( name ) != m_singleBodiesMap.end();
@@ -376,6 +442,14 @@ namespace loco
 ////     {
 ////         return m_terrainGeneratorsMap.find( name ) != m_terrainGeneratorsMap.end();
 ////     }
+
+    std::vector<const TDrawable*> TScenario::GetDrawablesList() const
+    {
+        std::vector<const TDrawable*> _drawablesList;
+        for ( auto& drawable : m_drawables )
+            _drawablesList.push_back( drawable.get() );
+        return _drawablesList;
+    }
 
     std::vector<const TSingleBody*> TScenario::GetSingleBodiesList() const
     {
@@ -417,6 +491,14 @@ namespace loco
 ////         return _terrainGeneratorsList;
 ////     }
 
+    std::vector< TDrawable* > TScenario::GetDrawablesList()
+    {
+        std::vector<TDrawable*> _drawablesList;
+        for ( auto& drawable : m_drawables )
+            _drawablesList.push_back( drawable.get() );
+        return _drawablesList;
+    }
+
     std::vector< TSingleBody* > TScenario::GetSingleBodiesList()
     {
         std::vector<TSingleBody*> _singleBodiesList;
@@ -457,6 +539,13 @@ namespace loco
 ////         return _terrainGeneratorsList;
 ////     }
 
+    const TDrawable* TScenario::_get_drawable( ssize_t index ) const
+    {
+        LOCO_CORE_ASSERT( ( index >= 0 && index < m_drawables.size() ), "TScenario::_get_drawable >>> \
+                          index {0} out of range [0,{1}]", index, m_drawables.size() );
+        return m_drawables[index].get();
+    }
+
     const TSingleBody* TScenario::_get_singleBody( ssize_t index ) const
     {
         LOCO_CORE_ASSERT( ( index >= 0 && index < m_singleBodies.size() ), "TScenario::_get_singleBody >>> \
@@ -491,6 +580,13 @@ namespace loco
 ////                           index {0} out of range [0,{1}]", index, m_terrainGenerators.size() );
 ////         return m_terrainGenerators[index].get();
 ////     }
+
+    TDrawable* TScenario::_get_mutable_drawable( ssize_t index )
+    {
+        LOCO_CORE_ASSERT( ( index >= 0 && index < m_drawables.size() ), "TScenario::_get_mutable_drawable >>> \
+                          index {0} our of range [0,...,{1}]", index, m_drawables.size() );
+        return m_drawables[index].get();
+    }
 
     TSingleBody* TScenario::_get_mutable_singleBody( ssize_t index )
     {

@@ -42,6 +42,7 @@ namespace loco
         if ( !m_glApplication )
             return;
 
+        _CollectDrawables();
         _CollectSingleBodies();
         //// _CollectCompounds();
         //// _CollectKintreeAgents();
@@ -51,6 +52,7 @@ namespace loco
 
     void TOpenGLVisualizer::_InitializeInternal()
     {
+        _CollectDrawables();
         _CollectSingleBodies();
         //// _CollectCompounds();
         //// _CollectKintreeAgents();
@@ -281,6 +283,29 @@ namespace loco
         }
 
         m_glApplication->scene()->ChangeCurrentLight( lightRef->name() );
+    }
+
+    void TOpenGLVisualizer::_CollectDrawables()
+    {
+        auto drawablesList = m_scenarioRef->GetDrawablesList();
+        for ( auto drawable : drawablesList )
+        {
+            auto gl_renderable = loco::glviz::CreateRenderable( drawable->data() );
+            if ( gl_renderable )
+            {
+                // Add engine-renderable to the scene
+                auto gl_renderableRef = m_glApplication->scene()->AddRenderable( std::move( gl_renderable ) );
+                // Create drawable adapter and link it to the adaptee (user drawable)
+                auto gl_drawableAdapter = std::make_unique<TOpenGLDrawableAdapter>( drawable, drawable->data(), gl_renderableRef );
+                drawable->SetDrawableAdapter( gl_drawableAdapter.get() );
+                gl_drawableAdapter->SetAmbientColor( drawable->data().ambient );
+                gl_drawableAdapter->SetDiffuseColor( drawable->data().diffuse );
+                gl_drawableAdapter->SetSpecularColor( drawable->data().specular );
+                gl_drawableAdapter->SetShininess( drawable->data().shininess );
+                // Keep ownership of the drawable adapter
+                m_vizDrawableAdapters.push_back( std::move( gl_drawableAdapter ) );
+            }
+        }
     }
 
     void TOpenGLVisualizer::_CollectSingleBodies()

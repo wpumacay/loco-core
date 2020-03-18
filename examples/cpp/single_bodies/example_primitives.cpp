@@ -98,6 +98,14 @@ int main( int argc, char* argv[] )
                                           loco::PATH_RESOURCES + "meshes/monkey.obj",
                                           { 2.0f, 2.0f, 2.0f }, orientation ) );
 
+    auto lizardon_data = loco::TVisualData();
+    lizardon_data.type = loco::eShapeType::MESH;
+    lizardon_data.size = { 0.1, 0.1, 0.1 };
+    lizardon_data.mesh_data.filename = "/home/gregor/Documents/repos/tysoc_core/ext/tiny_renderer/res/models/pokemons/lizardon/lizardon.obj";
+    auto lizardon = std::make_unique<loco::TDrawable>( "lizardon", lizardon_data );
+    lizardon->SetPosition( { 0.0, 0.0, 4.0 } );
+    scenario->AddDrawable( std::move( lizardon ) );
+
     auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, RENDERING_BACKEND );
     auto simulation = runtime->CreateSimulation( scenario.get() );
     auto visualizer = runtime->CreateVisualizer( scenario.get() );
