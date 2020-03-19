@@ -180,9 +180,9 @@ if ( LOCO_CORE_BUILD_WINDOWED_VISUALIZER OR LOCO_CORE_BUILD_HEADLESS_VISUALIZER 
     add_subdirectory( opengl_viz )
 endif()
 
-#### if ( LOCO_CORE_BUILD_PYTHON_BINDINGS )
-####     add_subdirectory( python/loco/bindings )
-#### endif()
+if ( LOCO_CORE_BUILD_PYTHON_BINDINGS )
+    add_subdirectory( python/loco/bindings )
+endif()
 
 #### if ( LOCO_CORE_IS_MASTER_PROJECT AND LOCO_CORE_BUILD_DOCS )
 ####     add_subdirectory( docs )

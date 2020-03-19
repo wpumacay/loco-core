@@ -1,12 +1,12 @@
 
 #include <loco_common_py.h>
-#include <components/loco_data.h>
+#include <loco_data.h>
 
 namespace py = pybind11;
 
 namespace loco
 {
-    void bindings_components_data( py::module& m )
+    void bindings_data( py::module& m )
     {   
         // Bindings for enumerators|constants
         {

@@ -3,6 +3,17 @@
 
 namespace loco
 {
+    std::string ToString( const eObjectType& obj_type )
+    {
+        if ( obj_type == eObjectType::BASE ) return "base";
+        if ( obj_type == eObjectType::DRAWABLE ) return "drawable";
+        if ( obj_type == eObjectType::SINGLE_BODY ) return "single_body";
+        if ( obj_type == eObjectType::SINGLE_BODY_COLLIDER ) return "single_body_collider";
+
+        LOCO_CORE_ERROR( "ToString(eObjectType) >>> undefined object type" );
+        return "undefined";
+    }
+
     void TObject::Initialize()
     {
         _InitializeInternal();

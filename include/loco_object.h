@@ -1,16 +1,19 @@
 #pragma once
 
 #include <loco_math.h>
+#include <loco_logger.h>
 
 namespace loco 
 {
     enum class eObjectType
     {
         BASE = 0,
-        COLLIDER,
-        VISUAL,
-        SINGLE_BODY
+        DRAWABLE,
+        SINGLE_BODY,
+        SINGLE_BODY_COLLIDER
     };
+
+    std::string ToString( const eObjectType& obj_type );
 
     class TObject
     {
@@ -55,7 +58,7 @@ namespace loco
 
         std::string name() const { return m_name; }
 
-        virtual eObjectType GetObjectType() const { return eObjectType::BASE; }
+        eObjectType GetObjectType() const { return _GetObjectTypeInternal(); }
 
         static eObjectType GetStaticType() { return eObjectType::BASE; }
 
@@ -74,6 +77,8 @@ namespace loco
         virtual void _DetachVizInternal() = 0;
 
         virtual void _SetTransformInternal( const TMat4& transform ) = 0;
+
+        virtual eObjectType _GetObjectTypeInternal() const { return eObjectType::BASE; }
 
     protected :
 

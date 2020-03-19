@@ -72,6 +72,8 @@ namespace loco
 
         bool wireframe() const { return m_Wireframe; }
 
+        static eObjectType GetStaticType() { return eObjectType::DRAWABLE; }
+
         TVisualData& data() { return m_Data; }
 
         const TVisualData& data() const { return m_Data; }
@@ -101,6 +103,8 @@ namespace loco
         void _SetTransformInternal( const TMat4& transform ) override;
 
         void _UpdateTransform();
+
+        eObjectType _GetObjectTypeInternal() const override { return eObjectType::DRAWABLE; }
 
     protected :
 

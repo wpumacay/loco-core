@@ -44,6 +44,8 @@ namespace loco
 
         void SetInitialQuaternion( const TVec4& quaternion0 ) { m_tf0.set( tinymath::rotation( quaternion0 ) ); }
 
+        void SetInitialTransform( const TMat4& transform0 ) { m_tf0 = transform0; }
+
         void SetInitialLinearVelocity( const TVec3& linear_vel0 ) { m_LinearVelocity0 = linear_vel0; }
 
         void SetInitialAngularVelocity( const TVec3& angular_vel0 ) { m_AngularVelocity0 = angular_vel0; }
@@ -76,8 +78,6 @@ namespace loco
 
         eDynamicsType dyntype() const { return m_Data.dyntype; }
 
-        eObjectType GetObjectType() const override { return eObjectType::SINGLE_BODY; }
-
         static eObjectType GetStaticType() { return eObjectType::SINGLE_BODY; }
 
         TSingleBodyCollider* collider() { return m_Collider.get(); }
@@ -107,6 +107,8 @@ namespace loco
         void _DetachVizInternal() override;
 
         void _SetTransformInternal( const TMat4& transform ) override;
+
+        eObjectType _GetObjectTypeInternal() const override { return eObjectType::SINGLE_BODY; }
 
     private :
 

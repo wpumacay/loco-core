@@ -54,9 +54,7 @@ namespace loco
 
         const TCollisionData& data() const { return m_Data; }
 
-        eObjectType GetObjectType() const override { return eObjectType::COLLIDER; }
-
-        static eObjectType GetStaticType() { return eObjectType::COLLIDER; }
+        static eObjectType GetStaticType() { return eObjectType::SINGLE_BODY_COLLIDER; }
 
         TSingleBody* parent() { return m_ParentBodyRef; }
 
@@ -85,6 +83,8 @@ namespace loco
         void _DetachVizInternal() override;
 
         void _SetTransformInternal( const TMat4& transform ) override;
+
+        eObjectType _GetObjectTypeInternal() const override { return eObjectType::SINGLE_BODY_COLLIDER; }
 
     protected :
 
