@@ -11,7 +11,7 @@ namespace loco
     public :
 
         TISingleBodyColliderAdapter( TSingleBodyCollider* collider_ref )
-            : m_ColliderRef( collider_ref ) {}
+            : m_ColliderRef( collider_ref ), m_Detached( false ) {}
 
         virtual ~TISingleBodyColliderAdapter() = default;
 
@@ -33,9 +33,13 @@ namespace loco
 
         const TSingleBodyCollider* collider() const { return m_ColliderRef; }
 
+        bool detached() const { return m_Detached; }
+
     protected :
 
         // Reference to owner collider
         TSingleBodyCollider* m_ColliderRef;
+        // Flag used to check resource state
+        bool m_Detached;
     };
 }

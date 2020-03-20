@@ -104,14 +104,14 @@ namespace loco
 
     void TSingleBody::_InitializeInternal()
     {
+        if ( m_BodyAdapter )
+            m_BodyAdapter->Initialize();
+
         if ( m_Collider )
             m_Collider->Initialize();
 
         if ( m_Drawable )
             m_Drawable->Initialize();
-
-        if ( m_BodyAdapter )
-            m_BodyAdapter->Initialize();
     }
 
     void TSingleBody::_PreStepInternal()

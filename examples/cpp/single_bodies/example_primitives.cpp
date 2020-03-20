@@ -76,9 +76,9 @@ int main( int argc, char* argv[] )
     LOCO_TRACE( "Physics-Backend: {0}", PHYSICS_BACKEND );
     LOCO_TRACE( "Rendering-Backend: {0}", RENDERING_BACKEND );
 
-    const loco::TVec3 orientation = { loco::PI / 3, loco::PI / 4, loco::PI / 6 };
+    //// const loco::TVec3 orientation = { loco::PI / 3, loco::PI / 4, loco::PI / 6 };
     //// const loco::TVec3 orientation = { loco::PI / 2, 0.0f, 0.0f };
-    //// const loco::TVec3 orientation = { 0.0f, 0.0f, 0.0f };
+    const loco::TVec3 orientation = { 0.0f, 0.0f, 0.0f };
 
     auto scenario = std::make_unique<loco::TScenario>();
     scenario->AddSingleBody( create_body( "floor", loco::eShapeType::PLANE, { 10.0f, 10.0f, 1.0f },
@@ -110,12 +110,35 @@ int main( int argc, char* argv[] )
     auto simulation = runtime->CreateSimulation( scenario.get() );
     auto visualizer = runtime->CreateVisualizer( scenario.get() );
 
+    auto sphere_ref = scenario->GetSingleBodyByName( "sphere" );
+
     while ( visualizer->IsActive() )
     {
         if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_ESCAPE ) )
             break;
         else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_R ) )
             simulation->Reset();
+        else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_P ) )
+            simulation->running() ? simulation->Pause() : simulation->Resume();
+        else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_L ) )
+            for ( auto single_body : scenario->GetSingleBodiesList() )
+                single_body->SetLinearVelocity( { 0.0, 0.0, 5.0 } );
+        else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_A ) )
+            for ( auto single_body : scenario->GetSingleBodiesList() )
+                single_body->SetAngularVelocity( { 0.0, 0.0, 3.1415 } );
+        else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_SPACE ) )
+            sphere_ref->AddForceCOM( { 0.0, 0.0, 1000.0 } );
+        else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_UP ) )
+            sphere_ref->AddForceCOM( { 0.0, 200.0, 0.0 } );
+        else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_DOWN ) )
+            sphere_ref->AddForceCOM( { 0.0, -200.0, 0.0 } );
+        else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_RIGHT ) )
+            sphere_ref->AddForceCOM( { 200.0, 0.0, 0.0 } );
+        else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_LEFT ) )
+            sphere_ref->AddForceCOM( { -200.0, 0.0, 0.0 } );
+
+        LOCO_TRACE( "Linear-velocity: {0}", loco::ToString( sphere_ref->linear_vel() ) );
+        LOCO_TRACE( "Angular-velocity: {0}", loco::ToString( sphere_ref->angular_vel() ) );
 
         simulation->Step();
         visualizer->Update();

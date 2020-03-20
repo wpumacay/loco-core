@@ -11,7 +11,7 @@ namespace loco
     public :
 
         TISingleBodyAdapter( TSingleBody* body_ref )
-            : m_BodyRef( body_ref ) {}
+            : m_BodyRef( body_ref ), m_Detached( false ) {}
 
         virtual ~TISingleBodyAdapter() { m_BodyRef = nullptr; }
 
@@ -43,9 +43,13 @@ namespace loco
 
         const TSingleBody* single_body() const { return m_BodyRef; }
 
+        bool detached() const { return m_Detached; }
+
     protected :
 
-        // Reference to ownerr body-obj
+        // Reference to owner body-obj
         TSingleBody* m_BodyRef;
+        // Flag used to check resource state
+        bool m_Detached;
     };
 }
