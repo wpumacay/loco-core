@@ -141,8 +141,7 @@ namespace loco
 
     void TSingleBodyCollider::_InitializeInternal()
     {
-        if ( m_ColliderAdapterRef )
-            m_ColliderAdapterRef->Initialize();
+        // Nothing to setup (adapter is handled by parent body)
     }
 
     void TSingleBodyCollider::_PreStepInternal()
