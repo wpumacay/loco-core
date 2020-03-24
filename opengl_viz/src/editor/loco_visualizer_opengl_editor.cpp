@@ -47,6 +47,7 @@ namespace loco
     {
         m_wantsToCaptureMouse = false;
 
+        _CheckUserKeyActions();
         _WindowObjects();
         _WindowScenario();
         _WindowInspector();
@@ -61,6 +62,28 @@ namespace loco
         if ( event.type() == engine::eEventType::MOUSE_PRESSED )
             return m_wantsToCaptureMouse;
         return false;
+    }
+
+    void TOpenGLEditorLayer::_CheckUserKeyActions()
+    {
+        if ( engine::CInputManager::IsKeyDown( engine::Keys::KEY_ESCAPE ) )
+        {
+            m_selectionState.selection_type = eSelectionType::NONE;
+            m_selectionState.name_single_body = "";
+            m_selectionState.name_compound = "";
+            m_selectionState.name_kinematic_tree = "";
+            m_selectionState.name_terrain_generator = "";
+        }
+        else if ( engine::CInputManager::IsKeyDown( engine::Keys::KEY_DELETE ) )
+        {
+            if ( m_selectionState.selection_type == eSelectionType::SINGLE_BODY &&
+                 m_scenarioRef->HasSingleBodyNamed( m_selectionState.name_single_body ) )
+            {
+                m_scenarioRef->RemoveSingleBodyByName( m_selectionState.name_single_body );
+                m_selectionState.selection_type = eSelectionType::NONE;
+                m_selectionState.name_single_body = "";
+            }
+        }
     }
 
     void TOpenGLEditorLayer::_WindowObjects()
@@ -365,8 +388,8 @@ namespace loco
             }
         }
 
-        const float curr_window_width = ImGui::GetWindowWidth();
-        const float curr_window_height = ImGui::GetWindowHeight();
+        const float curr_window_width = std::max( 10.0f, ImGui::GetWindowWidth() - 80 );
+        const float curr_window_height = std::max( 10.0f, ImGui::GetWindowHeight() - 80 );
         const float window_x = ImGui::GetWindowPos().x;
         const float window_y = ImGui::GetWindowPos().y;
         const bool is_window_focused = ImGui::IsWindowFocused();

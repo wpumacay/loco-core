@@ -26,6 +26,8 @@ namespace loco
 
     private :
 
+        void _CheckUserKeyActions();
+
         void _WindowObjects();
 
         void _WindowInspector();
