@@ -66,6 +66,9 @@ namespace loco
         // Takes a post-step, a.k.a. state-gather after taking a simulation step in the specific backend
         void _PostStep();
 
+        // Collects all detached objects from the simulation (recycles resources)
+        void _CollectDetached();
+
         virtual bool _InitializeInternal() = 0;
 
         virtual void _PreStepInternal() = 0;
@@ -91,7 +94,7 @@ namespace loco
 
         // Adapters for single-body API
         std::vector< std::unique_ptr<TISingleBodyAdapter> > m_singleBodyAdapters;
-        std::vector< std::unique_ptr<TISingleBodyColliderAdapter> > m_collisionAdapters;
+        std::vector< std::unique_ptr<TISingleBodyAdapter> > m_singleBodyAdaptersRecycled;
 
         // Whether or not the simulation is running
         bool m_running;

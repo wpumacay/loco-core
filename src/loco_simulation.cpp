@@ -31,8 +31,8 @@ namespace loco
     {
         m_scenarioRef = nullptr;
         m_visualizerRef = nullptr;
-        m_collisionAdapters.clear();
         m_singleBodyAdapters.clear();
+        m_singleBodyAdaptersRecycled.clear();
     }
 
     void TISimulation::Initialize()
@@ -83,6 +83,7 @@ namespace loco
             m_scenarioRef->PostStep();
 
         _PostStepInternal();
+        _CollectDetached();
     }
 
     void TISimulation::Reset()
@@ -101,6 +102,17 @@ namespace loco
     void TISimulation::Resume()
     {
         m_running = true;
+    }
+
+    void TISimulation::_CollectDetached()
+    {
+        for ( ssize_t i = 0; i < m_singleBodyAdapters.size(); i++ )
+        {
+            if ( !m_singleBodyAdapters[i]->detached() )
+                continue;
+            m_singleBodyAdaptersRecycled.push_back( std::move( m_singleBodyAdapters[i] ) );
+            m_singleBodyAdapters.erase( m_singleBodyAdapters.begin() + (i--) );
+        }
     }
 
     void TISimulation::SetVisualizer( TIVisualizer* visualizerRef )

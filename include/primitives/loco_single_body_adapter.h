@@ -1,17 +1,19 @@
 #pragma once
 
 #include <primitives/loco_single_body.h>
+#include <primitives/loco_single_body_collider_adapter.h>
 
 namespace loco
 {
     class TSingleBody;
+    class TISingleBodyColliderAdapter;
 
     class TISingleBodyAdapter
     {
     public :
 
         TISingleBodyAdapter( TSingleBody* body_ref )
-            : m_BodyRef( body_ref ), m_Detached( false ) {}
+            : m_BodyRef( body_ref ), m_Detached( false ), m_ColliderAdapter( nullptr ) {}
 
         virtual ~TISingleBodyAdapter() { m_BodyRef = nullptr; }
 
@@ -43,6 +45,10 @@ namespace loco
 
         const TSingleBody* single_body() const { return m_BodyRef; }
 
+        TISingleBodyColliderAdapter* collider_adapter() { return m_ColliderAdapter.get(); }
+
+        const TISingleBodyColliderAdapter* collider_adapter() const { return m_ColliderAdapter.get(); }
+
         bool detached() const { return m_Detached; }
 
     protected :
@@ -51,5 +57,7 @@ namespace loco
         TSingleBody* m_BodyRef;
         // Flag used to check resource state
         bool m_Detached;
+        // Adapter for related collider object
+        std::unique_ptr<TISingleBodyColliderAdapter> m_ColliderAdapter;
     };
 }

@@ -44,6 +44,13 @@ namespace loco
         //// const TKinTreeSensor* GetKinTreeSensorByName( const std::string& name ) const;
         //// const TTerrainGenerator* GetTerrainGeneratorByName( const std::string& name ) const;
 
+        void RemoveDrawableByName( const std::string& name );
+        void RemoveSingleBodyByName( const std::string& name );
+        //// void RemoveCompoundByName( const std::string& name );
+        //// void RemoveKinematicTreeByName( const std::string& name );
+        //// void RemoveKinematicTreeSensorByName( const std::string& name );
+        //// void RemoveTerrainGeneratorByName( const std::string& name );
+
         size_t GetNumDrawables() const;
         size_t GetNumSingleBodies() const;
         //// size_t GetNumCompounds() const;
@@ -72,36 +79,41 @@ namespace loco
         //// std::vector<const TKinTreeSensor*> GetKinTreeSensorsList() const;
         //// std::vector<const TTerrainGenerator*> GetTerrainGeneratorsList() const;
 
+        void remove_drawable( ssize_t index );
+        void remove_single_body( ssize_t index );
+        //// void remove_compound( ssize_t index );
+        //// void remove_kinematic_tree( ssize_t index );
+        //// void remove_kinematic_tree_sensor( ssize_t index );
+        //// void remove_terrain_generator( ssize_t index );
+
+        TDrawable* get_mutable_drawable( ssize_t index );
+        TSingleBody* get_mutable_singleBody( ssize_t index );
+        //// TCompound* get_mutable_compound( ssize_t index );
+        //// TKinTreeAgent* get_mutable_kintreeAgent( ssize_t index );
+        //// TKinTreeSensor* get_mutable_kintreeSensor( ssize_t index );
+        //// TTerrainGenerator* get_mutable_terrainGenerator( ssize_t index );
+
+        const TDrawable* get_drawable( ssize_t index ) const;
+        const TSingleBody* get_singleBody( ssize_t index ) const;
+        //// const TCompound* get_compound( ssize_t index ) const;
+        //// const TKinTreeAgent* get_kintreeAgent( ssize_t index ) const;
+        //// const TKinTreeSensor* get_kintreeSensor( ssize_t index ) const;
+        //// const TTerrainGenerator* get_terrainGenerator( ssize_t index ) const;
+
     private :
 
-        TDrawable* _get_mutable_drawable( ssize_t index );
-        TSingleBody* _get_mutable_singleBody( ssize_t index );
-        //// TCompound* _get_mutable_compound( ssize_t index );
-        //// TKinTreeAgent* _get_mutable_kintreeAgent( ssize_t index );
-        //// TKinTreeSensor* _get_mutable_kintreeSensor( ssize_t index );
-        //// TTerrainGenerator* _get_mutable_terrainGenerator( ssize_t index );
+        std::vector< std::unique_ptr< TDrawable > > m_Drawables;
+        std::vector< std::unique_ptr< TSingleBody > > m_SingleBodies;
+        //// std::vector< std::unique_ptr< TCompound > > m_Compounds;
+        //// std::vector< std::unique_ptr< TKinTreeAgent > > m_KinematicTrees;
+        //// std::vector< std::unique_ptr< TKinTreeSensor > > m_KinematicTreeSensors;
+        //// std::vector< std::unique_ptr< TTerrainGenerator > > m_TerrainGenerators;
 
-        const TDrawable* _get_drawable( ssize_t index ) const;
-        const TSingleBody* _get_singleBody( ssize_t index ) const;
-        //// const TCompound* _get_compound( ssize_t index ) const;
-        //// const TKinTreeAgent* _get_kintreeAgent( ssize_t index ) const;
-        //// const TKinTreeSensor* _get_kintreeSensor( ssize_t index ) const;
-        //// const TTerrainGenerator* _get_terrainGenerator( ssize_t index ) const;
-
-    private :
-
-        std::vector< std::unique_ptr< TDrawable > > m_drawables;
-        std::vector< std::unique_ptr< TSingleBody > > m_singleBodies;
-        //// std::vector< std::unique_ptr< TCompound > > m_compounds;
-        //// std::vector< std::unique_ptr< TKinTreeAgent > > m_kinTreeAgents;
-        //// std::vector< std::unique_ptr< TKinTreeSensor > > m_kinTreeSensors;
-        //// std::vector< std::unique_ptr< TTerrainGenerator > > m_terrainGenerators;
-
-        std::map< std::string, ssize_t > m_drawablesMap;
-        std::map< std::string, ssize_t > m_singleBodiesMap;
-        //// std::map< std::string, TCompound* > m_compoundsMap;
-        //// std::map< std::string, TKinTreeAgent* > m_kinTreeAgentsMap;
-        //// std::map< std::string, TKinTreeSensor* > m_kinTreeSensorsMap;
-        //// std::map< std::string, TTerrainGenerator* > m_terrainGeneratorsMap;
+        std::map< std::string, ssize_t > m_DrawablesMap;
+        std::map< std::string, ssize_t > m_SingleBodiesMap;
+        //// std::map< std::string, TCompound* > m_CompoundsMap;
+        //// std::map< std::string, TKinTreeAgent* > m_KinematicTreesMap;
+        //// std::map< std::string, TKinTreeSensor* > m_KinematicTreeSensorsMap;
+        //// std::map< std::string, TTerrainGenerator* > m_TerrainGeneratorsMap;
     };
 }
