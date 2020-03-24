@@ -120,6 +120,8 @@ namespace loco
         engine::CDebugDrawer::DrawLine( { 0.0f, 0.0f, 0.0f }, { 0.0f, 5.0f, 0.0f }, { 0.0f, 1.0f, 0.0f } );
         engine::CDebugDrawer::DrawLine( { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 5.0f }, { 0.0f, 0.0f, 1.0f } );
 
+        _CollectDetached();
+
     #ifndef LOCO_OPENGL_VISUALIZER_HEADLESS
         if ( engine::CInputManager::CheckSingleKeyPress( engine::Keys::KEY_G ) )
         {
@@ -137,6 +139,13 @@ namespace loco
         m_glApplication->begin();
         m_glApplication->render();
         m_glApplication->end();
+    }
+
+    void TOpenGLVisualizer::_CollectDetached()
+    {
+        for ( ssize_t i = 0; i < m_vizDrawableAdapters.size(); i++ )
+            if ( m_vizDrawableAdapters[i]->IsAwaitingDeletion() )
+                m_vizDrawableAdapters.erase( m_vizDrawableAdapters.begin() + (i--) );
     }
 
     void TOpenGLVisualizer::_ResetInternal()

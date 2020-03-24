@@ -61,6 +61,8 @@ namespace loco
         //// void _CollectKintreeSensors();
         //// void _CollectTerrainGenerators();
 
+        void _CollectDetached();
+
     protected :
 
         // Rendering application object
