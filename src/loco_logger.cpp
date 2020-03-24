@@ -33,6 +33,7 @@ namespace loco
         s_CoreLogger = nullptr;
         s_ClientLogger = nullptr;
         s_IsActive = false;
+        spdlog::drop_all();
     }
 
     bool TLogger::IsActive()
