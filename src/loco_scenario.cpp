@@ -390,7 +390,11 @@ namespace loco
             LOCO_CORE_ERROR( "TScenario::RemoveDrawableByName >>> tried removing unexistent drawable \"{0}\"", name );
             return;
         }
-        remove_drawable( m_DrawablesMap.at( name ) );
+        const ssize_t idx_drawable = m_DrawablesMap.at( name );
+        remove_drawable( idx_drawable );
+        for ( auto kv : m_DrawablesMap )
+            if ( kv.second > idx_drawable )
+                m_DrawablesMap[kv.first]--;
         m_DrawablesMap.erase( name );
     }
 
@@ -401,54 +405,73 @@ namespace loco
             LOCO_CORE_ERROR( "TScenario::RemoveSingleBodyByName >>> tried removing unexistent single-body \"{0}\"", name );
             return;
         }
-        remove_single_body( m_SingleBodiesMap.at( name ) );
+        const ssize_t idx_single_body = m_SingleBodiesMap.at( name );
+        remove_single_body( idx_single_body );
+        for ( auto kv : m_SingleBodiesMap )
+            if ( kv.second > idx_single_body )
+                m_SingleBodiesMap[kv.first]--;
         m_SingleBodiesMap.erase( name );
     }
 
-////     void TScenario::RemoveCompoundByName( const std::string& name )
-////     {
-////         if ( !HasCompoundNamed( name ) )
-////         {
-////             LOCO_CORE_ERROR( "TScenario::RemoveCompoundByName >>> tried removing unexistent compound \"{0}\"", name );
-////             return;
-////         }
-////         remove_compound( m_CompoundsMap.at( name ) );
-////         m_CompoundsMap.erase( name );
-////     }
+    // void TScenario::RemoveCompoundByName( const std::string& name )
+    // {
+    //     if ( !HasCompoundNamed( name ) )
+    //     {
+    //         LOCO_CORE_ERROR( "TScenario::RemoveCompoundByName >>> tried removing unexistent compound \"{0}\"", name );
+    //         return;
+    //     }
+    //     const ssize_t idx_compound = m_CompoundsMap.at( name );
+    //     remove_compound( idx_compound );
+    //     for ( auto kv : m_CompoundsMap )
+    //         if ( kv.second > idx_compound )
+    //             m_CompoundsMap[kv.first]--;
+    //     m_CompoundsMap.erase( name );
+    // }
 
-////     void TScenario::RemoveKinematicTreeByName( const std::string& name )
-////     {
-////         if ( !HasKinematicTreeNamed( name ) )
-////         {
-////             LOCO_CORE_ERROR( "TScenario::RemoveKinematicTreeByName >>> tried removing unexistent kinematic tree \"{0}\"", name );
-////             return;
-////         }
-////         remove_kinematic_tree( m_KinematicTreesMap.at( name ) );
-////         m_KinematicTreesMap.erase( name );
-////     }
+    // void TScenario::RemoveKinematicTreeByName( const std::string& name )
+    // {
+    //     if ( !HasKinematicTreeNamed( name ) )
+    //     {
+    //         LOCO_CORE_ERROR( "TScenario::RemoveKinematicTreeByName >>> tried removing unexistent kinematic tree \"{0}\"", name );
+    //         return;
+    //     }
+    //     const ssize_t idx_kinematic_tree = m_KinematicTreesMap.at( name );
+    //     remove_kinematic_tree( idx_kinematic_tree );
+    //     for ( auto kv : m_KinematicTreesMap )
+    //         if ( kv.second > idx_kinematic_Tree )
+    //             m_KinematicTreesMap[kv.first]--;
+    //     m_KinematicTreesMap.erase( name );
+    // }
 
-////     void TScenario::RemoveKinematicTreeSensorByName( const std::string& name )
-////     {
-////         if ( !HasKinematicTreeSensorNamed( name ) )
-////         {
-////             LOCO_CORE_ERROR( "TScenario::RemoveKinematicTreeSensorByName >>> tried removing unexistent kinematic tree sensor \"{0}\"", name );
-////             return;
-////         }
-////         remove_kinematic_tree_sensor( m_KinematicTreeSensorsMap.at( name ) );
-////         m_KinematicTreeSensors.erase( name );
-////     }
+    // void TScenario::RemoveKinematicTreeSensorByName( const std::string& name )
+    // {
+    //     if ( !HasKinematicTreeSensorNamed( name ) )
+    //     {
+    //         LOCO_CORE_ERROR( "TScenario::RemoveKinematicTreeSensorByName >>> tried removing unexistent kinematic tree sensor \"{0}\"", name );
+    //         return;
+    //     }
+    //     const ssize_t idx_kinematic_tree_sensor = m_KinematicTreeSensorsMap.at( name );
+    //     remove_kinematic_tree_sensor( idx_kinematic_tree_sensor );
+    //     for ( auto kv : m_KinematicTreeSensorsMap )
+    //         if ( kv.second > idx_kinematic_tree_sensor )
+    //             m_KinematicTreeSensorsMap[kv.first]--;
+    //     m_KinematicTreeSensorsMap.erase( name );
+    // }
 
-////     void TScenario::RemoveTerrainGeneratorByName( const std::string& name )
-////     {
-////         if ( !HasTerrainGeneratorNamed( name ) )
-////         {
-////             LOCO_CORE_ERROR( "TScenario::RemoveTerrainGeneratorByName >>> tried removing unexistent terrain generator \"{0}\"", name );
-////             return;
-////         }
-////         remove_terrain_generator( m_TerrainGeneratorsMap.at( name ) );
-////         m_TerrainGenerators.erase( name );
-////     }
-
+    // void TScenario::RemoveTerrainGeneratorByName( const std::string& name )
+    // {
+    //     if ( !HasTerrainGeneratorNamed( name ) )
+    //     {
+    //         LOCO_CORE_ERROR( "TScenario::RemoveTerrainGeneratorByName >>> tried removing unexistent terrain generator \"{0}\"", name );
+    //         return;
+    //     }
+    //     const ssize_t idx_terrain_generator = m_TerrainGeneratorsMap.at( name );
+    //     remove_terrain_generator( idx_terrain_generator );
+    //     for ( auto kv : m_TerrainGeneratorsMap )
+    //         if ( kv.second > idx_terrain_generator )
+    //             m_TerrainGeneratorsMap[kv.first]--;
+    //     m_TerrainGeneratorsMap.erase( name );
+    // }
 
     size_t TScenario::GetNumDrawables() const
     {
