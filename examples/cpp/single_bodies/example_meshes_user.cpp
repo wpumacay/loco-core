@@ -12,6 +12,27 @@ std::vector<int> TETRAHEDRON_FACES = { 0, 1, 3,
                                        0, 3, 2,
                                        1, 2, 3 };
 
+std::vector<float> RAMP_VERTICES = { 1.0, 0.0, 0.0,
+                                     1.0, 2.0, 0.0,
+                                     1.0, 1.0, 1.0,
+                                     1.0, 0.0, 1.0,
+                                    -1.0, 0.0, 0.0,
+                                    -1.0, 2.0, 0.0,
+                                    -1.0, 1.0, 1.0,
+                                    -1.0, 0.0, 1.0 };
+std::vector<int> RAMP_FACES = { 0, 1, 2,
+                                0, 2, 3,
+                                0, 4, 5,
+                                0, 5, 1,
+                                0, 3, 7,
+                                0, 7, 4,
+                                2, 6, 7,
+                                2, 7, 3,
+                                1, 5, 6,
+                                1, 6, 2,
+                                4, 7, 6,
+                                4, 6, 5 };
+
 std::unique_ptr<loco::TSingleBody> create_body( const std::string& name,
                                                 const loco::eShapeType& shape,
                                                 const loco::TVec3& size,
@@ -58,8 +79,10 @@ int main( int argc, char* argv[] )
                                           loco::eDynamicsType::STATIC, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.3f, 0.5f, 0.7f } ) );
     scenario->AddSingleBody( create_body( "sphere", loco::eShapeType::SPHERE, { 0.1f, 0.1f, 0.1f },
                                           loco::eDynamicsType::DYNAMIC, { 1.0f, -1.0f, 2.0f }, orientation ) );
-    scenario->AddSingleBody( create_tetrahedron( "tetra_0", { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, orientation ) );
-    scenario->AddSingleBody( create_tetrahedron( "tetra_1", { 0.5f, 0.5f, 0.5f }, { 0.0f, -1.0f, 1.0f }, orientation ) );
+    scenario->AddSingleBody( create_tetrahedron( "tetra_0", { 1.0f, 1.0f, 1.0f }, { -1.0f, -1.0f, 1.0f }, orientation ) );
+    scenario->AddSingleBody( create_tetrahedron( "tetra_1", { 0.5f, 0.5f, 0.5f }, { -1.0f, 1.0f, 1.0f }, orientation ) );
+    scenario->AddSingleBody( create_ramp( "ramp_0", { 0.3f, 0.3f, 0.3f }, { 1.0f, 1.0f, 1.0f }, orientation ) );
+    scenario->AddSingleBody( create_ramp( "ramp_1", { 0.5f, 0.5f, 0.5f }, { 1.0f, -1.0f, 1.0f }, orientation ) );
 
     auto lizardon_data = loco::TVisualData();
     lizardon_data.type = loco::eShapeType::MESH;
@@ -169,5 +192,27 @@ std::unique_ptr<loco::TSingleBody> create_ramp( const std::string& name,
                                                 const loco::TVec3& position,
                                                 const loco::TVec3& euler )
 {
+    auto col_data = loco::TCollisionData();
+    col_data.type = loco::eShapeType::MESH;
+    col_data.size = scale;
+    col_data.mesh_data.vertices = RAMP_VERTICES;
+    col_data.mesh_data.faces = RAMP_FACES;
+    auto vis_data = loco::TVisualData();
+    vis_data.type = loco::eShapeType::MESH;
+    vis_data.size = scale;
+    vis_data.mesh_data.vertices = RAMP_VERTICES;
+    vis_data.mesh_data.faces = RAMP_FACES;
+    vis_data.ambient = { 0.3, 0.7, 0.5 };
+    vis_data.diffuse = { 0.3, 0.7, 0.5 };
+    vis_data.specular = { 0.3, 0.7, 0.5 };
+    vis_data.shininess = 90.0;
+    auto body_data = loco::TBodyData();
+    body_data.collision = col_data;
+    body_data.visual = vis_data;
+    body_data.dyntype = loco::eDynamicsType::DYNAMIC;
+
+    auto body_obj = std::make_unique<loco::TSingleBody>( name, body_data, position, tinymath::rotation( euler ) );
+    return std::move( body_obj );
+
     return nullptr;
 }
