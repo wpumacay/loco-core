@@ -135,6 +135,21 @@ namespace loco
         }
     #endif
 
+////         auto renderables = m_glApplication->scene()->GetRenderablesList();
+////         for ( auto renderable : renderables )
+////         {
+////             if ( auto mesh = dynamic_cast<engine::CMesh*>( renderable ) )
+////             {
+////                 engine::CDebugDrawer::DrawNormals( mesh, { 0.0, 0.0, 1.0 } );
+////             }
+////             else if ( auto model = dynamic_cast<engine::CModel*>( renderable ) )
+////             {
+////                 auto meshes = model->meshes();
+////                 for ( auto mesh : meshes )
+////                     engine::CDebugDrawer::DrawNormals( mesh, { 0.0, 0.0, 1.0 } );
+////             }
+////         }
+
         m_glApplication->update();
         m_glApplication->begin();
         m_glApplication->render();

@@ -191,34 +191,42 @@ namespace glviz {
         if ( indices.size() % 3 != 0 )
             LOCO_CORE_ERROR( "CreateMeshFromData >>> there must be 3 elements per face" );
 
-        const size_t num_vertices = vertices.size() / 3;
-        const size_t num_indices = indices.size() / 3;
+        const size_t num_faces = indices.size() / 3;
+        const size_t num_vertices = num_faces * 3;
+        const size_t num_vertices_unique = vertices.size() / 3;
+        std::vector<engine::CVec3> mesh_vertices_unique( num_vertices_unique );
         std::vector<engine::CVec3> mesh_vertices( num_vertices );
         std::vector<engine::CVec3> mesh_normals( num_vertices );
         std::vector<engine::CVec2> mesh_texcoords( num_vertices );
-        std::vector<engine::CInd3> mesh_indices( num_indices );
+        std::vector<engine::CInd3> mesh_faces( num_faces );
 
-        for ( size_t v = 0; v < num_vertices; v++ )
-        {
-            mesh_vertices[v] = { vertices[3 * v + 0], vertices[3 * v + 1], vertices[3 * v + 2] };
-            mesh_texcoords[v] = { 1.0f, 1.0f }; // dummy uv-coordinates
-        }
+        for ( size_t v = 0; v < num_vertices_unique; v++ )
+            mesh_vertices_unique[v] = { vertices[3 * v + 0], vertices[3 * v + 1], vertices[3 * v + 2] };
 
-        for ( size_t f = 0; f < num_indices; f++ )
+        for ( size_t f = 0; f < num_faces; f++ )
         {
-            mesh_indices[f] = { indices[3 * f + 0], indices[3 * f + 1], indices[3 * f + 2] };
+            mesh_faces[f] = { (int)(3 * f + 0), (int)(3 * f + 1), (int)(3 * f + 2) };
             // Compute the normals (flat-normals, assuming winding order is 0-1-2 <=> out-normal )
-            TVec3 v0, v1, v2;
-            if ( indices[3 * f + 0] < num_vertices && indices[3 * f + 1] < num_vertices && indices[3 * f + 2] < num_vertices )
+            if ( indices[3 * f + 0] < num_vertices_unique &&
+                 indices[3 * f + 1] < num_vertices_unique &&
+                 indices[3 * f + 2] < num_vertices_unique )
             {
-                v0 = mesh_vertices[indices[3 * f + 0]];
-                v1 = mesh_vertices[indices[3 * f + 1]];
-                v2 = mesh_vertices[indices[3 * f + 2]];
+                mesh_vertices[3 * f + 0] = mesh_vertices_unique[indices[3 * f + 0]];
+                mesh_vertices[3 * f + 1] = mesh_vertices_unique[indices[3 * f + 1]];
+                mesh_vertices[3 * f + 2] = mesh_vertices_unique[indices[3 * f + 2]];
 
-                const auto flat_normal = tinymath::cross( v1 - v0, v2 - v0 );
-                mesh_normals[indices[3 * f + 0]] = flat_normal;
-                mesh_normals[indices[3 * f + 1]] = flat_normal;
-                mesh_normals[indices[3 * f + 2]] = flat_normal;
+                auto v0 = mesh_vertices[3 * f + 0];
+                auto v1 = mesh_vertices[3 * f + 1];
+                auto v2 = mesh_vertices[3 * f + 2];
+
+                const auto flat_normal = tinymath::cross( v1 - v0, v2 - v0 ).normalized();
+                mesh_normals[3 * f + 0] = flat_normal;
+                mesh_normals[3 * f + 1] = flat_normal;
+                mesh_normals[3 * f + 2] = flat_normal;
+
+                mesh_texcoords[3 * f + 0] = { 0.0f, 0.0f };
+                mesh_texcoords[3 * f + 1] = { 0.0f, 0.0f };
+                mesh_texcoords[3 * f + 2] = { 0.0f, 0.0f };
             }
             else
             {
@@ -228,7 +236,7 @@ namespace glviz {
 
         static size_t num_meshes = 0;
         auto mesh = std::make_unique<engine::CMesh>( "mesh_" + std::to_string( num_meshes++ ),
-                                                     mesh_vertices, mesh_normals, mesh_texcoords, mesh_indices );
+                                                     mesh_vertices, mesh_normals, mesh_texcoords, mesh_faces );
         return std::move( mesh );
     }
 }}
