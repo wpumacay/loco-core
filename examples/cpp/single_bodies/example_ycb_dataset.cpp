@@ -77,19 +77,19 @@ int main( int argc, char* argv[] )
 
     LOCO_TRACE( "Backend: {0}", PHYSICS_BACKEND );
 
-    const loco::TVec3 orientation = { 0.0f, 0.0f, 0.0f };
+    //// const loco::TVec3 orientation = { 0.0f, 0.0f, 0.0f };
     //// const loco::TVec3 orientation = { loco::PI / 2, 0.0f, 0.0f };
-    //// const loco::TVec3 orientation = { loco::PI / 3, loco::PI / 4, loco::PI / 6 };
+    const loco::TVec3 orientation = { loco::PI / 3, loco::PI / 4, loco::PI / 6 };
 
     auto scenario = std::make_unique<loco::TScenario>();
     scenario->AddSingleBody( create_body( "floor", loco::eShapeType::PLANE, { 10.0f, 10.0f, 1.0f },
                                           loco::eDynamicsType::STATIC, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.3f, 0.5f, 0.7f } ) );
     scenario->AddSingleBody( create_ycb_object( "mesh_ycb_1", "001_chips_can", { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, orientation ) );
     scenario->AddSingleBody( create_ycb_object( "mesh_ycb_2", "002_master_chef_can", { 1.0f, 1.0f, 1.0f }, { 0.0f, -1.0f, 1.0f }, orientation ) );
-    ////scenario->AddSingleBody( create_ycb_object( "mesh_ycb_3", "003_cracker_box", { 1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, 1.0f }, orientation ) );
-    ////scenario->AddSingleBody( create_ycb_object( "mesh_ycb_4", "004_sugar_box", { 1.0f, 1.0f, 1.0f }, { -1.0f, 1.0f, 1.0f }, orientation ) );
-    ////scenario->AddSingleBody( create_ycb_object( "mesh_ycb_6", "006_mustard_bottle", { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f }, orientation ) );
-    ////scenario->AddSingleBody( create_ycb_object( "mesh_ycb_7", "007_tuna_fish_can", { 1.0f, 1.0f, 1.0f }, { -1.0f, -1.0f, 1.0f }, orientation ) );
+    scenario->AddSingleBody( create_ycb_object( "mesh_ycb_3", "003_cracker_box", { 1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, 1.0f }, orientation ) );
+    scenario->AddSingleBody( create_ycb_object( "mesh_ycb_4", "004_sugar_box", { 1.0f, 1.0f, 1.0f }, { -1.0f, 1.0f, 1.0f }, orientation ) );
+    scenario->AddSingleBody( create_ycb_object( "mesh_ycb_6", "006_mustard_bottle", { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f }, orientation ) );
+    scenario->AddSingleBody( create_ycb_object( "mesh_ycb_7", "007_tuna_fish_can", { 1.0f, 1.0f, 1.0f }, { -1.0f, -1.0f, 1.0f }, orientation ) );
 
     auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, loco::config::rendering::GLVIZ_GLFW );
     auto simulation = runtime->CreateSimulation( scenario.get() );
