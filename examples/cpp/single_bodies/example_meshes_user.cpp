@@ -51,6 +51,8 @@ std::unique_ptr<loco::TSingleBody> create_ramp( const std::string& name,
                                                 const loco::TVec3& position,
                                                 const loco::TVec3& euler );
 
+std::unique_ptr<loco::TSingleBody> create_path_part( ssize_t idx );
+
 int main( int argc, char* argv[] )
 {
     loco::TLogger::Init();
@@ -83,6 +85,8 @@ int main( int argc, char* argv[] )
     scenario->AddSingleBody( create_tetrahedron( "tetra_1", { 0.5f, 0.5f, 0.5f }, { -1.0f, 1.0f, 1.0f }, orientation ) );
     scenario->AddSingleBody( create_ramp( "ramp_0", { 0.3f, 0.3f, 0.3f }, { 1.0f, 1.0f, 1.0f }, orientation ) );
     scenario->AddSingleBody( create_ramp( "ramp_1", { 0.5f, 0.5f, 0.5f }, { 1.0f, -1.0f, 1.0f }, orientation ) );
+    for ( ssize_t i = 0; i < 12; i++ )
+        scenario->AddSingleBody( create_path_part( i ) );
 
     auto lizardon_data = loco::TVisualData();
     lizardon_data.type = loco::eShapeType::MESH;
@@ -213,6 +217,65 @@ std::unique_ptr<loco::TSingleBody> create_ramp( const std::string& name,
 
     auto body_obj = std::make_unique<loco::TSingleBody>( name, body_data, position, tinymath::rotation( euler ) );
     return std::move( body_obj );
+}
 
-    return nullptr;
+std::unique_ptr<loco::TSingleBody> create_path_part( ssize_t idx )
+{
+    const float height = 1.0;
+    const float inner_rad = 2.0;
+    const float outer_rad = 3.0;
+    const float dtheta = 2.0 * loco::PI / 12.0;
+    const float ctheta = std::cos( dtheta * idx );
+    const float stheta = std::sin( dtheta * idx );
+    const float ctheta_n = std::cos( dtheta * ( idx + 1 ) );
+    const float stheta_n = std::sin( dtheta * ( idx + 1 ) );
+
+    const float half_rad = 0.5* ( inner_rad + outer_rad );
+    const loco::TVec3 com_position = { half_rad * std::cos( ( idx + 0.5f ) * dtheta ),
+                                       half_rad * std::sin( ( idx + 0.5f ) * dtheta ),
+                                       0.5 * height };
+    const loco::TVec3 euler = { 0.0, 0.0, 0.0 };
+
+    std::vector<float> vertices = { inner_rad * ctheta   - com_position.x(), inner_rad * stheta   - com_position.y(), 0.5f * height,
+                                    outer_rad * ctheta   - com_position.x(), outer_rad * stheta   - com_position.y(), 0.5f * height,
+                                    outer_rad * ctheta_n - com_position.x(), outer_rad * stheta_n - com_position.y(), 0.5f * height,
+                                    inner_rad * ctheta_n - com_position.x(), inner_rad * stheta_n - com_position.y(), 0.5f * height,
+                                    inner_rad * ctheta   - com_position.x(), inner_rad * stheta   - com_position.y(), -0.5f * height,
+                                    outer_rad * ctheta   - com_position.x(), outer_rad * stheta   - com_position.y(), -0.5f * height,
+                                    outer_rad * ctheta_n - com_position.x(), outer_rad * stheta_n - com_position.y(), -0.5f * height,
+                                    inner_rad * ctheta_n - com_position.x(), inner_rad * stheta_n - com_position.y(), -0.5f * height };
+    std::vector<int> indices = { 0, 1, 2,
+                                 0, 2, 3,
+                                 0, 4, 5,
+                                 0, 5, 1,
+                                 0, 3, 7,
+                                 0, 7, 4,
+                                 2, 6, 7,
+                                 2, 7, 3,
+                                 1, 5, 6,
+                                 1, 6, 2,
+                                 4, 7, 6,
+                                 4, 6, 5 };
+
+    auto col_data = loco::TCollisionData();
+    col_data.type = loco::eShapeType::MESH;
+    col_data.size = { 1.0, 1.0, 1.0 };
+    col_data.mesh_data.vertices = vertices;
+    col_data.mesh_data.faces = indices;
+    auto vis_data = loco::TVisualData();
+    vis_data.type = loco::eShapeType::MESH;
+    vis_data.size = { 1.0, 1.0, 1.0 };
+    vis_data.mesh_data.vertices = vertices;
+    vis_data.mesh_data.faces = indices;
+    vis_data.ambient = { 0.2, 0.8, 0.2 };
+    vis_data.diffuse = { 0.2, 0.8, 0.2 };
+    vis_data.specular = { 0.2, 0.8, 0.2 };
+    vis_data.shininess = 90.0;
+    auto body_data = loco::TBodyData();
+    body_data.collision = col_data;
+    body_data.visual = vis_data;
+    body_data.dyntype = loco::eDynamicsType::STATIC;
+
+    auto body_obj = std::make_unique<loco::TSingleBody>( "path_" + std::to_string( idx ), body_data, com_position, tinymath::rotation( euler ) );
+    return std::move( body_obj );
 }
