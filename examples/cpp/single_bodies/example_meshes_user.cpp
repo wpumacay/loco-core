@@ -3,23 +3,27 @@
 
 std::string PHYSICS_BACKEND = loco::config::physics::NONE;
 
-std::vector<float> TETRAHEDRON_VERTICES = { 0.0, 0.0, 0.0,
-                                            1.0, 0.0, 0.0,
-                                            0.0, 1.0, 0.0,
-                                            0.0, 0.0, 1.0 };
+const loco::TVec3 COM_TETRAHEDRON = { 1.0f / 3.0f, 1.0f / 3.0f, 1.0f / 3.0f };
+
+std::vector<float> TETRAHEDRON_VERTICES = { 0.0f - COM_TETRAHEDRON.x(), 0.0f - COM_TETRAHEDRON.y(), 0.0f - COM_TETRAHEDRON.z(),
+                                            1.0f - COM_TETRAHEDRON.x(), 0.0f - COM_TETRAHEDRON.y(), 0.0f - COM_TETRAHEDRON.z(),
+                                            0.0f - COM_TETRAHEDRON.x(), 1.0f - COM_TETRAHEDRON.y(), 0.0f - COM_TETRAHEDRON.z(),
+                                            0.0f - COM_TETRAHEDRON.x(), 0.0f - COM_TETRAHEDRON.y(), 1.0f - COM_TETRAHEDRON.z() };
 std::vector<int> TETRAHEDRON_FACES = { 0, 1, 3,
                                        0, 2, 1,
                                        0, 3, 2,
                                        1, 2, 3 };
 
-std::vector<float> RAMP_VERTICES = { 1.0, 0.0, 0.0,
-                                     1.0, 2.0, 0.0,
-                                     1.0, 1.0, 1.0,
-                                     1.0, 0.0, 1.0,
-                                    -1.0, 0.0, 0.0,
-                                    -1.0, 2.0, 0.0,
-                                    -1.0, 1.0, 1.0,
-                                    -1.0, 0.0, 1.0 };
+const loco::TVec3 COM_RAMP = { 0.0f, 7.0f / 9.0f, 4.0f / 9.0f };
+
+std::vector<float> RAMP_VERTICES = { 1.0f - COM_RAMP.x(), 0.0f - COM_RAMP.y(), 0.0f - COM_RAMP.z(),
+                                     1.0f - COM_RAMP.x(), 2.0f - COM_RAMP.y(), 0.0f - COM_RAMP.z(),
+                                     1.0f - COM_RAMP.x(), 1.0f - COM_RAMP.y(), 1.0f - COM_RAMP.z(),
+                                     1.0f - COM_RAMP.x(), 0.0f - COM_RAMP.y(), 1.0f - COM_RAMP.z(),
+                                    -1.0f - COM_RAMP.x(), 0.0f - COM_RAMP.y(), 0.0f - COM_RAMP.z(),
+                                    -1.0f - COM_RAMP.x(), 2.0f - COM_RAMP.y(), 0.0f - COM_RAMP.z(),
+                                    -1.0f - COM_RAMP.x(), 1.0f - COM_RAMP.y(), 1.0f - COM_RAMP.z(),
+                                    -1.0f - COM_RAMP.x(), 0.0f - COM_RAMP.y(), 1.0f - COM_RAMP.z() };
 std::vector<int> RAMP_FACES = { 0, 1, 2,
                                 0, 2, 3,
                                 0, 4, 5,
