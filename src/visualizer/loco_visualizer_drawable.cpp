@@ -181,6 +181,14 @@ namespace loco
             m_DrawableAdapter->SetShininess( shininess );
     }
 
+    void TDrawable::ChangeTexture( const std::string& texture )
+    {
+        m_Data.texture = texture;
+
+        if ( m_DrawableAdapter )
+            m_DrawableAdapter->SetTexture( texture );
+    }
+
     void TDrawable::_UpdateTransform()
     {
         if ( m_Parent )

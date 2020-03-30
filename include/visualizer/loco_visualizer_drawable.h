@@ -46,6 +46,8 @@ namespace loco
 
         void ChangeShininess( const TScalar& shininess );
 
+        void ChangeTexture( const std::string& texture );
+
         TVec3 local_pos() const { return TVec3( m_LocalTf.col( 3 ) ); }
 
         TMat3 local_rot() const { return TMat3( m_LocalTf ); }
