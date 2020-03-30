@@ -29,102 +29,6 @@ namespace loco
     #endif
     }
 
-    TDrawable* TScenario::AddDrawable( std::unique_ptr< TDrawable > drawable )
-    {
-        LOCO_CORE_ASSERT( drawable, "TScenario::AddDrawable >>> tried adding nullptr" );
-
-        if ( HasDrawableNamed( drawable->name() ) )
-        {
-            LOCO_CORE_WARN( "TScenario::AddDrawable >>> drawable with name {0} already exists. \
-                             New one won't be added, returning nullptr instead.", drawable->name() );
-            return nullptr;
-        }
-
-        m_DrawablesMap[drawable->name()] = m_Drawables.size();
-        m_Drawables.push_back( std::move( drawable ) );
-        return m_Drawables.back().get();
-    }
-
-    TSingleBody* TScenario::AddSingleBody( std::unique_ptr< TSingleBody > singleBody )
-    {
-        LOCO_CORE_ASSERT( singleBody, "TScenario::AddSingleBody >>> tried adding nullptr" );
-
-        if ( HasSingleBodyNamed( singleBody->name() ) )
-        {
-            LOCO_CORE_WARN( "TScenario::AddSingleBody >>> single-body with name {0} already exists. \
-                             New one won't be added, returning nullptr instead.", singleBody->name() );
-            return nullptr;
-        }
-
-        m_SingleBodiesMap[singleBody->name()] = m_SingleBodies.size();
-        m_SingleBodies.push_back( std::move( singleBody ) );
-        return m_SingleBodies.back().get();
-    }
-
-////     TCompound* TScenario::AddCompound( std::unique_ptr< TCompound > compound )
-////     {
-////         LOCO_CORE_ASSERT( compound, "TScenario::AddCompound >>> tried adding nullptr" );
-//// 
-////         if ( HasCompoundNamed( compound->name() ) )
-////         {
-////             LOCO_CORE_WARN( "TScenario::AddCompound >>> compound with name {0} already exists. \
-////                              New one won't be added, returning nullptr instead.", compound->name() );
-////             return nullptr;
-////         }
-//// 
-////         m_CompoundsMap[compound->name()] = m_Compounds.size();
-////         m_Compounds.push_back( std::move( compound ) );
-////         return m_Compounds.back().get();
-////     }
-//// 
-////     TKinTreeAgent* TScenario::AddKinTreeAgent( std::unique_ptr< TKinTreeAgent > kinTreeAgent )
-////     {
-////         LOCO_CORE_ASSERT( kinTreeAgent, "TScenario::AddKinTreeAgent >>> tried adding nullptr" );
-//// 
-////         if ( HasKinTreeAgentNamed( kinTreeAgent->name() ) )
-////         {
-////             LOCO_CORE_WARN( "TScenario::AddKinTreeAgent >>> kinTreeAgent with name {0} already exists. \
-////                              New one won't be added, returning nullptr instead.", kinTreeAgent->name() );
-////             return nullptr;
-////         }
-//// 
-////         m_KinematicTreesMap[kinTreeAgent->name()] = m_KinematicTrees.size();
-////         m_KinematicTrees.push_back( std::move( kinTreeAgent ) );
-////         return m_KinematicTrees.back().get();
-////     }
-//// 
-////     TKinTreeSensor* TScenario::AddKinTreeSensor( std::unique_ptr< TKinTreeSensor > kinTreeSensor )
-////     {
-////         LOCO_CORE_ASSERT( kinTreeSensor, "TScenario::AddKinTreeSensor >>> tried adding nullptr" );
-//// 
-////         if ( HasKinTreeSensorNamed( kinTreeSensor->name() ) )
-////         {
-////             LOCO_CORE_WARN( "TScenario::AddKinTreeSensor >>> kinTreeSensor with name {0} already exists. \
-////                              New one won't be added, returning nullptr instead.", kinTreeSensor->name() );
-////             return nullptr;
-////         }
-//// 
-////         m_KinematicTreeSensorsMap[kinTreeSensor->name()] = m_KinematicTreeSensors.size();
-////         m_KinematicTreeSensors.push_back( std::move( kinTreeSensor ) );
-////         return m_KinematicTreeSensors.back().get();
-////     }
-//// 
-////     TTerrainGenerator* TScenario::AddTerrainGenerator( std::unique_ptr< TTerrainGenerator > terrainGenerator )
-////     {
-////         LOCO_CORE_ASSERT( terrainGenerator, "TScenario::AddTerrainGenerator >>> tried adding nullptr" );
-//// 
-////         if ( HasTerrainGeneratorNamed( terrainGenerator->name() ) )
-////         {
-////             LOCO_CORE_WARN( "TScenario::AddTerrainGenerator >>> terrainGenerator with name {0} already exists. \
-////                              New one won't be added, returning nullptr instead.", terrainGenerator->name() );
-////             return nullptr;
-////         }
-//// 
-////         m_TerrainGeneratorsMap[terrainGenerator->name()] = m_TerrainGenerators.size();
-////         m_TerrainGenerators.push_back( std::move( terrainGenerator ) );
-////         return m_TerrainGenerators.back().get();
-////     }
-
     void TScenario::Initialize()
     {
         for ( auto& drawable : m_Drawables )
@@ -250,6 +154,353 @@ namespace loco
 ////         for ( auto& terrainGenerator : m_TerrainGenerators )
 ////             terrainGenerator->DetachViz();
     }
+
+    TDrawable* TScenario::CreateBoxDrawable( const std::string& name,
+                                             const loco::TVec3& extents,
+                                             const loco::TVec3& color )
+    {
+        RETURN_DRAWABLE_PRIMITIVE( name, eShapeType::BOX, extents, color );
+    }
+
+    TDrawable* TScenario::CreateSphereDrawable( const std::string& name,
+                                                TScalar radius,
+                                                const loco::TVec3& color )
+    {
+        RETURN_DRAWABLE_PRIMITIVE( name, eShapeType::SPHERE, TVec3( radius, 0.0, 0.0 ), color );
+    }
+
+    TDrawable* TScenario::CreateCylinderDrawable( const std::string& name,
+                                                  TScalar radius, TScalar height,
+                                                  const loco::TVec3& color )
+    {
+        RETURN_DRAWABLE_PRIMITIVE( name, eShapeType::CYLINDER, TVec3( radius, height, 0.0 ), color );
+    }
+
+    TDrawable* TScenario::CreateCapsuleDrawable( const std::string& name,
+                                                 TScalar radius, TScalar height,
+                                                 const loco::TVec3& color  )
+    {
+        RETURN_DRAWABLE_PRIMITIVE( name, eShapeType::CAPSULE, TVec3( radius, height, 0.0 ), color );
+    }
+
+    TDrawable* TScenario::CreateEllipsoidDrawable( const std::string& name,
+                                                   const loco::TVec3& radii,
+                                                   const loco::TVec3& color )
+    {
+        RETURN_DRAWABLE_PRIMITIVE( name, eShapeType::ELLIPSOID, radii, color );
+    }
+
+    TDrawable* TScenario::CreateMeshDrawable( const std::string& name,
+                                              const std::string& filename,
+                                              TScalar scale,
+                                              const loco::TVec3& color )
+    {
+        auto vis_data = loco::TVisualData();
+        vis_data.type = eShapeType::MESH;
+        vis_data.size = { scale, scale, scale };
+        vis_data.mesh_data.filename = filename;
+        vis_data.ambient = color;
+        vis_data.diffuse = color;
+        vis_data.specular = color;
+        vis_data.shininess = 128.0f;
+        return AddDrawable( std::make_unique<TDrawable>( name, vis_data ) );
+    }
+
+    TDrawable* TScenario::CreateMeshDrawable( const std::string& name,
+                                              const std::vector<float>& vertices,
+                                              const std::vector<int>& faces,
+                                              TScalar scale,
+                                              const loco::TVec3& color )
+    {
+        auto vis_data = loco::TVisualData();
+        vis_data.type = eShapeType::MESH;
+        vis_data.size = { scale, scale, scale };
+        vis_data.mesh_data.vertices = vertices;
+        vis_data.mesh_data.faces = faces;
+        vis_data.ambient = color;
+        vis_data.diffuse = color;
+        vis_data.specular = color;
+        vis_data.shininess = 128.0f;
+        return AddDrawable( std::make_unique<TDrawable>( name, vis_data ) );
+    }
+
+    TSingleBody* TScenario::CreateBox( const std::string& name,
+                                       const TVec3& position,
+                                       const TMat3& rotation,
+                                       const loco::TVec3& extents,
+                                       eDynamicsType dyntype,
+                                       int collisionGroup,
+                                       int collisionMask,
+                                       TScalar mass )
+    {
+        RETURN_SINGLE_BODY_PRIMITIVE( name, position, rotation, eShapeType::BOX, extents, collisionGroup, collisionMask, mass, dyntype );
+    }
+
+    TSingleBody* TScenario::CreateSphere( const std::string& name,
+                                          const TVec3& position,
+                                          const TMat3& rotation,
+                                          TScalar radius,
+                                          eDynamicsType dyntype,
+                                          int collisionGroup,
+                                          int collisionMask,
+                                          TScalar mass )
+    {
+        RETURN_SINGLE_BODY_PRIMITIVE( name, position, rotation, eShapeType::SPHERE, TVec3( radius, 0.0, 0.0 ), collisionGroup, collisionMask, mass, dyntype );
+    }
+
+    TSingleBody* TScenario::CreateCylinder( const std::string& name,
+                                            const TVec3& position,
+                                            const TMat3& rotation,
+                                            TScalar radius, TScalar height,
+                                            eDynamicsType dyntype,
+                                            int collisionGroup,
+                                            int collisionMask,
+                                            TScalar mass )
+    {
+        RETURN_SINGLE_BODY_PRIMITIVE( name, position, rotation, eShapeType::CYLINDER, TVec3( radius, height, 0.0 ), collisionGroup, collisionMask, mass, dyntype );
+    }
+
+    TSingleBody* TScenario::CreateCapsule( const std::string& name,
+                                           const TVec3& position,
+                                           const TMat3& rotation,
+                                           TScalar radius, TScalar height,
+                                           eDynamicsType dyntype,
+                                           int collisionGroup,
+                                           int collisionMask,
+                                           TScalar mass )
+    {
+        RETURN_SINGLE_BODY_PRIMITIVE( name, position, rotation, eShapeType::CAPSULE, TVec3( radius, height, 0.0 ), collisionGroup, collisionMask, mass, dyntype );
+    }
+
+    TSingleBody* TScenario::CreateEllipsoid( const std::string& name,
+                                             const TVec3& position,
+                                             const TMat3& rotation,
+                                             const loco::TVec3& radii,
+                                             eDynamicsType dyntype,
+                                             int collisionGroup,
+                                             int collisionMask,
+                                             TScalar mass )
+    {
+        RETURN_SINGLE_BODY_PRIMITIVE( name, position, rotation, eShapeType::ELLIPSOID, radii, collisionGroup, collisionMask, mass, dyntype );
+    }
+
+    TSingleBody* TScenario::CreateMesh( const std::string& name,
+                                        const TVec3& position,
+                                        const TMat3& rotation,
+                                        const std::string& filename,
+                                        TScalar scale,
+                                        eDynamicsType dyntype,
+                                        int collisionGroup,
+                                        int collisionMask,
+                                        TScalar mass )
+    {
+        auto vis_data = loco::TVisualData();
+        vis_data.type = eShapeType::MESH;
+        vis_data.size = { scale, scale, scale };
+        vis_data.mesh_data.filename = filename;
+        vis_data.ambient = { 0.7, 0.5, 0.3 };
+        vis_data.diffuse = { 0.7, 0.5, 0.3 };
+        vis_data.specular = { 0.7, 0.5, 0.3 };
+        auto col_data = loco::TCollisionData();
+        col_data.type = eShapeType::MESH;
+        col_data.size = { scale, scale, scale };
+        col_data.mesh_data.filename = filename;
+        col_data.collisionGroup = collisionGroup;
+        col_data.collisionMask = collisionMask;
+        auto body_data = loco::TBodyData();
+        body_data.dyntype = dyntype;
+        body_data.inertia.mass = mass;
+        body_data.collision = col_data;
+        body_data.visual = vis_data;
+        return AddSingleBody( std::make_unique<TSingleBody>( name, body_data, position, rotation ) );
+    }
+
+    TSingleBody* TScenario::CreateMesh( const std::string& name,
+                                        const TVec3& position,
+                                        const TMat3& rotation,
+                                        const std::vector<float>& vertices,
+                                        const std::vector<int>& faces,
+                                        TScalar scale,
+                                        eDynamicsType dyntype,
+                                        int collisionGroup,
+                                        int collisionMask,
+                                        TScalar mass )
+    {
+        auto vis_data = loco::TVisualData();
+        vis_data.type = eShapeType::MESH;
+        vis_data.size = { scale, scale, scale };
+        vis_data.mesh_data.vertices = vertices;
+        vis_data.mesh_data.faces = faces;
+        vis_data.ambient = { 0.7, 0.5, 0.3 };
+        vis_data.diffuse = { 0.7, 0.5, 0.3 };
+        vis_data.specular = { 0.7, 0.5, 0.3 };
+        auto col_data = loco::TCollisionData();
+        col_data.type = eShapeType::MESH;
+        col_data.size = { scale, scale, scale };
+        col_data.mesh_data.vertices = vertices;
+        col_data.mesh_data.faces = faces;
+        col_data.collisionGroup = collisionGroup;
+        col_data.collisionMask = collisionMask;
+        auto body_data = loco::TBodyData();
+        body_data.dyntype = dyntype;
+        body_data.inertia.mass = mass;
+        body_data.collision = col_data;
+        body_data.visual = vis_data;
+        return AddSingleBody( std::make_unique<TSingleBody>( name, body_data, position, rotation ) );
+    }
+
+    TSingleBody* TScenario::CreateHeightfield( const std::string& name,
+                                               const TVec3& position,
+                                               const TMat3& rotation,
+                                               ssize_t num_width_samples,
+                                               ssize_t num_depth_samples,
+                                               TScalar width_extent,
+                                               TScalar depth_extent,
+                                               const std::vector<float>& heights,
+                                               int collisionGroup,
+                                               int collisionMask )
+    {
+        auto vis_data = loco::TVisualData();
+        vis_data.type = eShapeType::HFIELD;
+        vis_data.size = { width_extent, depth_extent, 1.0 };
+        vis_data.hfield_data.nWidthSamples = num_width_samples;
+        vis_data.hfield_data.nDepthSamples = num_depth_samples;
+        vis_data.hfield_data.heights = heights;
+        vis_data.ambient = { 0.3, 0.5, 0.7 };
+        vis_data.diffuse = { 0.3, 0.5, 0.7 };
+        vis_data.specular = { 0.3, 0.5, 0.7 };
+        auto col_data = loco::TCollisionData();
+        col_data.type = eShapeType::HFIELD;
+        col_data.size = { width_extent, depth_extent, 1.0 };
+        col_data.hfield_data.nWidthSamples = num_width_samples;
+        col_data.hfield_data.nDepthSamples = num_depth_samples;
+        col_data.collisionGroup = collisionGroup;
+        col_data.collisionMask = collisionMask;
+        auto body_data = loco::TBodyData();
+        body_data.dyntype = eDynamicsType::STATIC;
+        body_data.collision = col_data;
+        body_data.visual = vis_data;
+        return AddSingleBody( std::make_unique<TSingleBody>( name, body_data, position, rotation ) );
+    }
+
+    TSingleBody* TScenario::CreatePlane( const std::string& name,
+                                         TScalar width, TScalar depth,
+                                         int collisionGroup,
+                                         int collisionMask )
+    {
+        auto vis_data = loco::TVisualData();
+        vis_data.type = eShapeType::PLANE;
+        vis_data.size = { width, depth, 0.0 };
+        vis_data.ambient = { 0.3, 0.5, 0.7 };
+        vis_data.diffuse = { 0.3, 0.5, 0.7 };
+        vis_data.specular = { 0.3, 0.5, 0.7 };
+        auto col_data = loco::TCollisionData();
+        col_data.type = eShapeType::PLANE;
+        col_data.size = { width, depth, 0.0 };
+        col_data.collisionGroup = collisionGroup;
+        col_data.collisionMask = collisionMask;
+        auto body_data = loco::TBodyData();
+        body_data.dyntype = eDynamicsType::STATIC;
+        body_data.collision = col_data;
+        body_data.visual = vis_data;
+        return AddSingleBody( std::make_unique<TSingleBody>( name, body_data, TVec3(), TMat3() ) );
+    }
+
+    TDrawable* TScenario::AddDrawable( std::unique_ptr< TDrawable > drawable )
+    {
+        LOCO_CORE_ASSERT( drawable, "TScenario::AddDrawable >>> tried adding nullptr" );
+
+        if ( HasDrawableNamed( drawable->name() ) )
+        {
+            LOCO_CORE_WARN( "TScenario::AddDrawable >>> drawable with name {0} already exists. \
+                             New one won't be added, returning nullptr instead.", drawable->name() );
+            return nullptr;
+        }
+
+        m_DrawablesMap[drawable->name()] = m_Drawables.size();
+        m_Drawables.push_back( std::move( drawable ) );
+        return m_Drawables.back().get();
+    }
+
+    TSingleBody* TScenario::AddSingleBody( std::unique_ptr< TSingleBody > singleBody )
+    {
+        LOCO_CORE_ASSERT( singleBody, "TScenario::AddSingleBody >>> tried adding nullptr" );
+
+        if ( HasSingleBodyNamed( singleBody->name() ) )
+        {
+            LOCO_CORE_WARN( "TScenario::AddSingleBody >>> single-body with name {0} already exists. \
+                             New one won't be added, returning nullptr instead.", singleBody->name() );
+            return nullptr;
+        }
+
+        m_SingleBodiesMap[singleBody->name()] = m_SingleBodies.size();
+        m_SingleBodies.push_back( std::move( singleBody ) );
+        return m_SingleBodies.back().get();
+    }
+
+////     TCompound* TScenario::AddCompound( std::unique_ptr< TCompound > compound )
+////     {
+////         LOCO_CORE_ASSERT( compound, "TScenario::AddCompound >>> tried adding nullptr" );
+//// 
+////         if ( HasCompoundNamed( compound->name() ) )
+////         {
+////             LOCO_CORE_WARN( "TScenario::AddCompound >>> compound with name {0} already exists. \
+////                              New one won't be added, returning nullptr instead.", compound->name() );
+////             return nullptr;
+////         }
+//// 
+////         m_CompoundsMap[compound->name()] = m_Compounds.size();
+////         m_Compounds.push_back( std::move( compound ) );
+////         return m_Compounds.back().get();
+////     }
+//// 
+////     TKinTreeAgent* TScenario::AddKinTreeAgent( std::unique_ptr< TKinTreeAgent > kinTreeAgent )
+////     {
+////         LOCO_CORE_ASSERT( kinTreeAgent, "TScenario::AddKinTreeAgent >>> tried adding nullptr" );
+//// 
+////         if ( HasKinTreeAgentNamed( kinTreeAgent->name() ) )
+////         {
+////             LOCO_CORE_WARN( "TScenario::AddKinTreeAgent >>> kinTreeAgent with name {0} already exists. \
+////                              New one won't be added, returning nullptr instead.", kinTreeAgent->name() );
+////             return nullptr;
+////         }
+//// 
+////         m_KinematicTreesMap[kinTreeAgent->name()] = m_KinematicTrees.size();
+////         m_KinematicTrees.push_back( std::move( kinTreeAgent ) );
+////         return m_KinematicTrees.back().get();
+////     }
+//// 
+////     TKinTreeSensor* TScenario::AddKinTreeSensor( std::unique_ptr< TKinTreeSensor > kinTreeSensor )
+////     {
+////         LOCO_CORE_ASSERT( kinTreeSensor, "TScenario::AddKinTreeSensor >>> tried adding nullptr" );
+//// 
+////         if ( HasKinTreeSensorNamed( kinTreeSensor->name() ) )
+////         {
+////             LOCO_CORE_WARN( "TScenario::AddKinTreeSensor >>> kinTreeSensor with name {0} already exists. \
+////                              New one won't be added, returning nullptr instead.", kinTreeSensor->name() );
+////             return nullptr;
+////         }
+//// 
+////         m_KinematicTreeSensorsMap[kinTreeSensor->name()] = m_KinematicTreeSensors.size();
+////         m_KinematicTreeSensors.push_back( std::move( kinTreeSensor ) );
+////         return m_KinematicTreeSensors.back().get();
+////     }
+//// 
+////     TTerrainGenerator* TScenario::AddTerrainGenerator( std::unique_ptr< TTerrainGenerator > terrainGenerator )
+////     {
+////         LOCO_CORE_ASSERT( terrainGenerator, "TScenario::AddTerrainGenerator >>> tried adding nullptr" );
+//// 
+////         if ( HasTerrainGeneratorNamed( terrainGenerator->name() ) )
+////         {
+////             LOCO_CORE_WARN( "TScenario::AddTerrainGenerator >>> terrainGenerator with name {0} already exists. \
+////                              New one won't be added, returning nullptr instead.", terrainGenerator->name() );
+////             return nullptr;
+////         }
+//// 
+////         m_TerrainGeneratorsMap[terrainGenerator->name()] = m_TerrainGenerators.size();
+////         m_TerrainGenerators.push_back( std::move( terrainGenerator ) );
+////         return m_TerrainGenerators.back().get();
+////     }
 
     const TDrawable* TScenario::GetDrawableByName( const std::string& name ) const
     {
