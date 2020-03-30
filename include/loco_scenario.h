@@ -150,6 +150,8 @@ namespace loco
                                         int collisionMask = 1 );
 
         TSingleBody* CreatePlane( const std::string& name,
+                                  const TVec3& position,
+                                  const TMat3& rotation,
                                   TScalar width, TScalar depth,
                                   int collisionGroup = 1,
                                   int collisionMask = 1 );

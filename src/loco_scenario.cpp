@@ -374,6 +374,7 @@ namespace loco
         col_data.size = { width_extent, depth_extent, 1.0 };
         col_data.hfield_data.nWidthSamples = num_width_samples;
         col_data.hfield_data.nDepthSamples = num_depth_samples;
+        col_data.hfield_data.heights = heights;
         col_data.collisionGroup = collisionGroup;
         col_data.collisionMask = collisionMask;
         auto body_data = loco::TBodyData();
@@ -384,6 +385,8 @@ namespace loco
     }
 
     TSingleBody* TScenario::CreatePlane( const std::string& name,
+                                         const TVec3& position,
+                                         const TMat3& rotation,
                                          TScalar width, TScalar depth,
                                          int collisionGroup,
                                          int collisionMask )
@@ -403,7 +406,7 @@ namespace loco
         body_data.dyntype = eDynamicsType::STATIC;
         body_data.collision = col_data;
         body_data.visual = vis_data;
-        return AddSingleBody( std::make_unique<TSingleBody>( name, body_data, TVec3(), TMat3() ) );
+        return AddSingleBody( std::make_unique<TSingleBody>( name, body_data, position, rotation ) );
     }
 
     TDrawable* TScenario::AddDrawable( std::unique_ptr< TDrawable > drawable )
