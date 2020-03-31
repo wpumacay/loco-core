@@ -4,14 +4,14 @@
 std::string PHYSICS_BACKEND = loco::config::physics::NONE;
 std::string RENDERING_BACKEND = loco::config::rendering::GLVIZ_GLFW;
 
-const int nx_samples_hfield_1 = 50;
-const int ny_samples_hfield_1 = 50;
+const int nx_samples_hfield_1 = 25;
+const int ny_samples_hfield_1 = 25;
 const float x_extent_hfield_1 = 10.0f;
 const float y_extent_hfield_1 = 10.0f;
 std::vector<float> create_hfield_paraboloid();
 
-const int nx_samples_hfield_2 = 50;
-const int ny_samples_hfield_2 = 50;
+const int nx_samples_hfield_2 = 25;
+const int ny_samples_hfield_2 = 25;
 const float x_extent_hfield_2 = 10.0f;
 const float y_extent_hfield_2 = 10.0f;
 const int hfield_octaves = 4;
@@ -20,6 +20,10 @@ const float hfield_lacunarity = 2.0f;
 const float hfield_noise_scale = 5.0f;
 std::vector<float> create_hfield_perlin_noise();
 
+const int nx_samples_hfield_3 = 401;
+const int ny_samples_hfield_3 = 401;
+const float x_extent_hfield_3 = 40.0f;
+const float y_extent_hfield_3 = 40.0f;
 std::vector<float> create_hfield_deeploco_terrain();
 
 std::vector<float> create_hfield_deepterrainrl_terrain_chunk();
@@ -59,6 +63,10 @@ int main( int argc, char* argv[] )
                                                  nx_samples_hfield_2, ny_samples_hfield_2,
                                                  x_extent_hfield_2, y_extent_hfield_2,
                                                  create_hfield_perlin_noise() );
+    auto hfield_3 = scenario->CreateHeightfield( "hfield_3", { -25.0, -25.0, 0.0 }, loco::TMat3(),
+                                                 nx_samples_hfield_3, ny_samples_hfield_3,
+                                                 x_extent_hfield_3, y_extent_hfield_3,
+                                                 create_hfield_deeploco_terrain() );
 
     auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, RENDERING_BACKEND );
     auto simulation = runtime->CreateSimulation( scenario.get() );
@@ -67,6 +75,7 @@ int main( int argc, char* argv[] )
     floor->drawable()->ChangeTexture( "built_in_chessboard" );
     hfield_1->drawable()->ChangeTexture( "built_in_chessboard" );
     hfield_2->drawable()->ChangeTexture( "built_in_chessboard" );
+    //// hfield_3->drawable()->ChangeTexture( "built_in_chessboard" );
 
     while ( visualizer->IsActive() )
     {
@@ -135,7 +144,27 @@ std::vector<float> create_hfield_perlin_noise()
 
 std::vector<float> create_hfield_deeploco_terrain()
 {
-    return {};
+    const std::string terrain_file = loco::PATH_RESOURCES + "txt/terrain_deeploco.txt";
+    std::fstream fhandle( terrain_file.c_str(), std::ios::in );
+    std::string line = "";
+    const ssize_t num_rows = 401;
+    const ssize_t num_cols = 401;
+    std::vector<float> heights( num_rows * num_cols );
+    ssize_t i_line = 0;
+    while( getline( fhandle, line ) )
+    {
+        auto vec_str = loco::Split( line, '\t' );
+        assert( vec_str.size() == num_cols );
+        for ( ssize_t j = 0; j < num_cols; j++ )
+            heights[i_line + num_rows * j] = std::stof( vec_str[j] );
+        i_line++;
+    }
+    assert( i_line == num_rows );
+    // Make sure all heights are above 0.0f
+    float min_height = *std::min_element( heights.cbegin(), heights.cend() );
+    for ( ssize_t k = 0; k < heights.size(); k++ )
+        heights[k] -= min_height;
+    return heights;
 }
 
 std::vector<float> create_hfield_deepterrainrl_terrain_chunk()
