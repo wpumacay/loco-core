@@ -1,12 +1,17 @@
 #pragma once
 
-#include <cstdint>
 #include <string>
+#include <cstdint>
+#include <cstdlib>
+#include <cmath>
+#include <memory>
 
 // tinymath-library
 #include <vector_t.h>
 #include <matrix_t.h>
 #include <transforms.h>
+
+#define LOCO_RANDOM_UNIFORM( a, b ) ( a + ( b - a ) * ( rand() / ( float )RAND_MAX ) )
 
 namespace loco
 {
@@ -75,10 +80,56 @@ namespace loco
     typedef TSize<float> TSizef;
     typedef TSize<int32_t> TSizei;
 
-    /// returns the "shortest" quaternion that transforms the given vector to the given target
+    /// Returns the "shortest" quaternion that transforms the given vector to the given target
     TVec4 ShortestArcQuat( const TVec3& v, const TVec3& vTarget );
 
     /// Rearranges the elements of a TVec3 from a format where the z vector is given by "worldUp"
     /// into the standard format where the world z is Up. @todo: replace string for enum
     TVec3 Rearrange( const TVec3& vec, const std::string& worldUp );
+
+    /// Implementation of the perlin noise function based on these references :
+    ///
+    ///     c++ implementation of perlin3d https://github.com/sol-prog/Perlin_Noise/blob/master/PerlinNoise.cpp
+    ///     javascript implementation of perlin2d https://github.com/josephg/noisejs/blob/master/perlin.js
+    class TNoiseGenerator
+    {
+
+    public :
+
+        static void Init();
+        static void Release();
+
+        ~TNoiseGenerator() = default;
+
+        static void Config( int octaves, float persistance, float lacunarity, float noise_scale );
+        static float GetNoise1d( float x );
+        static float GetNoise2d( float x, float y );
+
+    private :
+
+        static std::unique_ptr<TNoiseGenerator> s_Instance;
+
+        TNoiseGenerator();
+
+        void _Config( int octaves, float persistance, float lacunarity, float noise_scale );
+
+        float _GetNoise1d( float x );
+        float _GetNoise2d( float x, float y );
+        float _Fade( float t );
+        float _Lerp( float a, float b, float t );
+        float _DotGrad( int hash, float x, float y );
+        float _Perlin2d( float x, float y );
+
+    private :
+
+        int m_Octaves;
+        float m_Persistance;
+        float m_Lacunarity;
+        float m_NoiseScale;
+
+        std::vector<int> m_Permutations;
+        std::vector<TVec2> m_OctaveOffsets;
+
+    };
+
 }

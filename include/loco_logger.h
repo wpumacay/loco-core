@@ -125,7 +125,7 @@ namespace loco
         {                                                                               \
             if( !(x) )                                                                  \
             {                                                                           \
-                LOCO_CORE_CRITICAL( "Failed due to assertion: {0}", __VA_ARGS__ );      \
+                LOCO_CORE_CRITICAL( __VA_ARGS__ );      \
                 exit( EXIT_FAILURE );                                                   \
             }                                                                           \
         }
@@ -139,7 +139,7 @@ namespace loco
         {                                                                       \
             if( !(x) )                                                          \
             {                                                                   \
-                LOCO_CRITICAL( "Failed due to assertion: {0}", __VA_ARGS__ );   \
+                LOCO_CRITICAL( __VA_ARGS__ );   \
                 exit( EXIT_FAILURE );                                           \
             }                                                                   \
         }

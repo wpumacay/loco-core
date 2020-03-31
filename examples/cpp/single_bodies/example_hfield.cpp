@@ -4,13 +4,21 @@
 std::string PHYSICS_BACKEND = loco::config::physics::NONE;
 std::string RENDERING_BACKEND = loco::config::rendering::GLVIZ_GLFW;
 
-const int nx_samples_hfield_1 = 40;
-const int ny_samples_hfield_1 = 40;
-const float x_extent_hfield_1 = 16.0f;
-const float y_extent_hfield_1 = 8.0f;
+const int nx_samples_hfield_1 = 50;
+const int ny_samples_hfield_1 = 50;
+const float x_extent_hfield_1 = 10.0f;
+const float y_extent_hfield_1 = 10.0f;
 std::vector<float> create_hfield_paraboloid();
 
-std::vector<float> create_hfield_gaussian_bumps();
+const int nx_samples_hfield_2 = 50;
+const int ny_samples_hfield_2 = 50;
+const float x_extent_hfield_2 = 10.0f;
+const float y_extent_hfield_2 = 10.0f;
+const int hfield_octaves = 4;
+const float hfield_persistance = 0.5f;
+const float hfield_lacunarity = 2.0f;
+const float hfield_noise_scale = 5.0f;
+std::vector<float> create_hfield_perlin_noise();
 
 std::vector<float> create_hfield_deeploco_terrain();
 
@@ -41,17 +49,24 @@ int main( int argc, char* argv[] )
     LOCO_TRACE( "Rendering-Backend: {0}", RENDERING_BACKEND );
 
     auto scenario = std::make_unique<loco::TScenario>();
+    auto floor = scenario->CreatePlane( "floor", { 0.0, 0.0, -0.001f }, loco::TMat3(), 40, 40 );
     auto sphere = scenario->CreateSphere( "sphere", { 0.0, 0.0, 2.0 }, loco::TMat3(), 0.1 );
     auto hfield_1 = scenario->CreateHeightfield( "hfield_1", { 0.0, 0.0, 0.0 }, loco::TMat3(),
                                                  nx_samples_hfield_1, ny_samples_hfield_1,
                                                  x_extent_hfield_1, y_extent_hfield_1,
                                                  create_hfield_paraboloid() );
+    auto hfield_2 = scenario->CreateHeightfield( "hfield_2", { 10.0, 10.0, 0.0 }, loco::TMat3(),
+                                                 nx_samples_hfield_2, ny_samples_hfield_2,
+                                                 x_extent_hfield_2, y_extent_hfield_2,
+                                                 create_hfield_perlin_noise() );
 
     auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, RENDERING_BACKEND );
     auto simulation = runtime->CreateSimulation( scenario.get() );
     auto visualizer = runtime->CreateVisualizer( scenario.get() );
 
+    floor->drawable()->ChangeTexture( "built_in_chessboard" );
     hfield_1->drawable()->ChangeTexture( "built_in_chessboard" );
+    hfield_2->drawable()->ChangeTexture( "built_in_chessboard" );
 
     while ( visualizer->IsActive() )
     {
@@ -84,27 +99,38 @@ int main( int argc, char* argv[] )
 
 std::vector<float> create_hfield_paraboloid()
 {
-    const int nx_samples = nx_samples_hfield_1;
-    const int ny_samples = ny_samples_hfield_1;
-    const float x_extent = x_extent_hfield_1;
-    const float y_extent = y_extent_hfield_1;
-
     std::vector<float> heights;
-    for ( ssize_t i = 0; i < ny_samples; i++ )
+    for ( ssize_t i = 0; i < ny_samples_hfield_1; i++ )
     {
-        for ( ssize_t j = 0; j < nx_samples; j++ )
+        for ( ssize_t j = 0; j < nx_samples_hfield_1; j++ )
         {
-            float x = x_extent * ( (float)i / nx_samples - 0.5f );
-            float y = y_extent * ( (float)j / ny_samples - 0.5f );
-            heights.push_back( 15.0f * ( x * x + y * y ) / ( x_extent * x_extent + y_extent * y_extent ) );
+            float x = x_extent_hfield_1 * ( (float)j / nx_samples_hfield_1 - 0.5f );
+            float y = y_extent_hfield_1 * ( (float)i / ny_samples_hfield_1 - 0.5f );
+            heights.push_back( 10.0f * ( x * x + y * y ) / 
+                                ( x_extent_hfield_1 * x_extent_hfield_1 + 
+                                  y_extent_hfield_1 * y_extent_hfield_1 ) );
         }
     }
     return heights;
 }
 
-std::vector<float> create_hfield_gaussian_bumps()
+std::vector<float> create_hfield_perlin_noise()
 {
-    return {};
+    // Initialize perlin-noise generator
+    loco::TNoiseGenerator::Init();
+    loco::TNoiseGenerator::Config( hfield_octaves, hfield_persistance, hfield_lacunarity, hfield_noise_scale );
+
+    std::vector<float> heights;
+    for ( ssize_t i = 0; i < ny_samples_hfield_2; i++ )
+    {
+        for ( ssize_t j = 0; j < nx_samples_hfield_2; j++ )
+        {
+            float x = x_extent_hfield_2 * ( (float)j / nx_samples_hfield_2 - 0.5f );
+            float y = y_extent_hfield_2 * ( (float)i / ny_samples_hfield_2 - 0.5f );
+            heights.push_back( std::max( 0.0f, loco::TNoiseGenerator::GetNoise2d( x, y ) ) );
+        }
+    }
+    return heights;
 }
 
 std::vector<float> create_hfield_deeploco_terrain()
