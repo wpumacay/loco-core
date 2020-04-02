@@ -45,6 +45,7 @@ int main( int argc, char* argv[] )
     // Create some sphere-pairs, one in each pair moving in the direction of the other
     // such that they would collide if to their collision groups and masks match
 
+    // Should collide with each other
     auto sphere_1_1 = scenario->CreateSphere( "sphere_1_1", { 1.0, 1.0, 0.2 }, loco::TMat3(), 0.2,
                                               loco::eDynamicsType::DYNAMIC, 0b0001, 0b0001 );
     auto sphere_1_2 = scenario->CreateSphere( "sphere_1_2", { 1.0, 3.0, 0.2 }, loco::TMat3(), 0.2,
@@ -53,6 +54,7 @@ int main( int argc, char* argv[] )
     sphere_1_1->drawable()->ChangeColor( { 0.7, 0.5, 0.3 } );
     sphere_1_2->drawable()->ChangeColor( { 0.7, 0.5, 0.3 } );
 
+    // Shouldn't collide with each other
     auto sphere_2_1 = scenario->CreateSphere( "sphere_2_1", { 2.0, 1.0, 0.2 }, loco::TMat3(), 0.2,
                                               loco::eDynamicsType::DYNAMIC, 0b0001, 0b0001 );
     auto sphere_2_2 = scenario->CreateSphere( "sphere_2_2", { 2.0, 3.0, 0.2 }, loco::TMat3(), 0.2,
@@ -61,14 +63,16 @@ int main( int argc, char* argv[] )
     sphere_2_1->drawable()->ChangeColor( { 0.3, 0.7, 0.5 } );
     sphere_2_2->drawable()->ChangeColor( { 0.3, 0.7, 0.5 } );
 
+    // Should collide with each other
     auto sphere_3_1 = scenario->CreateSphere( "sphere_3_1", { 3.0, 1.0, 0.2 }, loco::TMat3(), 0.2,
-                                              loco::eDynamicsType::DYNAMIC, 0b0011, 0b0011 );
-    auto sphere_3_2 = scenario->CreateSphere( "sphere_3_2", { 3.0, 3.0, 0.2 }, loco::TMat3(), 0.2,
                                               loco::eDynamicsType::DYNAMIC, 0b0010, 0b0010 );
+    auto sphere_3_2 = scenario->CreateSphere( "sphere_3_2", { 3.0, 3.0, 0.2 }, loco::TMat3(), 0.2,
+                                              loco::eDynamicsType::DYNAMIC, 0b0001, 0b0010 );
     sphere_3_1->SetInitialLinearVelocity( { 0.0, 0.5, 0.0 } );
     sphere_3_1->drawable()->ChangeColor( { 0.5, 0.3, 0.7 } );
     sphere_3_2->drawable()->ChangeColor( { 0.5, 0.3, 0.7 } );
 
+    // Should collide with all but 2_2
     auto sphere_user = scenario->CreateSphere( "sphere_user", { 0.0, 0.0, 0.1 }, loco::TMat3(), 0.1,
                                               loco::eDynamicsType::DYNAMIC, 0b0001, 0b0001 );
 
