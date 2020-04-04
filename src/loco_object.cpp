@@ -9,6 +9,7 @@ namespace loco
         if ( obj_type == eObjectType::DRAWABLE ) return "drawable";
         if ( obj_type == eObjectType::SINGLE_BODY ) return "single_body";
         if ( obj_type == eObjectType::SINGLE_BODY_COLLIDER ) return "single_body_collider";
+        if ( obj_type == eObjectType::SINGLE_BODY_CONSTRAINT ) return "single_body_constraint";
 
         LOCO_CORE_ERROR( "ToString(eObjectType) >>> undefined object type" );
         return "undefined";

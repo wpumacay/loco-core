@@ -125,6 +125,7 @@ set( LOCO_CORE_SRCS
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/compounds/compound_body.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/primitives/loco_single_body.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/primitives/loco_single_body_collider.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/primitives/loco_single_body_constraint.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_scenario.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/sensor_base.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/sensor/types/sensor_agent_intrinsics.cpp"

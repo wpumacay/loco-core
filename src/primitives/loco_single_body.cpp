@@ -11,6 +11,7 @@ namespace loco
     {
         m_Data = data;
         m_BodyAdapter = nullptr;
+        m_Constraint = nullptr;
 
         m_tf.set( position, 3 );
         m_tf.set( rotation );
@@ -44,6 +45,7 @@ namespace loco
         DetachViz();
 
         m_BodyAdapter = nullptr;
+        m_Constraint = nullptr;
         m_Collider = nullptr;
         m_Drawable = nullptr;
 
@@ -67,6 +69,14 @@ namespace loco
         m_Collider = std::move( collider );
         m_Collider->SetParentBody( this );
         m_Data.collision = m_Collider->data();
+    }
+
+    void TSingleBody::SetConstraint( std::unique_ptr<TISingleBodyConstraint> constraint )
+    {
+        LOCO_CORE_ASSERT( constraint, "TSingleBody::SetConstraint >>> tried adding nullptr to body {0}", m_name );
+
+        m_Constraint = std::move( constraint );
+        m_Constraint->SetParentBody( this );
     }
 
     void TSingleBody::SetDrawable( std::unique_ptr<TDrawable> drawable )
@@ -107,6 +117,9 @@ namespace loco
         if ( m_BodyAdapter )
             m_BodyAdapter->Initialize();
 
+        if ( m_Constraint )
+            m_Constraint->Initialize();
+
         if ( m_Collider )
             m_Collider->Initialize();
 
@@ -121,6 +134,9 @@ namespace loco
             m_BodyAdapter->SetForceCOM( m_TotalForce );
             m_BodyAdapter->SetTorqueCOM( m_TotalTorque );
         }
+
+        if ( m_Constraint )
+            m_Constraint->PreStep();
 
         if ( m_Collider )
             m_Collider->PreStep();
@@ -137,6 +153,9 @@ namespace loco
             m_BodyAdapter->GetAngularVelocity( m_AngularVelocity );
             m_BodyAdapter->GetTransform( m_tf );
         }
+
+        if ( m_Constraint )
+            m_Constraint->PostStep();
 
         if ( m_Collider )
             m_Collider->PostStep();
@@ -160,6 +179,9 @@ namespace loco
         SetLinearVelocity( m_LinearVelocity0 );
         SetAngularVelocity( m_AngularVelocity0 );
 
+        if ( m_Constraint )
+            m_Constraint->Reset();
+
         if ( m_BodyAdapter )
             m_BodyAdapter->Reset();
 
@@ -173,6 +195,9 @@ namespace loco
             m_BodyAdapter->OnDetach();
         m_BodyAdapter = nullptr;
 
+        if ( m_Constraint )
+            m_Constraint->DetachSim();
+
         if ( m_Collider )
             m_Collider->DetachSim();
 
@@ -182,6 +207,9 @@ namespace loco
 
     void TSingleBody::_DetachVizInternal()
     {
+        if ( m_Constraint )
+            m_Constraint->DetachViz();
+
         if ( m_Collider )
             m_Collider->DetachViz();
 
@@ -195,6 +223,9 @@ namespace loco
 
         if ( m_BodyAdapter )
             m_BodyAdapter->SetTransform( m_tf );
+
+        if ( m_Constraint )
+            m_Constraint->PostStep();
 
         if ( m_Collider )
             m_Collider->PostStep();

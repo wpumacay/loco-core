@@ -10,7 +10,8 @@ namespace loco
         BASE = 0,
         DRAWABLE,
         SINGLE_BODY,
-        SINGLE_BODY_COLLIDER
+        SINGLE_BODY_COLLIDER,
+        SINGLE_BODY_CONSTRAINT
     };
 
     std::string ToString( const eObjectType& obj_type );

@@ -12,7 +12,6 @@ namespace loco
 
     class TSingleBodyCollider : public TObject
     {
-
     public :
 
         TSingleBodyCollider( const std::string& name,
@@ -94,7 +93,7 @@ namespace loco
         TSingleBody* m_ParentBodyRef;
         // Reference to the drawable resource used for visualization
         TIDrawableAdapter* m_DrawableAdapterRef;
-        // Adapter object that gives access to the low-level API for a specific backend
+        // Reference to the adapter object that gives access to the low-level API for a specific backend
         TISingleBodyColliderAdapter* m_ColliderAdapterRef;
         // Flag that indicates the collider's drawable visibility
         bool m_Visible;
