@@ -4,13 +4,13 @@
 
 namespace loco
 {
-    class TSingleBodyConstraint;
+    class TISingleBodyConstraint;
 
     class TISingleBodyConstraintAdapter
     {
     public :
 
-        TISingleBodyConstraintAdapter( TSingleBodyConstraint* constraint_ref )
+        TISingleBodyConstraintAdapter( TISingleBodyConstraint* constraint_ref )
             : m_ConstraintRef( constraint_ref ), m_Detached( false ) {}
 
         virtual ~TISingleBodyConstraintAdapter() = default;
@@ -19,18 +19,20 @@ namespace loco
 
         virtual void Initialize() = 0;
 
+        virtual void Reset() = 0;
+
         virtual void OnDetach() = 0;
 
-        TSingleBodyConstraint* constraint() { return m_ConstraintRef; }
+        TISingleBodyConstraint* constraint() { return m_ConstraintRef; }
 
-        const TSingleBodyConstraint* constraint() const { return m_ConstraintRef; }
+        const TISingleBodyConstraint* constraint() const { return m_ConstraintRef; }
 
         bool detached() const { return m_Detached; }
 
     protected :
 
         // Reference to owner constraint
-        TSingleBodyConstraint* m_ConstraintRef;
+        TISingleBodyConstraint* m_ConstraintRef;
         // Flag used to check resource state
         bool m_Detached;
     };
@@ -39,7 +41,7 @@ namespace loco
     {
     public :
 
-        TISingleBodyRevoluteConstraintAdapter( TSingleBodyConstraint* constraint_ref )
+        TISingleBodyRevoluteConstraintAdapter( TISingleBodyConstraint* constraint_ref )
             : TISingleBodyConstraintAdapter( constraint_ref ) {}
 
         virtual ~TISingleBodyRevoluteConstraintAdapter() = default;
@@ -55,7 +57,7 @@ namespace loco
     {
     public :
 
-        TISingleBodyPrismaticConstraintAdapter( TSingleBodyConstraint* constraint_ref )
+        TISingleBodyPrismaticConstraintAdapter( TISingleBodyConstraint* constraint_ref )
             : TISingleBodyConstraintAdapter( constraint_ref ) {}
 
         virtual ~TISingleBodyPrismaticConstraintAdapter() = default;

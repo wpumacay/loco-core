@@ -85,6 +85,7 @@ namespace loco
         m_Axis = axis;
         m_Limits = { 1.0f, -1.0f }; // min > max <=> no limits
         m_HingeAngle = 0.0f;
+        m_ConstraintType = eConstraintType::REVOLUTE;
 
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
         if ( TLogger::IsActive() )
@@ -159,6 +160,7 @@ namespace loco
         m_Axis = axis;
         m_Limits = { 1.0f, -1.0f }; // min > max <=> no limits
         m_SlidePosition = 0.0f;
+        m_ConstraintType = eConstraintType::PRISMATIC;
 
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
         if ( TLogger::IsActive() )

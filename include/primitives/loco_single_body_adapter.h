@@ -2,11 +2,13 @@
 
 #include <primitives/loco_single_body.h>
 #include <primitives/loco_single_body_collider_adapter.h>
+#include <primitives/loco_single_body_constraint_adapter.h>
 
 namespace loco
 {
     class TSingleBody;
     class TISingleBodyColliderAdapter;
+    class TISingleBodyConstraintAdapter;
 
     class TISingleBodyAdapter
     {
@@ -49,6 +51,10 @@ namespace loco
 
         const TISingleBodyColliderAdapter* collider_adapter() const { return m_ColliderAdapter.get(); }
 
+        TISingleBodyConstraintAdapter* constraint_adapter() { return m_ConstraintAdapter.get(); }
+
+        const TISingleBodyConstraintAdapter* constraint_adapter() const { return m_ConstraintAdapter.get(); }
+
         bool detached() const { return m_Detached; }
 
     protected :
@@ -59,5 +65,7 @@ namespace loco
         bool m_Detached;
         // Adapter for related collider object
         std::unique_ptr<TISingleBodyColliderAdapter> m_ColliderAdapter;
+        // Adapter for related constraint object
+        std::unique_ptr<TISingleBodyConstraintAdapter> m_ConstraintAdapter;
     };
 }
