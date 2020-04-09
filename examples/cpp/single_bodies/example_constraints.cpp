@@ -28,21 +28,38 @@ int main( int argc, char* argv[] )
 
     auto scenario = std::make_unique<loco::TScenario>();
     auto floor = scenario->CreatePlane( "floor", { 0.0, 0.0, -0.001f }, loco::TMat3(), 40, 40 );
-    auto sphere = scenario->CreateSphere( "sphere", { 0.0, 0.0, 5.0 }, loco::TMat3(), 0.1 );
-    auto block = scenario->CreateBox( "block", { 0.0, 0.0, 2.0 }, tinymath::rotationX<loco::TScalar>( loco::PI / 3.0f ),
-                                      { 0.2, 0.2, 1.0 } );
-    auto door = scenario->CreateBox( "door", { -0.5, 1.0, 0.1 }, tinymath::rotationY<loco::TScalar>( loco::PI / 2.0f ),
-                                      { 0.2, 0.2, 1.0 } );
 
-    auto block_constraint = std::make_unique<loco::TSingleBodyRevoluteConstraint>( "block_constraint",
-                                                                                   loco::TMat4(),
-                                                                                   loco::TVec3( 1.0f, 0.0f, 0.0f ) );
+    auto sphere = scenario->CreateSphere( "sphere", { 0.0, 0.0, 5.0 }, loco::TMat3(), 0.1 );
+    auto sphere_constraint = std::make_unique<loco::TSingleBodyUniversal3dConstraint>( "sphere_constraint" );
+    sphere->SetConstraint( std::move( sphere_constraint ) );
+
+    auto block = scenario->CreateBox( "block", { 0.0, 0.0, 2.0 }, tinymath::rotationX<loco::TScalar>( loco::PI / 3.0f ), { 0.2, 0.2, 1.0 } );
+    auto block_constraint = std::make_unique<loco::TSingleBodyRevoluteConstraint>( "block_constraint", loco::TMat4(), loco::TVec3( 1.0f, 0.0f, 0.0f ) );
     block->SetConstraint( std::move( block_constraint ) );
 
-    auto door_constraint = std::make_unique<loco::TSingleBodyRevoluteConstraint>( "door_constraint",
-                                                                                  loco::TMat4( loco::TMat3(), { 0.0f, 0.0f, 0.5f } ),
-                                                                                  loco::TVec3( 1.0f, 0.0f, 0.0f ) );
+    auto door = scenario->CreateBox( "door", { -0.5, 1.0, 0.1 }, tinymath::rotationY<loco::TScalar>( loco::PI / 2.0f ), { 0.2, 0.2, 1.0 } );
+    auto door_constraint = std::make_unique<loco::TSingleBodyRevoluteConstraint>( "door_constraint", loco::TMat4( loco::TMat3(), { 0.0f, 0.0f, 0.5f } ), loco::TVec3( 1.0f, 0.0f, 0.0f ) );
     door->SetConstraint( std::move( door_constraint ) );
+
+    auto rod = scenario->CreateCapsule( "rod", { 1.0, 0.0, 1.0 }, loco::TMat3(), 0.1f, 1.0f );
+    auto rod_constraint = std::make_unique<loco::TSingleBodySphericalConstraint>( "rod_constraint", loco::TMat4( loco::TMat3(), loco::TVec3( 0.0f, 0.0f, 0.5f ) ) );
+    rod->SetConstraint( std::move( rod_constraint ) );
+
+    auto lego_1 = scenario->CreateBox( "lego_1", { -1.0, 0.0, 0.1 }, loco::TMat3(), { 0.4, 0.2, 0.2 } );
+    auto lego_1_constraint = std::make_unique<loco::TSingleBodyPlanarConstraint>( "lego_1_constraint" );
+    //// lego_1->SetConstraint( std::move( lego_1_constraint ) );
+
+    auto lego_2 = scenario->CreateBox( "lego_2", { -0.8, 0.0, 0.301 }, loco::TMat3(), { 0.4, 0.2, 0.2 } );
+    auto lego_2_constraint = std::make_unique<loco::TSingleBodyPlanarConstraint>( "lego_2_constraint" );
+    //// lego_2->SetConstraint( std::move( lego_2_constraint ) );
+
+    auto lego_3 = scenario->CreateBox( "lego_3", { -1.2, 0.0, 0.301 }, loco::TMat3(), { 0.4, 0.2, 0.2 } );
+    auto lego_3_constraint = std::make_unique<loco::TSingleBodyPlanarConstraint>( "lego_3_constraint" );
+    //// lego_3->SetConstraint( std::move( lego_3_constraint ) );
+
+    auto lego_4 = scenario->CreateBox( "lego_4", { -1.0, 0.0, 0.501 }, loco::TMat3(), { 0.4, 0.2, 0.2 } );
+    auto lego_4_constraint = std::make_unique<loco::TSingleBodyPlanarConstraint>( "lego_4_constraint" );
+    //// lego_4->SetConstraint( std::move( lego_4_constraint ) );
 
     auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, RENDERING_BACKEND );
     auto simulation = runtime->CreateSimulation( scenario.get() );

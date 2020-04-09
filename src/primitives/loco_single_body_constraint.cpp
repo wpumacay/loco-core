@@ -9,8 +9,9 @@ namespace loco
         else if ( type == eConstraintType::REVOLUTE ) return "revolute";
         else if ( type == eConstraintType::PRISMATIC ) return "prismatic";
         else if ( type == eConstraintType::SPHERICAL ) return "spherical";
-        else if ( type == eConstraintType::PLANAR ) return "planar";
         else if ( type == eConstraintType::TRANSLATIONAL3D ) return "translational3d";
+        else if ( type == eConstraintType::UNIVERSAL3D ) return "universal3d";
+        else if ( type == eConstraintType::PLANAR ) return "planar";
         return "undefined";
     }
 
@@ -220,6 +221,199 @@ namespace loco
 
     void TSingleBodyPrismaticConstraint::_ResetInternal()
     {
-        // Nothing to setup for a reset request
+        // Nothing to setup for a reset request (adapter is handled by parent body)
+    }
+
+    //********************************************************************************************//
+    //                                 Spherical-Constraint Impl.                                 //
+    //********************************************************************************************//
+
+    TSingleBodySphericalConstraint::TSingleBodySphericalConstraint( const std::string& name,
+                                                                    const TMat4& local_transform )
+        : TISingleBodyConstraint( name, local_transform )
+    {
+        m_ConstraintType = eConstraintType::SPHERICAL;
+
+    #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+        if ( TLogger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBodySphericalConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        else
+            std::cout << "Loco::Allocs: Created TSingleBodySphericalConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+    #endif
+    }
+
+    TSingleBodySphericalConstraint::~TSingleBodySphericalConstraint()
+    {
+    #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+        if ( TLogger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSingleBodySphericalConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        else
+            std::cout << "Loco::Allocs: Destroyed TSingleBodySphericalConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+    #endif
+    }
+
+    void TSingleBodySphericalConstraint::_InitializeInternal()
+    {
+        // Nothing to setup (adapter is handled by parent body)
+    }
+
+    void TSingleBodySphericalConstraint::_PreStepInternal()
+    {
+        // Nothing to setup prior to a simulation step
+    }
+
+    void TSingleBodySphericalConstraint::_PostStepInternal()
+    {
+        if ( m_ParentBodyRef )
+            m_tf = m_ParentBodyRef->tf() * m_LocalTransform;
+    }
+
+    void TSingleBodySphericalConstraint::_ResetInternal()
+    {
+        // Nothing to setup for a reset request (adapter is handled by parent body)
+    }
+
+    //********************************************************************************************//
+    //                              Translational3d-Constraint Impl.                              //
+    //********************************************************************************************//
+
+    TSingleBodyTranslational3dConstraint::TSingleBodyTranslational3dConstraint( const std::string& name )
+        : TISingleBodyConstraint( name, TMat4() )
+    {
+        m_ConstraintType = eConstraintType::TRANSLATIONAL3D;
+
+    #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+        if ( TLogger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBodyTranslational3dConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        else
+            std::cout << "Loco::Allocs: Created TSingleBodyTranslational3dConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+    #endif
+    }
+
+    TSingleBodyTranslational3dConstraint::~TSingleBodyTranslational3dConstraint()
+    {
+    #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+        if ( TLogger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSingleBodyTranslational3dConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        else
+            std::cout << "Loco::Allocs: Destroyed TSingleBodyTranslational3dConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+    #endif
+    }
+
+    void TSingleBodyTranslational3dConstraint::_InitializeInternal()
+    {
+        // Nothing to setup (adapter is handled by parent body)
+    }
+
+    void TSingleBodyTranslational3dConstraint::_PreStepInternal()
+    {
+        // Nothing to setup prior to a simulation step
+    }
+
+    void TSingleBodyTranslational3dConstraint::_PostStepInternal()
+    {
+        if ( m_ParentBodyRef )
+            m_tf = m_ParentBodyRef->tf();
+    }
+
+    void TSingleBodyTranslational3dConstraint::_ResetInternal()
+    {
+        // Nothing to setup for a reset request (adapter is handled by parent body)
+    }
+
+    //********************************************************************************************//
+    //                              Universal3d-Constraint Impl.                              //
+    //********************************************************************************************//
+
+    TSingleBodyUniversal3dConstraint::TSingleBodyUniversal3dConstraint( const std::string& name )
+        : TISingleBodyConstraint( name, TMat4() )
+    {
+        m_ConstraintType = eConstraintType::UNIVERSAL3D;
+
+    #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+        if ( TLogger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBodyUniversal3dConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        else
+            std::cout << "Loco::Allocs: Created TSingleBodyUniversal3dConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+    #endif
+    }
+
+    TSingleBodyUniversal3dConstraint::~TSingleBodyUniversal3dConstraint()
+    {
+    #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+        if ( TLogger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSingleBodyUniversal3dConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        else
+            std::cout << "Loco::Allocs: Destroyed TSingleBodyUniversal3dConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+    #endif
+    }
+
+    void TSingleBodyUniversal3dConstraint::_InitializeInternal()
+    {
+        // Nothing to setup (adapter is handled by parent body)
+    }
+
+    void TSingleBodyUniversal3dConstraint::_PreStepInternal()
+    {
+        // Nothing to setup prior to a simulation step
+    }
+
+    void TSingleBodyUniversal3dConstraint::_PostStepInternal()
+    {
+        if ( m_ParentBodyRef )
+            m_tf = m_ParentBodyRef->tf();
+    }
+
+    void TSingleBodyUniversal3dConstraint::_ResetInternal()
+    {
+        // Nothing to setup for a reset request (adapter is handled by parent body)
+    }
+
+    //********************************************************************************************//
+    //                                  Planar-Constraint Impl.                                   //
+    //********************************************************************************************//
+
+    TSingleBodyPlanarConstraint::TSingleBodyPlanarConstraint( const std::string& name )
+        : TISingleBodyConstraint( name, TMat4() )
+    {
+        m_ConstraintType = eConstraintType::PLANAR;
+
+    #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+        if ( TLogger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBodyPlanarConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        else
+            std::cout << "Loco::Allocs: Created TSingleBodyPlanarConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+    #endif
+    }
+
+    TSingleBodyPlanarConstraint::~TSingleBodyPlanarConstraint()
+    {
+    #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+        if ( TLogger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSingleBodyPlanarConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        else
+            std::cout << "Loco::Allocs: Destroyed TSingleBodyPlanarConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+    #endif
+    }
+
+    void TSingleBodyPlanarConstraint::_InitializeInternal()
+    {
+        // Nothing to setup (adapter is handled by parent body)
+    }
+
+    void TSingleBodyPlanarConstraint::_PreStepInternal()
+    {
+        // Nothing to setup prior to a simulation step
+    }
+
+    void TSingleBodyPlanarConstraint::_PostStepInternal()
+    {
+        if ( m_ParentBodyRef )
+            m_tf = m_ParentBodyRef->tf();
+    }
+
+    void TSingleBodyPlanarConstraint::_ResetInternal()
+    {
+        // Nothing to setup for a reset request (adapter is handled by parent body)
     }
 }

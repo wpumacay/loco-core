@@ -15,8 +15,9 @@ namespace loco
         REVOLUTE,
         PRISMATIC,
         SPHERICAL,
-        PLANAR,
-        TRANSLATIONAL3D
+        TRANSLATIONAL3D,
+        UNIVERSAL3D,
+        PLANAR
     };
 
     std::string ToString( const eConstraintType& type );
@@ -146,5 +147,82 @@ namespace loco
         TVec2 m_Limits;
         // Axis of movement of the prismatic constraint
         TVec3 m_Axis;
+    };
+
+    class TSingleBodySphericalConstraint : public TISingleBodyConstraint
+    {
+    public :
+
+        TSingleBodySphericalConstraint( const std::string& name,
+                                        const TMat4& local_transform );
+
+        ~TSingleBodySphericalConstraint();
+
+    protected :
+
+        void _InitializeInternal() override;
+
+        void _PreStepInternal() override;
+
+        void _PostStepInternal() override;
+
+        void _ResetInternal() override;
+    };
+
+    class TSingleBodyTranslational3dConstraint : public TISingleBodyConstraint
+    {
+    public :
+
+        TSingleBodyTranslational3dConstraint( const std::string& name );
+
+        ~TSingleBodyTranslational3dConstraint();
+
+    protected :
+
+        void _InitializeInternal() override;
+
+        void _PreStepInternal() override;
+
+        void _PostStepInternal() override;
+
+        void _ResetInternal() override;
+    };
+
+    class TSingleBodyUniversal3dConstraint : public TISingleBodyConstraint
+    {
+    public :
+
+        TSingleBodyUniversal3dConstraint( const std::string& name );
+
+        ~TSingleBodyUniversal3dConstraint();
+
+    protected :
+
+        void _InitializeInternal() override;
+
+        void _PreStepInternal() override;
+
+        void _PostStepInternal() override;
+
+        void _ResetInternal() override;
+    };
+
+    class TSingleBodyPlanarConstraint : public TISingleBodyConstraint
+    {
+    public :
+
+        TSingleBodyPlanarConstraint( const std::string& name );
+
+        ~TSingleBodyPlanarConstraint();
+
+    protected :
+
+        void _InitializeInternal() override;
+
+        void _PreStepInternal() override;
+
+        void _PostStepInternal() override;
+
+        void _ResetInternal() override;
     };
 }
