@@ -10,16 +10,15 @@ namespace loco
     {
     public :
 
-        TISingleBodyColliderAdapter( TSingleBodyCollider* collider_ref )
-            : m_ColliderRef( collider_ref ), m_Detached( false ) {}
+        TISingleBodyColliderAdapter( TSingleBodyCollider* collider_ref );
 
-        virtual ~TISingleBodyColliderAdapter() = default;
+        virtual ~TISingleBodyColliderAdapter();
 
         virtual void Build() = 0;
 
         virtual void Initialize() = 0;
 
-        virtual void OnDetach() = 0;
+        virtual void OnDetach();
 
         virtual void ChangeSize( const TVec3& new_size ) = 0;
 

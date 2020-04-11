@@ -10,10 +10,9 @@ namespace loco
     {
     public :
 
-        TISingleBodyConstraintAdapter( TISingleBodyConstraint* constraint_ref )
-            : m_ConstraintRef( constraint_ref ), m_Detached( false ) {}
+        TISingleBodyConstraintAdapter( TISingleBodyConstraint* constraint_ref );
 
-        virtual ~TISingleBodyConstraintAdapter() = default;
+        virtual ~TISingleBodyConstraintAdapter();
 
         virtual void Build() = 0;
 
@@ -21,7 +20,7 @@ namespace loco
 
         virtual void Reset() = 0;
 
-        virtual void OnDetach() = 0;
+        virtual void OnDetach();
 
         TISingleBodyConstraint* constraint() { return m_ConstraintRef; }
 
@@ -44,7 +43,7 @@ namespace loco
         TISingleBodyRevoluteConstraintAdapter( TISingleBodyConstraint* constraint_ref )
             : TISingleBodyConstraintAdapter( constraint_ref ) {}
 
-        virtual ~TISingleBodyRevoluteConstraintAdapter() = default;
+        ~TISingleBodyRevoluteConstraintAdapter() = default;
 
         virtual void SetHingeAngle( TScalar hinge_angle ) = 0;
 
@@ -60,7 +59,7 @@ namespace loco
         TISingleBodyPrismaticConstraintAdapter( TISingleBodyConstraint* constraint_ref )
             : TISingleBodyConstraintAdapter( constraint_ref ) {}
 
-        virtual ~TISingleBodyPrismaticConstraintAdapter() = default;
+        ~TISingleBodyPrismaticConstraintAdapter() = default;
 
         virtual void SetSlidePosition( TScalar slide_position ) = 0;
 

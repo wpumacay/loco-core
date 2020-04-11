@@ -14,10 +14,9 @@ namespace loco
     {
     public :
 
-        TISingleBodyAdapter( TSingleBody* body_ref )
-            : m_BodyRef( body_ref ), m_Detached( false ), m_ColliderAdapter( nullptr ) {}
+        TISingleBodyAdapter( TSingleBody* body_ref ); 
 
-        virtual ~TISingleBodyAdapter() { m_BodyRef = nullptr; }
+        virtual ~TISingleBodyAdapter();
 
         virtual void Build() = 0;
 
@@ -25,7 +24,7 @@ namespace loco
 
         virtual void Reset() = 0;
 
-        virtual void OnDetach() = 0;
+        virtual void OnDetach();
 
         virtual void SetTransform( const TMat4& transform ) = 0;
 
