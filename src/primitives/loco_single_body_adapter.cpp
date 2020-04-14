@@ -8,13 +8,17 @@ namespace loco
     {
         m_Detached = false;
         m_ColliderAdapter = nullptr;
+        m_ConstraintAdapter = nullptr;
     }
 
     TISingleBodyAdapter::~TISingleBodyAdapter()
     {
         if ( m_BodyRef )
             m_BodyRef->DetachSim();
+
         m_BodyRef = nullptr;
+        m_ColliderAdapter = nullptr;
+        m_ConstraintAdapter = nullptr;
     }
 
     void TISingleBodyAdapter::OnDetach()
