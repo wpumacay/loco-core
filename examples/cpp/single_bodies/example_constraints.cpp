@@ -41,6 +41,10 @@ int main( int argc, char* argv[] )
     auto door_constraint = std::make_unique<loco::TSingleBodyRevoluteConstraint>( "door_constraint", loco::TMat4( loco::TMat3(), { 0.0f, 0.0f, 0.5f } ), loco::TVec3( 1.0f, 0.0f, 0.0f ) );
     door->SetConstraint( std::move( door_constraint ) );
 
+    auto platform = scenario->CreateBox( "platform", { 0.0, -2.0, 2.0 }, tinymath::rotationY<loco::TScalar>( loco::PI / 3.0f ), { 1.0, 1.0, 0.2 } );
+    auto platform_constraint = std::make_unique<loco::TSingleBodyPrismaticConstraint>( "platform_constraint", loco::TMat4( loco::TMat3(), { 0.0f, 0.0f, 0.0f } ), loco::TVec3( 0.0f, 0.0f, 1.0f ) );
+    platform->SetConstraint( std::move( platform_constraint ) );
+
     auto rod = scenario->CreateCapsule( "rod", { 1.0, 0.0, 1.0 }, loco::TMat3(), 0.1f, 1.0f );
     auto rod_constraint = std::make_unique<loco::TSingleBodySphericalConstraint>( "rod_constraint", loco::TMat4( loco::TMat3(), loco::TVec3( 0.0f, 0.0f, 0.5f ) ) );
     rod->SetConstraint( std::move( rod_constraint ) );
