@@ -3,6 +3,7 @@
 #include <loco_math.h>
 #include <loco_logger.h>
 #include <loco_data.h>
+#include <primitives/loco_single_body_constraint.h>
 #include <primitives/loco_single_body_collider.h>
 #include <primitives/loco_single_body.h>
 #include <loco_scenario.h>
