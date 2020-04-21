@@ -48,12 +48,6 @@ namespace loco
                 .value( "POSITION", loco::eActuatorType::POSITION )
                 .value( "VELOCITY", loco::eActuatorType::VELOCITY )
                 .value( "PD_CONTROLLER", loco::eActuatorType::PD_CONTROLLER );
-
-            py::enum_< loco::eBodyClassType >( m, "BodyClassType", py::arithmetic() )
-                .value( "NONE", loco::eBodyClassType::NONE )
-                .value( "SINGLE_BODY", loco::eBodyClassType::SINGLE_BODY )
-                .value( "COMPOUND_BODY", loco::eBodyClassType::COMPOUND_BODY )
-                .value( "KINEMATIC_TREE_BODY", loco::eBodyClassType::KINEMATIC_TREE_BODY );
         }
 
         // Bindings for base structs

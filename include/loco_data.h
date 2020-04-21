@@ -2,22 +2,25 @@
 
 #include <loco_common.h>
 
+/// Loco core functionality
 namespace loco
 {
-    enum class eShapeType
+    /// Type of shape, used for collider-related objects in the simulation
+    enum class eShapeType : uint8_t
     {
-        NONE = 0,
-        BOX, 
-        PLANE, 
-        SPHERE, 
-        CYLINDER, 
-        CAPSULE, 
-        ELLIPSOID, 
-        MESH, 
-        HFIELD
+        NONE = 0,   ///< Dummy collision shape
+        BOX,        ///< Box collision shape, defined by its width, depth, and height
+        PLANE,      ///< Plane collision shape, defined by its width and depth
+        SPHERE,     ///< Sphere collision shape, defined by its radius
+        CYLINDER,   ///< Cylinder collision shape, defined by its radius and height
+        CAPSULE,    ///< Capsule collision shape, defined by its radius and cylindrical-part height
+        ELLIPSOID,  ///< Ellipsoid collision shape, defined by its three radii (x,y,z)
+        MESH,       ///< Mesh collision shape, defined by a file-resource, or user-defined vertex-data
+        HFIELD      ///< Heightfield collision-shape, defined by user-defined elevation data
     };
 
-    enum class eJointType
+    /// Type of joint, used for joint-related objects in the simulation
+    enum class eJointType : uint8_t
     {
         FREE = 0,
         REVOLUTE,
@@ -27,14 +30,15 @@ namespace loco
         FIXED
     };
 
-    enum class eDynamicsType
+    /// Simulation dynamics-behaviour
+    enum class eDynamicsType : uint8_t
     {
         DYNAMIC = 0,
-        STATIC,
-        KINEMATIC
+        STATIC
     };
 
-    enum class eSensorType
+    /// Sensor type, used for sensor-related objects in the simulation
+    enum class eSensorType : uint8_t
     {
         NONE = 0,
         PROP_JOINT,
@@ -46,7 +50,8 @@ namespace loco
         EXT_CAMERA_SEGMENTATION
     };
 
-    enum class eActuatorType
+    /// Actuator type, used for actuator-related objects in the simulation
+    enum class eActuatorType : uint8_t
     {
         TORQUE = 0,
         POSITION,
@@ -54,20 +59,11 @@ namespace loco
         PD_CONTROLLER
     };
 
-    enum class eBodyClassType
-    {
-        NONE = 0,
-        SINGLE_BODY,
-        COMPOUND_BODY,
-        KINEMATIC_TREE_BODY
-    };
-
     std::string ToString( const eShapeType& type );
     std::string ToString( const eJointType& type );
     std::string ToString( const eDynamicsType& type );
     std::string ToString( const eSensorType& type );
     std::string ToString( const eActuatorType& type );
-    std::string ToString( const eBodyClassType& type );
 
     eShapeType ToEnumShape( const std::string& shape );
     eJointType ToEnumJoint( const std::string& type );

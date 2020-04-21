@@ -2,7 +2,7 @@
 #
 # This file only contains a selection of the most common options. For a full
 # list see the documentation:
-# http://www.sphinx-doc.org/en/master/config
+# https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 # -- Path setup --------------------------------------------------------------
 
@@ -17,8 +17,8 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'tysoc'
-copyright = '2019, Wilbert Pumacay'
+project = 'Loco'
+copyright = '2020, Wilbert Pumacay'
 author = 'Wilbert Pumacay'
 
 
@@ -51,4 +51,4 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 # Breathe configuration
-breathe_default_project = 'tysoc'
+breathe_default_project = 'Loco'

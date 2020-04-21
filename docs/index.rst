@@ -1,18 +1,16 @@
-.. tysoc documentation master file, created by
-   sphinx-quickstart on Fri Jun  7 00:22:36 2019.
+.. Loco documentation master file, created by
+   sphinx-quickstart on Mon Apr 20 21:51:45 2020.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to tysoc's documentation!
-=================================
+Welcome to Loco's documentation!
+================================
 
 .. toctree::
-   :name: mastertoc
    :maxdepth: 2
    :caption: Contents:
 
-   docs_cpp_api
-   docs_python_api
+
 
 Indices and tables
 ==================

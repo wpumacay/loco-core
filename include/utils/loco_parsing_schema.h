@@ -3,7 +3,9 @@
 #include <loco_common.h>
 #include <utils/loco_parsing_common.h>
 
+/// Loco core functionality
 namespace loco {
+/// Loco parsing functionality
 namespace parsing {
 
     enum class eAttributeType : uint8_t

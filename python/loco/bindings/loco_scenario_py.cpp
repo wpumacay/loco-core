@@ -64,6 +64,12 @@ namespace loco
                 ////         return self->GetTerrainGeneratorByName( name );
                 ////     },
                 ////     py::arg( "name" ), py::return_value_policy::reference )
+                .def( "RemoveDrawableByName", &TScenario::RemoveDrawableByName )
+                .def( "RemoveSingleBodyByName", &TScenario::RemoveSingleBodyByName )
+                //// .def( "RemoveCompoundByName", &TScenario::RemoveCompoundByName )
+                //// .def( "RemoveKinematicTreeByName", &TScenario::RemoveKinematicTreeByName )
+                //// .def( "RemoveKinematicTreeSensorByName", &TScenario::RemoveKinematicTreeSensorByName )
+                //// .def( "RemoveTerrainGeneratorByName", &TScenario::RemoveTerrainGeneratorByName )
                 .def( "GetNumDrawables", &TScenario::GetNumDrawables )
                 .def( "GetNumSingleBodies", &TScenario::GetNumSingleBodies )
                 //// .def( "GetNumCompounds", &TScenario::GetNumCompounds )
@@ -106,6 +112,12 @@ namespace loco
                 ////         return self->GetTerrainGeneratorsList();
                 ////     },
                 ////     py::return_value_policy::reference )
+                .def( "remove_drawable", &TScenario::remove_drawable )
+                .def( "remove_single_body", &TScenario::remove_single_body )
+                //// .def( "remove_compound", &TScenario::remove_compound )
+                //// .def( "remove_kinematic_tree", &TScenario::remove_kinematic_tree )
+                //// .def( "remove_kinematic_tree_sensor", &TScenario::remove_kinematic_tree_sensor )
+                //// .def( "remove_terrain_generator", &TScenario::remove_terrain_generator )
                 .def( "__repr__", []( const TScenario* self )
                     {
                         auto _strrep = std::string( "Scenario(\n" );

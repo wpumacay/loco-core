@@ -1,0 +1,12 @@
+PROJECT_NAME            = "Loco"
+OUTPUT_DIRECTORY        = "@DOXYGEN_OUTPUT_DIR@"
+INPUT                   = "@DOXYGEN_INPUT_DIR@"
+GENERATE_HTML           = YES
+GENERATE_LATEX          = NO
+GENERATE_XML            = YES
+ENUM_VALUES_PER_LINE    = 1
+QUIET                   = YES
+WARNINGS                = YES
+WARN_IF_UNDOCUMENTED    = NO
+RECURSIVE               = YES
+PREDEFINED              = DOXYGEN_SHOULD_SKIP_THIS

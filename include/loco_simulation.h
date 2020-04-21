@@ -20,11 +20,9 @@ namespace loco
     /// passed, then a default scenario is created. If a scenario is passed,
     /// then all components of that scenario (agents, terraingens, and sensors)
     /// are wrapped and these wrappers are stored in the simulation. This is
-    /// similar to "define and then run" (tensorflow). However, during execution
-    /// the user should be able to add extra agents, terraingens or sensors
-    /// via direct addition of wrapped objects using this class "add" methods.
+    /// similar to "define and then run" (tensorflow).
     ///
-    /// Backend-specific simulations should extend this class, and implement
+    /// Backend-specific simulations should extend this interface, and implement
     /// the necessary code in the following virtual methods:
     class TISimulation
     {
@@ -102,7 +100,7 @@ namespace loco
 
     typedef TISimulation* FcnCreateSim( TScenario* scenarioRef );
 
-    /// @brielf Dummy simulation object to use as replacement when no backend available
+    /// @brief Dummy simulation object to use as replacement when no backend available
     ///
     /// @details
     /// This class implements just a dummy simulation that can be drop in if no backend is
