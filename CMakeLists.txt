@@ -124,6 +124,7 @@ set( LOCO_CORE_SRCS
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/compounds/compound.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/compounds/compound_body.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/primitives/loco_single_body.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/src/primitives/loco_single_body_primitives.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/primitives/loco_single_body_adapter.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/primitives/loco_single_body_collider.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/primitives/loco_single_body_collider_adapter.cpp"

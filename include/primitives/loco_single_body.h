@@ -18,6 +18,10 @@ namespace loco
     public :
 
         TSingleBody( const std::string& name,
+                     const TVec3& position,
+                     const TMat3& rotation );
+
+        TSingleBody( const std::string& name,
                      const TBodyData& data,
                      const TVec3& position,
                      const TMat3& rotation );
@@ -118,7 +122,7 @@ namespace loco
 
         eObjectType _GetObjectTypeInternal() const override { return eObjectType::SINGLE_BODY; }
 
-    private :
+    protected :
 
         // Body properties (construction info)
         TBodyData m_Data;

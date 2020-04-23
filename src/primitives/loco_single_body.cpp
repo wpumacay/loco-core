@@ -4,6 +4,38 @@
 namespace loco
 {
     TSingleBody::TSingleBody( const std::string& name,
+                              const TVec3& position,
+                              const TMat3& rotation )
+        : TObject( name )
+    {
+        m_BodyAdapter = nullptr;
+        m_Constraint = nullptr;
+
+        m_tf.set( position, 3 );
+        m_tf.set( rotation );
+
+        m_tf0.set( position, 3 );
+        m_tf0.set( rotation );
+
+        m_TotalForce = { 0.0, 0.0, 0.0 };
+        m_TotalTorque = { 0.0, 0.0, 0.0 };
+        m_LinearVelocity = { 0.0, 0.0, 0.0 };
+        m_AngularVelocity = { 0.0, 0.0, 0.0 };
+        m_LinearVelocity0 = { 0.0, 0.0, 0.0 };
+        m_AngularVelocity0 = { 0.0, 0.0, 0.0 };
+
+        m_Collider = nullptr;
+        m_Drawable = nullptr;
+
+    #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+        if ( TLogger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBody {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        else
+            std::cout << "Loco::Allocs: Created TSingleBody " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+    #endif
+    }
+
+    TSingleBody::TSingleBody( const std::string& name,
                               const TBodyData& data,
                               const TVec3& position,
                               const TMat3& rotation )
