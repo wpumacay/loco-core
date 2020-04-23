@@ -8,7 +8,30 @@ const int nx_samples_hfield = 401;
 const int ny_samples_hfield = 401;
 const float x_extent_hfield = 80.0f;
 const float y_extent_hfield = 80.0f;
-std::vector<float> create_hfield_deeploco_terrain();
+std::vector<float> create_hfield_deeploco_terrain()
+{
+    const std::string terrain_file = loco::PATH_RESOURCES + "txt/terrain_deeploco.txt";
+    std::fstream fhandle( terrain_file.c_str(), std::ios::in );
+    std::string line = "";
+    const ssize_t num_rows = ny_samples_hfield;
+    const ssize_t num_cols = nx_samples_hfield;
+    std::vector<float> heights( num_rows * num_cols );
+    ssize_t i_line = 0;
+    while( getline( fhandle, line ) )
+    {
+        auto vec_str = loco::Split( line, '\t' );
+        assert( vec_str.size() == num_cols );
+        for ( ssize_t j = 0; j < num_cols; j++ )
+            heights[i_line + num_rows * j] = std::stof( vec_str[j] );
+        i_line++;
+    }
+    assert( i_line == num_rows );
+    // Make sure all heights are above 0.0f
+    float min_height = *std::min_element( heights.cbegin(), heights.cend() );
+    for ( ssize_t k = 0; k < heights.size(); k++ )
+        heights[k] -= min_height;
+    return heights;
+}
 
 int main( int argc, char* argv[] )
 {
@@ -33,12 +56,16 @@ int main( int argc, char* argv[] )
     LOCO_TRACE( "Rendering-Backend: {0}", RENDERING_BACKEND );
 
     auto scenario = std::make_unique<loco::TScenario>();
-    auto floor = scenario->CreatePlane( "floor", { 0.0, 0.0, -0.001f }, loco::TMat3(), 40, 40 );
-    auto sphere = scenario->CreateSphere( "sphere", { 0.0, 0.0, 10.0 }, loco::TMat3(), 0.1 );
-    auto hfield = scenario->CreateHeightfield( "hfield", { 0.0, 0.0, 0.0 }, loco::TMat3(),
-                                                 nx_samples_hfield, ny_samples_hfield,
-                                                 x_extent_hfield, y_extent_hfield,
-                                                 create_hfield_deeploco_terrain() );
+    auto floor = scenario->AddSingleBody( std::make_unique<loco::TPlane>( "floor", 40.0f, 40.0f, loco::TVec3( 0.0f, 0.0f, -0.001f ), loco::TMat3() ) );
+    floor->drawable()->ChangeColor( { 0.3f, 0.5f, 0.7f } );
+
+    auto sphere = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere", 0.1f, loco::TVec3( 0.0, 0.0, 10.0 ), loco::TMat3() ) );
+    auto hfield = scenario->AddSingleBody( std::make_unique<loco::THeightfield>( "hfield",
+                                                                                 nx_samples_hfield, ny_samples_hfield,
+                                                                                 x_extent_hfield, y_extent_hfield,
+                                                                                 create_hfield_deeploco_terrain(),
+                                                                                 loco::TVec3(), loco::TMat3() ) );
+    hfield->drawable()->ChangeColor( { 0.5f, 0.5f, 0.5f } );
 
     auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, RENDERING_BACKEND );
     auto simulation = runtime->CreateSimulation( scenario.get() );
@@ -73,29 +100,4 @@ int main( int argc, char* argv[] )
     runtime->DestroyVisualizer();
 
     return 0;
-}
-
-std::vector<float> create_hfield_deeploco_terrain()
-{
-    const std::string terrain_file = loco::PATH_RESOURCES + "txt/terrain_deeploco.txt";
-    std::fstream fhandle( terrain_file.c_str(), std::ios::in );
-    std::string line = "";
-    const ssize_t num_rows = ny_samples_hfield;
-    const ssize_t num_cols = nx_samples_hfield;
-    std::vector<float> heights( num_rows * num_cols );
-    ssize_t i_line = 0;
-    while( getline( fhandle, line ) )
-    {
-        auto vec_str = loco::Split( line, '\t' );
-        assert( vec_str.size() == num_cols );
-        for ( ssize_t j = 0; j < num_cols; j++ )
-            heights[i_line + num_rows * j] = std::stof( vec_str[j] );
-        i_line++;
-    }
-    assert( i_line == num_rows );
-    // Make sure all heights are above 0.0f
-    float min_height = *std::min_element( heights.cbegin(), heights.cend() );
-    for ( ssize_t k = 0; k < heights.size(); k++ )
-        heights[k] -= min_height;
-    return heights;
 }

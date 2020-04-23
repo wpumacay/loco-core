@@ -8,7 +8,22 @@ const int nx_samples_hfield_1 = 25;
 const int ny_samples_hfield_1 = 25;
 const float x_extent_hfield_1 = 10.0f;
 const float y_extent_hfield_1 = 10.0f;
-std::vector<float> create_hfield_paraboloid();
+std::vector<float> create_hfield_paraboloid()
+{
+    std::vector<float> heights;
+    for ( ssize_t i = 0; i < ny_samples_hfield_1; i++ )
+    {
+        for ( ssize_t j = 0; j < nx_samples_hfield_1; j++ )
+        {
+            float x = x_extent_hfield_1 * ( (float)j / nx_samples_hfield_1 - 0.5f );
+            float y = y_extent_hfield_1 * ( (float)i / ny_samples_hfield_1 - 0.5f );
+            heights.push_back( 10.0f * ( x * x + y * y ) / 
+                                ( x_extent_hfield_1 * x_extent_hfield_1 + 
+                                  y_extent_hfield_1 * y_extent_hfield_1 ) );
+        }
+    }
+    return heights;
+}
 
 const int nx_samples_hfield_2 = 25;
 const int ny_samples_hfield_2 = 25;
@@ -18,7 +33,24 @@ const int hfield_octaves = 4;
 const float hfield_persistance = 0.5f;
 const float hfield_lacunarity = 2.0f;
 const float hfield_noise_scale = 5.0f;
-std::vector<float> create_hfield_perlin_noise();
+std::vector<float> create_hfield_perlin_noise()
+{
+    // Initialize perlin-noise generator
+    loco::TNoiseGenerator::Init();
+    loco::TNoiseGenerator::Config( hfield_octaves, hfield_persistance, hfield_lacunarity, hfield_noise_scale );
+
+    std::vector<float> heights;
+    for ( ssize_t i = 0; i < ny_samples_hfield_2; i++ )
+    {
+        for ( ssize_t j = 0; j < nx_samples_hfield_2; j++ )
+        {
+            float x = x_extent_hfield_2 * ( (float)j / nx_samples_hfield_2 - 0.5f );
+            float y = y_extent_hfield_2 * ( (float)i / ny_samples_hfield_2 - 0.5f );
+            heights.push_back( std::max( 0.0f, loco::TNoiseGenerator::GetNoise2d( x, y ) ) );
+        }
+    }
+    return heights;
+}
 
 int main( int argc, char* argv[] )
 {
@@ -43,16 +75,22 @@ int main( int argc, char* argv[] )
     LOCO_TRACE( "Rendering-Backend: {0}", RENDERING_BACKEND );
 
     auto scenario = std::make_unique<loco::TScenario>();
-    auto floor = scenario->CreatePlane( "floor", { 0.0, 0.0, -0.001f }, loco::TMat3(), 40, 40 );
-    auto sphere = scenario->CreateSphere( "sphere", { -1.0, -1.0, 3.0 }, loco::TMat3(), 0.1 );
-    auto hfield_1 = scenario->CreateHeightfield( "hfield_1", { -5.0, -5.0, 0.0 }, loco::TMat3(),
-                                                 nx_samples_hfield_1, ny_samples_hfield_1,
-                                                 x_extent_hfield_1, y_extent_hfield_1,
-                                                 create_hfield_paraboloid() );
-    auto hfield_2 = scenario->CreateHeightfield( "hfield_2", { 5.0, 5.0, 0.0 }, loco::TMat3(),
-                                                 nx_samples_hfield_2, ny_samples_hfield_2,
-                                                 x_extent_hfield_2, y_extent_hfield_2,
-                                                 create_hfield_perlin_noise() );
+    auto floor = scenario->AddSingleBody( std::make_unique<loco::TPlane>( "floor", 40.0f, 40.0f, loco::TVec3( 0.0f, 0.0f, -0.001f ), loco::TMat3() ) );
+    floor->drawable()->ChangeColor( { 0.3f, 0.5f, 0.7f } );
+
+    auto sphere = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere", 0.1f, loco::TVec3( -1.0, -1.0, 3.0 ), loco::TMat3() ) );
+    auto hfield_1 = scenario->AddSingleBody( std::make_unique<loco::THeightfield>( "hfield_1",
+                                                                                   nx_samples_hfield_1, ny_samples_hfield_1,
+                                                                                   x_extent_hfield_1, y_extent_hfield_1,
+                                                                                   create_hfield_paraboloid(),
+                                                                                   loco::TVec3( -5.0, -5.0, 0.0 ), loco::TMat3() ) );
+    hfield_1->drawable()->ChangeColor( { 0.5f, 0.5f, 0.5f } );
+    auto hfield_2 = scenario->AddSingleBody( std::make_unique<loco::THeightfield>( "hfield_2",
+                                                                                   nx_samples_hfield_2, ny_samples_hfield_2,
+                                                                                   x_extent_hfield_2, y_extent_hfield_2,
+                                                                                   create_hfield_perlin_noise(),
+                                                                                   loco::TVec3( 5.0, 5.0, 0.0 ), loco::TMat3() ) );
+    hfield_2->drawable()->ChangeColor( { 0.5f, 0.5f, 0.5f } );
 
     auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, RENDERING_BACKEND );
     auto simulation = runtime->CreateSimulation( scenario.get() );
@@ -89,40 +127,4 @@ int main( int argc, char* argv[] )
     runtime->DestroyVisualizer();
 
     return 0;
-}
-
-std::vector<float> create_hfield_paraboloid()
-{
-    std::vector<float> heights;
-    for ( ssize_t i = 0; i < ny_samples_hfield_1; i++ )
-    {
-        for ( ssize_t j = 0; j < nx_samples_hfield_1; j++ )
-        {
-            float x = x_extent_hfield_1 * ( (float)j / nx_samples_hfield_1 - 0.5f );
-            float y = y_extent_hfield_1 * ( (float)i / ny_samples_hfield_1 - 0.5f );
-            heights.push_back( 10.0f * ( x * x + y * y ) / 
-                                ( x_extent_hfield_1 * x_extent_hfield_1 + 
-                                  y_extent_hfield_1 * y_extent_hfield_1 ) );
-        }
-    }
-    return heights;
-}
-
-std::vector<float> create_hfield_perlin_noise()
-{
-    // Initialize perlin-noise generator
-    loco::TNoiseGenerator::Init();
-    loco::TNoiseGenerator::Config( hfield_octaves, hfield_persistance, hfield_lacunarity, hfield_noise_scale );
-
-    std::vector<float> heights;
-    for ( ssize_t i = 0; i < ny_samples_hfield_2; i++ )
-    {
-        for ( ssize_t j = 0; j < nx_samples_hfield_2; j++ )
-        {
-            float x = x_extent_hfield_2 * ( (float)j / nx_samples_hfield_2 - 0.5f );
-            float y = y_extent_hfield_2 * ( (float)i / ny_samples_hfield_2 - 0.5f );
-            heights.push_back( std::max( 0.0f, loco::TNoiseGenerator::GetNoise2d( x, y ) ) );
-        }
-    }
-    return heights;
 }
