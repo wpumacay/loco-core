@@ -2,61 +2,7 @@
 #include <loco.h>
 
 std::string PHYSICS_BACKEND = loco::config::physics::NONE;
-
-std::unique_ptr<loco::TSingleBody> create_body( const std::string& name,
-                                                const loco::eShapeType& shape,
-                                                const loco::TVec3& size,
-                                                const loco::eDynamicsType& dyntype,
-                                                const loco::TVec3& position,
-                                                const loco::TVec3& euler,
-                                                const loco::TVec3& color = { 0.7f, 0.5f, 0.3f } )
-{
-    auto col_data = loco::TCollisionData();
-    col_data.type = shape;
-    col_data.size = size;
-    auto vis_data = loco::TVisualData();
-    vis_data.type = shape;
-    vis_data.size = size;
-    vis_data.ambient = color;
-    vis_data.diffuse = color;
-    vis_data.specular = color;
-    auto body_data = loco::TBodyData();
-    body_data.collision = col_data;
-    body_data.visual = vis_data;
-    body_data.dyntype = dyntype;
-
-    auto body_obj = std::make_unique<loco::TSingleBody>( name, body_data, position, tinymath::rotation( euler ) );
-    return std::move( body_obj );
-}
-
-std::unique_ptr<loco::TSingleBody> create_ycb_object( const std::string& name,
-                                                      const std::string& ycbname,
-                                                      const loco::TVec3& scale,
-                                                      const loco::TVec3& position,
-                                                      const loco::TVec3& euler )
-{
-    const std::string obj_filepath_col = loco::PATH_RESOURCES + "meshes/ycb/" + ycbname + "/tsdf/nontextured.stl";
-    const std::string obj_filepath_vis = loco::PATH_RESOURCES + "meshes/ycb/" + ycbname + "/tsdf/textured.obj";
-    auto col_data = loco::TCollisionData();
-    col_data.type = loco::eShapeType::MESH;
-    col_data.size = scale;
-    col_data.mesh_data.filename = obj_filepath_col;
-    auto vis_data = loco::TVisualData();
-    vis_data.type = loco::eShapeType::MESH;
-    vis_data.size = scale;
-    vis_data.mesh_data.filename = obj_filepath_vis;
-    vis_data.ambient = { 1.0, 1.0, 1.0 };
-    vis_data.diffuse = { 1.0, 1.0, 1.0 };
-    vis_data.specular = { 1.0, 1.0, 1.0 };
-    vis_data.shininess = 90.0;
-    auto body_data = loco::TBodyData();
-    body_data.collision = col_data;
-    body_data.visual = vis_data;
-    body_data.dyntype = loco::eDynamicsType::DYNAMIC;
-
-    auto body_obj = std::make_unique<loco::TSingleBody>( name, body_data, position, tinymath::rotation( euler ) );
-    return std::move( body_obj );
-}
+std::string RENDERING_BACKEND = loco::config::rendering::GLVIZ_GLFW;
 
 int main( int argc, char* argv[] )
 {
@@ -73,27 +19,55 @@ int main( int argc, char* argv[] )
             PHYSICS_BACKEND = loco::config::physics::DART;
         else if ( choice_backend == "raisim" )
             PHYSICS_BACKEND = loco::config::physics::RAISIM;
+        else if ( choice_backend == "none" )
+            PHYSICS_BACKEND = loco::config::physics::NONE;
     }
 
-    LOCO_TRACE( "Backend: {0}", PHYSICS_BACKEND );
+    LOCO_TRACE( "Physics-Backend: {0}", PHYSICS_BACKEND );
+    LOCO_TRACE( "Rendering-Backend: {0}", RENDERING_BACKEND );
 
-    //// const loco::TVec3 orientation = { 0.0f, 0.0f, 0.0f };
-    //// const loco::TVec3 orientation = { loco::PI / 2, 0.0f, 0.0f };
-    const loco::TVec3 orientation = { loco::PI / 3, loco::PI / 4, loco::PI / 6 };
+    const loco::TMat3 rotation = tinymath::rotation( loco::TVec3( loco::PI / 3, loco::PI / 4, loco::PI / 6 ) );
+    //// const loco::TMat3 rotation = tinymath::rotation( loco::TVec3( loco::PI / 2, 0.0f, 0.0f ) );
+    //// const loco::TMat3 rotation = tinymath::rotation( loco::TVec3( 0.0f, 0.0f, 0.0f ) );
 
     auto scenario = std::make_unique<loco::TScenario>();
-    scenario->AddSingleBody( create_body( "floor", loco::eShapeType::PLANE, { 10.0f, 10.0f, 1.0f },
-                                          loco::eDynamicsType::STATIC, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 0.3f, 0.5f, 0.7f } ) );
-    scenario->AddSingleBody( create_ycb_object( "mesh_ycb_1", "001_chips_can", { 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 1.0f }, orientation ) );
-    scenario->AddSingleBody( create_ycb_object( "mesh_ycb_2", "002_master_chef_can", { 1.0f, 1.0f, 1.0f }, { 0.0f, -1.0f, 1.0f }, orientation ) );
-    scenario->AddSingleBody( create_ycb_object( "mesh_ycb_3", "003_cracker_box", { 1.0f, 1.0f, 1.0f }, { 1.0f, -1.0f, 1.0f }, orientation ) );
-    scenario->AddSingleBody( create_ycb_object( "mesh_ycb_4", "004_sugar_box", { 1.0f, 1.0f, 1.0f }, { -1.0f, 1.0f, 1.0f }, orientation ) );
-    scenario->AddSingleBody( create_ycb_object( "mesh_ycb_6", "006_mustard_bottle", { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f }, orientation ) );
-    scenario->AddSingleBody( create_ycb_object( "mesh_ycb_7", "007_tuna_fish_can", { 1.0f, 1.0f, 1.0f }, { -1.0f, -1.0f, 1.0f }, orientation ) );
+    scenario->AddSingleBody( std::make_unique<loco::TPlane>( "floor", 10.0f, 10.0f, loco::TVec3(), loco::TMat3() ) );
+    scenario->AddSingleBody( std::make_unique<loco::TMesh>( "mesh_ycb_1",
+                                                            loco::PATH_RESOURCES + "meshes/ycb/001_chips_can/tsdf/nontextured.stl",
+                                                            loco::PATH_RESOURCES + "meshes/ycb/001_chips_can/tsdf/textured.obj",
+                                                            1.0f, loco::TVec3( 0.0f, 0.0f, 1.0f ), rotation ) );
+    scenario->AddSingleBody( std::make_unique<loco::TMesh>( "mesh_ycb_2",
+                                                            loco::PATH_RESOURCES + "meshes/ycb/002_master_chef_can/tsdf/nontextured.stl",
+                                                            loco::PATH_RESOURCES + "meshes/ycb/002_master_chef_can/tsdf/textured.obj",
+                                                            1.0f, loco::TVec3( 0.0f, -1.0f, 1.0f ), rotation ) );
+    scenario->AddSingleBody( std::make_unique<loco::TMesh>( "mesh_ycb_3",
+                                                            loco::PATH_RESOURCES + "meshes/ycb/003_cracker_box/tsdf/nontextured.stl",
+                                                            loco::PATH_RESOURCES + "meshes/ycb/003_cracker_box/tsdf/textured.obj",
+                                                            1.0f, loco::TVec3( 1.0f, -1.0f, 1.0f ), rotation ) );
+    scenario->AddSingleBody( std::make_unique<loco::TMesh>( "mesh_ycb_4",
+                                                            loco::PATH_RESOURCES + "meshes/ycb/004_sugar_box/tsdf/nontextured.stl",
+                                                            loco::PATH_RESOURCES + "meshes/ycb/004_sugar_box/tsdf/textured.obj",
+                                                            1.0f, loco::TVec3( -1.0f, 1.0f, 1.0f ), rotation ) );
+    scenario->AddSingleBody( std::make_unique<loco::TMesh>( "mesh_ycb_5",
+                                                            loco::PATH_RESOURCES + "meshes/ycb/005_tomato_soup_can/tsdf/nontextured.stl",
+                                                            loco::PATH_RESOURCES + "meshes/ycb/005_tomato_soup_can/tsdf/textured.obj",
+                                                            1.0f, loco::TVec3( 1.0f, 1.0f, 1.0f ), rotation ) );
+    scenario->AddSingleBody( std::make_unique<loco::TMesh>( "mesh_ycb_6",
+                                                            loco::PATH_RESOURCES + "meshes/ycb/006_mustard_bottle/tsdf/nontextured.stl",
+                                                            loco::PATH_RESOURCES + "meshes/ycb/006_mustard_bottle/tsdf/textured.obj",
+                                                            1.0f, loco::TVec3( -1.0f, -1.0f, 1.0f ), rotation ) );
 
-    auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, loco::config::rendering::GLVIZ_GLFW );
+    auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, RENDERING_BACKEND );
     auto simulation = runtime->CreateSimulation( scenario.get() );
     auto visualizer = runtime->CreateVisualizer( scenario.get() );
+
+    for ( ssize_t i = 1; i <= 6; i++ )
+        if ( auto ycb_mesh_ref = scenario->GetSingleBodyByName( "mesh_ycb_" + std::to_string( i ) ) )
+            ycb_mesh_ref->drawable()->ChangeColor( { 1.0f, 1.0f, 1.0f } );
+
+    auto floor_ref = scenario->GetSingleBodyByName( "floor" );
+    floor_ref->drawable()->ChangeTexture( "built_in_chessboard" );
+    floor_ref->drawable()->ChangeColor( { 0.3f, 0.5f, 0.7f } );
 
     while ( visualizer->IsActive() )
     {

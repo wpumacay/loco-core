@@ -5,6 +5,7 @@
 #include <loco_data.h>
 #include <primitives/loco_single_body_constraint.h>
 #include <primitives/loco_single_body_collider.h>
+#include <primitives/loco_single_body_primitives.h>
 #include <primitives/loco_single_body.h>
 #include <loco_scenario.h>
 #include <loco_simulation.h>
