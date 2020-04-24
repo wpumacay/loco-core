@@ -27,24 +27,6 @@ namespace loco
         return size;
     }
 
-    py::array_t<TScalar> stdvec_to_nparray( const std::vector<TScalar>& stdvec )
-    {
-        auto nparray = py::array_t<TScalar>( stdvec.size() );
-        auto bufferInfo = nparray.request();
-        auto bufferData = bufferInfo.ptr;
-        memcpy( bufferData, stdvec.data(), sizeof( TScalar ) * stdvec.size() );
-        return nparray;
-    }
-
-    std::vector<TScalar> nparray_to_stdvec( const py::array_t<TScalar>& arr_stdvec )
-    {
-        auto bufferInfo = arr_stdvec.request();
-        auto bufferData = bufferInfo.ptr;
-        auto stdvec = std::vector<TScalar>( bufferInfo.size, 0.0 );
-        memcpy( stdvec.data(), bufferData, sizeof( TScalar ) * bufferInfo.size );
-        return stdvec;
-    }
-
     std::string ToString( const std::vector<TScalar>& stdvec )
     {
         std::string _strrep = "( ";
@@ -62,5 +44,6 @@ namespace loco
         m.attr( "NUM_QPOS_JOINT_SPHERICAL" ) = loco::NUM_QPOS_JOINT_SPHERICAL;
         m.attr( "NUM_QPOS_JOINT_FREE" ) = loco::NUM_QPOS_JOINT_FREE;
         m.attr( "DEFAULT_DENSITY" ) = loco::DEFAULT_DENSITY;
+        m.attr( "PATH_RESOURCES" ) = loco::PATH_RESOURCES;
     }
 }

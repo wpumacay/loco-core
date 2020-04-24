@@ -1,6 +1,6 @@
 
 #include <loco_common_py.h>
-#include <primitives/loco_single_body.h>
+#include <primitives/loco_single_body_primitives.h>
 
 namespace py = pybind11;
 
@@ -111,24 +111,33 @@ namespace loco
                     {
                         return self->data();
                     }, py::return_value_policy::reference )
-                //// .def_property( "collider",
-                ////     []( TSingleBody* self ) -> TSingleBodyCollider*
-                ////         {
-                ////             return self->collider();
-                ////         },
-                ////     []( TSingleBody* self, std::unique_ptr<TSingleBodyCollider> collider ) -> void
-                ////         {
-                ////             self->SetCollider( std::move( collider ) );
-                ////         }, py::keep_alive<1, 2>() )
-                //// .def_property( "drawable",
-                ////     []( TSingleBody* self ) -> TDrawable*
-                ////         {
-                ////             return self->drawable();
-                ////         },
-                ////     []( TSingleBody* self, std::unique_ptr<TDrawable> drawable ) -> void
-                ////         {
-                ////             self->SetDrawable( std::move( drawable ) );
-                ////         }, py::keep_alive<1, 2>() )
+                .def_property( "collider",
+                    []( TSingleBody* self ) -> TSingleBodyCollider*
+                        {
+                            return self->collider();
+                        },
+                    []( TSingleBody* self, std::unique_ptr<TSingleBodyCollider> collider ) -> void
+                        {
+                            self->SetCollider( std::move( collider ) );
+                        }, py::keep_alive<1, 2>() )
+                .def_property( "drawable",
+                    []( TSingleBody* self ) -> TDrawable*
+                        {
+                            return self->drawable();
+                        },
+                    []( TSingleBody* self, std::unique_ptr<TDrawable> drawable ) -> void
+                        {
+                            self->SetDrawable( std::move( drawable ) );
+                        }, py::keep_alive<1, 2>() )
+                .def_property( "constraint",
+                    []( TSingleBody* self ) -> TISingleBodyConstraint*
+                        {
+                            return self->constraint();
+                        },
+                    []( TSingleBody* self, std::unique_ptr<TISingleBodyConstraint> constraint ) -> void
+                        {
+                            self->SetConstraint( std::move( constraint ) );
+                        }, py::keep_alive<1, 2>() )
                 .def_property( "linear_vel",
                     []( const TSingleBody* self ) -> py::array_t<TScalar>
                         {
@@ -227,6 +236,7 @@ namespace loco
                         _strrep += "dyntype     : " + loco::ToString( self->dyntype() ) + "\n";
                         _strrep += "collision   : " + ( self->collider() ? loco::PointerToHexAddress( self->collider() ) : std::string( "null" ) ) + "\n";
                         _strrep += "visual      : " + ( self->drawable() ? loco::PointerToHexAddress( self->drawable() ) : std::string( "null" ) ) + "\n";
+                        _strrep += "constraint  : " + ( self->constraint() ? loco::PointerToHexAddress( self->constraint() ) : std::string( "null" ) ) + "\n";
                         _strrep += "position    : " + loco::ToString( self->pos() ) + "\n";
                         _strrep += "rotation    :\n" + loco::ToString( self->rot() ) + "\n";
                         _strrep += "euler       : " + loco::ToString( self->euler() ) + "\n";
@@ -235,6 +245,344 @@ namespace loco
                         _strrep += ")";
                         return _strrep;
                     } );
+        }
+
+        // Bindings for primitives helper classes
+        {
+            py::class_< TBox, TSingleBody >( m, "Box" )
+                .def( py::init( []( const std::string& name,
+                                    const py::array_t<TScalar>& arr_extents,
+                                    const py::array_t<TScalar>& arr_position,
+                                    const py::array_t<TScalar>& arr_rotation,
+                                    const eDynamicsType& dyntype,
+                                    const int& collision_group,
+                                    const int& collision_mask )
+                    {
+                        return std::make_unique<TBox>( name,
+                                                       tinymath::nparray_to_vector<TScalar, 3>( arr_extents ),
+                                                       tinymath::nparray_to_vector<TScalar, 3>( arr_position ),
+                                                       tinymath::nparray_to_matrix<TScalar, 3>( arr_rotation ),
+                                                       dyntype, collision_group, collision_mask );
+                    } ),
+                     py::arg( "name" ), py::arg( "extents" ), py::arg( "position" ), py::arg( "rotation" ),
+                     py::arg( "dyntype" ) = eDynamicsType::DYNAMIC, py::arg( "collision_group" ) = 1, py::arg( "collision_mask" ) = 1 )
+                .def_property( "extents",
+                    []( const TBox* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 3>( self->extents() );
+                        },
+                    []( TBox* self, const py::array_t<TScalar>& arr_extents ) -> void
+                        {
+                            self->SetExtents( tinymath::nparray_to_vector<TScalar, 3>( arr_extents ) );
+                        } )
+                .def_property( "width",
+                    []( const TBox* self ) -> TScalar
+                        {
+                            return self->width();
+                        },
+                    []( TBox* self, const TScalar& width ) -> void
+                        {
+                            self->SetWidth( width );
+                        } )
+                .def_property( "depth",
+                    []( const TBox* self ) -> TScalar
+                        {
+                            return self->depth();
+                        },
+                    []( TBox* self, const TScalar& depth ) -> void
+                        {
+                            self->SetDepth( depth );
+                        } )
+                .def_property( "height",
+                    []( const TBox* self ) -> TScalar
+                        {
+                            return self->height();
+                        },
+                    []( TBox* self, const TScalar& height ) -> void
+                        {
+                            self->SetHeight( height );
+                        } );
+
+            py::class_< TPlane, TSingleBody >( m, "Plane" )
+                .def( py::init( []( const std::string& name,
+                                    const TScalar& width,
+                                    const TScalar& depth,
+                                    const py::array_t<TScalar>& arr_position,
+                                    const py::array_t<TScalar>& arr_rotation,
+                                    const int& collision_group,
+                                    const int& collision_mask )
+                    {
+                        return std::make_unique<TPlane>( name,
+                                                         width, depth,
+                                                         tinymath::nparray_to_vector<TScalar, 3>( arr_position ),
+                                                         tinymath::nparray_to_matrix<TScalar, 3>( arr_rotation ),
+                                                         collision_group, collision_mask );
+                    } ),
+                     py::arg( "name" ), py::arg( "width" ), py::arg( "depth" ), py::arg( "position" ),
+                     py::arg( "rotation" ), py::arg( "collision_group" ) = 0x7fffffff, py::arg( "collision_mask" ) = 0x7fffffff )
+                .def_property( "width",
+                    []( const TPlane* self ) -> TScalar
+                        {
+                            return self->width();
+                        },
+                    []( TPlane* self, const TScalar& width ) -> void
+                        {
+                            self->SetWidth( width );
+                        } )
+                .def_property( "depth",
+                    []( const TPlane* self ) -> TScalar
+                        {
+                            return self->depth();
+                        },
+                    []( TPlane* self, const TScalar& depth ) -> void
+                        {
+                            self->SetDepth( depth );
+                        } );
+
+            py::class_< TSphere, TSingleBody >( m, "Sphere" )
+                .def( py::init( []( const std::string& name,
+                                    const TScalar& radius,
+                                    const py::array_t<TScalar>& arr_position,
+                                    const py::array_t<TScalar>& arr_rotation,
+                                    const eDynamicsType& dyntype,
+                                    const int& collision_group,
+                                    const int& collision_mask )
+                    {
+                        return std::make_unique<TSphere>( name,
+                                                          radius,
+                                                          tinymath::nparray_to_vector<TScalar, 3>( arr_position ),
+                                                          tinymath::nparray_to_matrix<TScalar, 3>( arr_rotation ),
+                                                          dyntype, collision_group, collision_mask );
+                    } ),
+                     py::arg( "name" ), py::arg( "radius" ), py::arg( "position" ), py::arg( "rotation" ),
+                     py::arg( "dyntype" ) = eDynamicsType::DYNAMIC, py::arg( "collision_group" ) = 1, py::arg( "collision_mask" ) = 1 )
+                .def_property( "radius",
+                    []( const TSphere* self ) -> TScalar
+                        {
+                            return self->radius();
+                        },
+                    []( TSphere* self, const TScalar& radius ) -> void
+                        {
+                            self->SetRadius( radius );
+                        } );
+
+            py::class_< TCylinder, TSingleBody >( m, "Cylinder" )
+                .def( py::init( []( const std::string& name,
+                                    const TScalar& radius,
+                                    const TScalar& height,
+                                    const py::array_t<TScalar>& arr_position,
+                                    const py::array_t<TScalar>& arr_rotation,
+                                    const eDynamicsType& dyntype,
+                                    const int& collision_group,
+                                    const int& collision_mask )
+                    {
+                        return std::make_unique<TCylinder>( name,
+                                                            radius, height,
+                                                            tinymath::nparray_to_vector<TScalar, 3>( arr_position ),
+                                                            tinymath::nparray_to_matrix<TScalar, 3>( arr_rotation ),
+                                                            dyntype, collision_group, collision_mask );
+                    } ),
+                     py::arg( "name" ), py::arg( "radius" ), py::arg( "height" ), py::arg( "position" ), py::arg( "rotation" ),
+                     py::arg( "dyntype" ) = eDynamicsType::DYNAMIC, py::arg( "collision_group" ) = 1, py::arg( "collision_mask" ) = 1 )
+                .def_property( "radius",
+                    []( const TCylinder* self ) -> TScalar
+                        {
+                            return self->radius();
+                        },
+                    []( TCylinder* self, const TScalar& radius ) -> void
+                        {
+                            self->SetRadius( radius );
+                        } )
+                .def_property( "height",
+                    []( const TCylinder* self ) -> TScalar
+                        {
+                            return self->height();
+                        },
+                    []( TCylinder* self, const TScalar& height ) -> void
+                        {
+                            self->SetHeight( height );
+                        } );
+
+            py::class_< TCapsule, TSingleBody >( m, "Capsule" )
+                .def( py::init( []( const std::string& name,
+                                    const TScalar& radius,
+                                    const TScalar& height,
+                                    const py::array_t<TScalar>& arr_position,
+                                    const py::array_t<TScalar>& arr_rotation,
+                                    const eDynamicsType& dyntype,
+                                    const int& collision_group,
+                                    const int& collision_mask )
+                    {
+                        return std::make_unique<TCapsule>( name,
+                                                            radius, height,
+                                                            tinymath::nparray_to_vector<TScalar, 3>( arr_position ),
+                                                            tinymath::nparray_to_matrix<TScalar, 3>( arr_rotation ),
+                                                            dyntype, collision_group, collision_mask );
+                    } ),
+                     py::arg( "name" ), py::arg( "radius" ), py::arg( "height" ), py::arg( "position" ), py::arg( "rotation" ),
+                     py::arg( "dyntype" ) = eDynamicsType::DYNAMIC, py::arg( "collision_group" ) = 1, py::arg( "collision_mask" ) = 1 )
+                .def_property( "radius",
+                    []( const TCapsule* self ) -> TScalar
+                        {
+                            return self->radius();
+                        },
+                    []( TCapsule* self, const TScalar& radius ) -> void
+                        {
+                            self->SetRadius( radius );
+                        } )
+                .def_property( "height",
+                    []( const TCapsule* self ) -> TScalar
+                        {
+                            return self->height();
+                        },
+                    []( TCapsule* self, const TScalar& height ) -> void
+                        {
+                            self->SetHeight( height );
+                        } );
+
+            py::class_< TEllipsoid, TSingleBody >( m, "Ellipsoid" )
+                .def( py::init( []( const std::string& name,
+                                    const py::array_t<TScalar>& arr_radii,
+                                    const py::array_t<TScalar>& arr_position,
+                                    const py::array_t<TScalar>& arr_rotation,
+                                    const eDynamicsType& dyntype,
+                                    const int& collision_group,
+                                    const int& collision_mask )
+                    {
+                        return std::make_unique<TEllipsoid>( name,
+                                                             tinymath::nparray_to_vector<TScalar, 3>( arr_radii ),
+                                                             tinymath::nparray_to_vector<TScalar, 3>( arr_position ),
+                                                             tinymath::nparray_to_matrix<TScalar, 3>( arr_rotation ),
+                                                             dyntype, collision_group, collision_mask );
+                    } ),
+                     py::arg( "name" ), py::arg( "radii" ), py::arg( "position" ), py::arg( "rotation" ),
+                     py::arg( "dyntype" ) = eDynamicsType::DYNAMIC, py::arg( "collision_group" ) = 1, py::arg( "collision_mask" ) = 1 )
+                .def_property( "radii",
+                    []( const TEllipsoid* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 3>( self->radii() );
+                        },
+                    []( TEllipsoid* self, const py::array_t<TScalar>& arr_radii ) -> void
+                        {
+                            self->SetRadii( tinymath::nparray_to_vector<TScalar, 3>( arr_radii ) );
+                        } )
+                .def_property( "radius_x",
+                    []( const TEllipsoid* self ) -> TScalar
+                        {
+                            return self->radius_x();
+                        },
+                    []( TEllipsoid* self, const TScalar& radius_x ) -> void
+                        {
+                            self->SetRadiusX( radius_x );
+                        } )
+                .def_property( "radius_y",
+                    []( const TEllipsoid* self ) -> TScalar
+                        {
+                            return self->radius_y();
+                        },
+                    []( TEllipsoid* self, const TScalar& radius_y ) -> void
+                        {
+                            self->SetRadiusY( radius_y );
+                        } )
+                .def_property( "radius_z",
+                    []( const TEllipsoid* self ) -> TScalar
+                        {
+                            return self->radius_z();
+                        },
+                    []( TEllipsoid* self, const TScalar& radius_z ) -> void
+                        {
+                            self->SetRadiusZ( radius_z );
+                        } );
+
+            py::class_< TMesh, TSingleBody >( m, "Mesh" )
+                .def( py::init( []( const std::string& name,
+                                    const std::string& mesh_collider_filepath,
+                                    const std::string& mesh_visual_filepath,
+                                    const TScalar& mesh_scale,
+                                    const py::array_t<TScalar>& arr_position,
+                                    const py::array_t<TScalar>& arr_rotation,
+                                    const eDynamicsType& dyntype,
+                                    const int& collision_group,
+                                    const int& collision_mask )
+                    {
+                        return std::make_unique<TMesh>( name,
+                                                        mesh_collider_filepath,
+                                                        mesh_visual_filepath,
+                                                        mesh_scale,
+                                                        tinymath::nparray_to_vector<TScalar, 3>( arr_position ),
+                                                        tinymath::nparray_to_matrix<TScalar, 3>( arr_rotation ),
+                                                        dyntype, collision_group, collision_mask );
+                    } ),
+                     py::arg( "name" ), py::arg( "mesh_collider_filepath" ), py::arg( "mesh_visual_filepath" ),
+                     py::arg( "mesh_scale" ), py::arg( "position" ), py::arg( "rotation" ),
+                     py::arg( "dyntype" ) = eDynamicsType::DYNAMIC, py::arg( "collision_group" ) = 1, py::arg( "collision_mask" ) = 1 )
+                .def( py::init( []( const std::string& name,
+                                    const py::array_t<float>& arr_mesh_vertices,
+                                    const py::array_t<int>& arr_mesh_faces,
+                                    const TScalar& mesh_scale,
+                                    const py::array_t<TScalar>& arr_position,
+                                    const py::array_t<TScalar>& arr_rotation,
+                                    const eDynamicsType& dyntype,
+                                    const int& collision_group,
+                                    const int& collision_mask )
+                    {
+                        return std::make_unique<TMesh>( name,
+                                                        loco::nparray_to_stdvec<float>( arr_mesh_vertices ),
+                                                        loco::nparray_to_stdvec<int>( arr_mesh_faces ),
+                                                        mesh_scale,
+                                                        tinymath::nparray_to_vector<TScalar, 3>( arr_position ),
+                                                        tinymath::nparray_to_matrix<TScalar, 3>( arr_rotation ),
+                                                        dyntype, collision_group, collision_mask );
+                    } ),
+                     py::arg( "name" ), py::arg( "mesh_vertices" ), py::arg( "mesh_faces" ),
+                     py::arg( "mesh_scale" ), py::arg( "position" ), py::arg( "rotation" ),
+                     py::arg( "dyntype" ) = eDynamicsType::DYNAMIC, py::arg( "collision_group" ) = 1, py::arg( "collision_mask" ) = 1 )
+                .def_property( "scale",
+                    []( const TMesh* self ) -> TScalar
+                        {
+                            return self->scale();
+                        },
+                    []( TMesh* self, const TScalar& scale ) -> void
+                        {
+                            self->SetScale( scale );
+                        } );
+
+            py::class_< THeightfield, TSingleBody >( m, "Heightfield" )
+                .def( py::init( []( const std::string& name,
+                                    const ssize_t& num_width_samples,
+                                    const ssize_t& num_depth_samples,
+                                    const TScalar& width_extent,
+                                    const TScalar& depth_extent,
+                                    const py::array_t<float>& arr_heights,
+                                    const py::array_t<TScalar>& arr_position,
+                                    const py::array_t<TScalar>& arr_rotation,
+                                    const int& collision_group,
+                                    const int& collision_mask )
+                    {
+                        return std::make_unique<THeightfield>( name,
+                                                               num_width_samples, num_depth_samples,
+                                                               width_extent, depth_extent,
+                                                               loco::nparray_to_stdvec<float>( arr_heights ),
+                                                               tinymath::nparray_to_vector<TScalar, 3>( arr_position ),
+                                                               tinymath::nparray_to_matrix<TScalar, 3>( arr_rotation ),
+                                                               collision_group, collision_mask );
+                    } ),
+                     py::arg( "name" ), py::arg( "num_width_samples" ), py::arg( "num_depth_samples" ),
+                     py::arg( "width_extent" ), py::arg( "depth_extent" ), py::arg( "heights" ),
+                     py::arg( "position" ), py::arg( "rotation" ), py::arg( "collision_group" ) = 0x7fffffff, py::arg( "collision_mask" ) = 0x7fffffff )
+                .def_property( "heights",
+                    []( const THeightfield* self ) -> py::array_t<float>
+                        {
+                            return loco::stdvec_to_nparray<float>( self->heights() );
+                        },
+                    []( THeightfield* self, const py::array_t<float>& arr_heights ) -> void
+                        {
+                            self->SetHeights( loco::nparray_to_stdvec<float>( arr_heights ) );
+                        } )
+                .def_property_readonly( "num_width_samples", []( const THeightfield* self ) { return self->num_width_samples(); } )
+                .def_property_readonly( "num_depth_samples", []( const THeightfield* self ) { return self->num_depth_samples(); } )
+                .def_property_readonly( "width_extent", []( const THeightfield* self ) { return self->width_extent(); } )
+                .def_property_readonly( "depth_extent", []( const THeightfield* self ) { return self->depth_extent(); } );
         }
     }
 }

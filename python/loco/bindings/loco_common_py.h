@@ -43,10 +43,26 @@ namespace loco
     TSizef nparray_to_sizef( const py::array_t<TScalar>& arr_size );
 
     // Conversion from std-vector to numpy array
-    py::array_t<TScalar> stdvec_to_nparray( const std::vector<TScalar>& stdvec );
+    template< typename Scalar_T >
+    py::array_t<Scalar_T> stdvec_to_nparray( const std::vector<Scalar_T>& stdvec )
+    {
+        auto nparray = py::array_t<Scalar_T>( stdvec.size() );
+        auto bufferInfo = nparray.request();
+        auto bufferData = bufferInfo.ptr;
+        memcpy( bufferData, stdvec.data(), sizeof( Scalar_T ) * stdvec.size() );
+        return nparray;
+    }
 
     // Conversion from numpy array to std-vector
-    std::vector<TScalar> nparray_to_stdvec( const py::array_t<TScalar>& arr_stdvec );
+    template< typename Scalar_T >
+    std::vector<Scalar_T> nparray_to_stdvec( const py::array_t<Scalar_T>& arr_stdvec )
+    {
+        auto bufferInfo = arr_stdvec.request();
+        auto bufferData = bufferInfo.ptr;
+        auto stdvec = std::vector<Scalar_T>( bufferInfo.size, 0.0 );
+        memcpy( stdvec.data(), bufferData, sizeof( Scalar_T ) * bufferInfo.size );
+        return stdvec;
+    }
 
     // Returns string-representation of an std-vector
     std::string ToString( const std::vector<TScalar>& stdvec );
