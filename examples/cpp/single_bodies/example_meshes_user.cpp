@@ -53,7 +53,6 @@ std::pair<std::vector<float>, std::vector<int>> create_path_part( ssize_t idx )
     const loco::TVec3 com_position = { half_rad * std::cos( ( idx + 0.5f ) * dtheta ),
                                        half_rad * std::sin( ( idx + 0.5f ) * dtheta ),
                                        0.5 * height };
-    const loco::TVec3 euler = { 0.0, 0.0, 0.0 };
 
     std::vector<float> vertices = { inner_rad * ctheta   - com_position.x(), inner_rad * stheta   - com_position.y(), 0.5f * height,
                                     outer_rad * ctheta   - com_position.x(), outer_rad * stheta   - com_position.y(), 0.5f * height,
