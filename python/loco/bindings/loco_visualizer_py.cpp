@@ -264,6 +264,15 @@ namespace loco
                         {
                             self->ChangeShininess( shininess );
                         } )
+                .def_property( "texture",
+                    []( const TDrawable* self ) -> std::string
+                        {
+                            return self->texture();
+                        },
+                    []( TDrawable* self, const std::string& texture ) -> void
+                        {
+                            self->ChangeTexture( texture );
+                        } )
                 .def( "__repr__", []( const TDrawable* self )
                     {
                         auto _strrep = std::string( "Collision(\n" );

@@ -70,6 +70,8 @@ namespace loco
 
         TScalar shininess() const { return m_Data.shininess; }
 
+        std::string texture() const { return m_Data.texture; }
+
         bool visible() const { return m_Visible; }
 
         bool wireframe() const { return m_Wireframe; }
