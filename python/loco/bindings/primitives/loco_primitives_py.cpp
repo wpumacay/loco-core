@@ -584,5 +584,117 @@ namespace loco
                 .def_property_readonly( "width_extent", []( const THeightfield* self ) { return self->width_extent(); } )
                 .def_property_readonly( "depth_extent", []( const THeightfield* self ) { return self->depth_extent(); } );
         }
+
+        // Bindings for constraints
+        {
+            py::class_< TISingleBodyConstraint, TObject >( m, "ISingleBodyConstraint" )
+                .def_property_readonly( "local_tf",
+                    []( const TISingleBodyConstraint* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::matrix_to_nparray<TScalar, 4>( self->local_tf() );
+                        } )
+                .def_property_readonly( "constraint_type",
+                    []( const TISingleBodyConstraint* self ) -> eConstraintType
+                        {
+                            return self->constraint_type();
+                        } );
+
+            py::class_< TSingleBodyRevoluteConstraint, TISingleBodyConstraint >( m, "SingleBodyRevoluteConstraint" )
+                .def( py::init( []( const std::string& name,
+                                    const py::array_t<TScalar>& arr_local_tf,
+                                    const py::array_t<TScalar>& arr_axis )
+                    {
+                        return std::make_unique<TSingleBodyRevoluteConstraint>( name,
+                                                                                tinymath::nparray_to_matrix<TScalar, 4>( arr_local_tf ),
+                                                                                tinymath::nparray_to_vector<TScalar, 3>( arr_axis ) );
+                    } ),
+                     py::arg( "name" ), py::arg( "local_tf" ), py::arg( "axis" ) )
+                .def_property( "hinge_angle",
+                    []( const TSingleBodyRevoluteConstraint* self ) -> TScalar
+                        {
+                            return self->hinge_angle();
+                        },
+                    []( TSingleBodyRevoluteConstraint* self, TScalar hinge_angle ) -> void
+                        {
+                            self->SetHingeAngle( hinge_angle );
+                        } )
+                .def_property( "limits",
+                    []( const TSingleBodyRevoluteConstraint* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 2>( self->limits() );
+                        },
+                    []( TSingleBodyRevoluteConstraint* self, const py::array_t<TScalar>& arr_limits ) -> void
+                        {
+                            self->SetLimits( tinymath::nparray_to_vector<TScalar, 2>( arr_limits ) );
+                        } )
+                .def_property_readonly( "axis",
+                    []( const TSingleBodyRevoluteConstraint* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 3>( self->axis() );
+                        } );
+
+            py::class_< TSingleBodyPrismaticConstraint, TISingleBodyConstraint >( m, "SingleBodyPrismaticConstraint" )
+                .def( py::init( []( const std::string& name,
+                                    const py::array_t<TScalar>& arr_local_tf,
+                                    const py::array_t<TScalar>& arr_axis )
+                    {
+                        return std::make_unique<TSingleBodyPrismaticConstraint>( name,
+                                                                                 tinymath::nparray_to_matrix<TScalar, 4>( arr_local_tf ),
+                                                                                 tinymath::nparray_to_vector<TScalar, 3>( arr_axis ) );
+                    } ),
+                     py::arg( "name" ), py::arg( "local_tf" ), py::arg( "axis" ) )
+                .def_property( "slide_position",
+                    []( const TSingleBodyPrismaticConstraint* self ) -> TScalar
+                        {
+                            return self->slide_position();
+                        },
+                    []( TSingleBodyPrismaticConstraint* self, TScalar slide_position ) -> void
+                        {
+                            self->SetSlidePosition( slide_position );
+                        } )
+                .def_property( "limits",
+                    []( const TSingleBodyPrismaticConstraint* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 2>( self->limits() );
+                        },
+                    []( TSingleBodyPrismaticConstraint* self, const py::array_t<TScalar>& arr_limits ) -> void
+                        {
+                            self->SetLimits( tinymath::nparray_to_vector<TScalar, 2>( arr_limits ) );
+                        } )
+                .def_property_readonly( "axis",
+                    []( const TSingleBodyPrismaticConstraint* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 3>( self->axis() );
+                        } );
+
+            py::class_< TSingleBodySphericalConstraint, TISingleBodyConstraint >( m, "SingleBodySphericalConstraint" )
+                .def( py::init( []( const std::string& name,
+                                    const py::array_t<TScalar>& arr_local_tf )
+                    {
+                        return std::make_unique<TSingleBodySphericalConstraint>( name, tinymath::nparray_to_matrix<TScalar, 4>( arr_local_tf ) );
+                    } ),
+                     py::arg( "name" ), py::arg( "loca_tf" ) );
+
+            py::class_< TSingleBodyTranslational3dConstraint, TISingleBodyConstraint >( m, "SingleBodyTranslational3dConstraint" )
+                .def( py::init( []( const std::string& name )
+                    {
+                        return std::make_unique<TSingleBodyTranslational3dConstraint>( name );
+                    } ),
+                     py::arg( "name" ) );
+
+            py::class_< TSingleBodyUniversal3dConstraint, TISingleBodyConstraint >( m, "SingleBodyUniversal3dConstraint" )
+                .def( py::init( []( const std::string& name )
+                    {
+                        return std::make_unique<TSingleBodyUniversal3dConstraint>( name );
+                    } ),
+                     py::arg( "name" ) );
+
+            py::class_< TSingleBodyPlanarConstraint, TISingleBodyConstraint >( m, "SingleBodyPlanarConstraint" )
+                .def( py::init( []( const std::string& name )
+                    {
+                        return std::make_unique<TSingleBodyPlanarConstraint>( name );
+                    } ),
+                     py::arg( "name" ) );
+        }
     }
 }
