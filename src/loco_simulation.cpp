@@ -131,20 +131,20 @@ namespace loco
         m_backendId = "null";
 
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Created TNullSimulation @ {0}", loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Created TNullSimulation @ {0}", tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Created TNullSimulation @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Created TNullSimulation @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 
     TNullSimulation::~TNullSimulation()
     {
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TNullSimulation @ {0}", loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TNullSimulation @ {0}", tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Destroyed TNullSimulation @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Destroyed TNullSimulation @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 

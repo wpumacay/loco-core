@@ -25,10 +25,10 @@ namespace loco
                 .def( "__repr__", []( const TISimulation* self )
                     {
                         auto _strrep = std::string( "Simulation(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "backend-id  : " + self->backendId() + "\n";
                         _strrep += "running     : " + std::string( self->running() ? "true" : "false" ) + "\n";
-                        _strrep += "cpp-scenario: " + loco::PointerToHexAddress( self->scenario() ) + "\n";
+                        _strrep += "cpp-scenario: " + tinyutils::PointerToHexAddress( self->scenario() ) + "\n";
                         _strrep += ")";
                         return _strrep;
                     } );

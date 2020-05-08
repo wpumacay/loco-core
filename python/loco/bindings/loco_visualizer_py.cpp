@@ -276,7 +276,7 @@ namespace loco
                 .def( "__repr__", []( const TDrawable* self )
                     {
                         auto _strrep = std::string( "Collision(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "name        : " + self->name() + "\n";
                         _strrep += "shape       : " + loco::ToString( self->shape() ) + "\n";
                         _strrep += "size        : " + loco::ToString( self->size() ) + "\n";
@@ -284,7 +284,7 @@ namespace loco
                         _strrep += "diffuse     : " + loco::ToString( self->diffuse() ) + "\n";
                         _strrep += "specular    : " + loco::ToString( self->specular() ) + "\n";
                         _strrep += "shininess   : " + std::to_string( self->shininess() ) + "\n";
-                        _strrep += "parent      : " + ( self->parent() ? loco::PointerToHexAddress( self->parent() ) : std::string( "null" ) ) + "\n";
+                        _strrep += "parent      : " + ( self->parent() ? tinyutils::PointerToHexAddress( self->parent() ) : std::string( "null" ) ) + "\n";
                         _strrep += "position    : " + loco::ToString( self->pos() ) + "\n";
                         _strrep += "rotation    :\n" + loco::ToString( self->rot() ) + "\n";
                         _strrep += "euler       : " + loco::ToString( self->euler() ) + "\n";
@@ -339,7 +339,7 @@ namespace loco
                 .def( "__repr__", []( const TVizCamera* self )
                     {
                         auto _strrep = std::string( "VizCamera(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "name        : " + self->name() + "\n";
                         _strrep += "type        : " + loco::ToString( self->type() ) + "\n";
                         _strrep += "position    : " + loco::ToString( self->position() ) + "\n";
@@ -420,7 +420,7 @@ namespace loco
                 .def( "__repr__", []( const TVizLight* self )
                     {
                         auto _strrep = std::string( "VizLight(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "name        : " + self->name() + "\n";
                         _strrep += "type        : " + loco::ToString( self->type() ) + "\n";
                         _strrep += "position    : " + loco::ToString( self->position() ) + "\n";
@@ -599,7 +599,7 @@ namespace loco
                 .def( "__repr__", []( const TIVisualizer* self )
                     {
                         auto _strrep = std::string( "IVisualizer(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "num-cameras : " + std::to_string( self->GetNumCameras() ) + "\n";
                         _strrep += "num-lights  : " + std::to_string( self->GetNumLights() ) + "\n";
                         _strrep += "cameras     :\n";

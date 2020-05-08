@@ -38,9 +38,8 @@ const float hfield_noise_scale = 10.0f;
 
 int main( int argc, char* argv[] )
 {
-    loco::TLogger::Init();
-    loco::TNoiseGenerator::Init();
-    loco::TNoiseGenerator::Config( hfield_octaves, hfield_persistance, hfield_lacunarity, hfield_noise_scale );
+    loco::InitUtils();
+    tinyutils::PerlinNoise::Config( hfield_octaves, hfield_persistance, hfield_lacunarity, hfield_noise_scale );
 
     if ( argc > 1 )
     {
@@ -170,7 +169,7 @@ std::vector<float> create_hfield_deepterrainrl_terrain_chunk_1()
                 else
                 {
                     in_obstacle = false;
-                    z += loco::TNoiseGenerator::GetNoise1d( x );
+                    z += tinyutils::PerlinNoise::Sample1d( x );
                 }
             }
             else
@@ -178,12 +177,12 @@ std::vector<float> create_hfield_deepterrainrl_terrain_chunk_1()
                 if ( x >= ( x_seg_start + segments[idx_seg].obstacle_start ) )
                 {
                     in_obstacle = true;
-                    z += loco::TNoiseGenerator::GetNoise1d( x );
+                    z += tinyutils::PerlinNoise::Sample1d( x );
                     obstacle_z = z + obstacle_height;
                 }
                 else
                 {
-                    z += loco::TNoiseGenerator::GetNoise1d( x );
+                    z += tinyutils::PerlinNoise::Sample1d( x );
                 }
             }
         }

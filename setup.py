@@ -108,7 +108,7 @@ class BuildCommand( build_ext ) :
         _cfg = 'Debug' if self.debug else 'Release'
         _windowed = 'ON' if self.windowed else 'OFF'
         _headless = 'ON' if self.headless else 'OFF'
-        _buildArgs = ['--config', _cfg, '--', '-j8']
+        _buildArgs = ['--config', _cfg, '--', '-j2']
         _cmakeArgs = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + _extensionDirPath,
                       '-DCMAKE_BUILD_RPATH=' + GetInstallationDir(),
                       '-DCMAKE_INSTALL_RPATH=' + GetInstallationDir(),
@@ -123,6 +123,7 @@ class BuildCommand( build_ext ) :
                       '-DLOCO_CORE_BUILD_TESTS=OFF',
                       '-DLOCO_CORE_BUILD_PYTHON_BINDINGS=ON',
                       '-DLOCO_CORE_BUILD_WITH_LOGS=OFF',
+                      '-DLOCO_CORE_BUILD_WITH_PROFILING=OFF',
                       '-DLOCO_CORE_BUILD_WITH_TRACK_ALLOCS=OFF']
 
         _env = os.environ.copy()

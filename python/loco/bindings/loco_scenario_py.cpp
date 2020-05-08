@@ -121,7 +121,7 @@ namespace loco
                 .def( "__repr__", []( const TScenario* self )
                     {
                         auto _strrep = std::string( "Scenario(\n" );
-                        _strrep += "cpp-address         : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address         : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "num-drawables       : " + std::to_string( self->GetNumDrawables() ) + "\n";
                         _strrep += "num-single-bodies   : " + std::to_string( self->GetNumSingleBodies() ) + "\n";
                         //// _strrep += "num-compounds       : " + std::to_string( self->GetNumCompounds() ) + "\n";

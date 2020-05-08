@@ -19,15 +19,20 @@
 
 #include <loco_math.h>
 #include <loco_object.h>
-#include <loco_logger.h>
 #include <loco_config.h>
 
-// Assimp helper functionality
 #include <assimp/config.h>
 #include <assimp/cimport.h>
 #include <assimp/cexport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+
+#include <tinyutils/common.hpp>
+#include <tinyutils/logging.hpp>
+#include <tinyutils/timing.hpp>
+#include <tinyutils/path_handling.hpp>
+#include <tinyutils/perlin_noise.hpp>
+#include <tinyutils/profiling.hpp>
 
 #ifndef LOCO_PATH_RESOURCES
     #define LOCO_PATH_RESOURCES "../res/"
@@ -90,42 +95,8 @@ namespace loco
     /// Default density value (1000 kg/m3 - water density) used for mass calculation (if no mass given)
     const TScalar DEFAULT_DENSITY = 1000.0f;
 
-    /// Divides a given string into substrings using the given character separator
-    ///
-    /// @param txt          String to be splitted into substrings
-    /// @param separator    Character separator used for the splitting process
-    /// @return Vector of strings that form the initial string, after splitting using the separator
-    std::vector< std::string > Split( const std::string &txt, char separator = '/' );
-
-    /// Gets the string representation of the hex-address of a given pointer
-    ///
-    /// @param ptr  Pointer from whom to get the hex-address representation
-    /// @return String representation of the hex-address of the pointer
-    std::string PointerToHexAddress( const void* ptr );
-
-    /// Gets the stripped filename from an absolute full-path
-    ///
-    /// @param filepath     Absolute path from which to strip the filename
-    /// @return String representing the filename stripped from the given fullpath
-    std::string GetFilenameFromFilePath( const std::string& filepath );
-
-    /// Gets the stripped foldername from an absolute full-path
-    ///
-    /// @param filepath     Absolute path from which to strip the foldername
-    /// @return String representing the foldername stripped from the given fullpath
-    std::string GetFoldernameFromFilePath( const std::string& filepath );
-
-    /// Gets the folderpath (path with removed filename) from an absolute full-path
-    ///
-    /// @param filepath     Absolute path from which to strip the folderpath
-    /// @return String representing the folderpath stripped from the given fullpath
-    std::string GetFolderpathFromFilePath( const std::string& filepath );
-
-    /// Gets the stripped filename from an absolute full-path, and removes the file extension
-    ///
-    /// @param filepath     Absolute path from which to strip the filename
-    /// @return String representing the filename (without extension) stripped from the given fullpath
-    std::string GetFilenameNoExtensionFromFilePath( const std::string& filepath );
+    /// Initializes utilities used across the whole framework
+    void InitUtils();
 
     /// Hashed storage for various data types
     ///
@@ -219,20 +190,56 @@ namespace loco
     };
 }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#if defined(LOCO_CORE_USE_LOGS)
+    #define LOCO_CORE_TRACE(...)        LOG_CORE_TRACE(__VA_ARGS__)
+    #define LOCO_CORE_INFO(...)         LOG_CORE_INFO(__VA_ARGS__)
+    #define LOCO_CORE_WARN(...)         LOG_CORE_WARN(__VA_ARGS__)
+    #define LOCO_CORE_ERROR(...)        LOG_CORE_ERROR(__VA_ARGS__)
+    #define LOCO_CORE_CRITICAL(...)     LOG_CORE_CRITICAL(__VA_ARGS__)
+    #define LOCO_CORE_ASSERT(x,...)     LOG_CORE_ASSERT((x), __VA_ARGS__)
 
-#ifndef UNIQUE_PTR_EXTENSION
-#define UNIQUE_PTR_EXTENSION
-namespace std
-{
-    // make_unique implementation from Herb Sutter's blog
-    // url: https://herbsutter.com/gotw/_102/
-    template<typename T, typename ...Args>
-    std::unique_ptr<T> make_unique( Args&& ...args )
-    {
-        return std::unique_ptr<T>( new T( std::forward<Args>(args)... ) );
+    #define LOCO_TRACE(...)         LOG_TRACE(__VA_ARGS__)
+    #define LOCO_INFO(...)          LOG_INFO(__VA_ARGS__)
+    #define LOCO_WARN(...)          LOG_WARN(__VA_ARGS__)
+    #define LOCO_ERROR(...)         LOG_ERROR(__VA_ARGS__)
+    #define LOCO_CRITICAL(...)      LOG_CRITICAL(__VA_ARGS__)
+    #define LOCO_ASSERT(x,...)      LOG_ASSERT((x), __VA_ARGS__)
+#else
+    #define LOCO_CORE_TRACE(...)        ((void)0)
+    #define LOCO_CORE_INFO(...)         ((void)0)
+    #define LOCO_CORE_WARN(...)         ((void)0)
+    #define LOCO_CORE_ERROR(...)        ((void)0)
+    #define LOCO_CORE_CRITICAL(...)     \
+    {                                   \
+        assert( false );                \
     }
-}
-#endif /* UNIQUE_PTR_EXTENSION */
+    #define LOCO_CORE_ASSERT(x,...)     \
+    {                                   \
+        assert((x));                    \
+    }
 
-#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+    #define LOCO_TRACE(...)         ((void)0)
+    #define LOCO_INFO(...)          ((void)0)
+    #define LOCO_WARN(...)          ((void)0)
+    #define LOCO_ERROR(...)         ((void)0)
+    #define LOCO_CRITICAL(...)      \
+    {                               \
+        assert( false );            \
+    }
+    #define LOCO_ASSERT(x,...)      \
+    {                               \
+        assert((x));                \
+    }
+#endif
+
+#if defined(LOCO_CORE_USE_PROFILING)
+    #define LOCO_CORE_PROFILE_SCOPE(name)                       PROFILE_SCOPE(name)
+    #define LOCO_CORE_PROFILE_SCOPE_IN_SESSION(name, session)   PROFILE_SCOPE_IN_SESSION(name, session)
+    #define LOCO_CORE_PROFILE_FUNCTION()                        PROFILE_FUNCTION()
+    #define LOCO_CORE_PROFILE_FUNCTION_IN_SESSION(session)      PROFILE_FUNCTION_IN_SESSION(session)
+#else
+    #define LOCO_CORE_PROFILE_SCOPE(name)                       ((void)0)
+    #define LOCO_CORE_PROFILE_SCOPE_IN_SESSION(name, session)   ((void)0)
+    #define LOCO_CORE_PROFILE_FUNCTION()                        ((void)0)
+    #define LOCO_CORE_PROFILE_FUNCTION_IN_SESSION(session)      ((void)0)
+#endif

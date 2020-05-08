@@ -16,10 +16,10 @@ namespace loco
         m_drawableImplRef = nullptr;
 
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TVisual {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TVisual {0} @ {1}", m_name, tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Created TVisual " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Created TVisual " << m_name << " @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
     }
 
@@ -29,10 +29,10 @@ namespace loco
         m_drawableImplRef = nullptr;
 
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TVisual {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TVisual {0} @ {1}", m_name, tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TVisual " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TVisual " << m_name << " @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
     }
 

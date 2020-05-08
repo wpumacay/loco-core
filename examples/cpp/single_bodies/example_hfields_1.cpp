@@ -35,9 +35,7 @@ const float hfield_lacunarity = 2.0f;
 const float hfield_noise_scale = 5.0f;
 std::vector<float> create_hfield_perlin_noise()
 {
-    // Initialize perlin-noise generator
-    loco::TNoiseGenerator::Init();
-    loco::TNoiseGenerator::Config( hfield_octaves, hfield_persistance, hfield_lacunarity, hfield_noise_scale );
+    tinyutils::PerlinNoise::Config( hfield_octaves, hfield_persistance, hfield_lacunarity, hfield_noise_scale );
 
     std::vector<float> heights;
     for ( ssize_t i = 0; i < ny_samples_hfield_2; i++ )
@@ -46,7 +44,7 @@ std::vector<float> create_hfield_perlin_noise()
         {
             float x = x_extent_hfield_2 * ( (float)j / nx_samples_hfield_2 - 0.5f );
             float y = y_extent_hfield_2 * ( (float)i / ny_samples_hfield_2 - 0.5f );
-            heights.push_back( std::max( 0.0f, loco::TNoiseGenerator::GetNoise2d( x, y ) ) );
+            heights.push_back( std::max( 0.0f, tinyutils::PerlinNoise::Sample2d( x, y ) ) );
         }
     }
     return heights;
@@ -54,7 +52,7 @@ std::vector<float> create_hfield_perlin_noise()
 
 int main( int argc, char* argv[] )
 {
-    loco::TLogger::Init();
+    loco::InitUtils();
 
     if ( argc > 1 )
     {

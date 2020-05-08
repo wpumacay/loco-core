@@ -16,10 +16,10 @@ namespace loco
         m_DrawableAdapter = nullptr;
 
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Created TDrawable {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Created TDrawable {0} @ {1}", m_name, tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Created TDrawable " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Created TDrawable " << m_name << " @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 
@@ -32,10 +32,10 @@ namespace loco
         m_DrawableAdapter = nullptr;
 
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TDrawable {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TDrawable {0} @ {1}", m_name, tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Destroyed TDrawable " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Destroyed TDrawable " << m_name << " @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 

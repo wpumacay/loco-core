@@ -46,14 +46,4 @@ namespace loco
         m.attr( "DEFAULT_DENSITY" ) = loco::DEFAULT_DENSITY;
         m.attr( "PATH_RESOURCES" ) = loco::PATH_RESOURCES;
     }
-
-    void bindings_utils( py::module& m )
-    {
-        py::class_< TNoiseGenerator >( m, "NoiseGenerator" )
-            .def_static( "Init", &TNoiseGenerator::Init )
-            .def_static( "Release", &TNoiseGenerator::Release )
-            .def_static( "Config", &TNoiseGenerator::Config )
-            .def_static( "GetNoise1d", &TNoiseGenerator::GetNoise1d )
-            .def_static( "GetNoise2d", &TNoiseGenerator::GetNoise2d );
-    }
 }

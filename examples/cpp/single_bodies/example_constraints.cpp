@@ -6,7 +6,7 @@ std::string RENDERING_BACKEND = loco::config::rendering::GLVIZ_GLFW;
 
 int main( int argc, char* argv[] )
 {
-    loco::TLogger::Init();
+    loco::InitUtils();
 
     if ( argc > 1 )
     {

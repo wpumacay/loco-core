@@ -37,7 +37,7 @@ loco::TVec3 random_rotation()
 
 int main( int argc, char* argv[] )
 {
-    loco::TLogger::Init();
+    loco::InitUtils();
 
     if ( argc > 1 )
     {

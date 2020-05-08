@@ -71,7 +71,7 @@ namespace loco
             .def( "__repr__", []( const TObject* self )
                 {
                     auto _strrep = std::string( "Object(\n" );
-                    _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                    _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                     _strrep += "name        : " + self->name() + "\n";
                     _strrep += "obj-type    : " + loco::ToString( self->GetObjectType() ) + "\n";
                     _strrep += "position    : " + loco::ToString( self->pos() ) + "\n";

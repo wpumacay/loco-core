@@ -38,7 +38,7 @@ namespace loco
                 .def( "__repr__", []( const TRuntime* self )
                     {
                         auto _strrep = std::string( "Runtime(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "dlpath-sim  : " + self->dlpathSim() + "\n";
                         _strrep += "dlpath-viz  : " + self->dlpathViz() + "\n";
 
@@ -47,7 +47,7 @@ namespace loco
                         _strrep += "\texists        : " + std::string( _simulation ? "yes" : "no" ) + "\n";
                         if ( _simulation )
                         {
-                            _strrep += "\tcpp-address   : " + loco::PointerToHexAddress( _simulation ) + "\n";
+                            _strrep += "\tcpp-address   : " + tinyutils::PointerToHexAddress( _simulation ) + "\n";
                             _strrep += "\tbackend-id    : " + _simulation->backendId() + "\n";
                         }
 
@@ -56,7 +56,7 @@ namespace loco
                         _strrep += "\texists        : " + std::string( _visualizer ? "yes" : "no" ) + "\n";
                         if ( _visualizer )
                         {
-                            _strrep += "\tcpp-address   : " + loco::PointerToHexAddress( _visualizer ) + "\n";
+                            _strrep += "\tcpp-address   : " + tinyutils::PointerToHexAddress( _visualizer ) + "\n";
                             _strrep += "\tbackend-id    : " + _visualizer->backendId() + "\n";
                         }
                         _strrep += ")";

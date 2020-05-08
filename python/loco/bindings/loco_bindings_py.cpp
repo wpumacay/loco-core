@@ -6,7 +6,6 @@ namespace py = pybind11;
 namespace loco
 {
     extern void bindings_common( py::module& m );
-    extern void bindings_utils( py::module& m );
     extern void bindings_object( py::module& m );
     extern void bindings_data( py::module& m );
     extern void bindings_primitives( py::module& m );
@@ -19,7 +18,6 @@ namespace loco
 PYBIND11_MODULE( loco_sim, m )
 {
     loco::bindings_common( m );
-    loco::bindings_utils( m );
     loco::bindings_object( m );
     loco::bindings_data( m );
     loco::bindings_primitives( m );
@@ -29,5 +27,8 @@ PYBIND11_MODULE( loco_sim, m )
     loco::bindings_runtime( m );
 
     // Execute some required initialization steps
-    loco::TLogger::Init();
+    tinyutils::Logger::Init();
+    tinyutils::Clock::Init();
+    tinyutils::Profiler::Init();
+    tinyutils::PerlinNoise::Init();
 }

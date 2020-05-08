@@ -68,7 +68,7 @@ namespace loco
                 .def( "__repr__", []( const THeightFieldData* self )
                     {
                         auto _strrep = std::string( "HeightFieldData(\n" );
-                        _strrep += "cpp-address     : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address     : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "nWidthSamples   : " + std::to_string( self->nWidthSamples ) + "\n";
                         _strrep += "nDepthSamples   : " + std::to_string( self->nDepthSamples ) + "\n";
                         _strrep += ")";
@@ -101,7 +101,7 @@ namespace loco
                 .def( "__repr__", []( const TShapeData* self )
                     {
                         auto _strrep = std::string( "ShapeData(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "type        : " + loco::ToString( self->type ) + "\n";
                         _strrep += "size        : " + loco::ToString( self->size ) + "\n";
                         if ( self->type == eShapeType::MESH )
@@ -142,7 +142,7 @@ namespace loco
                 .def( "__repr__", []( const TCollisionData* self )
                     {
                         auto _strrep = std::string( "CollisionData(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "type        : " + loco::ToString( self->type ) + "\n";
                         _strrep += "size        : " + loco::ToString( self->size ) + "\n";
                         if ( self->type == eShapeType::MESH )
@@ -202,7 +202,7 @@ namespace loco
                 .def( "__repr__", []( const TVisualData* self )
                     {
                         auto _strrep = std::string( "VisualData(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "type        : " + loco::ToString( self->type ) + "\n";
                         _strrep += "size        : " + loco::ToString( self->size ) + "\n";
                         if ( self->type == eShapeType::MESH )
@@ -274,7 +274,7 @@ namespace loco
                 .def( "__repr__", []( const TJointData* self )
                     {
                         auto _strrep = std::string( "JointData(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "type        : " + loco::ToString( self->type ) + "\n";
                         _strrep += "axis        : " + loco::ToString( self->axis ) + "\n";
                         _strrep += "limits      : " + loco::ToString( self->limits ) + "\n";
@@ -324,7 +324,7 @@ namespace loco
                 .def( "__repr__", []( const TActuatorData* self )
                     {
                         auto _strrep = std::string( "ActuatorData(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "type        : " + loco::ToString( self->type ) + "\n";
                         _strrep += "limits      : " + loco::ToString( self->limits ) + "\n";
                         _strrep += "gear        : " + loco::ToString( self->gear ) + "\n";
@@ -350,7 +350,7 @@ namespace loco
                 .def( "__repr__", []( const TSensorData* self )
                     {
                         auto _strrep = std::string( "SensorData(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "type        : " + loco::ToString( self->type ) + "\n";
                         _strrep += "localTf     : \n" + loco::ToString( self->localTransform ) + "\n";
                         _strrep += ")";
@@ -378,7 +378,7 @@ namespace loco
                 .def( "__repr__", []( const TInertialData* self )
                     {
                         auto _strrep = std::string( "InertialData(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "mass        : " + std::to_string( self->mass ) + "\n";
                         _strrep += "ixx         : " + std::to_string( self->ixx ) + "\n";
                         _strrep += "ixy         : " + std::to_string( self->ixy ) + "\n";
@@ -409,7 +409,7 @@ namespace loco
                 .def( "__repr__", []( const TBodyData* self )
                     {
                         auto _strrep = std::string( "BodyData(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "dyntype     : " + loco::ToString( self->dyntype ) + "\n";
                         _strrep += "localTf0    : \n" + loco::ToString( self->localTransformZero ) + "\n";
                         _strrep += ")";

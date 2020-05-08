@@ -6,7 +6,7 @@ std::string RENDERING_BACKEND = loco::config::rendering::GLVIZ_GLFW;
 
 int main( int argc, char* argv[] )
 {
-    loco::TLogger::Init();
+    loco::InitUtils();
 
     if ( argc > 1 )
     {
@@ -51,8 +51,11 @@ int main( int argc, char* argv[] )
     floor_ref->drawable()->ChangeTexture( "built_in_chessboard" );
     floor_ref->drawable()->ChangeColor( { 0.3f, 0.5f, 0.7f } );
 
+    tinyutils::Profiler::BeginSession( "whole-framework" );
     while ( visualizer->IsActive() )
     {
+        LOCO_CORE_PROFILE_SCOPE_IN_SESSION("simulation-loop","whole-framework");
+        tinyutils::Clock::Tick();
         if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_ESCAPE ) )
             break;
         else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_R ) )
@@ -78,7 +81,11 @@ int main( int argc, char* argv[] )
 
         simulation->Step();
         visualizer->Update();
+        tinyutils::Clock::Tock();
+        LOCO_TRACE( "fps        : {0}", tinyutils::Clock::GetAvgFps() );
+        LOCO_TRACE( "time-step  : {0}", tinyutils::Clock::GetAvgTimeStep() );
     }
+    tinyutils::Profiler::EndSession( "whole-framework" );
 
     runtime->DestroySimulation();
     runtime->DestroyVisualizer();

@@ -3,6 +3,7 @@
 import sys
 import loco
 import tinymath as tm
+import tinyutils as tu
 import numpy as np
 
 PHYSICS_BACKEND = loco.sim.PHYSICS_NONE
@@ -28,8 +29,7 @@ hfield_persistance = 0.5
 hfield_lacunarity = 2.0
 hfield_noise_scale = 5.0
 def create_hfield_perlin_noise() :
-    loco.sim.NoiseGenerator.Init()
-    loco.sim.NoiseGenerator.Config( hfield_octaves, hfield_persistance, hfield_lacunarity, hfield_noise_scale )
+    tu.PerlinNoise.Config( hfield_octaves, hfield_persistance, hfield_lacunarity, hfield_noise_scale )
 
     x = np.linspace( -0.5 * x_extent_hfield_2, 0.5 * x_extent_hfield_2, nx_samples_hfield_2, endpoint=False )
     y = np.linspace( -0.5 * y_extent_hfield_2, 0.5 * y_extent_hfield_2, ny_samples_hfield_2, endpoint=False )
@@ -37,7 +37,7 @@ def create_hfield_perlin_noise() :
     zz = np.zeros_like( xx )
     for j in range( 0, nx_samples_hfield_2 ) :
         for i in range( 0, ny_samples_hfield_2 ) :
-            zz[i,j] = max( 0.0, loco.sim.NoiseGenerator.GetNoise2d( xx[i,j], yy[i,j] ) )
+            zz[i,j] = max( 0.0, tu.PerlinNoise.Sample2d( xx[i,j], yy[i,j] ) )
     return zz.ravel()
 
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <loco_config.h>
-#include <loco_logger.h>
 #include <loco_simulation.h>
 #include <visualizer/loco_visualizer.h>
 // @todo-windows: search for alternative in windows-platform

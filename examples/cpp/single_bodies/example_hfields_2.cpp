@@ -19,7 +19,7 @@ std::vector<float> create_hfield_deeploco_terrain()
     ssize_t i_line = 0;
     while( getline( fhandle, line ) )
     {
-        auto vec_str = loco::Split( line, '\t' );
+        auto vec_str = tinyutils::Split( line, '\t' );
         assert( vec_str.size() == num_cols );
         for ( ssize_t j = 0; j < num_cols; j++ )
             heights[i_line + num_rows * j] = std::stof( vec_str[j] );
@@ -35,7 +35,7 @@ std::vector<float> create_hfield_deeploco_terrain()
 
 int main( int argc, char* argv[] )
 {
-    loco::TLogger::Init();
+    loco::InitUtils();
 
     if ( argc > 1 )
     {

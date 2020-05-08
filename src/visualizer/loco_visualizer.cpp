@@ -357,20 +357,20 @@ namespace loco
         m_backendId = "null";
 
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Created TNullVisualizer @ {0}", loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Created TNullVisualizer @ {0}", tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Created TNullVisualizer @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Created TNullVisualizer @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 
     TNullVisualizer::~TNullVisualizer()
     {
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TNullVisualizer @ {0}", loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TNullVisualizer @ {0}", tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Destroyed TNullVisualizer @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Destroyed TNullVisualizer @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 }

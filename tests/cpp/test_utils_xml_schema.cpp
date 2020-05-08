@@ -4,7 +4,7 @@
 
 TEST( TestLocoUtilsXmlSchema, TestXmlSchemaMjcf )
 {
-    loco::TLogger::Init();
+    loco::InitUtils();
 
     const std::string MJCF_SCHEMA_PATH = loco::PATH_RESOURCES + "xml/schema_mjcf.xml";
     auto schema_mjcf = std::make_unique<loco::parsing::TMjcfSchema>( MJCF_SCHEMA_PATH );
@@ -265,7 +265,7 @@ TEST( TestLocoUtilsXmlSchema, TestXmlSchemaMjcf )
 
 TEST( TestLocoUtilsXmlSchema, TestXmlSchemaUrdf )
 {
-    loco::TLogger::Init();
+    loco::InitUtils();
 
     const std::string URDF_SCHEMA_PATH = loco::PATH_RESOURCES + "xml/schema_urdf.xml";
     auto schema_urdf = std::make_unique<loco::parsing::TUrdfSchema>( URDF_SCHEMA_PATH );

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <loco_math.h>
-#include <loco_logger.h>
 
 namespace loco 
 {

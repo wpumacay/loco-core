@@ -1,7 +1,6 @@
 
 #include <loco_common.h>
 #include <loco_math.h>
-#include <loco_logger.h>
 #include <loco_data.h>
 #include <primitives/loco_single_body_constraint.h>
 #include <primitives/loco_single_body_collider.h>

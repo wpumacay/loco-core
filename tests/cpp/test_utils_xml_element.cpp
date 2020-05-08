@@ -5,7 +5,7 @@
 // Just tests that the loading functionality doesn't crash
 TEST( TestLocoUtilsXmlElement, TestXmlElementMjcfLoadFile )
 {
-    loco::TLogger::Init();
+    loco::InitUtils();
     auto root = loco::parsing::TElement::CreateFromXmlFile( loco::parsing::eSchemaType::MJCF,
                                                             loco::PATH_TEMPLATES_MJCF + "pr2.xml" );
     LOCO_TRACE( "root:\n{0}", root->ToString() );
@@ -13,7 +13,7 @@ TEST( TestLocoUtilsXmlElement, TestXmlElementMjcfLoadFile )
 
 TEST( TestLocoUtilsXmlElement, TestXmlElementMjcfLoadString )
 {
-    loco::TLogger::Init();
+    loco::InitUtils();
     const std::string sample_mjcf =
         "<mujoco model=\"template_ball\">\n"
         "  <worldbody>\n"
@@ -44,7 +44,7 @@ TEST( TestLocoUtilsXmlElement, TestXmlElementMjcfLoadString )
 
 TEST( TestLocoUtilsXmlElement, TestXmlElementMjcfClone )
 {
-    loco::TLogger::Init();
+    loco::InitUtils();
     const std::string sample_mjcf =
         "<mujoco model=\"template_ball\">\n"
         "  <worldbody>\n"
@@ -120,7 +120,7 @@ TEST( TestLocoUtilsXmlElement, TestXmlElementMjcfProgrammatical )
 // Just tests that the loading functionality doesn't crash
 TEST( TestLocoUtilsXmlElement, TextXmlElementUrdfLoadFile )
 {
-    loco::TLogger::Init();
+    loco::InitUtils();
     auto root = loco::parsing::TElement::CreateFromXmlFile( loco::parsing::eSchemaType::URDF,
                                                             loco::PATH_TEMPLATES_URDF + "nao.urdf" );
     LOCO_TRACE( "num_children: {0}", root->num_children() );
@@ -129,7 +129,7 @@ TEST( TestLocoUtilsXmlElement, TextXmlElementUrdfLoadFile )
 
 TEST( TestLocoUtilsXmlElement, TestXmlElementUrdfString )
 {
-    loco::TLogger::Init();
+    loco::InitUtils();
     const std::string sample_urdf =
         "<robot name=\"cube\">\n"
         "  <link name=\"baseLink\">\n"
@@ -209,7 +209,7 @@ TEST( TestLocoUtilsXmlElement, TestXmlElementUrdfString )
 
 TEST( TestLocoUtilsXmlElement, TestXmlElementUrdffClone )
 {
-    loco::TLogger::Init();
+    loco::InitUtils();
     const std::string sample_urdf =
         "<robot name=\"cube\">\n"
         "  <link name=\"baseLink\">\n"

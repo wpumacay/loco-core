@@ -4,5 +4,6 @@ imgui*
 spdlog*
 pybind11*
 tiny_math*
+tiny_utils*
 tiny_renderer*
 googletest*

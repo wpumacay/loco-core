@@ -120,20 +120,20 @@ namespace loco
               nqpos( 0 ), nqvel( 0 )
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TJointData @ {0}", loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TJointData @ {0}", tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Created TJointData @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Created TJointData @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
         }
 
         ~TJointData()
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TJointData @ {0}", loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TJointData @ {0}", tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TJointData @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TJointData @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
         }
     };
@@ -150,20 +150,20 @@ namespace loco
               friction( { 1., 0.005, 0.0001 } ), density( loco::DEFAULT_DENSITY )
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TCollisionData @ {0}", loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TCollisionData @ {0}", tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Created TCollisionData @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Created TCollisionData @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
         }
 
         ~TCollisionData()
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TCollisionData @ {0}", loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TCollisionData @ {0}", tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TCollisionData @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TCollisionData @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
         }
     };
@@ -185,20 +185,20 @@ namespace loco
               usesMaterialFromMesh( false )
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TVisualData @ {0}", loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TVisualData @ {0}", tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Created TVisualData @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Created TVisualData @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
         }
 
         ~TVisualData()
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TVisualData @ {0}", loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TVisualData @ {0}", tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TVisualData @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TVisualData @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
         }
     };
@@ -217,20 +217,20 @@ namespace loco
               gear( TSizef() ), kp( 0.0f ), kv( 0.0f )
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TActuatorData @ {0}", loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TActuatorData @ {0}", tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Created TActuatorData @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Created TActuatorData @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
         }
 
         ~TActuatorData()
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TActuatorData @ {0}", loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TActuatorData @ {0}", tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TActuatorData @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TActuatorData @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
         }
     };
@@ -244,20 +244,20 @@ namespace loco
             : type( eSensorType::PROP_JOINT )
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TSensorData @ {0}", loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TSensorData @ {0}", tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Created TSensorData @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Created TSensorData @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
         }
 
         ~TSensorData()
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSensorData @ {0}", loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSensorData @ {0}", tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TSensorData @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TSensorData @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
         }
     };
@@ -278,20 +278,20 @@ namespace loco
               iyy( -1.0f ), iyz( -1.0f ), izz( -1.0f )
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TInertialData @ {0}", loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TInertialData @ {0}", tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Created TInertialData @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Created TInertialData @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
         }
 
         ~TInertialData()
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TInertialData @ {0}", loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TInertialData @ {0}", tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TInertialData @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TInertialData @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
         }
     };
@@ -307,20 +307,20 @@ namespace loco
         TBodyData() : dyntype( eDynamicsType::STATIC )
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TBodyData @ {0}", loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TBodyData @ {0}", tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Created TBodyData @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Created TBodyData @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
         }
 
         ~TBodyData()
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TBodyData @ {0}", loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TBodyData @ {0}", tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TBodyData @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TBodyData @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
         }
     };

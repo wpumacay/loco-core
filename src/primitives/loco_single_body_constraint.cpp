@@ -89,20 +89,20 @@ namespace loco
         m_ConstraintType = eConstraintType::REVOLUTE;
 
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBodyRevoluteConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBodyRevoluteConstraint {0} @ {1}", m_name, tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Created TSingleBodyRevoluteConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Created TSingleBodyRevoluteConstraint " << m_name << " @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 
     TSingleBodyRevoluteConstraint::~TSingleBodyRevoluteConstraint()
     {
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TISingleBodyConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TISingleBodyConstraint {0} @ {1}", m_name, tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Destroyed TISingleBodyConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Destroyed TISingleBodyConstraint " << m_name << " @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 
@@ -164,20 +164,20 @@ namespace loco
         m_ConstraintType = eConstraintType::PRISMATIC;
 
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBodyPrismaticConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBodyPrismaticConstraint {0} @ {1}", m_name, tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Created TSingleBodyPrismaticConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Created TSingleBodyPrismaticConstraint " << m_name << " @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 
     TSingleBodyPrismaticConstraint::~TSingleBodyPrismaticConstraint()
     {
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TISingleBodyConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TISingleBodyConstraint {0} @ {1}", m_name, tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Destroyed TISingleBodyConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Destroyed TISingleBodyConstraint " << m_name << " @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 
@@ -235,20 +235,20 @@ namespace loco
         m_ConstraintType = eConstraintType::SPHERICAL;
 
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBodySphericalConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBodySphericalConstraint {0} @ {1}", m_name, tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Created TSingleBodySphericalConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Created TSingleBodySphericalConstraint " << m_name << " @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 
     TSingleBodySphericalConstraint::~TSingleBodySphericalConstraint()
     {
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSingleBodySphericalConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSingleBodySphericalConstraint {0} @ {1}", m_name, tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Destroyed TSingleBodySphericalConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Destroyed TSingleBodySphericalConstraint " << m_name << " @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 
@@ -283,20 +283,20 @@ namespace loco
         m_ConstraintType = eConstraintType::TRANSLATIONAL3D;
 
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBodyTranslational3dConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBodyTranslational3dConstraint {0} @ {1}", m_name, tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Created TSingleBodyTranslational3dConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Created TSingleBodyTranslational3dConstraint " << m_name << " @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 
     TSingleBodyTranslational3dConstraint::~TSingleBodyTranslational3dConstraint()
     {
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSingleBodyTranslational3dConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSingleBodyTranslational3dConstraint {0} @ {1}", m_name, tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Destroyed TSingleBodyTranslational3dConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Destroyed TSingleBodyTranslational3dConstraint " << m_name << " @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 
@@ -331,20 +331,20 @@ namespace loco
         m_ConstraintType = eConstraintType::UNIVERSAL3D;
 
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBodyUniversal3dConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBodyUniversal3dConstraint {0} @ {1}", m_name, tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Created TSingleBodyUniversal3dConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Created TSingleBodyUniversal3dConstraint " << m_name << " @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 
     TSingleBodyUniversal3dConstraint::~TSingleBodyUniversal3dConstraint()
     {
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSingleBodyUniversal3dConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSingleBodyUniversal3dConstraint {0} @ {1}", m_name, tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Destroyed TSingleBodyUniversal3dConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Destroyed TSingleBodyUniversal3dConstraint " << m_name << " @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 
@@ -379,20 +379,20 @@ namespace loco
         m_ConstraintType = eConstraintType::PLANAR;
 
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBodyPlanarConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Created TSingleBodyPlanarConstraint {0} @ {1}", m_name, tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Created TSingleBodyPlanarConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Created TSingleBodyPlanarConstraint " << m_name << " @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 
     TSingleBodyPlanarConstraint::~TSingleBodyPlanarConstraint()
     {
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-        if ( TLogger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSingleBodyPlanarConstraint {0} @ {1}", m_name, loco::PointerToHexAddress( this ) );
+        if ( tinyutils::Logger::IsActive() )
+            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TSingleBodyPlanarConstraint {0} @ {1}", m_name, tinyutils::PointerToHexAddress( this ) );
         else
-            std::cout << "Loco::Allocs: Destroyed TSingleBodyPlanarConstraint " << m_name << " @ " << loco::PointerToHexAddress( this ) << std::endl;
+            std::cout << "Loco::Allocs: Destroyed TSingleBodyPlanarConstraint " << m_name << " @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
 

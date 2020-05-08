@@ -5,80 +5,16 @@ namespace loco
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////
     ////                                                                                        ////
-    ////                                      Helpers impl.                                     ////
+    ////                                Helper-functions impl.                                  ////
     ////                                                                                        ////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::vector< std::string > Split( const std::string &txt, char separator )
+    void InitUtils()
     {
-        std::vector< std::string > _res;
-
-        int pos = txt.find( separator );
-        if ( pos == std::string::npos )
-        {
-            _res.push_back( txt );
-            return _res;
-        }
-
-        int initpos = 0;
-
-        while ( pos != std::string::npos )
-        {
-            _res.push_back( txt.substr( initpos, pos - initpos ) );
-            initpos = pos + 1;
-
-            pos = txt.find( separator, initpos );
-        }
-
-        _res.push_back( txt.substr( initpos, std::min( pos, (int) txt.size() ) - initpos ) );
-
-        return _res;
-    }
-
-    std::string PointerToHexAddress( const void* ptr )
-    {
-        auto ptr_casted = reinterpret_cast<std::intptr_t>( ptr );
-        std::stringstream _ss;
-        _ss << "0x" << std::hex << ptr_casted;
-        return _ss.str();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    ////                                                                                        ////
-    ////                                  Path helpers impl.                                    ////
-    ////                                                                                        ////
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    std::string GetFilenameFromFilePath(  const std::string& filepath )
-    {
-        return Split( filepath, '/' ).back();
-    }
-
-    std::string GetFoldernameFromFilePath(  const std::string& filepath )
-    {
-        auto _pathParts = Split( filepath, '/' );
-        if ( _pathParts.size() < 2 )
-            return "./";
-
-        return _pathParts[_pathParts.size() - 2];
-    }
-
-    std::string GetFolderpathFromFilePath( const std::string& filepath )
-    {
-        auto _pathParts = Split( filepath, '/' );
-        if ( _pathParts.size() < 2 )
-            return "./";
-
-        std::stringstream _ss;
-        for ( size_t i = 0; i < _pathParts.size() - 1; i++ )
-            _ss << _pathParts[i] << "/";
-
-        return _ss.str();
-    }
-
-    std::string GetFilenameNoExtensionFromFilePath(  const std::string& filepath )
-    {
-        return Split( Split( filepath, '/' ).back(), '.' ).front();
+        tinyutils::Logger::Init();
+        tinyutils::Profiler::Init();
+        tinyutils::PerlinNoise::Init();
+        tinyutils::Clock::Init();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

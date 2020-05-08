@@ -84,10 +84,10 @@ namespace loco
         }
 
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Created TJoint @ {0}", loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Created TJoint @ {0}", tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Created TJoint @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Created TJoint @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
     }
 
@@ -99,10 +99,10 @@ namespace loco
         m_ownerParentRef = nullptr;
 
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
-            if ( TLogger::IsActive() )
-                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TJoint @ {0}", loco::PointerToHexAddress( this ) );
+            if ( tinyutils::Logger::IsActive() )
+                LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TJoint @ {0}", tinyutils::PointerToHexAddress( this ) );
             else
-                std::cout << "Loco::Allocs: Destroyed TJoint @ " << loco::PointerToHexAddress( this ) << std::endl;
+                std::cout << "Loco::Allocs: Destroyed TJoint @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
         #endif
     }
 

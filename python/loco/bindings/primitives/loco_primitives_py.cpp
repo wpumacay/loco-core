@@ -78,13 +78,13 @@ namespace loco
                 .def( "__repr__", []( const TSingleBodyCollider* self )
                     {
                         auto _strrep = std::string( "SingleBodyCollider(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "name        : " + self->name() + "\n";
                         _strrep += "shape       : " + loco::ToString( self->shape() ) + "\n";
                         _strrep += "size        : " + loco::ToString( self->size() ) + "\n";
                         _strrep += "colGroup    : " + std::to_string( self->collisionGroup() ) + "\n";
                         _strrep += "colMask     : " + std::to_string( self->collisionMask() ) + "\n";
-                        _strrep += "parent      : " + ( self->parent() ? loco::PointerToHexAddress( self->parent() ) : std::string( "null" ) ) + "\n";
+                        _strrep += "parent      : " + ( self->parent() ? tinyutils::PointerToHexAddress( self->parent() ) : std::string( "null" ) ) + "\n";
                         _strrep += "position    : " + loco::ToString( self->pos() ) + "\n";
                         _strrep += "rotation    :\n" + loco::ToString( self->rot() ) + "\n";
                         _strrep += "euler       : " + loco::ToString( self->euler() ) + "\n";
@@ -231,12 +231,12 @@ namespace loco
                 .def( "__repr__", []( const TSingleBody* self )
                     {
                         auto _strrep = std::string( "SingleBody(\n" );
-                        _strrep += "cpp-address : " + loco::PointerToHexAddress( self ) + "\n";
+                        _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "name        : " + self->name() + "\n";
                         _strrep += "dyntype     : " + loco::ToString( self->dyntype() ) + "\n";
-                        _strrep += "collision   : " + ( self->collider() ? loco::PointerToHexAddress( self->collider() ) : std::string( "null" ) ) + "\n";
-                        _strrep += "visual      : " + ( self->drawable() ? loco::PointerToHexAddress( self->drawable() ) : std::string( "null" ) ) + "\n";
-                        _strrep += "constraint  : " + ( self->constraint() ? loco::PointerToHexAddress( self->constraint() ) : std::string( "null" ) ) + "\n";
+                        _strrep += "collision   : " + ( self->collider() ? tinyutils::PointerToHexAddress( self->collider() ) : std::string( "null" ) ) + "\n";
+                        _strrep += "visual      : " + ( self->drawable() ? tinyutils::PointerToHexAddress( self->drawable() ) : std::string( "null" ) ) + "\n";
+                        _strrep += "constraint  : " + ( self->constraint() ? tinyutils::PointerToHexAddress( self->constraint() ) : std::string( "null" ) ) + "\n";
                         _strrep += "position    : " + loco::ToString( self->pos() ) + "\n";
                         _strrep += "rotation    :\n" + loco::ToString( self->rot() ) + "\n";
                         _strrep += "euler       : " + loco::ToString( self->euler() ) + "\n";

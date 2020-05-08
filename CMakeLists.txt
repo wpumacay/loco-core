@@ -20,6 +20,7 @@ option( LOCO_CORE_BUILD_EXAMPLES "Build C/C++ examples" ON )
 option( LOCO_CORE_BUILD_TESTS "Build C/C++ tests" ON )
 option( LOCO_CORE_BUILD_PYTHON_BINDINGS "Build Python-bindings" ON )
 option( LOCO_CORE_BUILD_WITH_LOGS "Build using logging functionality" ON )
+option( LOCO_CORE_BUILD_WITH_PROFILING "Build using profiling tools enabled" ON )
 option( LOCO_CORE_BUILD_WITH_TRACK_ALLOCS "Build using tracking of objects allocations|deallocations" ON )
 
 if ( NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY )
@@ -38,14 +39,21 @@ else()
     message( "LOCO::CORE >>> Configuring as CHILD project" )
 endif()
 
-if ( LOCO_CORE_BUILD_WITH_LOGS OR ( CMAKE_BUILD_TYPE STREQUAL Debug ) )
+if ( LOCO_CORE_BUILD_WITH_LOGS )
     set( LOCO_CORE_USE_LOGS "YES" )
     add_definitions( -DLOCO_CORE_USE_LOGS )
 else()
     set( LOCO_CORE_USE_LOGS "NO" )
 endif()
 
-if ( LOCO_CORE_BUILD_WITH_TRACK_ALLOCS OR ( CMAKE_BUILD_TYPE STREQUAL Debug ) )
+if ( LOCO_CORE_BUILD_WITH_PROFILING )
+    set( LOCO_CORE_USE_PROFILING "YES" )
+    add_definitions( -DLOCO_CORE_USE_PROFILING )
+else()
+    set( LOCO_CORE_USE_PROFILING "NO" )
+endif()
+
+if ( LOCO_CORE_BUILD_WITH_TRACK_ALLOCS )
     set( LOCO_CORE_USE_TRACK_ALLOCS "YES" )
     add_definitions( -DLOCO_CORE_USE_TRACK_ALLOCS )
 else()
@@ -112,7 +120,6 @@ find_package( ASSIMP REQUIRED )
 set( LOCO_CORE_SRCS
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_common.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_math.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_logger.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_object.cpp"
      "${CMAKE_CURRENT_SOURCE_DIR}/src/loco_data.cpp"
      #### "${CMAKE_CURRENT_SOURCE_DIR}/src/agent/agent_base.cpp"
@@ -170,13 +177,15 @@ set( LOCO_CORE_INCLUDE_DIRS
      "${CMAKE_CURRENT_SOURCE_DIR}/ext/tinyxml2"
      "${CMAKE_CURRENT_SOURCE_DIR}/ext/json"
      "${CMAKE_SOURCE_DIR}/ext/spdlog/include"
-     "${CMAKE_SOURCE_DIR}/ext/tiny_math/include" )
+     "${CMAKE_SOURCE_DIR}/ext/tiny_math/include"
+     "${CMAKE_SOURCE_DIR}/ext/tiny_utils/include" )
 include_directories( ${LOCO_CORE_INCLUDE_DIRS} )
 
 add_library( loco_core SHARED
              ${LOCO_CORE_SRCS} )
 target_link_libraries( loco_core
                        tinymath_cpp_lib
+                       tinyutils_cpp_lib
                        assimp
                        spdlog
                        dl )
@@ -226,12 +235,14 @@ message( "LOCO_CORE_LIBRARIES_PATH                  : ${LOCO_CORE_LIBRARIES_PATH
 message( "LOCO_CORE_BUILD_WINDOWED_VISUALIZER       : ${LOCO_CORE_BUILD_WINDOWED_VISUALIZER}" )
 message( "LOCO_CORE_BUILD_HEADLESS_VISUALIZER       : ${LOCO_CORE_BUILD_HEADLESS_VISUALIZER}" )
 message( "LOCO_CORE_BUILD_FFMPEG_VISUALIZER_UTILS   : ${LOCO_CORE_BUILD_FFMPEG_VISUALIZER_UTILS}" )
-message( "LOCO_CORE_BUILD_DOCS                  : ${LOCO_CORE_BUILD_DOCS}" )
-message( "LOCO_CORE_BUILD_EXAMPLES              : ${LOCO_CORE_BUILD_EXAMPLES}" )
-message( "LOCO_CORE_BUILD_TESTS                 : ${LOCO_CORE_BUILD_TESTS}" )
-message( "LOCO_CORE_BUILD_PYTHON_BINDINGS       : ${LOCO_CORE_BUILD_PYTHON_BINDINGS}" )
-message( "LOCO_CORE_BUILD_WITH_LOGS             : ${LOCO_CORE_BUILD_WITH_LOGS}" )
-message( "LOCO_CORE_BUILD_WITH_TRACK_ALLOCS     : ${LOCO_CORE_BUILD_WITH_TRACK_ALLOCS}" )
-message( "LOCO_CORE_USE_LOGS                    : ${LOCO_CORE_USE_LOGS}" )
-message( "LOCO_CORE_USE_TRACK_ALLOCS            : ${LOCO_CORE_USE_TRACK_ALLOCS}" )
+message( "LOCO_CORE_BUILD_DOCS                      : ${LOCO_CORE_BUILD_DOCS}" )
+message( "LOCO_CORE_BUILD_EXAMPLES                  : ${LOCO_CORE_BUILD_EXAMPLES}" )
+message( "LOCO_CORE_BUILD_TESTS                     : ${LOCO_CORE_BUILD_TESTS}" )
+message( "LOCO_CORE_BUILD_PYTHON_BINDINGS           : ${LOCO_CORE_BUILD_PYTHON_BINDINGS}" )
+message( "LOCO_CORE_BUILD_WITH_LOGS                 : ${LOCO_CORE_BUILD_WITH_LOGS}" )
+message( "LOCO_CORE_BUILD_WITH_PROFILING            : ${LOCO_CORE_BUILD_WITH_PROFILING}" )
+message( "LOCO_CORE_BUILD_WITH_TRACK_ALLOCS         : ${LOCO_CORE_BUILD_WITH_TRACK_ALLOCS}" )
+message( "LOCO_CORE_USE_LOGS                        : ${LOCO_CORE_USE_LOGS}" )
+message( "LOCO_CORE_USE_PROFILING                   : ${LOCO_CORE_USE_PROFILING}" )
+message( "LOCO_CORE_USE_TRACK_ALLOCS                : ${LOCO_CORE_USE_TRACK_ALLOCS}" )
 message( "***************************************************************************************" )
