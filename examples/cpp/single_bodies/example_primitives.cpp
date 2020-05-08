@@ -51,6 +51,7 @@ int main( int argc, char* argv[] )
     floor_ref->drawable()->ChangeTexture( "built_in_chessboard" );
     floor_ref->drawable()->ChangeColor( { 0.3f, 0.5f, 0.7f } );
 
+    loco::eRenderMode render_mode = loco::eRenderMode::NORMAL;
     tinyutils::Profiler::BeginSession( "whole-framework" );
     while ( visualizer->IsActive() )
     {
@@ -78,9 +79,15 @@ int main( int argc, char* argv[] )
             sphere_ref->AddForceCOM( { 200.0, 0.0, 0.0 } );
         else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_LEFT ) )
             sphere_ref->AddForceCOM( { -200.0, 0.0, 0.0 } );
+        else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_N ) )
+            render_mode = loco::eRenderMode::NORMAL;
+        else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_S ) )
+            render_mode = loco::eRenderMode::SEMANTIC;
+        else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_D ) )
+            render_mode = loco::eRenderMode::DEPTH;
 
         simulation->Step();
-        visualizer->Update();
+        visualizer->Render( render_mode );
         tinyutils::Clock::Tock();
         LOCO_TRACE( "fps        : {0}", tinyutils::Clock::GetAvgFps() );
         LOCO_TRACE( "time-step  : {0}", tinyutils::Clock::GetAvgTimeStep() );

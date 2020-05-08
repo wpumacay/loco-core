@@ -141,6 +141,11 @@ namespace loco
                 .value( "DIRECTIONAL", loco::eVizLightType::DIRECTIONAL )
                 .value( "POINT", loco::eVizLightType::POINT )
                 .value( "SPOT", loco::eVizLightType::SPOT );
+
+            py::enum_<loco::eRenderMode>( m, "RenderMode", py::arithmetic() )
+                .value( "NORMAL", loco::eRenderMode::NORMAL )
+                .value( "SEMANTIC", loco::eRenderMode::SEMANTIC )
+                .value( "DEPTH", loco::eRenderMode::DEPTH );
         }
 
         // Bindings for TDrawable class (user-exposed drawable)
@@ -437,7 +442,12 @@ namespace loco
         {
             py::class_<TIVisualizer>( m, "IVisualizer" )
                 .def( "Initialize", &TIVisualizer::Initialize )
-                .def( "Update", &TIVisualizer::Update )
+                .def( "Render",
+                    []( TIVisualizer* self, const eRenderMode& mode )
+                        {
+                            self->Render( mode );
+                        },
+                    py::arg( "mode" ) = eRenderMode::NORMAL )
                 .def( "Reset", &TIVisualizer::Reset )
                 .def( "CreateCamera",
                       []( TIVisualizer* self,

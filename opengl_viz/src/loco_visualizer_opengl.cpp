@@ -37,6 +37,12 @@ namespace loco
     #endif
     }
 
+    void TOpenGLVisualizer::_SetRenderOffscreenInternal()
+    {
+        if ( m_glApplication )
+            m_glApplication->setOffscreenRendering( m_RenderOffscreen );
+    }
+
     void TOpenGLVisualizer::_ChangeScenarioInternal()
     {
         if ( !m_glApplication )
@@ -114,7 +120,19 @@ namespace loco
         m_glApplication->renderOptions().shadowMapRangeConfig.cameraPtr = gl_cameraRef; // @firsttodo: should check this on engine instead of user side
     }
 
-    void TOpenGLVisualizer::_UpdateInternal()
+    void TOpenGLVisualizer::_CollectDetached()
+    {
+        for ( ssize_t i = 0; i < m_vizDrawableAdapters.size(); i++ )
+            if ( m_vizDrawableAdapters[i]->IsAwaitingDeletion() )
+                m_vizDrawableAdapters.erase( m_vizDrawableAdapters.begin() + (i--) );
+    }
+
+    void TOpenGLVisualizer::_ResetInternal()
+    {
+        // Nothing extra to reset
+    }
+
+    std::unique_ptr<uint8_t[]> TOpenGLVisualizer::_RenderInternal( const eRenderMode& mode )
     {
         engine::CDebugDrawer::DrawLine( { 0.0f, 0.0f, 0.0f }, { 10.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f } );
         engine::CDebugDrawer::DrawLine( { 0.0f, 0.0f, 0.0f }, { 0.0f, 10.0f, 0.0f }, { 0.0f, 1.0f, 0.0f } );
@@ -150,22 +168,21 @@ namespace loco
 ////             }
 ////         }
 
+        if ( mode == eRenderMode::NORMAL )
+            m_glApplication->renderOptions().mode = engine::eRenderMode::NORMAL;
+        else if ( mode == eRenderMode::SEMANTIC )
+            m_glApplication->renderOptions().mode = engine::eRenderMode::SEMANTIC_ONLY;
+        else if ( mode == eRenderMode::DEPTH )
+            m_glApplication->renderOptions().mode = engine::eRenderMode::DEPTH_ONLY;
+
         m_glApplication->update();
         m_glApplication->begin();
         m_glApplication->render();
         m_glApplication->end();
-    }
 
-    void TOpenGLVisualizer::_CollectDetached()
-    {
-        for ( ssize_t i = 0; i < m_vizDrawableAdapters.size(); i++ )
-            if ( m_vizDrawableAdapters[i]->IsAwaitingDeletion() )
-                m_vizDrawableAdapters.erase( m_vizDrawableAdapters.begin() + (i--) );
-    }
-
-    void TOpenGLVisualizer::_ResetInternal()
-    {
-        // Nothing extra to reset
+        if ( !m_glApplication->use_render_target() )
+            return nullptr;
+        return m_glApplication->renderTarget()->read();
     }
 
     void TOpenGLVisualizer::_DrawLineInternal( const TVec3& start, const TVec3& end, const TVec3& color )

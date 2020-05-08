@@ -14,6 +14,13 @@ namespace loco
     class TISimulation;
     class TRuntime;
 
+    enum class eRenderMode : uint8_t
+    {
+        NORMAL,
+        SEMANTIC,
+        DEPTH
+    };
+
     class TIVisualizer
     {
     public :
@@ -23,10 +30,12 @@ namespace loco
                       bool windowResizable, bool renderOffscreen );
         virtual ~TIVisualizer();
 
+        void SetRenderOffscreen( bool render_offscreen );
         void ChangeScenario( TScenario* scenarioRef );
         void Initialize();
-        void Update();
         void Reset();
+
+        std::unique_ptr<uint8_t[]> Render( const eRenderMode& mode = eRenderMode::NORMAL );
 
         TVizCamera* CreateCamera( const std::string& name,
                                   const eVizCameraType& type,
@@ -96,12 +105,14 @@ namespace loco
 
     protected :
 
+        virtual void _SetRenderOffscreenInternal() = 0;
         virtual void _ChangeScenarioInternal() = 0;
         virtual void _InitializeInternal() = 0;
-        virtual void _UpdateInternal() = 0;
         virtual void _ResetInternal() = 0;
         virtual void _SetSimulationInternal( TISimulation* simulationRef ) {};
         virtual void _SetRuntimeInternal( TRuntime* runtimeRef ) {};
+
+        virtual std::unique_ptr<uint8_t[]> _RenderInternal( const eRenderMode& mode ) = 0;
 
         virtual void _DrawLineInternal( const TVec3& start, const TVec3& end, const TVec3& color ) = 0;
         virtual void _DrawAABBInternal( const TVec3& aabbMin, const TVec3& aabbMax, const TMat4& aabbWorldTransform, const TVec3& color ) = 0;
@@ -144,6 +155,8 @@ namespace loco
 
         ssize_t m_currentCameraIndex;
         ssize_t m_currentLightIndex;
+
+        bool m_RenderOffscreen;
     };
 
     typedef TIVisualizer* FcnCreateViz( TScenario* scenarioRef,
@@ -162,10 +175,12 @@ namespace loco
 
     protected :
 
+        void _SetRenderOffscreenInternal() override {}
         void _ChangeScenarioInternal() override {}
         void _InitializeInternal() override {}
-        void _UpdateInternal() override {}
         void _ResetInternal() override {}
+
+        std::unique_ptr<uint8_t[]> _RenderInternal( const eRenderMode& mode ) { return nullptr; }
 
         void _DrawLineInternal( const TVec3& start, const TVec3& end, const TVec3& color ) override {}
         void _DrawAABBInternal( const TVec3& aabbMin, const TVec3& aabbMax, const TMat4& aabbWorldTransform, const TVec3& color ) override {}

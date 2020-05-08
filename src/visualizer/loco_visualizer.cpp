@@ -15,6 +15,7 @@ namespace loco
         m_currentCameraIndex = -1;
         m_currentLightIndex = -1;
         m_backendId = "none";
+        m_RenderOffscreen = false;
     }
 
     TIVisualizer::~TIVisualizer()
@@ -27,6 +28,12 @@ namespace loco
         m_scenarioRef = nullptr;
         m_simulationRef = nullptr;
         m_runtimeRef = nullptr;
+    }
+
+    void TIVisualizer::SetRenderOffscreen( bool render_offscreen )
+    {
+        m_RenderOffscreen = render_offscreen;
+        _SetRenderOffscreenInternal();
     }
 
     void TIVisualizer::ChangeScenario( TScenario* scenarioRef )
@@ -46,15 +53,14 @@ namespace loco
         _InitializeInternal();
     }
 
-    void TIVisualizer::Update()
+    std::unique_ptr<uint8_t[]> TIVisualizer::Render( const eRenderMode& mode )
     {
         for ( auto& camera : m_vizCameras )
             camera->Update();
-
         for ( auto& light : m_vizLights )
             light->Update();
 
-        _UpdateInternal();
+        return _RenderInternal( mode );
     }
 
     void TIVisualizer::Reset()

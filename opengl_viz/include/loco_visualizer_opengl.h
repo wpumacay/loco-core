@@ -21,10 +21,12 @@ namespace loco
 
     protected :
 
+        void _SetRenderOffscreenInternal() override;
         void _ChangeScenarioInternal() override;
         void _InitializeInternal() override;
-        void _UpdateInternal() override;
         void _ResetInternal() override;
+
+        std::unique_ptr<uint8_t[]> _RenderInternal( const eRenderMode& mode );
 
         void _DrawLineInternal( const TVec3& start, const TVec3& end, const TVec3& color ) override;
         void _DrawAABBInternal( const TVec3& aabbMin, const TVec3& aabbMax, const TMat4& aabbWorldTransform, const TVec3& color ) override;

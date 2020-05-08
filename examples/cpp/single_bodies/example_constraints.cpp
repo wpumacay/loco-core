@@ -121,7 +121,7 @@ int main( int argc, char* argv[] )
             sphere->AddForceCOM( { -200.0, 0.0, 0.0 } );
 
         simulation->Step();
-        visualizer->Update();
+        visualizer->Render();
     }
 
     runtime->DestroySimulation();

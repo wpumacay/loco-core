@@ -77,7 +77,7 @@ int main( int argc, char* argv[] )
             simulation->Reset();
 
         simulation->Step();
-        visualizer->Update();
+        visualizer->Render();
     }
 
     runtime->DestroySimulation();

@@ -31,7 +31,7 @@ TEST( TestLocoNullVisualizer, TestNullVisualizerFunctionality )
                                              { 0.8f, 0.8f, 0.8f },
                                              { 0.8f, 0.8f, 0.8f } );
     visualizer->Initialize();
-    visualizer->Update();
+    visualizer->Render();
     visualizer->Reset();
 
     cameraRef->SetPosition( { 5.0f, 5.0f, 5.0f } );

@@ -42,7 +42,7 @@ TEST( TestLocoRuntimeOpenGLViz, TestRuntimeOpenGLVizGLFW )
                                                 { 0.8f, 0.8f, 0.8f },
                                                 { 0.8f, 0.8f, 0.8f } );
     visualizerRef->Initialize();
-    visualizerRef->Update();
+    visualizerRef->Render();
     visualizerRef->Reset();
     EXPECT_EQ( visualizerRef->backendId(), "openglviz_glfw" );
     EXPECT_TRUE( visualizerRef->HasCameraNamed( "cam_orbit_0" ) );

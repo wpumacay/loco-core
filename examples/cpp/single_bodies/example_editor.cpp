@@ -96,7 +96,7 @@ int main( int argc, char* argv[] )
         if ( auto simulation = runtime->GetCurrentSimulation() )
             simulation->Step();
 
-        visualizer->Update();
+        visualizer->Render();
     }
 
     runtime->DestroySimulation();
