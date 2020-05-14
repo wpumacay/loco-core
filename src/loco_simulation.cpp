@@ -7,40 +7,43 @@ namespace loco
     //// How the simulation-creation process works :
     ////    * The key functions are both the constructor and _InitializeInternal method
     ////    * Within the constructor, the specific backend implementation can choose to instantiate
-    ////      the resources it needs (e.g. create Rainsim::World object, or similar) or just declare
+    ////      the resources it needs (e.g. create Raisim::World, or similar) or just declare
     ////      which resources will be used and later create them.
     ////    * Within the _InitializeInternal method, extra backend-resources can be created (e.g. create
     ////      MuJoCo's mjModel and mjData), but keep in mind that any backend-resources that need to be
     ////      created by the adapters (on their "Build" methods) might (or might not) need to use some
-    ////      handle an initialize backend (Raisim requires a handle to its raisim::World object to
-    ////      create resources like bodies and articulated systems).
+    ////      reference to an initialize backend (e.g. Raisim requires a handle to its raisim::World 
+    ///       object to create resources like bodies and articulated systems).
 
     TISimulation::TISimulation( TScenario* scenarioRef )
     {
         LOCO_CORE_ASSERT( scenarioRef, "TISimulation >>> given nullptr for scenario-reference" );
 
-        m_backendId = "none";
-        m_scenarioRef = scenarioRef;
-        m_visualizerRef = nullptr;
-        m_running = false;
+        m_BackendId = "none";
+        m_ScenarioRef = scenarioRef;
+        m_VisualizerRef = nullptr;
+        m_Running = false;
+        m_WorldTime = 0.0;
+        m_FixedTimeStep = 0.002;
+        m_Gravity = { 0.0, 0.0, -9.81 };
 
         /* DERIVED simulations should create adapters (from the scenario) as they see fit */
     }
 
     TISimulation::~TISimulation()
     {
-        m_scenarioRef = nullptr;
-        m_visualizerRef = nullptr;
-        m_singleBodyAdapters.clear();
-        m_singleBodyAdaptersRecycled.clear();
+        m_ScenarioRef = nullptr;
+        m_VisualizerRef = nullptr;
+        m_SingleBodyAdapters.clear();
+        m_SingleBodyAdaptersRecycled.clear();
     }
 
     void TISimulation::Initialize()
     {
-        LOCO_CORE_ASSERT( m_scenarioRef, "TISimulation::Initialize >>> scenario-reference is nullptr" );
+        LOCO_CORE_ASSERT( m_ScenarioRef, "TISimulation::Initialize >>> scenario-reference is nullptr" );
 
         // Build backend-specific resources for single-bodies (should recursively build collider and visual adapters)
-        for ( auto& bodyAdapter : m_singleBodyAdapters )
+        for ( auto& bodyAdapter : m_SingleBodyAdapters )
             bodyAdapter->Build();
 
 ////         // Build backend-specific resources for compounds (should recursively build compound-bodies, joints, colliders and visual adapters)
@@ -52,35 +55,35 @@ namespace loco
 ////             kintreeAgentAdapter->Build();
 
         // Initialize backend resources (assemble them, set internal configuration, etc.)
-        m_running = _InitializeInternal();
+        m_Running = _InitializeInternal();
 
         // Initialize the scenario to its required initial simulation state
-        if ( m_running )
-            m_scenarioRef->Initialize();
+        if ( m_Running )
+            m_ScenarioRef->Initialize();
     }
 
-    void TISimulation::Step()
+    void TISimulation::Step( const TScalar& dt )
     {
         _PreStep();
 
-        if ( m_running )
-            _SimStepInternal();
+        if ( m_Running )
+            _SimStepInternal( dt );
 
         _PostStep();
     }
 
     void TISimulation::_PreStep()
     {
-        if ( m_scenarioRef )
-            m_scenarioRef->PreStep();
+        if ( m_ScenarioRef )
+            m_ScenarioRef->PreStep();
 
         _PreStepInternal();
     }
 
     void TISimulation::_PostStep()
     {
-        if ( m_scenarioRef )
-            m_scenarioRef->PostStep();
+        if ( m_ScenarioRef )
+            m_ScenarioRef->PostStep();
 
         _PostStepInternal();
         _CollectDetached();
@@ -88,37 +91,49 @@ namespace loco
 
     void TISimulation::Reset()
     {
-        if ( m_scenarioRef )
-            m_scenarioRef->Reset();
+        if ( m_ScenarioRef )
+            m_ScenarioRef->Reset();
 
         _ResetInternal();
     }
 
     void TISimulation::Pause()
     {
-        m_running = false;
+        m_Running = false;
     }
 
     void TISimulation::Resume()
     {
-        m_running = true;
+        m_Running = true;
     }
 
     void TISimulation::_CollectDetached()
     {
-        for ( ssize_t i = 0; i < m_singleBodyAdapters.size(); i++ )
+        for ( ssize_t i = 0; i < m_SingleBodyAdapters.size(); i++ )
         {
-            if ( !m_singleBodyAdapters[i]->detached() )
+            if ( !m_SingleBodyAdapters[i]->detached() )
                 continue;
-            m_singleBodyAdaptersRecycled.push_back( std::move( m_singleBodyAdapters[i] ) );
-            m_singleBodyAdapters.erase( m_singleBodyAdapters.begin() + (i--) );
+            m_SingleBodyAdaptersRecycled.push_back( std::move( m_SingleBodyAdapters[i] ) );
+            m_SingleBodyAdapters.erase( m_SingleBodyAdapters.begin() + (i--) );
         }
     }
 
     void TISimulation::SetVisualizer( TIVisualizer* visualizerRef )
     {
-        m_visualizerRef = visualizerRef;
-        _SetVisualizerInternal( m_visualizerRef );
+        m_VisualizerRef = visualizerRef;
+        _SetVisualizerInternal( m_VisualizerRef );
+    }
+
+    void TISimulation::SetTimeStep( const TScalar& time_step )
+    {
+        m_FixedTimeStep = time_step;
+        _SetTimeStepInternal( time_step );
+    }
+
+    void TISimulation::SetGravity( const TVec3& gravity )
+    {
+        m_Gravity = gravity;
+        _SetGravityInternal( gravity );
     }
 
     /********************************************************************************
@@ -128,7 +143,7 @@ namespace loco
     TNullSimulation::TNullSimulation( TScenario* scenarioRef )
         : TISimulation( scenarioRef )
     {
-        m_backendId = "null";
+        m_BackendId = "null";
 
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
         if ( tinyutils::Logger::IsActive() )
@@ -146,30 +161,5 @@ namespace loco
         else
             std::cout << "Loco::Allocs: Destroyed TNullSimulation @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
-    }
-
-    bool TNullSimulation::_InitializeInternal()
-    {
-        return true;
-    }
-
-    void TNullSimulation::_PreStepInternal()
-    {
-        // just do nothing here
-    }
-
-    void TNullSimulation::_SimStepInternal()
-    {
-        // just do nothing here
-    }
-
-    void TNullSimulation::_PostStepInternal()
-    {
-        // just do nothing here
-    }
-
-    void TNullSimulation::_ResetInternal()
-    {
-        // just do nothing here
     }
 }
