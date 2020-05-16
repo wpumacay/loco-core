@@ -60,6 +60,9 @@ namespace loco
         for ( auto& light : m_vizLights )
             light->Update();
 
+        // @todo: Add flag to enable/disable the visualization of contacts
+        _DrawContactsSingleBodies();
+
         return _RenderInternal( mode );
     }
 
@@ -347,6 +350,24 @@ namespace loco
     void TIVisualizer::DrawSolidArrowZ( float length, const TMat4& transform, const TVec4& color)
     {
         _DrawSolidArrowInternalZ( length, transform, color );
+    }
+
+    void TIVisualizer::_DrawContactsSingleBodies()
+    {
+        auto single_bodies = m_scenarioRef->GetSingleBodiesList();
+        for ( auto single_body : single_bodies )
+        {
+            const auto& contacts = single_body->collider()->contacts();
+            for ( const auto& contact : contacts )
+            {
+                const TVec3 position = contact.position;
+                const TMat3 rotation = tinymath::rotation( loco::ShortestArcQuat( { 1.0, 0.0, 0.0 }, contact.normal.normalized() ) );
+                const TMat4 world_transform( rotation, position );
+
+                DrawSolidCylinderX( 0.1, 0.025, world_transform, { 0.1, 0.4, 0.9, 1.0 } );
+                DrawSolidArrowX( 0.5, world_transform, { 0.4, 0.9, 0.1, 1.0 } );
+            }
+        }
     }
 
     /********************************************************************************

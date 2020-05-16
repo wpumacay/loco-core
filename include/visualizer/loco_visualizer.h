@@ -135,6 +135,9 @@ namespace loco
         virtual void _ChangeCurrentCameraInternal( TVizCamera* cameraRef ) = 0;
         virtual void _ChangeCurrentLightInternal( TVizLight* lightRef ) = 0;
 
+        void _DrawContactsSingleBodies();
+        //// _DrawContactsKinematicTrees();
+
     protected :
 
         std::string m_backendId;
