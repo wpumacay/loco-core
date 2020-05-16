@@ -53,6 +53,10 @@ namespace loco
 
         const TCollisionData& data() const { return m_Data; }
 
+        std::vector<TContactData>& contacts() { return m_Contacts; }
+
+        const std::vector<TContactData>& contacts() const { return m_Contacts; }
+
         static eObjectType GetStaticType() { return eObjectType::SINGLE_BODY_COLLIDER; }
 
         TSingleBody* parent() { return m_ParentBodyRef; }
@@ -99,5 +103,7 @@ namespace loco
         bool m_Visible;
         // Flag that indicates the collider's drawable wireframe-mode
         bool m_Wireframe;
+        /// List of all currently detected contacts
+        std::vector<TContactData> m_Contacts;
     };
 }

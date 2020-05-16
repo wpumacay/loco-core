@@ -262,6 +262,17 @@ namespace loco
         }
     };
 
+    /// Object representation of the contact associated with a specific collider (resolved by the collision detector)
+    struct TContactData
+    {
+        /// Contact-point in world-space
+        TVec3 position = { 0.0, 0.0, 0.0 };
+        /// Contact-normal in world-space (from this collider to the collider with whom the contact was detected)
+        TVec3 normal = { 0.0, 0.0, 0.0 };
+        /// Unique identifier of the collider with whom the contact was detected
+        std::string name = "";
+    };
+
     struct TInertialData
     {
         TScalar     mass;               // mass of the body (if negative then inertial props come from colliders)
