@@ -357,6 +357,37 @@ namespace loco
                         return _strrep;
                     } );
 
+            py::class_< TContactData >( m, "ContactData" )
+                .def( py::init<>() )
+                .def_readwrite( "name", &TContactData::name )
+                .def_property( "position",
+                    []( const TContactData* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 3>( self->position );
+                        },
+                    []( TContactData* self, const py::array_t<TScalar>& arr_position ) -> void
+                        {
+                            self->position = tinymath::nparray_to_vector<TScalar, 3>( arr_position );
+                        } )
+                .def_property( "normal",
+                    []( const TContactData* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 3>( self->normal );
+                        },
+                    []( TContactData* self, const py::array_t<TScalar>& arr_normal ) -> void
+                        {
+                            self->normal = tinymath::nparray_to_vector<TScalar, 3>( arr_normal );
+                        } )
+                .def( "__repr__", []( const TContactData* self )
+                    {
+                        auto _strrep = std::string( "ContactData(\n" );
+                        _strrep += "position    : " + loco::ToString( self->position ) + "\n";
+                        _strrep += "normal      : " + loco::ToString( self->normal ) + "\n";
+                        _strrep += "name        : " + self->name + "\n";
+                        _strrep += ")";
+                        return _strrep;
+                    } );
+
             py::class_< TInertialData >( m, "InertialData" )
                 .def( py::init<>() )
                 .def_readwrite( "mass", &TInertialData::mass )

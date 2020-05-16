@@ -74,6 +74,11 @@ namespace loco
                         {
                             self->ChangeCollisionMask( collisionMask );
                         } )
+                .def_property_readonly( "contacts",
+                    []( TSingleBodyCollider* self ) -> std::vector<TContactData>
+                        {
+                            return self->contacts();
+                        } )
                 .def_property_readonly( "shape", &TSingleBodyCollider::shape )
                 .def( "__repr__", []( const TSingleBodyCollider* self )
                     {
