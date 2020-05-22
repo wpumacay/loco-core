@@ -3,18 +3,50 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Loco's documentation!
-================================
+LOCO --- A locomotion framework with multi-backend support
+==========================================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+    :maxdepth: 1
 
+    basics/introduction
+    basics/installation
+    basics/features
 
+.. toctree::
+    :caption: Primitives
+    :maxdepth: 2
 
-Indices and tables
-==================
+    primitives/introduction
+    primitives/features
+    primitives/constraints
+    primitives/examples
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. toctree::
+    :caption: Kinematic Trees
+    :maxdepth: 2
+
+.. toctree::
+    :caption: C++ API
+    :maxdepth: 2
+
+    api/cpp_simulation
+    api/cpp_visualizer
+    api/cpp_primitives
+..    api_cpp_kinematic_trees
+
+.. toctree::
+    :caption: Python API
+    :maxdepth: 2
+
+    api/python_simulation
+    api/python_visualizer
+    api/python_primitives
+..    api_python_kinematic_trees
+
+.. toctree::
+    :caption: Extra Information
+    :maxdepth: 1
+
+    extra/faq
+    extra/limitations

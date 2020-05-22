@@ -254,7 +254,13 @@ namespace loco
 
         // Bindings for primitives helper classes
         {
-            py::class_< TBox, TSingleBody >( m, "Box" )
+            py::class_< TBox, TSingleBody >( m, "Box", R"mydelimiter(
+                Box primitive, corresponding to a single-body with box-shaped collider and drawable
+
+                This helper class creates a single body with a box-shaped collider, defined
+                by its x-y-z extents (width|depth|height). The body exposes its extents as
+                user modifiable parameters to the user, which can be changed at runtime.
+                )mydelimiter" )
                 .def( py::init( []( const std::string& name,
                                     const py::array_t<TScalar>& arr_extents,
                                     const py::array_t<TScalar>& arr_position,
@@ -279,7 +285,9 @@ namespace loco
                     []( TBox* self, const py::array_t<TScalar>& arr_extents ) -> void
                         {
                             self->SetExtents( tinymath::nparray_to_vector<TScalar, 3>( arr_extents ) );
-                        } )
+                        }, R"mydelimiter(
+                        Width (x), depth (y) and height (z) extensions of the box collider, grouped into a vec3
+                        )mydelimiter" )
                 .def_property( "width",
                     []( const TBox* self ) -> TScalar
                         {
@@ -288,7 +296,9 @@ namespace loco
                     []( TBox* self, const TScalar& width ) -> void
                         {
                             self->SetWidth( width );
-                        } )
+                        }, R"mydelimiter(
+                        Width (x) of the box collider associated with this single-body
+                        )mydelimiter" )
                 .def_property( "depth",
                     []( const TBox* self ) -> TScalar
                         {
@@ -297,7 +307,9 @@ namespace loco
                     []( TBox* self, const TScalar& depth ) -> void
                         {
                             self->SetDepth( depth );
-                        } )
+                        }, R"mydelimiter(
+                        Depth (y) of the box collider associated with this single-body
+                        )mydelimiter" )
                 .def_property( "height",
                     []( const TBox* self ) -> TScalar
                         {
@@ -306,7 +318,24 @@ namespace loco
                     []( TBox* self, const TScalar& height ) -> void
                         {
                             self->SetHeight( height );
-                        } );
+                        }, R"mydelimiter(
+                        Height (z) of the box collider associated with this single-body
+                        )mydelimiter" )
+                .def( "__repr__", []( const TBox* self )
+                    {
+                        std::string strrep = "Box(\n";
+                        strrep += "width        : " + std::to_string( self->width() ) + "\n";
+                        strrep += "depth        : " + std::to_string( self->depth() ) + "\n";
+                        strrep += "height       : " + std::to_string( self->height() ) + "\n";
+                        strrep += "position     : " + loco::ToString( self->pos() ) + "\n";
+                        strrep += "rot-matrix   :\n" + loco::ToString( self->rot() ) + "\n";
+                        strrep += "rot-euler    : " + loco::ToString( self->euler() ) + "\n";
+                        strrep += "rot-quat     : " + loco::ToString( self->quat() ) + "\n";
+                        strrep += "transform    :\n" + loco::ToString( self->tf() ) + "\n";
+                        strrep += "cpp-address  : " + tinyutils::PointerToHexAddress( self ) + "\n";
+                        strrep += ")";
+                        return strrep;
+                    } );
 
             py::class_< TPlane, TSingleBody >( m, "Plane" )
                 .def( py::init( []( const std::string& name,
