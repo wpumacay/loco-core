@@ -139,6 +139,14 @@ namespace loco
             m_ColliderAdapterRef->ChangeCollisionMask( collisionMask );
     }
 
+    void TSingleBodyCollider::ChangeFriction( const TScalar& friction )
+    {
+        m_Data.friction.x() = friction;
+
+        if ( m_ColliderAdapterRef )
+            m_ColliderAdapterRef->ChangeFriction( m_Data.friction.x() );
+    }
+
     void TSingleBodyCollider::_InitializeInternal()
     {
         // Nothing to setup (adapter is handled by parent body)

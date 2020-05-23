@@ -28,6 +28,8 @@ namespace loco
 
         virtual void ChangeCollisionMask( int collision_mask ) = 0;
 
+        virtual void ChangeFriction( const TScalar& friction ) = 0;
+
         TSingleBodyCollider* collider() { return m_ColliderRef; }
 
         const TSingleBodyCollider* collider() const { return m_ColliderRef; }

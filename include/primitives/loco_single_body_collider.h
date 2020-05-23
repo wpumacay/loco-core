@@ -37,6 +37,8 @@ namespace loco
 
         void ChangeCollisionMask( int collision_mask );
 
+        void ChangeFriction( const TScalar& friction );
+
         eShapeType shape() const { return m_Data.type; }
 
         TVec3 size() const { return m_Data.size; }
@@ -44,6 +46,8 @@ namespace loco
         int collisionGroup() const { return m_Data.collisionGroup; }
 
         int collisionMask() const { return m_Data.collisionMask; }
+
+        TScalar friction() const { return m_Data.friction.x(); }
 
         bool visible() const { return m_Visible; }
 

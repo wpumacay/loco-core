@@ -74,6 +74,15 @@ namespace loco
                         {
                             self->ChangeCollisionMask( collisionMask );
                         } )
+                .def_property( "friction",
+                    []( const TSingleBodyCollider* self ) -> TScalar
+                        {
+                            return self->friction();
+                        },
+                    []( TSingleBodyCollider* self, TScalar friction )
+                        {
+                            self->ChangeFriction( friction );
+                        } )
                 .def_property_readonly( "contacts",
                     []( TSingleBodyCollider* self ) -> std::vector<TContactData>
                         {
