@@ -207,11 +207,27 @@ namespace loco
             }
             case eShapeType::CAPSULE :
             {
-                // scale according to radius
-                m_Scale.x() = m_Size.x() / m_Size0.x();
-                m_Scale.y() = m_Size.x() / m_Size0.x();
-                // scale according to height
-                m_Scale.z() = m_Size.y() / m_Size0.y();
+                LOCO_CORE_ASSERT( m_glRenderableRef->type() == engine::CModel::GetStaticType(),
+                                  "TOpenGLDrawableAdapter::ChangeSize >>> gl-renderable should be of type MODEL" );
+                auto capsule_model = static_cast<engine::CModel*>( m_glRenderableRef );
+                auto capsule_meshes = capsule_model->meshes();
+                // First submesh is the cylinder, so just scale it appropriately as above
+                auto cylinder_mesh = capsule_meshes[0];
+                cylinder_mesh->scale.x() = m_Size.x() / m_Size0.x();
+                cylinder_mesh->scale.y() = m_Size.x() / m_Size0.x();
+                cylinder_mesh->scale.z() = m_Size.y() / m_Size0.y();
+                // Second mesh is the top-sphere, so just update its radius and relative-transform appropriately
+                auto top_sphere = capsule_meshes[1];
+                top_sphere->scale.x() = m_Size.x() / m_Size0.x();
+                top_sphere->scale.y() = m_Size.x() / m_Size0.x();
+                top_sphere->scale.z() = m_Size.x() / m_Size0.x();
+                capsule_model->localTransforms()[1].set( engine::CVec3( 0.0f, 0.0f, 0.5f * m_Size.y() ), 3 );
+                // Thrid mesh is the bottom sphere, so just update its radius and relative-transform appropriately
+                auto bottom_sphere = capsule_meshes[2];
+                bottom_sphere->scale.x() = m_Size.x() / m_Size0.x();
+                bottom_sphere->scale.y() = m_Size.x() / m_Size0.x();
+                bottom_sphere->scale.z() = m_Size.x() / m_Size0.x();
+                capsule_model->localTransforms()[2].set( engine::CVec3( 0.0f, 0.0f, -0.5f * m_Size.y() ), 3 );
                 break;
             }
             case eShapeType::ELLIPSOID :

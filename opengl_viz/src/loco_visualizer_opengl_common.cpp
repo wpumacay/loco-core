@@ -140,7 +140,13 @@ namespace glviz {
             }
             case loco::eShapeType::CAPSULE :
             {
-                renderable = engine::CMeshBuilder::createCapsule( data.size.x(), data.size.y(), engine::eAxis::Z );
+                renderable = std::make_unique<engine::CModel>( "capsule_compmesh" );
+                static_cast<engine::CModel*>( renderable.get() )->addMesh( engine::CMeshBuilder::createCylinder( data.size.x(), data.size.y(), engine::eAxis::Z ),
+                                                                           engine::CMat4() /* set cylindrical part in the center */ );
+                static_cast<engine::CModel*>( renderable.get() )->addMesh( engine::CMeshBuilder::createSphere( data.size.x() ),
+                                                                           engine::CMat4( engine::CMat3(), { 0.0f, 0.0f, 0.5f * data.size.y() } ) );
+                static_cast<engine::CModel*>( renderable.get() )->addMesh( engine::CMeshBuilder::createSphere( data.size.x() ),
+                                                                           engine::CMat4( engine::CMat3(), { 0.0f, 0.0f, -0.5f * data.size.y() } ) );
                 break;
             }
             case loco::eShapeType::ELLIPSOID :
