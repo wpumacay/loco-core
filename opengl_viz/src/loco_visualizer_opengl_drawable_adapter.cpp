@@ -241,9 +241,11 @@ namespace loco
             case eShapeType::MESH :
             {
                 // scale every dimension
-                m_Scale.x() = m_Size.x() / m_Size0.x();
-                m_Scale.y() = m_Size.y() / m_Size0.y();
-                m_Scale.z() = m_Size.z() / m_Size0.z();
+                m_Scale.x() = m_Size.x();
+                m_Scale.y() = m_Size.y();
+                m_Scale.z() = m_Size.z();
+                // update old size(scale) to new size
+                m_Size0 = m_Size;
                 break;
             }
             case eShapeType::HFIELD :
