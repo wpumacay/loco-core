@@ -263,7 +263,43 @@ namespace loco
         if ( !m_glRenderableRef )
             return;
 
-        LOCO_CORE_WARN( "TOpenGLDrawableAdapter::ChangeElevationData >>> not supported yet. Requires to construct a new renderable" );
+        // Unnormalize the heights data (use data.size.z() as scaler)
+        auto heightsScaled = heightData;
+        for ( size_t i = 0; i < heightsScaled.size(); i++ )
+            heightsScaled[i] *= m_data.size.z();
+
+        std::vector<engine::CVec3> new_vertices;
+        std::vector<engine::CVec3> new_normals;
+        std::vector<engine::CVec2> new_texCoords;
+        std::vector<engine::CInd3> new_indices;
+        float max_height = -1e6f; float min_height = 1e6f;
+        engine::CMeshBuilder::hfieldCreateVertexData( m_data.hfield_data.nWidthSamples,
+                                                      m_data.hfield_data.nDepthSamples,
+                                                      m_data.size.x(), m_data.size.y(),
+                                                      m_data.size.x() / 2.0f,
+                                                      m_data.size.y() / 2.0f,
+                                                      heightsScaled,
+                                                      glviz::HFIELD_HEIGHT_BASE,
+                                                      engine::eAxis::Z,
+                                                      new_vertices, new_normals, new_texCoords, new_indices,
+                                                      max_height, min_height );
+
+        if ( auto gl_hfield_mesh = dynamic_cast<engine::CMesh*>( m_glRenderableRef ) )
+        {
+            gl_hfield_mesh->vertices() = new_vertices;
+            gl_hfield_mesh->normals() = new_normals;
+            gl_hfield_mesh->uvs() = new_texCoords;
+            gl_hfield_mesh->indices() = new_indices;
+            auto& gl_hfield_vao = gl_hfield_mesh->vertexArray();
+            gl_hfield_vao->vertexBuffers()[0]->updateData( sizeof( engine::CVec3 ) * new_vertices.size(), 
+                                                         (engine::float32*)new_vertices.data() );
+            gl_hfield_vao->vertexBuffers()[1]->updateData( sizeof( engine::CVec3 ) * new_normals.size(),
+                                                         (engine::float32*)new_normals.data() );
+            gl_hfield_vao->vertexBuffers()[2]->updateData( sizeof( engine::CVec2 ) * new_texCoords.size(),
+                                                         (engine::float32*)new_texCoords.data() );
+            gl_hfield_vao->indexBuffer()->updateData( 3 * new_indices.size(),
+                                                      (engine::uint32*)new_indices.data() );
+        }
     }
 
     void TOpenGLDrawableAdapter::SetVisible( bool visible )
