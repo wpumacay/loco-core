@@ -160,7 +160,7 @@ namespace glviz {
                 if ( mesh_data.filename != "" )
                     renderable = engine::CMeshBuilder::createModelFromFile( mesh_data.filename );
                 else if ( mesh_data.vertices.size() > 0 && mesh_data.faces.size() > 0 )
-                    renderable = CreateMeshFromData( mesh_data.vertices, mesh_data.faces );
+                    renderable = CreateMeshFromUserData( mesh_data.vertices, mesh_data.faces );
                 else
                     LOCO_CORE_ERROR( "CreateRenderable >>> couldn't create mesh-renderable (no filename, no data)" );
                 if ( renderable )
@@ -189,14 +189,9 @@ namespace glviz {
         return std::move( renderable );
     }
 
-    std::unique_ptr<engine::CMesh> CreateMeshFromData( const std::vector<float>& vertices,
+    std::unique_ptr<engine::CMesh> CreateMeshFromUserData( const std::vector<float>& vertices,
                                                        const std::vector<int>& indices )
     {
-        if ( vertices.size() % 3 != 0 )
-            LOCO_CORE_ERROR( "CreateMeshFromData >>> there must be 3 elements per vertex" );
-        if ( indices.size() % 3 != 0 )
-            LOCO_CORE_ERROR( "CreateMeshFromData >>> there must be 3 elements per face" );
-
         const size_t num_faces = indices.size() / 3;
         const size_t num_vertices = num_faces * 3;
         const size_t num_vertices_unique = vertices.size() / 3;
@@ -206,43 +201,68 @@ namespace glviz {
         std::vector<engine::CVec2> mesh_texcoords( num_vertices );
         std::vector<engine::CInd3> mesh_faces( num_faces );
 
+        CreateMeshVertexDataFromUserData( vertices, indices,
+                                          mesh_vertices_unique,
+                                          mesh_vertices,
+                                          mesh_normals,
+                                          mesh_texcoords,
+                                          mesh_faces );
+
+        static size_t num_meshes = 0;
+        auto mesh = std::make_unique<engine::CMesh>( "mesh_" + std::to_string( num_meshes++ ),
+                                                     mesh_vertices, mesh_normals, mesh_texcoords, mesh_faces, engine::eBufferUsage::DYNAMIC );
+        return std::move( mesh );
+    }
+
+    void CreateMeshVertexDataFromUserData( const std::vector<float>& vertices,
+                                           const std::vector<int>& indices,
+                                           std::vector<engine::CVec3>& dst_vertices_unique,
+                                           std::vector<engine::CVec3>& dst_vertices,
+                                           std::vector<engine::CVec3>& dst_normals,
+                                           std::vector<engine::CVec2>& dst_texcoords,
+                                           std::vector<engine::CInd3>& dst_faces )
+    {
+        if ( vertices.size() % 3 != 0 )
+            LOCO_CORE_ERROR( "CreateMeshVertexDataFromUserData >>> there must be 3 elements per vertex" );
+        if ( indices.size() % 3 != 0 )
+            LOCO_CORE_ERROR( "CreateMeshVertexDataFromUserData >>> there must be 3 elements per face" );
+
+        const size_t num_faces = indices.size() / 3;
+        const size_t num_vertices = num_faces * 3;
+        const size_t num_vertices_unique = vertices.size() / 3;
+
         for ( size_t v = 0; v < num_vertices_unique; v++ )
-            mesh_vertices_unique[v] = { vertices[3 * v + 0], vertices[3 * v + 1], vertices[3 * v + 2] };
+            dst_vertices_unique[v] = { vertices[3 * v + 0], vertices[3 * v + 1], vertices[3 * v + 2] };
 
         for ( size_t f = 0; f < num_faces; f++ )
         {
-            mesh_faces[f] = { (int)(3 * f + 0), (int)(3 * f + 1), (int)(3 * f + 2) };
+            dst_faces[f] = { (int)(3 * f + 0), (int)(3 * f + 1), (int)(3 * f + 2) };
             // Compute the normals (flat-normals, assuming winding order is 0-1-2 <=> out-normal )
             if ( indices[3 * f + 0] < num_vertices_unique &&
                  indices[3 * f + 1] < num_vertices_unique &&
                  indices[3 * f + 2] < num_vertices_unique )
             {
-                mesh_vertices[3 * f + 0] = mesh_vertices_unique[indices[3 * f + 0]];
-                mesh_vertices[3 * f + 1] = mesh_vertices_unique[indices[3 * f + 1]];
-                mesh_vertices[3 * f + 2] = mesh_vertices_unique[indices[3 * f + 2]];
+                dst_vertices[3 * f + 0] = dst_vertices_unique[indices[3 * f + 0]];
+                dst_vertices[3 * f + 1] = dst_vertices_unique[indices[3 * f + 1]];
+                dst_vertices[3 * f + 2] = dst_vertices_unique[indices[3 * f + 2]];
 
-                auto v0 = mesh_vertices[3 * f + 0];
-                auto v1 = mesh_vertices[3 * f + 1];
-                auto v2 = mesh_vertices[3 * f + 2];
+                auto v0 = dst_vertices[3 * f + 0];
+                auto v1 = dst_vertices[3 * f + 1];
+                auto v2 = dst_vertices[3 * f + 2];
 
                 const auto flat_normal = tinymath::cross( v1 - v0, v2 - v0 ).normalized();
-                mesh_normals[3 * f + 0] = flat_normal;
-                mesh_normals[3 * f + 1] = flat_normal;
-                mesh_normals[3 * f + 2] = flat_normal;
+                dst_normals[3 * f + 0] = flat_normal;
+                dst_normals[3 * f + 1] = flat_normal;
+                dst_normals[3 * f + 2] = flat_normal;
 
-                mesh_texcoords[3 * f + 0] = { 0.0f, 0.0f };
-                mesh_texcoords[3 * f + 1] = { 0.0f, 0.0f };
-                mesh_texcoords[3 * f + 2] = { 0.0f, 0.0f };
+                dst_texcoords[3 * f + 0] = { 0.0f, 0.0f };
+                dst_texcoords[3 * f + 1] = { 0.0f, 0.0f };
+                dst_texcoords[3 * f + 2] = { 0.0f, 0.0f };
             }
             else
             {
-                LOCO_CORE_ERROR( "CreateMeshFromData >>> one of the given indices is out of range" );
+                LOCO_CORE_ERROR( "CreateMeshVertexDataFromUserData >>> one of the given indices is out of range" );
             }
         }
-
-        static size_t num_meshes = 0;
-        auto mesh = std::make_unique<engine::CMesh>( "mesh_" + std::to_string( num_meshes++ ),
-                                                     mesh_vertices, mesh_normals, mesh_texcoords, mesh_faces );
-        return std::move( mesh );
     }
 }}

@@ -31,6 +31,8 @@ namespace loco
 
         void ChangeSize( const TVec3& new_size );
 
+        void ChangeVertexData( const std::vector<float>& vertices, const std::vector<int>& faces );
+
         void ChangeElevationData( const std::vector< float >& heights );
 
         void ChangeCollisionGroup( int collision_group );

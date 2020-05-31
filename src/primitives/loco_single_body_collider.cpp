@@ -93,6 +93,24 @@ namespace loco
             m_DrawableAdapterRef->ChangeSize( new_size );
     }
 
+    void TSingleBodyCollider::ChangeVertexData( const std::vector<float>& vertices, const std::vector<int>& faces )
+    {
+        if ( m_Data.type != eShapeType::MESH )
+        {
+            LOCO_CORE_WARN( "TSingleBodyCollider::ChangeVertexData >>> collision shape {0} is not a mesh", m_name );
+            return;
+        }
+        auto& mesh_data = m_Data.mesh_data;
+        mesh_data.vertices = vertices;
+        mesh_data.faces = faces;
+
+        if ( m_ColliderAdapterRef )
+            m_ColliderAdapterRef->ChangeVertexData( vertices, faces );
+
+        if ( m_DrawableAdapterRef )
+            m_DrawableAdapterRef->ChangeVertexData( vertices, faces );
+    }
+
     void TSingleBodyCollider::ChangeElevationData( const std::vector< float >& heights )
     {
         if ( m_Data.type != eShapeType::HFIELD )

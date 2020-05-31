@@ -258,6 +258,58 @@ namespace loco
         m_glRenderableRef->scale = m_Scale;
     }
 
+    void TOpenGLDrawableAdapter::ChangeVertexData( const std::vector<float>& vertices, const std::vector<int>& faces )
+    {
+        if ( !m_glRenderableRef )
+            return;
+
+        if ( vertices.size() % 3 != 0 )
+            LOCO_CORE_ERROR( "TOpenGLDrawableAdapter::ChangeVertexData >>> there must be 3 elements per vertex \
+                              (while trying to change vertex-data for drawable {0})", m_OwnerRef->name() );
+        if ( faces.size() % 3 != 0 )
+            LOCO_CORE_ERROR( "TOpenGLDrawableAdapter::ChangeVertexData >>> there must be 3 indices per face \
+                              (while trying to change vertex-data for drawable {0})", m_OwnerRef->name() );
+
+        const ssize_t num_faces = faces.size() / 3;
+        const ssize_t num_vertices = num_faces * 3;
+        const ssize_t num_vertices_unique = vertices.size() / 3;
+        std::vector<engine::CVec3> new_vertices_unique( num_vertices_unique );
+        std::vector<engine::CVec3> new_vertices( num_vertices );
+        std::vector<engine::CVec3> new_normals( num_vertices );
+        std::vector<engine::CVec2> new_texCoords( num_vertices );
+        std::vector<engine::CInd3> new_faces( num_faces );
+
+        glviz::CreateMeshVertexDataFromUserData( vertices, faces,
+                                                 new_vertices_unique,
+                                                 new_vertices,
+                                                 new_normals,
+                                                 new_texCoords,
+                                                 new_faces );
+
+        if ( auto gl_mesh = dynamic_cast<engine::CMesh*>( m_glRenderableRef ) )
+        {
+            gl_mesh->vertices() = new_vertices;
+            gl_mesh->normals() = new_normals;
+            gl_mesh->uvs() = new_texCoords;
+            gl_mesh->indices() = new_faces;
+            auto& gl_mesh_vao = gl_mesh->vertexArray();
+            // Resize the buffers, as the amount of data might be different
+            gl_mesh_vao->vertexBuffers()[0]->resize( sizeof( engine::CVec3 ) * new_vertices.size() );
+            gl_mesh_vao->vertexBuffers()[1]->resize( sizeof( engine::CVec3 ) * new_normals.size() );
+            gl_mesh_vao->vertexBuffers()[2]->resize( sizeof( engine::CVec2 ) * new_texCoords.size() );
+            gl_mesh_vao->indexBuffer()->resize( 3 * new_faces.size() );
+            // Update the buffers with the new vertex data
+            gl_mesh_vao->vertexBuffers()[0]->updateData( sizeof( engine::CVec3 ) * new_vertices.size(), 
+                                                         (engine::float32*)new_vertices.data() );
+            gl_mesh_vao->vertexBuffers()[1]->updateData( sizeof( engine::CVec3 ) * new_normals.size(),
+                                                         (engine::float32*)new_normals.data() );
+            gl_mesh_vao->vertexBuffers()[2]->updateData( sizeof( engine::CVec2 ) * new_texCoords.size(),
+                                                         (engine::float32*)new_texCoords.data() );
+            gl_mesh_vao->indexBuffer()->updateData( 3 * new_faces.size(),
+                                                    (engine::uint32*)new_faces.data() );
+        }
+    }
+
     void TOpenGLDrawableAdapter::ChangeElevationData( const std::vector< float >& heightData )
     {
         if ( !m_glRenderableRef )
@@ -292,11 +344,11 @@ namespace loco
             gl_hfield_mesh->indices() = new_indices;
             auto& gl_hfield_vao = gl_hfield_mesh->vertexArray();
             gl_hfield_vao->vertexBuffers()[0]->updateData( sizeof( engine::CVec3 ) * new_vertices.size(), 
-                                                         (engine::float32*)new_vertices.data() );
+                                                           (engine::float32*)new_vertices.data() );
             gl_hfield_vao->vertexBuffers()[1]->updateData( sizeof( engine::CVec3 ) * new_normals.size(),
-                                                         (engine::float32*)new_normals.data() );
+                                                           (engine::float32*)new_normals.data() );
             gl_hfield_vao->vertexBuffers()[2]->updateData( sizeof( engine::CVec2 ) * new_texCoords.size(),
-                                                         (engine::float32*)new_texCoords.data() );
+                                                           (engine::float32*)new_texCoords.data() );
             gl_hfield_vao->indexBuffer()->updateData( 3 * new_indices.size(),
                                                       (engine::uint32*)new_indices.data() );
         }

@@ -528,6 +528,12 @@ namespace loco
         /// @param scale    Scale factor applied to the mesh collider|drawable
         void SetScale( const TScalar& scale );
 
+        /// Sets the vertex-data for the mesh collider|drawable
+        ///
+        /// @param vertices     List of vertices, as triplets of triangles
+        /// @param faces        List of indices for the mesh's triangles faces
+        void SetVertexData( const std::vector<float>& vertices, const std::vector<int>& faces );
+
         /// Gets the scale of the mesh collider|drawable
         ///
         /// @return Scale factor of the mesh collider|drawable

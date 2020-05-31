@@ -430,6 +430,12 @@ namespace loco
         m_Drawable->ChangeSize( { m_Scale, m_Scale, m_Scale } );
     }
 
+    void TMesh::SetVertexData( const std::vector<float>& vertices, const std::vector<int>& faces )
+    {
+        m_Collider->ChangeVertexData( vertices, faces );
+        m_Drawable->ChangeVertexData( vertices, faces );
+    }
+
     //********************************************************************************************//
     //                            Heightfield primitive Implementation                            //
     //********************************************************************************************//

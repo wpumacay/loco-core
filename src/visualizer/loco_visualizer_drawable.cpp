@@ -111,6 +111,21 @@ namespace loco
             m_DrawableAdapter->ChangeSize( new_size );
     }
 
+    void TDrawable::ChangeVertexData( const std::vector<float>& vertices, const std::vector<int>& faces )
+    {
+        if ( m_Data.type != eShapeType::MESH )
+        {
+            LOCO_CORE_WARN( "TDrawable::ChangeElevationData >>> collision shape {0} is not a mesh", m_name );
+            return;
+        }
+        auto& mesh_data = m_Data.mesh_data;
+        mesh_data.vertices = vertices;
+        mesh_data.faces = faces;
+
+        if ( m_DrawableAdapter )
+            m_DrawableAdapter->ChangeVertexData( vertices, faces );
+    }
+
     void TDrawable::ChangeElevationData( const std::vector< float >& heights )
     {
         if ( m_Data.type != eShapeType::HFIELD )
