@@ -10,7 +10,12 @@ namespace loco
         DRAWABLE,
         SINGLE_BODY,
         SINGLE_BODY_COLLIDER,
-        SINGLE_BODY_CONSTRAINT
+        SINGLE_BODY_CONSTRAINT,
+        KINEMATIC_TREE,
+        KINEMATIC_TREE_BODY,
+        KINEMATIC_TREE_COLLIDER,
+        KINEMATIC_TREE_JOINT,
+        KINEMATIC_TREE_ACTUATOR
     };
 
     std::string ToString( const eObjectType& obj_type );
