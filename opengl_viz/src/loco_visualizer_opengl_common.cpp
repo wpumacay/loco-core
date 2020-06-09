@@ -13,6 +13,8 @@ namespace glviz {
         cameraProjData.aspect = engine::CApplication::GetInstance()->window()->aspect();
         cameraProjData.zNear = 0.1f;
         cameraProjData.zFar = 50.0f;
+        cameraProjData.viewportWidth = engine::CApplication::GetInstance()->window()->width();
+        cameraProjData.viewportHeight = engine::CApplication::GetInstance()->window()->height();
 
         switch ( vizCameraRef->type() )
         {
@@ -22,25 +24,16 @@ namespace glviz {
                                                                  vizCameraRef->position(),
                                                                  vizCameraRef->target(),
                                                                  engine::eAxis::Z,
-                                                                 cameraProjData,
-                                                                 engine::CApplication::GetInstance()->window()->width(),
-                                                                 engine::CApplication::GetInstance()->window()->height() );
+                                                                 cameraProjData );
                 break;
             }
             case loco::eVizCameraType::FPS :
             {
-                const float cameraSensitivity = 0.1f;
-                const float cameraSpeed = 50.0f;
-                const float cameraMaxDelta = 10.0f;
-
                 camera = std::make_unique<engine::CFpsCamera>( vizCameraRef->name(),
                                                                vizCameraRef->position(),
                                                                vizCameraRef->target(),
                                                                engine::eAxis::Z,
-                                                               cameraProjData,
-                                                               cameraSensitivity,
-                                                               cameraSpeed,
-                                                               cameraMaxDelta );
+                                                               cameraProjData );
                 break;
             }
             case loco::eVizCameraType::FIXED :

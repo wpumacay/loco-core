@@ -23,7 +23,7 @@ namespace loco
     {
         m_awaitingDeletion = true;
         if ( m_glCameraRef )
-            m_glCameraRef->setActiveMode( false );
+            m_glCameraRef->SetActiveMode( false );
     }
 
     void TOpenGLCameraAdapter::Reset()
@@ -31,8 +31,8 @@ namespace loco
         if ( !m_glCameraRef || !m_cameraRef )
             return;
 
-        m_glCameraRef->setPosition( m_cameraRef->position() );
-        m_glCameraRef->setTargetPoint( m_cameraRef->target() );
+        m_glCameraRef->SetPosition( m_cameraRef->position() );
+        m_glCameraRef->SetTargetPoint( m_cameraRef->target() );
     }
 
     void TOpenGLCameraAdapter::SetPosition( const TVec3& position )
@@ -40,7 +40,7 @@ namespace loco
         if ( !m_glCameraRef )
             return;
 
-        m_glCameraRef->setPosition( position );
+        m_glCameraRef->SetPosition( position );
     }
 
     void TOpenGLCameraAdapter::SetTarget( const TVec3& target )
@@ -48,7 +48,7 @@ namespace loco
         if ( !m_glCameraRef )
             return;
 
-        m_glCameraRef->setTargetPoint( target );
+        m_glCameraRef->SetTargetPoint( target );
     }
 
     void TOpenGLCameraAdapter::GetPosition( TVec3& dstPosition )
@@ -64,6 +64,6 @@ namespace loco
         if ( !m_glCameraRef )
             return;
 
-        dstTarget = m_glCameraRef->targetPoint();
+        dstTarget = m_glCameraRef->target_point();
     }
 }
