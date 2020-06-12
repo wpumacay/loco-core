@@ -4,6 +4,12 @@
 namespace loco {
 namespace kintree {
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////                                                                                        ////
+    ////                                 Joint Interface impl.                                  ////
+    ////                                                                                        ////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     TKinematicTreeJoint::TKinematicTreeJoint( const std::string& name,
                                               const TKinematicTreeJointData& joint_data )
         : TObject( name )
@@ -166,8 +172,11 @@ namespace kintree {
             m_tf = m_ParentBodyRef->tf() * m_LocalTf;
     }
 
-
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////                                                                                        ////
+    ////                                 Revolute-joint impl.                                   ////
+    ////                                                                                        ////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     TKinematicTreeRevoluteJoint::TKinematicTreeRevoluteJoint( const std::string& name,
                                                               const TMat4& local_tf,
@@ -177,26 +186,43 @@ namespace kintree {
                                                               const TScalar& armature )
         : TKinematicTreeJoint( name, TKinematicTreeJointData() )
     {
+        m_Data.type = eJointType::REVOLUTE;
+        m_Data.limits = limits;
+        m_Data.stiffness = stiffness;
+        m_Data.armature = armature;
+        m_Data.local_axis = local_axis;
+        m_Data.local_tf = local_tf;
 
+        m_NumQpos = 1;
+        m_NumQvel = 1;
+        m_Qpos = { 0.0f };
+        m_Qvel = { 0.0f };
+        m_Qpos0 = { 0.0f };
+        m_Qvel0 = { 0.0f };
     }
 
-    void SetAngle( const TScalar& angle )
+    void TKinematicTreeRevoluteJoint::SetAngle( const TScalar& angle )
     {
-
+        SetQpos( { angle } );
     }
 
-    void SetAxis( const TVec3& axis )
+    void TKinematicTreeRevoluteJoint::SetAxis( const TVec3& axis )
     {
-
+        if ( m_JointAdapterRef )
+            m_JointAdapterRef->ChangeAxis( axis );
     }
 
     void TKinematicTreeRevoluteJoint::SetLimits( const TVec2& limits )
     {
-
+        if ( m_JointAdapterRef )
+            m_JointAdapterRef->ChangeLimits( limits );
     }
 
-
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////                                                                                        ////
+    ////                                Prismatic-joint impl.                                   ////
+    ////                                                                                        ////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     TKinematicTreePrismaticJoint::TKinematicTreePrismaticJoint( const std::string& name,
                                                                 const TMat4& local_tf,
@@ -206,26 +232,43 @@ namespace kintree {
                                                                 const TScalar& armature )
         : TKinematicTreeJoint( name, TKinematicTreeJointData() )
     {
+        m_Data.type = eJointType::PRISMATIC;
+        m_Data.limits = limits;
+        m_Data.stiffness = stiffness;
+        m_Data.armature = armature;
+        m_Data.local_axis = local_axis;
+        m_Data.local_tf = local_tf;
 
+        m_NumQpos = 1;
+        m_NumQvel = 1;
+        m_Qpos = { 0.0f };
+        m_Qvel = { 0.0f };
+        m_Qpos0 = { 0.0f };
+        m_Qvel0 = { 0.0f };
     }
 
     void TKinematicTreePrismaticJoint::SetPosition( const TScalar& position )
     {
-
+        SetQpos( { position } );
     }
 
     void TKinematicTreePrismaticJoint::SetAxis( const TVec3& axis )
     {
-
+        if ( m_JointAdapterRef )
+            m_JointAdapterRef->ChangeAxis( axis );
     }
 
     void TKinematicTreePrismaticJoint::SetLimits( const TVec2& limits )
     {
-
+        if ( m_JointAdapterRef )
+            m_JointAdapterRef->ChangeLimits( limits );
     }
 
-
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////                                                                                        ////
+    ////                                Spherical-joint impl.                                   ////
+    ////                                                                                        ////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     TKinematicTreeSphericalJoint::TKinematicTreeSphericalJoint( const std::string& name,
                                                                 const TMat4& local_tf,
@@ -234,46 +277,87 @@ namespace kintree {
                                                                 const TScalar& armature )
         : TKinematicTreeJoint( name, TKinematicTreeJointData() )
     {
+        m_Data.type = eJointType::SPHERICAL;
+        m_Data.limits = limits;
+        m_Data.stiffness = stiffness;
+        m_Data.armature = armature;
+        m_Data.local_tf = local_tf;
 
+        m_NumQpos = 4;
+        m_NumQvel = 3;
+        m_Qpos = { 0.0f, 0.0f, 0.0f, 1.0f };
+        m_Qvel = { 0.0f, 0.0f, 0.0f };
+        m_Qpos0 = { 0.0f, 0.0f, 0.0f, 1.0f };
+        m_Qvel0 = { 0.0f, 0.0f, 0.0f };
     }
 
     void TKinematicTreeSphericalJoint::SetQuat( const TVec4& quat )
     {
-
+        SetQpos( { quat.x(), quat.y(), quat.z(), quat.w() } );
     }
 
     void TKinematicTreeSphericalJoint::SetLimits( const TVec2& limits )
     {
-
+        if ( m_JointAdapterRef )
+            m_JointAdapterRef->ChangeLimits( limits );
     }
 
-
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////                                                                                        ////
+    ////                                  Planar-joint impl.                                    ////
+    ////                                                                                        ////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     TKinematicTreePlanarJoint::TKinematicTreePlanarJoint( const std::string& name,
                                                           const TVec3& plane_axis_1,
                                                           const TVec3& plane_axis_2 )
         : TKinematicTreeJoint( name, TKinematicTreeJointData() )
     {
+        m_Data.type = eJointType::PLANAR;
+        m_Data.plane_axis_1 = plane_axis_1;
+        m_Data.plane_axis_2 = plane_axis_2;
 
+        m_NumQpos = 3;
+        m_NumQvel = 3;
+        m_Qpos = { 0.0f, 0.0f, 0.0f };
+        m_Qvel = { 0.0f, 0.0f, 0.0f };
+        m_Qpos0 = { 0.0f, 0.0f, 0.0f };
+        m_Qvel0 = { 0.0f, 0.0f, 0.0f };
     }
 
-
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////                                                                                        ////
+    ////                                  FIxed-joint impl.                                     ////
+    ////                                                                                        ////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     TKinematicTreeFixedJoint::TKinematicTreeFixedJoint( const std::string& name,
                                                         const TMat4& local_tf )
         : TKinematicTreeJoint( name, TKinematicTreeJointData() )
     {
+        m_Data.type = eJointType::FIXED;
+        m_Data.local_tf = local_tf;
 
+        m_NumQpos = 0;
+        m_NumQvel = 0;
     }
 
-
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    ////                                                                                        ////
+    ////                                   Free-joint impl.                                     ////
+    ////                                                                                        ////
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     TKinematicTreeFreeJoint::TKinematicTreeFreeJoint( const std::string& name )
         : TKinematicTreeJoint( name, TKinematicTreeJointData() )
     {
+        m_Data.type = eJointType::FREE;
 
+        m_NumQpos = 7;
+        m_NumQvel = 6;
+        m_Qpos = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }; // x-y-z | qx-qy-qz-qw
+        m_Qvel = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }; // x-y-z | rx-ry-rz
+        m_Qpos0 = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }; // x-y-z | qx-qy-qz-qw
+        m_Qvel0 = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }; // x-y-z | rx-ry-rz
     }
 }}

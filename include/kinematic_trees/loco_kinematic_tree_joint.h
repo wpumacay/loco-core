@@ -129,10 +129,6 @@ namespace kintree {
         ssize_t m_NumQpos = -1;
 
         ssize_t m_NumQvel = -1;
-
-        bool m_DirtySetQpos = false;
-
-        bool m_DirtySetQvel = false;
     };
 
     class TKinematicTreeRevoluteJoint : public TKinematicTreeJoint

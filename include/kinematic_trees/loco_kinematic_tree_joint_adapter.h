@@ -33,6 +33,10 @@ namespace kintree {
 
         virtual void ChangeArmature( const TScalar& armature ) = 0;
 
+        virtual void ChangeAxis( const TVec3& axis ) = 0;
+
+        virtual void ChangeLimits( const TVec2& limits ) = 0;
+
         virtual void GetQpos( std::vector<TScalar>& dst_qpos ) = 0;
 
         virtual void GetQvel( std::vector<TScalar>& dst_qvel ) = 0;
