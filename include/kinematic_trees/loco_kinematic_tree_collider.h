@@ -20,7 +20,7 @@ namespace kintree {
 
         ~TKinematicTreeCollider();
 
-        void SetParentBody( TKinematicTreeBody* parent_body_ref );
+        void SetParentBody( TKinematicTreeBody* parent_body_ref, const TMat4& local_tf );
 
         void SetColliderAdapter( TIKinematicTreeColliderAdapter* collider_adapter_ref );
 
@@ -64,8 +64,6 @@ namespace kintree {
 
         const std::vector<TContactData>& contacts() const { return m_Contacts; }
 
-        static eObjectType GetStaticType() { return eObjectType::KINEMATIC_TREE_COLLIDER; }
-
         TKinematicTreeBody* parent() { return m_ParentBodyRef; }
 
         const TKinematicTreeBody* parent() const { return m_ParentBodyRef; }
@@ -77,6 +75,8 @@ namespace kintree {
         TIDrawableAdapter* drawable_adapter() { return m_DrawableAdapterRef; }
 
         const TIDrawableAdapter* drawable_adapter() const { return m_DrawableAdapterRef; }
+
+        static eObjectType GetStaticType() { return eObjectType::KINEMATIC_TREE_COLLIDER; }
 
     protected :
 

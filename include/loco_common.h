@@ -68,6 +68,8 @@ namespace loco
     const std::string SUFFIX_COLLIDER = "_col";
     /// Suffix-string used for drawable-resources
     const std::string SUFFIX_DRAWABLE = "_vis";
+    /// Suffix-string used for joint resources
+    const std::string SUFFIX_JOINT = "_jnt";
 
     /// Default rgb ambient color used for drawables
     const TVec3 DEFAULT_AMBIENT_COLOR = { 0.7f, 0.5f, 0.3f };
