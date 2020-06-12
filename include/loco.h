@@ -6,6 +6,10 @@
 #include <primitives/loco_single_body_collider.h>
 #include <primitives/loco_single_body_primitives.h>
 #include <primitives/loco_single_body.h>
+#include <kinematic_trees/loco_kinematic_tree_collider.h>
+#include <kinematic_trees/loco_kinematic_tree_joint.h>
+#include <kinematic_trees/loco_kinematic_tree_body.h>
+#include <kinematic_trees/loco_kinematic_tree.h>
 #include <loco_scenario.h>
 #include <loco_simulation.h>
 #include <visualizer/loco_visualizer_drawable.h>

@@ -5,7 +5,7 @@ namespace loco
 {
     TScenario::TScenario()
     {
-    #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
+    #if defined(LOCO_CORE_USE_TRACK_ALLOCS)
         if ( tinyutils::Logger::IsActive() )
             LOCO_CORE_TRACE( "Loco::Allocs: Created TScenario @ {0}", tinyutils::PointerToHexAddress( this ) );
         else
@@ -16,9 +16,7 @@ namespace loco
     TScenario::~TScenario()
     {
         m_SingleBodies.clear();
-        //// m_Compounds.clear();
-        //// m_KinematicTrees.clear();
-        //// m_KinematicTreeSensors.clear();
+        m_KinematicTrees.clear();
         //// m_TerrainGenerators.clear();
 
     #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
@@ -34,18 +32,12 @@ namespace loco
         for ( auto& drawable : m_Drawables )
             drawable->Initialize();
 
-        for ( auto& singleBody : m_SingleBodies )
-            singleBody->Initialize();
+        for ( auto& single_body : m_SingleBodies )
+            single_body->Initialize();
 
-////         for ( auto& compound : m_Compounds )
-////             compound->Initialize();
-//// 
-////         for ( auto& kinTreeAgent : m_KinematicTrees )
-////             kinTreeAgent->Initialize();
-//// 
-////         for ( auto& kinTreeSensor : m_KinematicTreeSensors )
-////             kinTreeSensor->Initialize();
-//// 
+        for ( auto& kinematic_tree : m_KinematicTrees )
+            kinematic_tree->Initialize();
+
 ////         for ( auto& terrainGenerator : m_TerrainGenerators )
 ////             terrainGenerator->Initialize();
     }
@@ -55,18 +47,12 @@ namespace loco
         for ( auto& drawable : m_Drawables )
             drawable->PreStep();
 
-        for ( auto& singleBody : m_SingleBodies )
-            singleBody->PreStep();
+        for ( auto& single_body : m_SingleBodies )
+            single_body->PreStep();
 
-////         for ( auto& compound : m_Compounds )
-////             compound->PreStep();
-//// 
-////         for ( auto& kinTreeAgent : m_KinematicTrees )
-////             kinTreeAgent->PreStep();
-//// 
-////         for ( auto& kinTreeSensor : m_KinematicTreeSensors )
-////             kinTreeSensor->PreStep();
-//// 
+        for ( auto& kinematic_tree : m_KinematicTrees )
+            kinematic_tree->PreStep();
+
 ////         for ( auto& terrainGenerator : m_TerrainGenerators )
 ////             terrainGenerator->PreStep();
     }
@@ -76,18 +62,12 @@ namespace loco
         for ( auto& drawable : m_Drawables )
             drawable->PostStep();
 
-        for ( auto& singleBody : m_SingleBodies )
-            singleBody->PostStep();
+        for ( auto& single_body : m_SingleBodies )
+            single_body->PostStep();
 
-////         for ( auto& compound : m_Compounds )
-////             compound->PostStep();
-//// 
-////         for ( auto& kinTreeAgent : m_KinematicTrees )
-////             kinTreeAgent->PostStep();
-//// 
-////         for ( auto& kinTreeSensor : m_KinematicTreeSensors )
-////             kinTreeSensor->PostStep();
-//// 
+        for ( auto& kinematic_tree : m_KinematicTrees )
+            kinematic_tree->PostStep();
+
 ////         for ( auto& terrainGenerator : m_TerrainGenerators )
 ////             terrainGenerator->PostStep();
 }
@@ -97,18 +77,12 @@ namespace loco
         for ( auto& drawable : m_Drawables )
             drawable->Reset();
 
-        for ( auto& singleBody : m_SingleBodies )
-            singleBody->Reset();
+        for ( auto& single_body : m_SingleBodies )
+            single_body->Reset();
 
-////         for ( auto& compound : m_Compounds )
-////             compound->Reset();
-//// 
-////         for ( auto& kinTreeAgent : m_KinematicTrees )
-////             kinTreeAgent->Reset();
-//// 
-////         for ( auto& kinTreeSensor : m_KinematicTreeSensors )
-////             kinTreeSensor->Reset();
-//// 
+        for ( auto& kinematic_tree : m_KinematicTrees )
+            kinematic_tree->Reset();
+
 ////         for ( auto& terrainGenerator : m_TerrainGenerators )
 ////             terrainGenerator->Reset();
     }
@@ -118,18 +92,12 @@ namespace loco
         for ( auto& drawable : m_Drawables )
             drawable->DetachSim();
 
-        for ( auto& singleBody : m_SingleBodies )
-            singleBody->DetachSim();
+        for ( auto& single_body : m_SingleBodies )
+            single_body->DetachSim();
 
-////         for ( auto& compound : m_Compounds )
-////             compound->DetachSim();
-//// 
-////         for ( auto& kinTreeAgent : m_KinematicTrees )
-////             kinTreeAgent->DetachSim();
-//// 
-////         for ( auto& kinTreeSensor : m_KinematicTreeSensors )
-////             kinTreeSensor->DetachSim();
-//// 
+        for ( auto& kinematic_tree : m_KinematicTrees )
+            kinematic_tree->DetachSim();
+
 ////         for ( auto& terrainGenerator : m_TerrainGenerators )
 ////             terrainGenerator->DetachSim();
     }
@@ -139,23 +107,17 @@ namespace loco
         for ( auto& drawable : m_Drawables )
             drawable->DetachViz();
 
-        for ( auto& singleBody : m_SingleBodies )
-            singleBody->DetachViz();
+        for ( auto& single_body : m_SingleBodies )
+            single_body->DetachViz();
 
-////         for ( auto& compound : m_Compounds )
-////             compound->DetachViz();
-//// 
-////         for ( auto& kinTreeAgent : m_KinematicTrees )
-////             kinTreeAgent->DetachViz();
-//// 
-////         for ( auto& kinTreeSensor : m_KinematicTreeSensors )
-////             kinTreeSensor->DetachViz();
-//// 
+        for ( auto& kinematic_tree : m_KinematicTrees )
+            kinematic_tree->DetachViz();
+
 ////         for ( auto& terrainGenerator : m_TerrainGenerators )
 ////             terrainGenerator->DetachViz();
     }
 
-    TDrawable* TScenario::AddDrawable( std::unique_ptr< TDrawable > drawable )
+    TDrawable* TScenario::AddDrawable( std::unique_ptr<TDrawable> drawable )
     {
         LOCO_CORE_ASSERT( drawable, "TScenario::AddDrawable >>> tried adding nullptr" );
 
@@ -171,70 +133,38 @@ namespace loco
         return m_Drawables.back().get();
     }
 
-    TSingleBody* TScenario::AddSingleBody( std::unique_ptr< TSingleBody > singleBody )
+    TSingleBody* TScenario::AddSingleBody( std::unique_ptr<TSingleBody> single_body )
     {
-        LOCO_CORE_ASSERT( singleBody, "TScenario::AddSingleBody >>> tried adding nullptr" );
+        LOCO_CORE_ASSERT( single_body, "TScenario::AddSingleBody >>> tried adding nullptr" );
 
-        if ( HasSingleBodyNamed( singleBody->name() ) )
+        if ( HasSingleBodyNamed( single_body->name() ) )
         {
             LOCO_CORE_WARN( "TScenario::AddSingleBody >>> single-body with name {0} already exists. \
-                             New one won't be added, returning nullptr instead.", singleBody->name() );
+                             New one won't be added, returning nullptr instead.", single_body->name() );
             return nullptr;
         }
 
-        m_SingleBodiesMap[singleBody->name()] = m_SingleBodies.size();
-        m_SingleBodies.push_back( std::move( singleBody ) );
+        m_SingleBodiesMap[single_body->name()] = m_SingleBodies.size();
+        m_SingleBodies.push_back( std::move( single_body ) );
         return m_SingleBodies.back().get();
     }
 
-////     TCompound* TScenario::AddCompound( std::unique_ptr< TCompound > compound )
-////     {
-////         LOCO_CORE_ASSERT( compound, "TScenario::AddCompound >>> tried adding nullptr" );
-//// 
-////         if ( HasCompoundNamed( compound->name() ) )
-////         {
-////             LOCO_CORE_WARN( "TScenario::AddCompound >>> compound with name {0} already exists. \
-////                              New one won't be added, returning nullptr instead.", compound->name() );
-////             return nullptr;
-////         }
-//// 
-////         m_CompoundsMap[compound->name()] = m_Compounds.size();
-////         m_Compounds.push_back( std::move( compound ) );
-////         return m_Compounds.back().get();
-////     }
-//// 
-////     TKinTreeAgent* TScenario::AddKinTreeAgent( std::unique_ptr< TKinTreeAgent > kinTreeAgent )
-////     {
-////         LOCO_CORE_ASSERT( kinTreeAgent, "TScenario::AddKinTreeAgent >>> tried adding nullptr" );
-//// 
-////         if ( HasKinTreeAgentNamed( kinTreeAgent->name() ) )
-////         {
-////             LOCO_CORE_WARN( "TScenario::AddKinTreeAgent >>> kinTreeAgent with name {0} already exists. \
-////                              New one won't be added, returning nullptr instead.", kinTreeAgent->name() );
-////             return nullptr;
-////         }
-//// 
-////         m_KinematicTreesMap[kinTreeAgent->name()] = m_KinematicTrees.size();
-////         m_KinematicTrees.push_back( std::move( kinTreeAgent ) );
-////         return m_KinematicTrees.back().get();
-////     }
-//// 
-////     TKinTreeSensor* TScenario::AddKinTreeSensor( std::unique_ptr< TKinTreeSensor > kinTreeSensor )
-////     {
-////         LOCO_CORE_ASSERT( kinTreeSensor, "TScenario::AddKinTreeSensor >>> tried adding nullptr" );
-//// 
-////         if ( HasKinTreeSensorNamed( kinTreeSensor->name() ) )
-////         {
-////             LOCO_CORE_WARN( "TScenario::AddKinTreeSensor >>> kinTreeSensor with name {0} already exists. \
-////                              New one won't be added, returning nullptr instead.", kinTreeSensor->name() );
-////             return nullptr;
-////         }
-//// 
-////         m_KinematicTreeSensorsMap[kinTreeSensor->name()] = m_KinematicTreeSensors.size();
-////         m_KinematicTreeSensors.push_back( std::move( kinTreeSensor ) );
-////         return m_KinematicTreeSensors.back().get();
-////     }
-//// 
+     kintree::TKinematicTree* TScenario::AddKinematicTree( std::unique_ptr<kintree::TKinematicTree> kinematic_tree )
+     {
+         LOCO_CORE_ASSERT( kinematic_tree, "TScenario::AddKinematicTree >>> tried adding nullptr" );
+ 
+         if ( HasKinematicTreeNamed( kinematic_tree->name() ) )
+         {
+             LOCO_CORE_WARN( "TScenario::AddKinematicTree >>> kinematic_tree with name {0} already exists. \
+                              New one won't be added, returning nullptr instead.", kinematic_tree->name() );
+             return nullptr;
+         }
+ 
+         m_KinematicTreesMap[kinematic_tree->name()] = m_KinematicTrees.size();
+         m_KinematicTrees.push_back( std::move( kinematic_tree ) );
+         return m_KinematicTrees.back().get();
+     }
+
 ////     TTerrainGenerator* TScenario::AddTerrainGenerator( std::unique_ptr< TTerrainGenerator > terrainGenerator )
 ////     {
 ////         LOCO_CORE_ASSERT( terrainGenerator, "TScenario::AddTerrainGenerator >>> tried adding nullptr" );
@@ -273,39 +203,17 @@ namespace loco
         return get_singleBody( m_SingleBodiesMap.at( name ) );
     }
 
-////     const TCompound* TScenario::GetCompoundBodyByName( const std::string& name ) const
-////     {
-////         if( !HasCompoundBodyNamed( name ) )
-////         {
-////             LOCO_CORE_ERROR( "TScenario::GetTerrainGeneratorByName >>> terrainGenerator with name {0} not found", name );
-////             return nullptr;
-////         }
-//// 
-////         return get_compound( m_CompoundsMap.at( name ) );
-////     }
-//// 
-////     const TKinTreeAgent* TScenario::GetKinTreeAgentByName( const std::string& name ) const
-////     {
-////         if( !HasKinTreeAgentNamed( name ) )
-////         {
-////             LOCO_CORE_ERROR( "TScenario::GetKinTreeAgentByName >>> kintreeAgent with name {0} not found", name );
-////             return nullptr;
-////         }
-//// 
-////         return get_kintreeAgent( m_KinematicTreesMap.at( name ) );
-////     }
-//// 
-////     const TKinTreeSensor* TScenario::GetKinTreeSensorByName( const std::string& name ) const
-////     {
-////         if( !HasKinTreeSensorNamed( name ) )
-////         {
-////             LOCO_CORE_ERROR( "TScenario::GetKinTreeSensorByName >>> kintreeSensor with name {0} not found", name );
-////             return nullptr;
-////         }
-//// 
-////         return get_kintreeSensor( m_KinematicTreeSensorsMap.at( name ) );
-////     }
-//// 
+    const kintree::TKinematicTree* TScenario::GetKinematicTreeByName( const std::string& name ) const
+    {
+        if( !HasKinematicTreeNamed( name ) )
+        {
+            LOCO_CORE_ERROR( "TScenario::GetKinematicTreeByName >>> kintree with name {0} not found", name );
+            return nullptr;
+        }
+
+        return get_kinematic_tree( m_KinematicTreesMap.at( name ) );
+    }
+
 ////     const TTerrainGenerator* TScenario::GetTerrainGeneratorByName( const std::string& name ) const
 ////     {
 ////         if( !HasTerrainGeneratorNamed( name ) )
@@ -339,39 +247,17 @@ namespace loco
         return get_mutable_singleBody( m_SingleBodiesMap.at( name ) );
     }
 
-////     TCompound* TScenario::GetCompoundBodyByName( const std::string& name )
-////     {
-////         if( !HasCompoundBodyNamed( name ) )
-////         {
-////             LOCO_CORE_ERROR( "TScenario::GetCompoundBodyByName >>> compound with name {0} not found", name );
-////             return nullptr;
-////         }
-//// 
-////         return get_mutable_compound( m_CompoundsMap.at( name ) );
-////     }
-//// 
-////     TKinTreeAgent* TScenario::GetKinTreeAgentByName( const std::string& name )
-////     {
-////         if( !HasKinTreeAgentNamed( name ) )
-////         {
-////             LOCO_CORE_ERROR( "TScenario::GetKinTreeAgentByName >>> kintreeAgent with name {0} not found", name );
-////             return nullptr;
-////         }
-//// 
-////         return get_mutable_kintreeAgent( m_KinematicTreesMap.at( name ) );
-////     }
-//// 
-////     TKinTreeSensor* TScenario::GetKinTreeSensorByName( const std::string& name )
-////     {
-////         if( !HasKinTreeSensorNamed( name ) )
-////         {
-////             LOCO_CORE_ERROR( "TScenario::GetKinTreeSensorByName >>> kintreeSensor with name {0} not found", name );
-////             return nullptr;
-////         }
-//// 
-////         return get_mutable_kintreeSensor( m_KinematicTreeSensorsMap.at( name ) );
-////     }
-//// 
+    kintree::TKinematicTree* TScenario::GetKinematicTreeByName( const std::string& name )
+    {
+        if( !HasKinematicTreeNamed( name ) )
+        {
+            LOCO_CORE_ERROR( "TScenario::GetKinematicTreeByName >>> kintree with name {0} not found", name );
+            return nullptr;
+        }
+
+        return get_mutable_kinematic_tree( m_KinematicTreesMap.at( name ) );
+    }
+
 ////     TTerrainGenerator* TScenario::GetTerrainGeneratorByName( const std::string& name )
 ////     {
 ////         if( !HasTerrainGeneratorNamed( name ) )
@@ -413,50 +299,20 @@ namespace loco
         m_SingleBodiesMap.erase( name );
     }
 
-    // void TScenario::RemoveCompoundByName( const std::string& name )
-    // {
-    //     if ( !HasCompoundNamed( name ) )
-    //     {
-    //         LOCO_CORE_ERROR( "TScenario::RemoveCompoundByName >>> tried removing unexistent compound \"{0}\"", name );
-    //         return;
-    //     }
-    //     const ssize_t idx_compound = m_CompoundsMap.at( name );
-    //     remove_compound( idx_compound );
-    //     for ( auto kv : m_CompoundsMap )
-    //         if ( kv.second > idx_compound )
-    //             m_CompoundsMap[kv.first]--;
-    //     m_CompoundsMap.erase( name );
-    // }
-
-    // void TScenario::RemoveKinematicTreeByName( const std::string& name )
-    // {
-    //     if ( !HasKinematicTreeNamed( name ) )
-    //     {
-    //         LOCO_CORE_ERROR( "TScenario::RemoveKinematicTreeByName >>> tried removing unexistent kinematic tree \"{0}\"", name );
-    //         return;
-    //     }
-    //     const ssize_t idx_kinematic_tree = m_KinematicTreesMap.at( name );
-    //     remove_kinematic_tree( idx_kinematic_tree );
-    //     for ( auto kv : m_KinematicTreesMap )
-    //         if ( kv.second > idx_kinematic_Tree )
-    //             m_KinematicTreesMap[kv.first]--;
-    //     m_KinematicTreesMap.erase( name );
-    // }
-
-    // void TScenario::RemoveKinematicTreeSensorByName( const std::string& name )
-    // {
-    //     if ( !HasKinematicTreeSensorNamed( name ) )
-    //     {
-    //         LOCO_CORE_ERROR( "TScenario::RemoveKinematicTreeSensorByName >>> tried removing unexistent kinematic tree sensor \"{0}\"", name );
-    //         return;
-    //     }
-    //     const ssize_t idx_kinematic_tree_sensor = m_KinematicTreeSensorsMap.at( name );
-    //     remove_kinematic_tree_sensor( idx_kinematic_tree_sensor );
-    //     for ( auto kv : m_KinematicTreeSensorsMap )
-    //         if ( kv.second > idx_kinematic_tree_sensor )
-    //             m_KinematicTreeSensorsMap[kv.first]--;
-    //     m_KinematicTreeSensorsMap.erase( name );
-    // }
+    void TScenario::RemoveKinematicTreeByName( const std::string& name )
+    {
+        if ( !HasKinematicTreeNamed( name ) )
+        {
+            LOCO_CORE_ERROR( "TScenario::RemoveKinematicTreeByName >>> tried removing unexistent kinematic tree \"{0}\"", name );
+            return;
+        }
+        const ssize_t idx_kinematic_tree = m_KinematicTreesMap.at( name );
+        remove_kinematic_tree( idx_kinematic_tree );
+        for ( auto kv : m_KinematicTreesMap )
+            if ( kv.second > idx_kinematic_tree )
+                m_KinematicTreesMap[kv.first]--;
+        m_KinematicTreesMap.erase( name );
+    }
 
     // void TScenario::RemoveTerrainGeneratorByName( const std::string& name )
     // {
@@ -483,21 +339,11 @@ namespace loco
         return m_SingleBodies.size();
     }
 
-////     size_t TScenario::GetNumCompounds() const
-////     {
-////         return m_Compounds.size();
-////     }
-//// 
-////     size_t TScenario::GetNumKinTreeAgents() const
-////     {
-////         return m_KinematicTrees.size();
-////     }
-//// 
-////     size_t TScenario::GetNumKinTreeSensors() const
-////     {
-////         return m_KinematicTreeSensors.size();
-////     }
-//// 
+    size_t TScenario::GetNumKinematicTrees() const
+    {
+        return m_KinematicTrees.size();
+    }
+
 ////     size_t TScenario::GetNumTerrainGenerators() const
 ////     {
 ////         return m_TerrainGenerators.size();
@@ -513,21 +359,11 @@ namespace loco
         return m_SingleBodiesMap.find( name ) != m_SingleBodiesMap.end();
     }
 
-////     bool TScenario::HasCompoundNamed( const std::string& name ) const
-////     {
-////         return m_CompoundsMap.find( name ) != m_CompoundsMap.end();
-////     }
-//// 
-////     bool TScenario::HasKinTreeAgentNamed( const std::string& name ) const
-////     {
-////         return m_KinematicTreesMap.find( name ) != m_KinematicTreesMap.end();
-////     }
-//// 
-////     bool TScenario::HasKinTreeSensorNamed( const std::string& name ) const
-////     {
-////         return m_KinematicTreeSensorsMap.find( name ) != m_KinematicTreeSensorsMap.end();
-////     }
-//// 
+    bool TScenario::HasKinematicTreeNamed( const std::string& name ) const
+    {
+        return m_KinematicTreesMap.find( name ) != m_KinematicTreesMap.end();
+    }
+
 ////     bool TScenario::HasTerrainGeneratorNamed( const std::string& name ) const
 ////     {
 ////         return m_TerrainGeneratorsMap.find( name ) != m_TerrainGeneratorsMap.end();
@@ -535,44 +371,28 @@ namespace loco
 
     std::vector<const TDrawable*> TScenario::GetDrawablesList() const
     {
-        std::vector<const TDrawable*> _drawablesList;
+        std::vector<const TDrawable*> drawables_list;
         for ( auto& drawable : m_Drawables )
-            _drawablesList.push_back( drawable.get() );
-        return _drawablesList;
+            drawables_list.push_back( drawable.get() );
+        return drawables_list;
     }
 
     std::vector<const TSingleBody*> TScenario::GetSingleBodiesList() const
     {
-        std::vector<const TSingleBody*> _singleBodiesList;
-        for ( auto& singleBody : m_SingleBodies )
-            _singleBodiesList.push_back( singleBody.get() );
-        return _singleBodiesList;
+        std::vector<const TSingleBody*> single_bodies_list;
+        for ( auto& single_body : m_SingleBodies )
+            single_bodies_list.push_back( single_body.get() );
+        return single_bodies_list;
     }
 
-////     std::vector<const TCompound*> TScenario::GetCompoundsList() const
-////     {
-////         std::vector<const TCompound*> _compoundsList;
-////         for ( auto& compound : m_Compounds )
-////             _compoundsList.push_back( compound.get() );
-////         return _compoundsList;
-////     }
-//// 
-////     std::vector<const TKinTreeAgent*> TScenario::GetKinTreeAgentsList() const
-////     {
-////         std::vector<const TKinTreeAgent*> _kintreeAgentsList;
-////         for ( auto& kintreeAgent : m_KinematicTrees )
-////             _kintreeAgentsList.push_back( kinTreeAgent.get() );
-////         return _kintreeAgentsList;
-////     }
-//// 
-////     std::vector<const TKinTreeSensor*> TScenario::GetKinTreeSensorsList() const
-////     {
-////         std::vector<const TKinTreeSensor*> _kintreeSensorsList;
-////         for ( auto& kintreeSensor : m_KinematicTreeSensors )
-////             _kintreeSensorsList.push_back( kinTreeSensor.get() );
-////         return _kintreeSensorsList;
-////     }
-//// 
+    std::vector<const kintree::TKinematicTree*> TScenario::GetKinematicTreesList() const
+    {
+        std::vector<const kintree::TKinematicTree*> kinematic_trees_list;
+        for ( auto& kinematic_tree : m_KinematicTrees )
+            kinematic_trees_list.push_back( kinematic_tree.get() );
+        return kinematic_trees_list;
+    }
+
 ////     std::vector<const TTerrainGenerator*> TScenario::GetTerrainGeneratorsList() const
 ////     {
 ////         std::vector<const TTerrainGenerator*> _terrainGeneratorsList;
@@ -581,46 +401,30 @@ namespace loco
 ////         return _terrainGeneratorsList;
 ////     }
 
-    std::vector< TDrawable* > TScenario::GetDrawablesList()
+    std::vector<TDrawable*> TScenario::GetDrawablesList()
     {
-        std::vector<TDrawable*> _drawablesList;
+        std::vector<TDrawable*> drawables_list;
         for ( auto& drawable : m_Drawables )
-            _drawablesList.push_back( drawable.get() );
-        return _drawablesList;
+            drawables_list.push_back( drawable.get() );
+        return drawables_list;
     }
 
-    std::vector< TSingleBody* > TScenario::GetSingleBodiesList()
+    std::vector<TSingleBody*> TScenario::GetSingleBodiesList()
     {
-        std::vector<TSingleBody*> _singleBodiesList;
-        for ( auto& singleBody : m_SingleBodies )
-            _singleBodiesList.push_back( singleBody.get() );
-        return _singleBodiesList;
+        std::vector<TSingleBody*> single_bodies_list;
+        for ( auto& single_body : m_SingleBodies )
+            single_bodies_list.push_back( single_body.get() );
+        return single_bodies_list;
     }
 
-////     std::vector<TCompound*> TScenario::GetCompoundsList()
-////     {
-////         std::vector<TCompound*> _compoundsList;
-////         for ( auto& compound : m_Compounds )
-////             _compoundsList.push_back( compound.get() );
-////         return _compoundsList;
-////     }
-//// 
-////     std::vector<TKinTreeAgent*> TScenario::GetKinTreeAgentsList()
-////     {
-////         std::vector<TKinTreeAgent*> _kintreeAgentsList;
-////         for ( auto& kintreeAgent : m_KinematicTrees )
-////             _kintreeAgentsList.push_back( kinTreeAgent.get() );
-////         return _kintreeAgentsList;
-////     }
-//// 
-////     std::vector<TKinTreeSensor*> TScenario::GetKinTreeSensorsList()
-////     {
-////         std::vector<TKinTreeSensor*> _kintreeSensorsList;
-////         for ( auto& kintreeSensor : m_KinematicTreeSensors )
-////             _kintreeSensorsList.push_back( kinTreeSensor.get() );
-////         return _kintreeSensorsList;
-////     }
-//// 
+    std::vector<kintree::TKinematicTree*> TScenario::GetKinematicTreesList()
+    {
+        std::vector<kintree::TKinematicTree*> kinematic_trees_list;
+        for ( auto& kinematic_tree : m_KinematicTrees )
+            kinematic_trees_list.push_back( kinematic_tree.get() );
+        return kinematic_trees_list;
+    }
+
 ////     std::vector<TTerrainGenerator*> TScenario::GetTerrainGeneratorsList()
 ////     {
 ////         std::vector<TTerrainGenerator*> _terrainGeneratorsList;
@@ -643,26 +447,12 @@ namespace loco
         m_SingleBodies.erase( m_SingleBodies.begin() + index );
     }
 
-////     void TScenario::remove_compound( ssize_t index )
-////     {
-////         LOCO_CORE_ASSERT( ( index >= 0 && index < m_Compounds.size() ), "TScenario::remove_compound >>> \
-////                           index {0} out of range [0,{1}]", index, m_Compounds.size() - 1 );
-////         m_Compounds.erase( m_Compounds.begin() + index );
-////     }
-
-////     void TScenario::remove_kinematic_tree( ssize_t index )
-////     {
-////         LOCO_CORE_ASSERT( ( index >= 0 && index < m_KinematicTrees.size() ), "TScenario::remove_kinematic_tree >>> \
-////                           index {0} out of range [0,{1}]", index, m_KinematicTrees.size() - 1 );
-////         m_KinematicTrees.erase( m_KinematicTrees.begin() + index );
-////     }
-
-////     void TScenario::remove_kinematic_tree_sensor( ssize_t index )
-////     {
-////         LOCO_CORE_ASSERT( ( index >= 0 && index < m_KinematicTreeSensors.size() ), "TScenario::remove_kinematic_tree_sensor >>> \
-////                           index {0} out of range [0,{1}]", index, m_KinematicTreeSensors.size() - 1 );
-////         m_KinematicTreeSensors.erase( m_KinematicTreeSensors.begin() + index );
-////     }
+    void TScenario::remove_kinematic_tree( ssize_t index )
+    {
+        LOCO_CORE_ASSERT( ( index >= 0 && index < m_KinematicTrees.size() ), "TScenario::remove_kinematic_tree >>> \
+                          index {0} out of range [0,{1}]", index, m_KinematicTrees.size() - 1 );
+        m_KinematicTrees.erase( m_KinematicTrees.begin() + index );
+    }
 
 ////     void TScenario::remove_terrain_generator( ssize_t index )
 ////     {
@@ -685,27 +475,13 @@ namespace loco
         return m_SingleBodies[index].get();
     }
 
-////     const TCompound* TScenario::get_compound( ssize_t index ) const
-////     {
-////         LOCO_CORE_ASSERT( ( index >= 0 && index < m_Compounds.size() ), "TScenario::get_compound >>> \
-////                           index {0} out of range [0,{1}]", index, m_Compounds.size() );
-////         return m_Compounds[index].get();
-////     }
-//// 
-////     const TKinTreeAgent* TScenario::get_kintreeAgent( ssize_t index ) const
-////     {
-////         LOCO_CORE_ASSERT( ( index >= 0 && index < m_KinematicTrees.size() ), "TScenario::get_kintreeAgent >>> \
-////                           index {0} out of range [0,{1}]", index, m_KinematicTrees.size() );
-////         return m_KinematicTrees[index].get();
-////     }
-//// 
-////     const TKinTreeSensor* TScenario::get_kintreeSensor( ssize_t index ) const
-////     {
-////         LOCO_CORE_ASSERT( ( index >= 0 && index < m_KinematicTreeSensors.size() ), "TScenario::get_kintreeSensor >>> \
-////                           index {0} out of range [0,{1}]", index, m_KinematicTreeSensors.size() );
-////         return m_KinematicTreeSensors[index].get();
-////     }
-//// 
+    const kintree::TKinematicTree* TScenario::get_kinematic_tree( ssize_t index ) const
+    {
+        LOCO_CORE_ASSERT( ( index >= 0 && index < m_KinematicTrees.size() ), "TScenario::get_kinematic_tree >>> \
+                          index {0} out of range [0,{1}]", index, m_KinematicTrees.size() );
+        return m_KinematicTrees[index].get();
+    }
+
 ////     const TTerrainGenerator* TScenario::get_terrainGenerator( ssize_t index ) const
 ////     {
 ////         LOCO_CORE_ASSERT( ( index >= 0 && index < m_TerrainGenerators.size() ), "TScenario::get_terrainGenerator >>> \
@@ -727,27 +503,13 @@ namespace loco
         return m_SingleBodies[index].get();
     }
 
-////     TCompound* TScenario::get_mutable_compound( ssize_t index )
-////     {
-////         LOCO_CORE_ASSERT( ( index >= 0 && index < m_Compounds.size() ), "TScenario::get_mutable_compound >>> \
-////                           index {0} out of range [0,...,{1}]", index, m_Compounds.size() );
-////         return m_Compounds[index].get();
-////     }
-//// 
-////     TKinTreeAgent* TScenario::get_mutable_kintreeAgent( ssize_t index )
-////     {
-////         LOCO_CORE_ASSERT( ( index >= 0 && index < m_KinematicTrees.size() ), "TScenario::get_mutable_kintreeAgent >>> \
-////                           index {0} out of range [0,...,{1}]", index, m_KinematicTrees.size() );
-////         return m_KinematicTrees[index].get();
-////     }
-//// 
-////     TKinTreeSensor* TScenario::get_mutable_kintreeSensor( ssize_t index )
-////     {
-////         LOCO_CORE_ASSERT( ( index >= 0 && index < m_KinematicTreeSensors.size() ), "TScenario::get_mutable_kintreeSensor >>> \
-////                           index {0} out of range [0,...,{1}]", index, m_KinematicTreeSensors.size() );
-////         return m_KinematicTreeSensors[index].get();
-////     }
-//// 
+    kintree::TKinematicTree* TScenario::get_mutable_kinematic_tree( ssize_t index )
+    {
+        LOCO_CORE_ASSERT( ( index >= 0 && index < m_KinematicTrees.size() ), "TScenario::get_mutable_kinematic_tree >>> \
+                          index {0} out of range [0,...,{1}]", index, m_KinematicTrees.size() );
+        return m_KinematicTrees[index].get();
+    }
+
 ////     TTerrainGenerator* TScenario::get_mutable_terrainGenerator( ssize_t index )
 ////     {
 ////         LOCO_CORE_ASSERT( ( index >= 0 && index < m_TerrainGenerators.size() ), "TScenario::get_mutable_terrainGenerator >>> \
