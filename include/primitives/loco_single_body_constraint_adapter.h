@@ -2,8 +2,9 @@
 
 #include <primitives/loco_single_body_constraint.h>
 
-namespace loco
-{
+namespace loco {
+namespace primitives {
+
     class TISingleBodyConstraint;
 
     class TISingleBodyConstraintAdapter
@@ -67,4 +68,4 @@ namespace loco
 
         virtual void GetSlidePosition( TScalar& dst_slide_position ) = 0;
     };
-}
+}}

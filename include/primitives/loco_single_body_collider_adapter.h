@@ -2,8 +2,9 @@
 
 #include <primitives/loco_single_body_collider.h>
 
-namespace loco
-{
+namespace loco {
+namespace primitives {
+
     class TSingleBodyCollider;
 
     class TISingleBodyColliderAdapter
@@ -45,4 +46,4 @@ namespace loco
         // Flag used to check resource state
         bool m_Detached;
     };
-}
+}}

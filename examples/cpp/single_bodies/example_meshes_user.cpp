@@ -105,21 +105,21 @@ int main( int argc, char* argv[] )
     const loco::TMat3 rotation = tinymath::rotation( loco::TVec3( 0.0f, 0.0f, 0.0f ) );
 
     auto scenario = std::make_unique<loco::TScenario>();
-    scenario->AddSingleBody( std::make_unique<loco::TPlane>( "floor", 10.0f, 10.0f, loco::TVec3(), loco::TMat3() ) );
-    scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere", 0.1f, loco::TVec3( 1.0f, -1.0f, 2.0f ), rotation ) );
-    scenario->AddSingleBody( std::make_unique<loco::TMesh>( "tetrahedron_0",
+    scenario->AddSingleBody( std::make_unique<loco::primitives::TPlane>( "floor", 10.0f, 10.0f, loco::TVec3(), loco::TMat3() ) );
+    scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( "sphere", 0.1f, loco::TVec3( 1.0f, -1.0f, 2.0f ), rotation ) );
+    scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "tetrahedron_0",
                                                             TETRAHEDRON_VERTICES,
                                                             TETRAHEDRON_FACES,
                                                             1.0f, loco::TVec3( -1.0f, -1.0f, 1.0f ), rotation ) );
-    scenario->AddSingleBody( std::make_unique<loco::TMesh>( "tetrahedron_1",
+    scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "tetrahedron_1",
                                                             TETRAHEDRON_VERTICES,
                                                             TETRAHEDRON_FACES,
                                                             0.5f, loco::TVec3( -1.0f, 1.0f, 1.0f ), rotation ) );
-    scenario->AddSingleBody( std::make_unique<loco::TMesh>( "ramp_0",
+    scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "ramp_0",
                                                             RAMP_VERTICES,
                                                             RAMP_FACES,
                                                             0.3f, loco::TVec3( 1.0f, 1.0f, 1.0f ), rotation ) );
-    scenario->AddSingleBody( std::make_unique<loco::TMesh>( "ramp_1",
+    scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "ramp_1",
                                                             RAMP_VERTICES,
                                                             RAMP_FACES,
                                                             0.5f, loco::TVec3( 1.0f, -1.0f, 1.0f ), rotation ) );
@@ -136,7 +136,7 @@ int main( int argc, char* argv[] )
                                            0.5f * height };
 
         auto vertex_data = create_path_part( i );
-        scenario->AddSingleBody( std::make_unique<loco::TMesh>( "path_part_" + std::to_string( i ),
+        scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "path_part_" + std::to_string( i ),
                                                                 vertex_data.first,
                                                                 vertex_data.second,
                                                                 1.0f, com_position, loco::TMat3(),

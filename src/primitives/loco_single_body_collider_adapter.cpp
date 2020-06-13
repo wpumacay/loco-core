@@ -1,8 +1,9 @@
 
 #include <primitives/loco_single_body_collider_adapter.h>
 
-namespace loco
-{
+namespace loco {
+namespace primitives {
+
     TISingleBodyColliderAdapter::TISingleBodyColliderAdapter( TSingleBodyCollider* collider_ref )
     {
         m_ColliderRef = collider_ref;
@@ -21,4 +22,4 @@ namespace loco
         m_Detached = true;
         m_ColliderRef = nullptr;
     }
-}
+}}

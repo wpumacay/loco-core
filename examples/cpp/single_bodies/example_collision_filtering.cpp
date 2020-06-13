@@ -39,45 +39,52 @@ int main( int argc, char* argv[] )
     const float floor_depth = 20.0f;
     const int floor_colgroup = 0x7fffffff;
     const int floor_colmask = 0x7fffffff;
-    auto floor = scenario->AddSingleBody( std::make_unique<loco::TPlane>( "floor",
-                                                                          floor_width, floor_depth,
-                                                                          floor_position, floor_rotation,
-                                                                          floor_colgroup, floor_colmask ) );
+    auto floor = scenario->AddSingleBody( std::make_unique<loco::primitives::TPlane>( 
+                                                        "floor", floor_width, floor_depth,
+                                                        floor_position, floor_rotation,
+                                                        floor_colgroup, floor_colmask ) );
     floor->drawable()->ChangeColor( { 0.3, 0.5, 0.7 } );
 
     // Create some sphere-pairs, one in each pair moving in the direction of the other
     // such that they would collide if to their collision groups and masks match
 
     // Should collide with each other
-    auto sphere_1_1 = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere_1_1", 0.2f, loco::TVec3( 1.0, 1.0, 0.2 ), loco::TMat3(),
-                                                                                loco::eDynamicsType::DYNAMIC, 0b0001, 0b0001 ) );
-    auto sphere_1_2 = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere_1_2", 0.2f, loco::TVec3( 1.0, 3.0, 0.2 ), loco::TMat3(),
-                                                                                loco::eDynamicsType::DYNAMIC, 0b1111, 0b1111 ) );
+    auto sphere_1_1 = scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( 
+                                                            "sphere_1_1", 0.2f, loco::TVec3( 1.0, 1.0, 0.2 ), loco::TMat3(),
+                                                            loco::eDynamicsType::DYNAMIC, 0b0001, 0b0001 ) );
+    auto sphere_1_2 = scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( 
+                                                            "sphere_1_2", 0.2f, loco::TVec3( 1.0, 3.0, 0.2 ), loco::TMat3(),
+                                                            loco::eDynamicsType::DYNAMIC, 0b1111, 0b1111 ) );
     sphere_1_1->SetInitialLinearVelocity( { 0.0, 0.5, 0.0 } );
     sphere_1_1->drawable()->ChangeColor( { 0.7, 0.5, 0.3 } );
     sphere_1_2->drawable()->ChangeColor( { 0.7, 0.5, 0.3 } );
 
     // Shouldn't collide with each other
-    auto sphere_2_1 = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere_2_1", 0.2f, loco::TVec3( 2.0, 1.0, 0.2 ), loco::TMat3(),
-                                                                                loco::eDynamicsType::DYNAMIC, 0b0001, 0b0001 ) );
-    auto sphere_2_2 = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere_2_2", 0.2f, loco::TVec3( 2.0, 3.0, 0.2 ), loco::TMat3(),
-                                                                                loco::eDynamicsType::DYNAMIC, 0b0010, 0b0010 ) );
+    auto sphere_2_1 = scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( 
+                                                            "sphere_2_1", 0.2f, loco::TVec3( 2.0, 1.0, 0.2 ), loco::TMat3(),
+                                                            loco::eDynamicsType::DYNAMIC, 0b0001, 0b0001 ) );
+    auto sphere_2_2 = scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( 
+                                                            "sphere_2_2", 0.2f, loco::TVec3( 2.0, 3.0, 0.2 ), loco::TMat3(),
+                                                            loco::eDynamicsType::DYNAMIC, 0b0010, 0b0010 ) );
     sphere_2_1->SetInitialLinearVelocity( { 0.0, 0.5, 0.0 } );
     sphere_2_1->drawable()->ChangeColor( { 0.3, 0.7, 0.5 } );
     sphere_2_2->drawable()->ChangeColor( { 0.3, 0.7, 0.5 } );
 
     // Should collide with each other
-    auto sphere_3_1 = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere_3_1", 0.2f, loco::TVec3( 3.0, 1.0, 0.2 ), loco::TMat3(),
-                                                                                loco::eDynamicsType::DYNAMIC, 0b0010, 0b0010 ) );
-    auto sphere_3_2 = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere_3_2", 0.2f, loco::TVec3( 3.0, 3.0, 0.2 ), loco::TMat3(),
-                                                                                loco::eDynamicsType::DYNAMIC, 0b0001, 0b0010 ) );
+    auto sphere_3_1 = scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( 
+                                                            "sphere_3_1", 0.2f, loco::TVec3( 3.0, 1.0, 0.2 ), loco::TMat3(),
+                                                            loco::eDynamicsType::DYNAMIC, 0b0010, 0b0010 ) );
+    auto sphere_3_2 = scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( 
+                                                            "sphere_3_2", 0.2f, loco::TVec3( 3.0, 3.0, 0.2 ), loco::TMat3(),
+                                                            loco::eDynamicsType::DYNAMIC, 0b0001, 0b0010 ) );
     sphere_3_1->SetInitialLinearVelocity( { 0.0, 0.5, 0.0 } );
     sphere_3_1->drawable()->ChangeColor( { 0.5, 0.3, 0.7 } );
     sphere_3_2->drawable()->ChangeColor( { 0.5, 0.3, 0.7 } );
 
     // Should collide with all but 2_2
-    auto sphere_user = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere_user", 0.1f, loco::TVec3( 0.0, 0.0, 0.1 ), loco::TMat3(),
-                                                                                 loco::eDynamicsType::DYNAMIC, 0b0001, 0b0001 ) );
+    auto sphere_user = scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( 
+                                                            "sphere_user", 0.1f, loco::TVec3( 0.0, 0.0, 0.1 ), loco::TMat3(),
+                                                            loco::eDynamicsType::DYNAMIC, 0b0001, 0b0001 ) );
 
     auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, RENDERING_BACKEND );
     auto simulation = runtime->CreateSimulation( scenario.get() );

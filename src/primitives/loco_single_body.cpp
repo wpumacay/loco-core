@@ -1,8 +1,9 @@
 
 #include <primitives/loco_single_body.h>
 
-namespace loco
-{
+namespace loco {
+namespace primitives {
+
     TSingleBody::TSingleBody( const std::string& name,
                               const TVec3& position,
                               const TMat3& rotation )
@@ -265,4 +266,4 @@ namespace loco
         if ( m_Drawable )
             m_Drawable->PostStep();
     }
-}
+}}

@@ -151,10 +151,10 @@ namespace loco
         TIVisualizer* m_VisualizerRef;
 
         /// Container used to store the single-body resources used for the simulation
-        std::vector< std::unique_ptr<TISingleBodyAdapter> > m_SingleBodyAdapters;
+        std::vector< std::unique_ptr<primitives::TISingleBodyAdapter> > m_SingleBodyAdapters;
 
         /// Container used to store recycled single-body resources previously in use for the simulation
-        std::vector< std::unique_ptr<TISingleBodyAdapter> > m_SingleBodyAdaptersRecycled;
+        std::vector< std::unique_ptr<primitives::TISingleBodyAdapter> > m_SingleBodyAdaptersRecycled;
 
         // Fixed time-step used for the internal engine's integrator
         TScalar m_FixedTimeStep;

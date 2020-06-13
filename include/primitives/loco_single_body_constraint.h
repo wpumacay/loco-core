@@ -4,8 +4,9 @@
 #include <primitives/loco_single_body.h>
 #include <primitives/loco_single_body_constraint_adapter.h>
 
-namespace loco
-{
+namespace loco {
+namespace primitives {
+
     class TSingleBody;
     class TISingleBodyConstraintAdapter;
 
@@ -225,4 +226,4 @@ namespace loco
 
         void _ResetInternal() override;
     };
-}
+}}

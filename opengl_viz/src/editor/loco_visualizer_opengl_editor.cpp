@@ -164,7 +164,7 @@ namespace loco
         ImGui::End();
     }
 
-    void TOpenGLEditorLayer::_WindowInspectorSingleBody( TSingleBody* single_body_ref )
+    void TOpenGLEditorLayer::_WindowInspectorSingleBody( primitives::TSingleBody* single_body_ref )
     {
         if ( m_runtimeRef->GetCurrentSimulation() )
             return;

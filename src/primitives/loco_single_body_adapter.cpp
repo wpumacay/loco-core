@@ -1,8 +1,9 @@
 
 #include <primitives/loco_single_body_adapter.h>
 
-namespace loco
-{
+namespace loco {
+namespace primitives {
+
     TISingleBodyAdapter::TISingleBodyAdapter( TSingleBody* body_ref )
         : m_BodyRef( body_ref )
     {
@@ -26,4 +27,4 @@ namespace loco
         m_Detached = true;
         m_BodyRef = nullptr;
     }
-}
+}}

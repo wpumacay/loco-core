@@ -1,8 +1,9 @@
 
 #include <primitives/loco_single_body_primitives.h>
 
-namespace loco
-{
+namespace loco {
+namespace primitives {
+
     //********************************************************************************************//
     //                                Box primitive Implementation                                //
     //********************************************************************************************//
@@ -493,4 +494,4 @@ namespace loco
         m_Collider->ChangeElevationData( m_Heights );
         m_Drawable->ChangeElevationData( m_Heights );
     }
-}
+}}

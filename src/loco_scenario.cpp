@@ -133,7 +133,7 @@ namespace loco
         return m_Drawables.back().get();
     }
 
-    TSingleBody* TScenario::AddSingleBody( std::unique_ptr<TSingleBody> single_body )
+    primitives::TSingleBody* TScenario::AddSingleBody( std::unique_ptr<primitives::TSingleBody> single_body )
     {
         LOCO_CORE_ASSERT( single_body, "TScenario::AddSingleBody >>> tried adding nullptr" );
 
@@ -192,7 +192,7 @@ namespace loco
         return get_drawable( m_DrawablesMap.at( name ) );
     }
 
-    const TSingleBody* TScenario::GetSingleBodyByName( const std::string& name ) const
+    const primitives::TSingleBody* TScenario::GetSingleBodyByName( const std::string& name ) const
     {
         if( !HasSingleBodyNamed( name ) )
         {
@@ -236,7 +236,7 @@ namespace loco
         return get_mutable_drawable( m_DrawablesMap.at( name ) );
     }
 
-    TSingleBody* TScenario::GetSingleBodyByName( const std::string& name )
+    primitives::TSingleBody* TScenario::GetSingleBodyByName( const std::string& name )
     {
         if( !HasSingleBodyNamed( name ) )
         {
@@ -377,9 +377,9 @@ namespace loco
         return drawables_list;
     }
 
-    std::vector<const TSingleBody*> TScenario::GetSingleBodiesList() const
+    std::vector<const primitives::TSingleBody*> TScenario::GetSingleBodiesList() const
     {
-        std::vector<const TSingleBody*> single_bodies_list;
+        std::vector<const primitives::TSingleBody*> single_bodies_list;
         for ( auto& single_body : m_SingleBodies )
             single_bodies_list.push_back( single_body.get() );
         return single_bodies_list;
@@ -409,9 +409,9 @@ namespace loco
         return drawables_list;
     }
 
-    std::vector<TSingleBody*> TScenario::GetSingleBodiesList()
+    std::vector<primitives::TSingleBody*> TScenario::GetSingleBodiesList()
     {
-        std::vector<TSingleBody*> single_bodies_list;
+        std::vector<primitives::TSingleBody*> single_bodies_list;
         for ( auto& single_body : m_SingleBodies )
             single_bodies_list.push_back( single_body.get() );
         return single_bodies_list;
@@ -468,7 +468,7 @@ namespace loco
         return m_Drawables[index].get();
     }
 
-    const TSingleBody* TScenario::get_singleBody( ssize_t index ) const
+    const primitives::TSingleBody* TScenario::get_singleBody( ssize_t index ) const
     {
         LOCO_CORE_ASSERT( ( index >= 0 && index < m_SingleBodies.size() ), "TScenario::get_singleBody >>> \
                           index {0} out of range [0,{1}]", index, m_SingleBodies.size() );
@@ -496,7 +496,7 @@ namespace loco
         return m_Drawables[index].get();
     }
 
-    TSingleBody* TScenario::get_mutable_singleBody( ssize_t index )
+    primitives::TSingleBody* TScenario::get_mutable_singleBody( ssize_t index )
     {
         LOCO_CORE_ASSERT( ( index >= 0 && index < m_SingleBodies.size() ), "TScenario::get_mutable_singleBody >>> \
                           index {0} out of range [0,...,{1}]", index, m_SingleBodies.size() );

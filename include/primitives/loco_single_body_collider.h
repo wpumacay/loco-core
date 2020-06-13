@@ -5,8 +5,9 @@
 #include <primitives/loco_single_body_collider_adapter.h>
 #include <visualizer/loco_visualizer_drawable_adapter.h>
 
-namespace loco
-{
+namespace loco {
+namespace primitives {
+
     class TSingleBody;
     class TISingleBodyColliderAdapter;
 
@@ -112,4 +113,4 @@ namespace loco
         /// List of all currently detected contacts
         std::vector<TContactData> m_Contacts;
     };
-}
+}}

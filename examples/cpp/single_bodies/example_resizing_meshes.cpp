@@ -69,22 +69,22 @@ int main( int argc, char* argv[] )
     LOCO_TRACE( "Rendering-Backend: {0}", RENDERING_BACKEND );
 
     auto scenario = std::make_unique<loco::TScenario>();
-    auto floor = scenario->AddSingleBody( std::make_unique<loco::TPlane>( "floor", 40.0f, 40.0f, loco::TVec3( 0.0f, 0.0f, -0.001f ), loco::TMat3() ) );
-    auto user_sphere = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "user_sphere", 0.1f, loco::TVec3( 0.0, 0.0, 3.0 ), loco::TMat3() ) );
+    auto floor = scenario->AddSingleBody( std::make_unique<loco::primitives::TPlane>( "floor", 40.0f, 40.0f, loco::TVec3( 0.0f, 0.0f, -0.001f ), loco::TMat3() ) );
+    auto user_sphere = scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( "user_sphere", 0.1f, loco::TVec3( 0.0, 0.0, 3.0 ), loco::TMat3() ) );
 
-    auto mesh_1 = scenario->AddSingleBody( std::make_unique<loco::TMesh>( "mesh_1",
+    auto mesh_1 = scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "mesh_1",
                                                                           TETRAHEDRON_VERTICES,
                                                                           TETRAHEDRON_FACES,
                                                                           1.0f, mesh_1_position, loco::TMat3() ) );
-    auto mesh_2 = scenario->AddSingleBody( std::make_unique<loco::TMesh>( "mesh_2",
+    auto mesh_2 = scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "mesh_2",
                                                                           TETRAHEDRON_VERTICES,
                                                                           TETRAHEDRON_FACES,
                                                                           0.5f, mesh_2_position, loco::TMat3() ) );
-    auto mesh_3 = scenario->AddSingleBody( std::make_unique<loco::TMesh>( "mesh_3",
+    auto mesh_3 = scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "mesh_3",
                                                                           RAMP_VERTICES,
                                                                           RAMP_FACES,
                                                                           0.3f, mesh_3_position, loco::TMat3() ) );
-    auto mesh_4 = scenario->AddSingleBody( std::make_unique<loco::TMesh>( "mesh_4",
+    auto mesh_4 = scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "mesh_4",
                                                                           RAMP_VERTICES,
                                                                           RAMP_FACES,
                                                                           0.5f, mesh_4_position, loco::TMat3() ) );
@@ -101,7 +101,7 @@ int main( int argc, char* argv[] )
     mesh_3->drawable()->ChangeColor( { 0.1f, 0.1f, 0.8f } );
     mesh_4->drawable()->ChangeColor( { 0.5f, 0.5f, 0.5f } );
 
-    std::array<loco::TSingleBody*, 4> meshes = { mesh_1, mesh_2, mesh_3, mesh_4 };
+    std::array<loco::primitives::TSingleBody*, 4> meshes = { mesh_1, mesh_2, mesh_3, mesh_4 };
     ssize_t indx_mesh = 0;
 
     while ( visualizer->IsActive() )
@@ -125,8 +125,8 @@ int main( int argc, char* argv[] )
         else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_H ) )
         {
             for ( ssize_t i = 0; i < 4; i++ )
-                static_cast<loco::TMesh*>( meshes[i] )->SetVertexData( meshes_vertices[(i + indx_mesh) % 4],
-                                                                       meshes_indices[(i + indx_mesh) % 4] );
+                static_cast<loco::primitives::TMesh*>( meshes[i] )->SetVertexData( meshes_vertices[(i + indx_mesh) % 4],
+                                                                                   meshes_indices[(i + indx_mesh) % 4] );
             indx_mesh = (indx_mesh + 1) % 4;
         }
 

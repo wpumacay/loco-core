@@ -31,7 +31,7 @@ namespace loco
         void _WindowObjects();
 
         void _WindowInspector();
-        void _WindowInspectorSingleBody( TSingleBody* single_body_ref );
+        void _WindowInspectorSingleBody( primitives::TSingleBody* single_body_ref );
         //// void _WindowInspectorCompound( TCompound* compound_ref );
         //// void _WindowInspectorKinematicTree( TKinematicTree* kinematic_tree_ref );
         //// void _WindowInspectorTerrainGenerator( TTerrainGenerator* terrain_generator_ref );

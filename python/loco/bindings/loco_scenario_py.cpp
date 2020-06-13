@@ -39,7 +39,7 @@ namespace loco
                         return self->GetDrawableByName( name );
                     },
                     py::arg( "name" ), py::return_value_policy::reference )
-                .def( "GetSingleBodyByName", []( TScenario* self, const std::string& name ) -> TSingleBody*
+                .def( "GetSingleBodyByName", []( TScenario* self, const std::string& name ) -> primitives::TSingleBody*
                     {
                         return self->GetSingleBodyByName( name );
                     },
@@ -87,7 +87,7 @@ namespace loco
                         return self->GetDrawablesList();
                     },
                     py::return_value_policy::reference )
-                .def( "GetSingleBodiesList", []( TScenario* self ) -> std::vector<TSingleBody*>
+                .def( "GetSingleBodiesList", []( TScenario* self ) -> std::vector<primitives::TSingleBody*>
                     {
                         return self->GetSingleBodiesList();
                     },

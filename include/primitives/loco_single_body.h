@@ -6,9 +6,13 @@
 #include <primitives/loco_single_body_constraint.h>
 #include <primitives/loco_single_body_adapter.h>
 
-namespace loco
-{
+namespace loco {
     class TDrawable;
+}
+
+namespace loco {
+namespace primitives {
+
     class TSingleBodyCollider;
     class TISingleBodyConstraint;
     class TISingleBodyAdapter;
@@ -149,4 +153,4 @@ namespace loco
         // Initial angular velocity
         TVec3 m_AngularVelocity0;
     };
-}
+}}

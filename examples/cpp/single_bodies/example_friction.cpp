@@ -34,39 +34,39 @@ int main( int argc, char* argv[] )
     const float floor_depth = 20.0f;
     const int floor_colgroup = 0x7fffffff;
     const int floor_colmask = 0x7fffffff;
-    auto floor = scenario->AddSingleBody( std::make_unique<loco::TPlane>( "floor",
+    auto floor = scenario->AddSingleBody( std::make_unique<loco::primitives::TPlane>( "floor",
                                                                           floor_width, floor_depth,
                                                                           floor_position, floor_rotation,
                                                                           floor_colgroup, floor_colmask ) );
     floor->drawable()->ChangeColor( { 0.3, 0.5, 0.7 } );
     floor->collider()->ChangeFriction( 0.1 );
 
-    auto box_1 = scenario->AddSingleBody( std::make_unique<loco::TBox>( "box_1", loco::TVec3( 0.2f, 0.2f, 0.2f ), loco::TVec3( 1.0, 1.0, 0.1 ), loco::TMat3(),
+    auto box_1 = scenario->AddSingleBody( std::make_unique<loco::primitives::TBox>( "box_1", loco::TVec3( 0.2f, 0.2f, 0.2f ), loco::TVec3( 1.0, 1.0, 0.1 ), loco::TMat3(),
                                                                         loco::eDynamicsType::DYNAMIC ) );
     box_1->SetInitialLinearVelocity( { 0.0, 5.0, 0.0 } );
     box_1->drawable()->ChangeColor( { 0.7, 0.5, 0.3 } );
     box_1->collider()->ChangeFriction( 0.4 );
 
-    auto box_2 = scenario->AddSingleBody( std::make_unique<loco::TBox>( "box_2", loco::TVec3( 0.2f, 0.2f, 0.2f ), loco::TVec3( 2.0, 1.0, 0.1 ), loco::TMat3(),
+    auto box_2 = scenario->AddSingleBody( std::make_unique<loco::primitives::TBox>( "box_2", loco::TVec3( 0.2f, 0.2f, 0.2f ), loco::TVec3( 2.0, 1.0, 0.1 ), loco::TMat3(),
                                                                         loco::eDynamicsType::DYNAMIC ) );
     box_2->SetInitialLinearVelocity( { 0.0, 5.0, 0.0 } );
     box_2->drawable()->ChangeColor( { 0.3, 0.7, 0.5 } );
     box_2->collider()->ChangeFriction( 0.9 );
 
-    auto sphere_1 = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere_1", 0.2f, loco::TVec3( 3.0, 1.0, 0.2 ), loco::TMat3(),
+    auto sphere_1 = scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( "sphere_1", 0.2f, loco::TVec3( 3.0, 1.0, 0.2 ), loco::TMat3(),
                                                                               loco::eDynamicsType::DYNAMIC ) );
     sphere_1->SetInitialLinearVelocity( { 0.0, 0.5, 0.0 } );
     sphere_1->drawable()->ChangeColor( { 0.5, 0.3, 0.7 } );
     sphere_1->collider()->ChangeFriction( 0.4 );
 
-    auto sphere_2 = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere_2", 0.2f, loco::TVec3( 4.0, 1.0, 0.2 ), loco::TMat3(),
+    auto sphere_2 = scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( "sphere_2", 0.2f, loco::TVec3( 4.0, 1.0, 0.2 ), loco::TMat3(),
                                                                               loco::eDynamicsType::DYNAMIC ) );
     sphere_2->SetInitialLinearVelocity( { 0.0, 0.5, 0.0 } );
     sphere_2->drawable()->ChangeColor( { 0.5, 0.5, 0.5 } );
     sphere_2->collider()->ChangeFriction( 0.9 );
 
     // Should collide with all but 2_2
-    auto sphere_user = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere_user", 0.1f, loco::TVec3( 0.0, 0.0, 0.1 ), loco::TMat3(),
+    auto sphere_user = scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( "sphere_user", 0.1f, loco::TVec3( 0.0, 0.0, 0.1 ), loco::TMat3(),
                                                                                  loco::eDynamicsType::DYNAMIC ) );
 
     auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, RENDERING_BACKEND );

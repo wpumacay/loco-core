@@ -56,11 +56,11 @@ int main( int argc, char* argv[] )
     LOCO_TRACE( "Rendering-Backend: {0}", RENDERING_BACKEND );
 
     auto scenario = std::make_unique<loco::TScenario>();
-    auto floor = scenario->AddSingleBody( std::make_unique<loco::TPlane>( "floor", 40.0f, 40.0f, loco::TVec3( 0.0f, 0.0f, -0.001f ), loco::TMat3() ) );
+    auto floor = scenario->AddSingleBody( std::make_unique<loco::primitives::TPlane>( "floor", 40.0f, 40.0f, loco::TVec3( 0.0f, 0.0f, -0.001f ), loco::TMat3() ) );
     floor->drawable()->ChangeColor( { 0.3f, 0.5f, 0.7f } );
 
-    auto sphere = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere", 0.1f, loco::TVec3( 0.0, 0.0, 10.0 ), loco::TMat3() ) );
-    auto hfield = scenario->AddSingleBody( std::make_unique<loco::THeightfield>( "hfield",
+    auto sphere = scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( "sphere", 0.1f, loco::TVec3( 0.0, 0.0, 10.0 ), loco::TMat3() ) );
+    auto hfield = scenario->AddSingleBody( std::make_unique<loco::primitives::THeightfield>( "hfield",
                                                                                  nx_samples_hfield, ny_samples_hfield,
                                                                                  x_extent_hfield, y_extent_hfield,
                                                                                  create_hfield_deeploco_terrain(),

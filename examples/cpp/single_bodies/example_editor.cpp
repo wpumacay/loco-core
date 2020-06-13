@@ -62,24 +62,24 @@ int main( int argc, char* argv[] )
     const loco::TMat3 rotation = tinymath::rotation( loco::TVec3( 0.0f, 0.0f, 0.0f ) );
 
     auto scenario = std::make_unique<loco::TScenario>();
-    scenario->AddSingleBody( std::make_unique<loco::TPlane>( "floor", 10.0f, 10.0f, loco::TVec3(), loco::TMat3() ) );
+    scenario->AddSingleBody( std::make_unique<loco::primitives::TPlane>( "floor", 10.0f, 10.0f, loco::TVec3(), loco::TMat3() ) );
     for ( ssize_t i = 0; i < NUM_BOXES; i++ )
-        scenario->AddSingleBody( std::make_unique<loco::TBox>( "box_" + std::to_string( i ), loco::TVec3( 0.2f, 0.3f, 0.4f ),
+        scenario->AddSingleBody( std::make_unique<loco::primitives::TBox>( "box_" + std::to_string( i ), loco::TVec3( 0.2f, 0.3f, 0.4f ),
                                                                random_position(), tinymath::rotation( random_rotation() ) ) );
     for ( ssize_t i = 0; i < NUM_SPHERES; i++ )
-        scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere_" + std::to_string( i ), 0.1f,
+        scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( "sphere_" + std::to_string( i ), 0.1f,
                                                                   random_position(), tinymath::rotation( random_rotation() ) ) );
     for ( ssize_t i = 0; i < NUM_CYLINDERS; i++ )
-        scenario->AddSingleBody( std::make_unique<loco::TCylinder>( "cylinder_" + std::to_string( i ), 0.2f, 0.5f,
+        scenario->AddSingleBody( std::make_unique<loco::primitives::TCylinder>( "cylinder_" + std::to_string( i ), 0.2f, 0.5f,
                                                                     random_position(), tinymath::rotation( random_rotation() ) ) );
     for ( ssize_t i = 0; i < NUM_CAPSULES; i++ )
-        scenario->AddSingleBody( std::make_unique<loco::TCapsule>( "capsule_" + std::to_string( i ), 0.2f, 0.5f,
+        scenario->AddSingleBody( std::make_unique<loco::primitives::TCapsule>( "capsule_" + std::to_string( i ), 0.2f, 0.5f,
                                                                    random_position(), tinymath::rotation( random_rotation() ) ) );
     for ( ssize_t i = 0; i < NUM_ELLIPSOIDS; i++ )
-        scenario->AddSingleBody( std::make_unique<loco::TEllipsoid>( "ellipsoid_" + std::to_string( i ), loco::TVec3( 0.2f, 0.3f, 0.4f ),
+        scenario->AddSingleBody( std::make_unique<loco::primitives::TEllipsoid>( "ellipsoid_" + std::to_string( i ), loco::TVec3( 0.2f, 0.3f, 0.4f ),
                                                                      random_position(), tinymath::rotation( random_rotation() ) ) );
     for ( ssize_t i = 0; i < NUM_MESHES; i++ )
-        scenario->AddSingleBody( std::make_unique<loco::TMesh>( "monkey_",
+        scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "monkey_",
                                                                 loco::PATH_RESOURCES + "meshes/monkey.stl",
                                                                 loco::PATH_RESOURCES + "meshes/monkey.obj",
                                                                 0.25f, random_position(), tinymath::rotation( random_rotation() ) ) );

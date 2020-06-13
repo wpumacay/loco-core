@@ -1,8 +1,9 @@
 
 #include <primitives/loco_single_body_constraint.h>
 
-namespace loco
-{
+namespace loco {
+namespace primitives {
+
     std::string ToString( const eConstraintType& type )
     {
         if ( type == eConstraintType::NONE ) return "none";
@@ -416,4 +417,4 @@ namespace loco
     {
         // Nothing to setup for a reset request (adapter is handled by parent body)
     }
-}
+}}

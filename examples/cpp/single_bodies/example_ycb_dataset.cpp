@@ -31,28 +31,28 @@ int main( int argc, char* argv[] )
     //// const loco::TMat3 rotation = tinymath::rotation( loco::TVec3( 0.0f, 0.0f, 0.0f ) );
 
     auto scenario = std::make_unique<loco::TScenario>();
-    scenario->AddSingleBody( std::make_unique<loco::TPlane>( "floor", 10.0f, 10.0f, loco::TVec3(), loco::TMat3() ) );
-    scenario->AddSingleBody( std::make_unique<loco::TMesh>( "mesh_ycb_1",
+    scenario->AddSingleBody( std::make_unique<loco::primitives::TPlane>( "floor", 10.0f, 10.0f, loco::TVec3(), loco::TMat3() ) );
+    scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "mesh_ycb_1",
                                                             loco::PATH_RESOURCES + "meshes/ycb/001_chips_can/tsdf/nontextured.stl",
                                                             loco::PATH_RESOURCES + "meshes/ycb/001_chips_can/tsdf/textured.obj",
                                                             1.0f, loco::TVec3( 0.0f, 0.0f, 1.0f ), rotation ) );
-    scenario->AddSingleBody( std::make_unique<loco::TMesh>( "mesh_ycb_2",
+    scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "mesh_ycb_2",
                                                             loco::PATH_RESOURCES + "meshes/ycb/002_master_chef_can/tsdf/nontextured.stl",
                                                             loco::PATH_RESOURCES + "meshes/ycb/002_master_chef_can/tsdf/textured.obj",
                                                             1.0f, loco::TVec3( 0.0f, -1.0f, 1.0f ), rotation ) );
-    scenario->AddSingleBody( std::make_unique<loco::TMesh>( "mesh_ycb_3",
+    scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "mesh_ycb_3",
                                                             loco::PATH_RESOURCES + "meshes/ycb/003_cracker_box/tsdf/nontextured.stl",
                                                             loco::PATH_RESOURCES + "meshes/ycb/003_cracker_box/tsdf/textured.obj",
                                                             1.0f, loco::TVec3( 1.0f, -1.0f, 1.0f ), rotation ) );
-    scenario->AddSingleBody( std::make_unique<loco::TMesh>( "mesh_ycb_4",
+    scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "mesh_ycb_4",
                                                             loco::PATH_RESOURCES + "meshes/ycb/004_sugar_box/tsdf/nontextured.stl",
                                                             loco::PATH_RESOURCES + "meshes/ycb/004_sugar_box/tsdf/textured.obj",
                                                             1.0f, loco::TVec3( -1.0f, 1.0f, 1.0f ), rotation ) );
-    scenario->AddSingleBody( std::make_unique<loco::TMesh>( "mesh_ycb_5",
+    scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "mesh_ycb_5",
                                                             loco::PATH_RESOURCES + "meshes/ycb/005_tomato_soup_can/tsdf/nontextured.stl",
                                                             loco::PATH_RESOURCES + "meshes/ycb/005_tomato_soup_can/tsdf/textured.obj",
                                                             1.0f, loco::TVec3( 1.0f, 1.0f, 1.0f ), rotation ) );
-    scenario->AddSingleBody( std::make_unique<loco::TMesh>( "mesh_ycb_6",
+    scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "mesh_ycb_6",
                                                             loco::PATH_RESOURCES + "meshes/ycb/006_mustard_bottle/tsdf/nontextured.stl",
                                                             loco::PATH_RESOURCES + "meshes/ycb/006_mustard_bottle/tsdf/textured.obj",
                                                             1.0f, loco::TVec3( -1.0f, -1.0f, 1.0f ), rotation ) );

@@ -30,7 +30,7 @@ TEST( TestLocoComponents, TestCollisionObject )
     col_data.type = loco::eShapeType::BOX;
     col_data.size = { 0.1, 0.2, 0.3 };
 
-    auto col_obj = std::make_unique<loco::TSingleBodyCollider>( "col_0", col_data );
+    auto col_obj = std::make_unique<loco::primitives::TSingleBodyCollider>( "col_0", col_data );
     // Call methods (nothing should happen, as the collider is not in a simulation)
     col_obj->Initialize();
     col_obj->PreStep();
@@ -97,7 +97,7 @@ TEST( TestLocoComponents, TestSingleBodyObject )
     body_data.collision = col_data;
     body_data.visual = vis_data;
 
-    auto body_obj = std::make_unique<loco::TSingleBody>( "body_0", body_data, tinymath::Vector3f( 1.0, 1.0, 1.0 ), tinymath::Matrix3f() );
+    auto body_obj = std::make_unique<loco::primitives::TSingleBody>( "body_0", body_data, tinymath::Vector3f( 1.0, 1.0, 1.0 ), tinymath::Matrix3f() );
     // Call methods (nothing should happen, as the body is not in a simulation)
     body_obj->Initialize();
     body_obj->PreStep();
@@ -128,7 +128,7 @@ TEST( TestLocoComponents, TestSingleBodyObject )
     col_data_2.size = { 0.1, 0.2, 0.1 };
 
     auto vis_obj_2 = std::make_unique<loco::TDrawable>( "vis_2_replacement", vis_data_2 );
-    auto col_obj_2 = std::make_unique<loco::TSingleBodyCollider>( "col_2_replacement", col_data_2 );
+    auto col_obj_2 = std::make_unique<loco::primitives::TSingleBodyCollider>( "col_2_replacement", col_data_2 );
     body_obj->SetDrawable( std::move( vis_obj_2 ) );
     body_obj->SetCollider( std::move( col_obj_2 ) );
     EXPECT_EQ( body_obj->drawable()->name(), "vis_2_replacement" );

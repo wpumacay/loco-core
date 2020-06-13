@@ -2,8 +2,8 @@
 
 #include <primitives/loco_single_body.h>
 
-namespace loco
-{
+namespace loco {
+namespace primitives {
     /// Box primitive, corresponding to a single-body with box-shaped collider and drawable
     ///
     /// @details
@@ -636,4 +636,4 @@ namespace loco
         /// Elevation data of the heightfield
         std::vector<float> m_Heights;
     };
-}
+}}

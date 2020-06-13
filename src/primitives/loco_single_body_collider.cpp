@@ -1,8 +1,9 @@
 
 #include <primitives/loco_single_body_collider.h>
 
-namespace loco
-{
+namespace loco {
+namespace primitives {
+
     TSingleBodyCollider::TSingleBodyCollider( const std::string& name,
                                               const TCollisionData& collisionData )
         : TObject( name )
@@ -211,4 +212,4 @@ namespace loco
         // Recover transform from parent
         m_tf = m_ParentBodyRef->tf();
     }
-}
+}}

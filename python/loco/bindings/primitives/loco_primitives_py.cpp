@@ -4,8 +4,9 @@
 
 namespace py = pybind11;
 
-namespace loco
-{
+namespace loco {
+namespace primitives {
+
     void bindings_primitives( py::module& m )
     {
         // Bindings for TSingleBodyCollider class
@@ -740,4 +741,4 @@ namespace loco
                      py::arg( "name" ) );
         }
     }
-}
+}}

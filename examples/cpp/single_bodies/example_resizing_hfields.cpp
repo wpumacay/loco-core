@@ -57,25 +57,25 @@ int main( int argc, char* argv[] )
     LOCO_TRACE( "Rendering-Backend: {0}", RENDERING_BACKEND );
 
     auto scenario = std::make_unique<loco::TScenario>();
-    auto floor = scenario->AddSingleBody( std::make_unique<loco::TPlane>( "floor", 40.0f, 40.0f, loco::TVec3( 0.0f, 0.0f, -0.001f ), loco::TMat3() ) );
-    auto user_sphere = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "user_sphere", 0.1f, loco::TVec3( 0.0, 0.0, 3.0 ), loco::TMat3() ) );
+    auto floor = scenario->AddSingleBody( std::make_unique<loco::primitives::TPlane>( "floor", 40.0f, 40.0f, loco::TVec3( 0.0f, 0.0f, -0.001f ), loco::TMat3() ) );
+    auto user_sphere = scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( "user_sphere", 0.1f, loco::TVec3( 0.0, 0.0, 3.0 ), loco::TMat3() ) );
 
-    auto hfield_1 = scenario->AddSingleBody( std::make_unique<loco::THeightfield>( "hfield_1",
+    auto hfield_1 = scenario->AddSingleBody( std::make_unique<loco::primitives::THeightfield>( "hfield_1",
                                                                                    nx_samples_hfield, ny_samples_hfield,
                                                                                    x_extent_hfield, y_extent_hfield,
                                                                                    create_hfield_perlin_noise( hfield_1_position.x(), hfield_1_position.y() ),
                                                                                    hfield_1_position, loco::TMat3() ) );
-    auto hfield_2 = scenario->AddSingleBody( std::make_unique<loco::THeightfield>( "hfield_2",
+    auto hfield_2 = scenario->AddSingleBody( std::make_unique<loco::primitives::THeightfield>( "hfield_2",
                                                                                    nx_samples_hfield, ny_samples_hfield,
                                                                                    x_extent_hfield, y_extent_hfield,
                                                                                    create_hfield_perlin_noise( hfield_2_position.x(), hfield_2_position.y() ),
                                                                                    hfield_2_position, loco::TMat3() ) );
-    auto hfield_3 = scenario->AddSingleBody( std::make_unique<loco::THeightfield>( "hfield_3",
+    auto hfield_3 = scenario->AddSingleBody( std::make_unique<loco::primitives::THeightfield>( "hfield_3",
                                                                                    nx_samples_hfield, ny_samples_hfield,
                                                                                    x_extent_hfield, y_extent_hfield,
                                                                                    create_hfield_perlin_noise( hfield_3_position.x(), hfield_3_position.y() ),
                                                                                    hfield_3_position, loco::TMat3() ) );
-    auto hfield_4 = scenario->AddSingleBody( std::make_unique<loco::THeightfield>( "hfield_4",
+    auto hfield_4 = scenario->AddSingleBody( std::make_unique<loco::primitives::THeightfield>( "hfield_4",
                                                                                    nx_samples_hfield, ny_samples_hfield,
                                                                                    x_extent_hfield, y_extent_hfield,
                                                                                    create_hfield_perlin_noise( hfield_4_position.x(), hfield_4_position.y() ),
@@ -97,7 +97,7 @@ int main( int argc, char* argv[] )
     hfield_4->drawable()->ChangeTexture( "built_in_chessboard" );
 
     std::array<loco::TVec3, 4> offsets = { hfield_1_position, hfield_2_position, hfield_3_position, hfield_4_position };
-    std::array<loco::TSingleBody*, 4> hfields = { hfield_1, hfield_2, hfield_3, hfield_4 };
+    std::array<loco::primitives::TSingleBody*, 4> hfields = { hfield_1, hfield_2, hfield_3, hfield_4 };
     ssize_t indx_hfield = 0;
 
     while ( visualizer->IsActive() )
@@ -124,7 +124,7 @@ int main( int argc, char* argv[] )
             {
                 float x_offset = offsets[(i + indx_hfield) % 4].x();
                 float y_offset = offsets[(i + indx_hfield) % 4].y();
-                static_cast<loco::THeightfield*>( hfields[i] )->SetHeights( create_hfield_perlin_noise( x_offset, y_offset ) );
+                static_cast<loco::primitives::THeightfield*>( hfields[i] )->SetHeights( create_hfield_perlin_noise( x_offset, y_offset ) );
             }
             indx_hfield = (indx_hfield + 1) % 4;
         }

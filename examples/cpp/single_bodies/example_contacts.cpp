@@ -31,10 +31,10 @@ int main( int argc, char* argv[] )
     const loco::TMat3 rotation = tinymath::rotation( loco::TVec3( 0.0f, 0.0f, 0.0f ) );
 
     auto scenario = std::make_unique<loco::TScenario>();
-    auto floor = scenario->AddSingleBody( std::make_unique<loco::TPlane>( "floor", 10.0f, 10.0f, loco::TVec3(), loco::TMat3() ) );
-    auto sphere = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere", 0.1f, loco::TVec3( 1.0f, -1.0f, 2.0f ), loco::TMat3() ) );
-    auto goal = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "goal", 0.4f, loco::TVec3( 0.0f, 0.0f, 0.4f ), loco::TMat3() ) );
-    auto box = scenario->AddSingleBody( std::make_unique<loco::TBox>( "box", loco::TVec3( 0.2f, 0.3f, 0.4f ), loco::TVec3( -1.0f, -1.0f, 2.0f ), rotation ) );
+    auto floor = scenario->AddSingleBody( std::make_unique<loco::primitives::TPlane>( "floor", 10.0f, 10.0f, loco::TVec3(), loco::TMat3() ) );
+    auto sphere = scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( "sphere", 0.1f, loco::TVec3( 1.0f, -1.0f, 2.0f ), loco::TMat3() ) );
+    auto goal = scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( "goal", 0.4f, loco::TVec3( 0.0f, 0.0f, 0.4f ), loco::TMat3() ) );
+    auto box = scenario->AddSingleBody( std::make_unique<loco::primitives::TBox>( "box", loco::TVec3( 0.2f, 0.3f, 0.4f ), loco::TVec3( -1.0f, -1.0f, 2.0f ), rotation ) );
 
     auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, RENDERING_BACKEND );
     auto simulation = runtime->CreateSimulation( scenario.get() );

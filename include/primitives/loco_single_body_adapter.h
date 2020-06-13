@@ -4,8 +4,9 @@
 #include <primitives/loco_single_body_collider_adapter.h>
 #include <primitives/loco_single_body_constraint_adapter.h>
 
-namespace loco
-{
+namespace loco {
+namespace primitives {
+
     class TSingleBody;
     class TISingleBodyColliderAdapter;
     class TISingleBodyConstraintAdapter;
@@ -67,4 +68,4 @@ namespace loco
         // Adapter for related constraint object
         std::unique_ptr<TISingleBodyConstraintAdapter> m_ConstraintAdapter;
     };
-}
+}}

@@ -60,23 +60,23 @@ int main( int argc, char* argv[] )
     LOCO_TRACE( "Rendering-Backend: {0}", RENDERING_BACKEND );
 
     auto scenario = std::make_unique<loco::TScenario>();
-    auto floor = scenario->AddSingleBody( std::make_unique<loco::TPlane>( "floor", 40.0f, 40.0f, loco::TVec3( 0.0f, 0.0f, -0.001f ), loco::TMat3() ) );
+    auto floor = scenario->AddSingleBody( std::make_unique<loco::primitives::TPlane>( "floor", 40.0f, 40.0f, loco::TVec3( 0.0f, 0.0f, -0.001f ), loco::TMat3() ) );
     floor->drawable()->ChangeColor( { 0.3f, 0.5f, 0.7f } );
 
-    auto sphere = scenario->AddSingleBody( std::make_unique<loco::TSphere>( "sphere", 0.1f, loco::TVec3( 0.0, 0.0, 5.0 ), loco::TMat3() ) );
-    auto hfield_1 = scenario->AddSingleBody( std::make_unique<loco::THeightfield>( "hfield_1",
+    auto sphere = scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( "sphere", 0.1f, loco::TVec3( 0.0, 0.0, 5.0 ), loco::TMat3() ) );
+    auto hfield_1 = scenario->AddSingleBody( std::make_unique<loco::primitives::THeightfield>( "hfield_1",
                                                                                    nx_samples_hfield_1, ny_samples_hfield_1,
                                                                                    x_extent_hfield_1, y_extent_hfield_1,
                                                                                    create_hfield_deepterrainrl_terrain_chunk_1(),
                                                                                    loco::TVec3(), loco::TMat3() ) );
     hfield_1->drawable()->ChangeColor( { 0.5f, 0.5f, 0.5f } );
-    auto hfield_2 = scenario->AddSingleBody( std::make_unique<loco::THeightfield>( "hfield_2",
+    auto hfield_2 = scenario->AddSingleBody( std::make_unique<loco::primitives::THeightfield>( "hfield_2",
                                                                                    nx_samples_hfield_2, ny_samples_hfield_2,
                                                                                    x_extent_hfield_2, y_extent_hfield_2,
                                                                                    create_hfield_deepterrainrl_terrain_chunk_2(),
                                                                                    loco::TVec3( 11.0, 0.0, 0.0 ), loco::TMat3() ) );
     hfield_2->drawable()->ChangeColor( { 0.5f, 0.5f, 0.5f } );
-    auto hfield_3 = scenario->AddSingleBody( std::make_unique<loco::THeightfield>( "hfield_3",
+    auto hfield_3 = scenario->AddSingleBody( std::make_unique<loco::primitives::THeightfield>( "hfield_3",
                                                                                    nx_samples_hfield_3, ny_samples_hfield_3,
                                                                                    x_extent_hfield_3, y_extent_hfield_3,
                                                                                    create_hfield_deepterrainrl_terrain_chunk_3(),
