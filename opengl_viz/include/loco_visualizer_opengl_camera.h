@@ -3,8 +3,9 @@
 #include <visualizer/loco_visualizer_camera.h>
 #include <loco_visualizer_opengl_common.h>
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     class TOpenGLCameraAdapter : public TVizCameraAdapter
     {
     public :
@@ -30,4 +31,4 @@ namespace loco
 
         engine::CICamera* m_glCameraRef;
     };
-}
+}}

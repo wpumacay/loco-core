@@ -21,17 +21,17 @@ namespace loco
         void DetachSim();
         void DetachViz();
 
-        TDrawable* AddDrawable( std::unique_ptr<TDrawable> drawable );
+        visualizer::TDrawable* AddDrawable( std::unique_ptr<visualizer::TDrawable> drawable );
         primitives::TSingleBody* AddSingleBody( std::unique_ptr<primitives::TSingleBody> body );
         kintree::TKinematicTree* AddKinematicTree( std::unique_ptr<kintree::TKinematicTree> kintree );
         //// TITerrainGenerator* AddTerrainGenerator( std::unique_ptr< TITerrainGenerator > terrainGenerator );
 
-        TDrawable* GetDrawableByName( const std::string& name );
+        visualizer::TDrawable* GetDrawableByName( const std::string& name );
         primitives::TSingleBody* GetSingleBodyByName( const std::string& name );
         kintree::TKinematicTree* GetKinematicTreeByName( const std::string& name );
         //// TTerrainGenerator* GetTerrainGeneratorByName( const std::string& name );
 
-        const TDrawable* GetDrawableByName( const std::string& name ) const;
+        const visualizer::TDrawable* GetDrawableByName( const std::string& name ) const;
         const primitives::TSingleBody* GetSingleBodyByName( const std::string& name ) const;
         const kintree::TKinematicTree* GetKinematicTreeByName( const std::string& name ) const;
         //// const TTerrainGenerator* GetTerrainGeneratorByName( const std::string& name ) const;
@@ -51,12 +51,12 @@ namespace loco
         bool HasKinematicTreeNamed( const std::string& name ) const;
         //// bool HasTerrainGeneratorNamed( const std::string& name ) const;
 
-        std::vector<TDrawable*> GetDrawablesList();
+        std::vector<visualizer::TDrawable*> GetDrawablesList();
         std::vector<primitives::TSingleBody*> GetSingleBodiesList();
         std::vector<kintree::TKinematicTree*> GetKinematicTreesList();
         //// std::vector<TTerrainGenerator*> GetTerrainGeneratorsList();
 
-        std::vector<const TDrawable*> GetDrawablesList() const;
+        std::vector<const visualizer::TDrawable*> GetDrawablesList() const;
         std::vector<const primitives::TSingleBody*> GetSingleBodiesList() const;
         std::vector<const kintree::TKinematicTree*> GetKinematicTreesList() const;
         //// std::vector<const TTerrainGenerator*> GetTerrainGeneratorsList() const;
@@ -66,19 +66,19 @@ namespace loco
         void remove_kinematic_tree( ssize_t index );
         //// void remove_terrain_generator( ssize_t index );
 
-        TDrawable* get_mutable_drawable( ssize_t index );
+        visualizer::TDrawable* get_mutable_drawable( ssize_t index );
         primitives::TSingleBody* get_mutable_singleBody( ssize_t index );
         kintree::TKinematicTree* get_mutable_kinematic_tree( ssize_t index );
         //// TTerrainGenerator* get_mutable_terrainGenerator( ssize_t index );
 
-        const TDrawable* get_drawable( ssize_t index ) const;
+        const visualizer::TDrawable* get_drawable( ssize_t index ) const;
         const primitives::TSingleBody* get_singleBody( ssize_t index ) const;
         const kintree::TKinematicTree* get_kinematic_tree( ssize_t index ) const;
         //// const TTerrainGenerator* get_terrainGenerator( ssize_t index ) const;
 
     private :
 
-        std::vector<std::unique_ptr<TDrawable>> m_Drawables;
+        std::vector<std::unique_ptr<visualizer::TDrawable>> m_Drawables;
         std::vector<std::unique_ptr<primitives::TSingleBody>> m_SingleBodies;
         std::vector<std::unique_ptr<kintree::TKinematicTree>> m_KinematicTrees;
         //// std::vector< std::unique_ptr< TTerrainGenerator > > m_TerrainGenerators;

@@ -2,8 +2,9 @@
 
 #include <loco_data.h>
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     class TDrawable;
 
     class TIDrawableAdapter
@@ -60,4 +61,4 @@ namespace loco
         // Whether or not the adapter is ready to be freed
         bool m_AwaitingDeletion;
     };
-}
+}}

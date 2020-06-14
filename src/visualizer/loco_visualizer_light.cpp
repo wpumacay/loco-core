@@ -1,8 +1,9 @@
 
 #include <visualizer/loco_visualizer_light.h>
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     std::string ToString( const eVizLightType& type )
     {
         if ( type == eVizLightType::DIRECTIONAL ) return "directional";
@@ -146,4 +147,4 @@ namespace loco
         if ( m_adapterRef )
             m_adapterRef->ChangeOuterCutoff( outerCutoff );
     }
-}
+}}

@@ -8,11 +8,13 @@
 #include <loco_simulation.h>
 #include <loco_runtime.h>
 
-
-namespace loco
-{
+namespace loco {
     class TISimulation;
     class TRuntime;
+}
+
+namespace loco {
+namespace visualizer {
 
     enum class eRenderMode : uint8_t
     {
@@ -206,4 +208,4 @@ namespace loco
         void _ChangeCurrentCameraInternal( TVizCamera* cameraRef ) override {}
         void _ChangeCurrentLightInternal( TVizLight* lightRef ) override {}
     };
-}
+}}

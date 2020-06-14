@@ -7,8 +7,9 @@
 #include <primitives/loco_single_body_adapter.h>
 
 namespace loco {
+namespace visualizer {
     class TDrawable;
-}
+}}
 
 namespace loco {
 namespace primitives {
@@ -38,7 +39,7 @@ namespace primitives {
 
         void SetConstraint( std::unique_ptr<TISingleBodyConstraint> constraint );
 
-        void SetDrawable( std::unique_ptr<TDrawable> drawable );
+        void SetDrawable( std::unique_ptr<visualizer::TDrawable> drawable );
 
         void SetLinearVelocity( const TVec3& linear_vel );
 
@@ -100,9 +101,9 @@ namespace primitives {
 
         const TISingleBodyConstraint* constraint() const { return m_Constraint.get(); }
 
-        TDrawable* drawable() { return m_Drawable.get(); }
+        visualizer::TDrawable* drawable() { return m_Drawable.get(); }
 
-        const TDrawable* drawable() const { return m_Drawable.get(); }
+        const visualizer::TDrawable* drawable() const { return m_Drawable.get(); }
 
         TISingleBodyAdapter* adapter() { return m_BodyAdapter; }
 
@@ -133,11 +134,11 @@ namespace primitives {
         // Adapter-object that gives access to the low-level API for a specific backend
         TISingleBodyAdapter* m_BodyAdapter;
         // Single-body collider (collider object) associated with this body
-        std::unique_ptr< TSingleBodyCollider > m_Collider;
+        std::unique_ptr<TSingleBodyCollider> m_Collider;
         // Single-body constraint (constraint object) associated with this body
-        std::unique_ptr< TISingleBodyConstraint > m_Constraint;
+        std::unique_ptr<TISingleBodyConstraint> m_Constraint;
         // Single drawable (viewer object) associated with this body
-        std::unique_ptr< TDrawable > m_Drawable;
+        std::unique_ptr<visualizer::TDrawable> m_Drawable;
         // Initial world-transform of the single-body on the scenario
         TMat4 m_tf0;
         // Total force to be applied to the COM of this body

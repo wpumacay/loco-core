@@ -59,7 +59,7 @@ namespace primitives {
         m_ColliderAdapterRef = collider_adapter_ref;
     }
 
-    void TSingleBodyCollider::SetDrawableAdapter( TIDrawableAdapter* drawable_adapter_ref )
+    void TSingleBodyCollider::SetDrawableAdapter( visualizer::TIDrawableAdapter* drawable_adapter_ref )
     {
         LOCO_CORE_ASSERT( drawable_adapter_ref, "TSingleBodyCollider::SetDrawable >>> tried adding nullptr" );
 

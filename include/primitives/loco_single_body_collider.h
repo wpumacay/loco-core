@@ -24,7 +24,7 @@ namespace primitives {
 
         void SetColliderAdapter( TISingleBodyColliderAdapter* collider_adapter_ref );
 
-        void SetDrawableAdapter( TIDrawableAdapter* drawable_adapter_ref );
+        void SetDrawableAdapter( visualizer::TIDrawableAdapter* drawable_adapter_ref );
 
         void SetVisible( bool visible );
 
@@ -74,9 +74,9 @@ namespace primitives {
 
         const TISingleBodyColliderAdapter* collider_adapter() const { return m_ColliderAdapterRef; }
 
-        TIDrawableAdapter* drawable_adapter() { return m_DrawableAdapterRef; }
+        visualizer::TIDrawableAdapter* drawable_adapter() { return m_DrawableAdapterRef; }
 
-        const TIDrawableAdapter* drawable_adapter() const { return m_DrawableAdapterRef; }
+        const visualizer::TIDrawableAdapter* drawable_adapter() const { return m_DrawableAdapterRef; }
 
     protected :
 
@@ -103,7 +103,7 @@ namespace primitives {
         // Reference to the parent-body of this collider object
         TSingleBody* m_ParentBodyRef;
         // Reference to the drawable resource used for visualization
-        TIDrawableAdapter* m_DrawableAdapterRef;
+        visualizer::TIDrawableAdapter* m_DrawableAdapterRef;
         // Reference to the adapter object that gives access to the low-level API for a specific backend
         TISingleBodyColliderAdapter* m_ColliderAdapterRef;
         // Flag that indicates the collider's drawable visibility

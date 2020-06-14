@@ -1,8 +1,9 @@
 
 #include <editor/loco_visualizer_opengl_editor.h>
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     /***********************************************************************************************
     *                                     Editor-GUI Impl.                                         *
     ***********************************************************************************************/
@@ -488,4 +489,4 @@ namespace loco
                                   windowResizable, renderOffscreen );
     }
 #endif /* LOCO_OPENGL_VISUALIZER_EDITOR */
-}
+}}

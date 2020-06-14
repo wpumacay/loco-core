@@ -34,7 +34,7 @@ namespace loco
                 //// .def( "AddTerrainGenerator", &TScenario::AddTerrainGenerator, py::arg( "terrain_generator" ),
                 ////       py::return_value_policy::reference,
                 ////       py::keep_alive<1, 2>() )
-                .def( "GetDrawableByName", []( TScenario* self, const std::string& name ) -> TDrawable*
+                .def( "GetDrawableByName", []( TScenario* self, const std::string& name ) -> visualizer::TDrawable*
                     {
                         return self->GetDrawableByName( name );
                     },
@@ -82,7 +82,7 @@ namespace loco
                 //// .def( "HasKinematicTreeNamed", &TScenario::HasKinematicTreeNamed, py::arg( "name" ) )
                 //// .def( "HasKinematicTreeSensorNamed", &TScenario::HasKinematicTreeSensorNamed, py::arg( "name" ) )
                 //// .def( "HasTerrainGeneratorNamed", &TScenario::HasTerrainGeneratorNamed, py::arg( "name" ) )
-                .def( "GetDrawablesList", []( TScenario* self ) -> std::vector<TDrawable*>
+                .def( "GetDrawablesList", []( TScenario* self ) -> std::vector<visualizer::TDrawable*>
                     {
                         return self->GetDrawablesList();
                     },

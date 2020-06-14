@@ -32,7 +32,7 @@ namespace primitives {
         visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
         visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
         visual_data.shininess = loco::DEFAULT_SHININESS;
-        m_Drawable = std::make_unique<TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
         m_Drawable->SetParentObject( this );
 
         m_Data.dyntype = dyntype;
@@ -98,7 +98,7 @@ namespace primitives {
         visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
         visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
         visual_data.shininess = loco::DEFAULT_SHININESS;
-        m_Drawable = std::make_unique<TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
         m_Drawable->SetParentObject( this );
 
         m_Data.dyntype = eDynamicsType::STATIC;
@@ -151,7 +151,7 @@ namespace primitives {
         visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
         visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
         visual_data.shininess = loco::DEFAULT_SHININESS;
-        m_Drawable = std::make_unique<TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
         m_Drawable->SetParentObject( this );
 
         m_Data.dyntype = dyntype;
@@ -197,7 +197,7 @@ namespace primitives {
         visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
         visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
         visual_data.shininess = loco::DEFAULT_SHININESS;
-        m_Drawable = std::make_unique<TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
         m_Drawable->SetParentObject( this );
 
         m_Data.dyntype = dyntype;
@@ -251,7 +251,7 @@ namespace primitives {
         visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
         visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
         visual_data.shininess = loco::DEFAULT_SHININESS;
-        m_Drawable = std::make_unique<TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
         m_Drawable->SetParentObject( this );
 
         m_Data.dyntype = dyntype;
@@ -304,7 +304,7 @@ namespace primitives {
         visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
         visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
         visual_data.shininess = loco::DEFAULT_SHININESS;
-        m_Drawable = std::make_unique<TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
         m_Drawable->SetParentObject( this );
 
         m_Data.dyntype = dyntype;
@@ -374,7 +374,7 @@ namespace primitives {
         visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
         visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
         visual_data.shininess = loco::DEFAULT_SHININESS;
-        m_Drawable = std::make_unique<TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
         m_Drawable->SetParentObject( this );
 
         m_Data.dyntype = dyntype;
@@ -414,7 +414,7 @@ namespace primitives {
         visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
         visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
         visual_data.shininess = loco::DEFAULT_SHININESS;
-        m_Drawable = std::make_unique<TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
         m_Drawable->SetParentObject( this );
 
         m_Data.dyntype = dyntype;
@@ -474,7 +474,7 @@ namespace primitives {
         visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
         visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
         visual_data.shininess = loco::DEFAULT_SHININESS;
-        m_Drawable = std::make_unique<TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
         m_Drawable->SetParentObject( this );
 
         m_Data.dyntype = eDynamicsType::STATIC;

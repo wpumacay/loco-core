@@ -2,8 +2,9 @@
 
 #include <loco_visualizer_opengl.h>
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     class TOpenGLEditor;
 
     class TOpenGLEditorLayer : public engine::CImGuiLayer
@@ -97,4 +98,4 @@ namespace loco
                                                 size_t windowWidth, size_t windowHeight,
                                                 bool windowResizable, bool renderOffscreen );
 #endif /* LOCO_OPENGL_VISUALIZER_EDITOR */
-}
+}}

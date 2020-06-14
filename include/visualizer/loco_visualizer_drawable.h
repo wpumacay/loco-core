@@ -3,8 +3,9 @@
 #include <loco_data.h>
 #include <visualizer/loco_visualizer_drawable_adapter.h>
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     class TDrawable : public TObject
     {
     public :
@@ -127,4 +128,4 @@ namespace loco
         // Flag that indicates drawable's wireframe-mode
         bool m_Wireframe;
     };
-}
+}}

@@ -33,11 +33,11 @@ TEST( TestLocoRuntimeEmpty, TestRuntimeNullObjs )
 
     auto visualizerRef = runtime->CreateVisualizer( scenario.get() );
     auto cameraRef = visualizerRef->CreateCamera( "cam_orbit_0", 
-                                                  loco::eVizCameraType::ORBIT,
+                                                  loco::visualizer::eVizCameraType::ORBIT,
                                                   { 3.0f, 3.0f, 3.0f },
                                                   { 0.0f, 0.0f, 0.0f } );
     auto lightRef = visualizerRef->CreateLight( "light_point_0",
-                                                loco::eVizLightType::POINT,
+                                                loco::visualizer::eVizLightType::POINT,
                                                 { 0.4f, 0.4f, 0.4f },
                                                 { 0.8f, 0.8f, 0.8f },
                                                 { 0.8f, 0.8f, 0.8f } );

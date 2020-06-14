@@ -1,8 +1,9 @@
 
 #include <loco_visualizer_opengl.h>
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     TOpenGLVisualizer::TOpenGLVisualizer( TScenario* scenarioRef,
                                           size_t windowWidth,
                                           size_t windowHeight,
@@ -261,7 +262,7 @@ namespace loco
             return;
         }
 
-        auto gl_camera = loco::glviz::CreateCamera( cameraRef );
+        auto gl_camera = loco::visualizer::CreateCamera( cameraRef );
         if ( !gl_camera )
         {
             LOCO_CORE_ERROR( "TOpenGLVisualizer::_CreateCameraInternal >>> couldn't create camera named {0}", cameraRef->name() );
@@ -285,7 +286,7 @@ namespace loco
             return;
         }
 
-        auto gl_light = loco::glviz::CreateLight( lightRef );
+        auto gl_light = loco::visualizer::CreateLight( lightRef );
         if ( !gl_light )
         {
             LOCO_CORE_ERROR( "TOpenGLVisualizer::_CreateLightInternal >>> couldn't create light named {0}", lightRef->name() );
@@ -331,7 +332,7 @@ namespace loco
         auto drawablesList = m_scenarioRef->GetDrawablesList();
         for ( auto drawable : drawablesList )
         {
-            auto gl_renderable = loco::glviz::CreateRenderable( drawable->data() );
+            auto gl_renderable = loco::visualizer::CreateRenderable( drawable->data() );
             if ( gl_renderable )
             {
                 // Add engine-renderable to the scene
@@ -357,7 +358,7 @@ namespace loco
             auto collision = singleBody->collider();
             if ( collision )
             {
-                auto gl_renderable = loco::glviz::CreateRenderable( collision->data() );
+                auto gl_renderable = loco::visualizer::CreateRenderable( collision->data() );
                 if ( gl_renderable )
                 {
                     // Add engine-renderable to the scene
@@ -375,7 +376,7 @@ namespace loco
             auto visual = singleBody->drawable();
             if ( visual )
             {
-                auto gl_renderable = loco::glviz::CreateRenderable( visual->data() );
+                auto gl_renderable = loco::visualizer::CreateRenderable( visual->data() );
                 if ( gl_renderable )
                 {
                     // Add engine-renderable to the scene
@@ -424,4 +425,4 @@ namespace loco
                                       windowResizable, renderOffscreen );
     }
 #endif /* LOCO_OPENGL_VISUALIZER_EDITOR */
-}
+}}

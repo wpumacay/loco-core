@@ -6,8 +6,9 @@
 #include <loco_visualizer_opengl_light.h>
 #include <loco_visualizer_opengl_drawable_adapter.h>
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     class TOpenGLVisualizer : public TIVisualizer
     {
     public :
@@ -75,4 +76,4 @@ namespace loco
                                                 size_t windowWidth, size_t windowHeight,
                                                 bool windowResizable, bool renderOffscreen );
 #endif /* LOCO_OPENGL_VISUALIZER_EDITOR */
-}
+}}

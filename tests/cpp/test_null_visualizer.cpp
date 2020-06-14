@@ -20,13 +20,13 @@ TEST( TestLocoNullVisualizer, TestNullVisualizerFunctionality )
     auto scenario = std::make_unique<loco::TScenario>();
     scenario->AddSingleBody( std::move( body_obj ) );
 
-    auto visualizer = std::make_unique<loco::TNullVisualizer>( scenario.get(), 1024, 768, true, false );
+    auto visualizer = std::make_unique<loco::visualizer::TNullVisualizer>( scenario.get(), 1024, 768, true, false );
     auto cameraRef = visualizer->CreateCamera( "cam_orbit_0", 
-                                               loco::eVizCameraType::ORBIT,
+                                               loco::visualizer::eVizCameraType::ORBIT,
                                                { 3.0f, 3.0f, 3.0f },
                                                { 0.0f, 0.0f, 0.0f } );
     auto lightRef = visualizer->CreateLight( "light_point_0",
-                                             loco::eVizLightType::POINT,
+                                             loco::visualizer::eVizLightType::POINT,
                                              { 0.4f, 0.4f, 0.4f },
                                              { 0.8f, 0.8f, 0.8f },
                                              { 0.8f, 0.8f, 0.8f } );
@@ -49,11 +49,11 @@ TEST( TestLocoNullVisualizer, TestNullVisualizerFunctionality )
     EXPECT_TRUE( tinymath::allclose( visualizer->GetCameraByName( "cam_orbit_0" )->position(), cameraRef->position() ) );
     EXPECT_TRUE( tinymath::allclose( visualizer->GetLightByName( "light_point_0" )->ambient(), lightRef->ambient() ) );
 
-    EXPECT_EQ( cameraRef->type(), loco::eVizCameraType::ORBIT );
+    EXPECT_EQ( cameraRef->type(), loco::visualizer::eVizCameraType::ORBIT );
     EXPECT_TRUE( tinymath::allclose( cameraRef->position(), { 5.0f, 5.0f, 5.0f } ) );
     EXPECT_TRUE( tinymath::allclose( cameraRef->target(), { 0.0f, 0.0f, 1.0f } ) );
 
-    EXPECT_EQ( lightRef->type(), loco::eVizLightType::POINT );
+    EXPECT_EQ( lightRef->type(), loco::visualizer::eVizLightType::POINT );
     EXPECT_TRUE( tinymath::allclose( lightRef->position(), { 0.0f, 0.0f, 7.0f } ) );
     EXPECT_TRUE( tinymath::allclose( lightRef->ambient(), { 0.4f, 0.4f, 0.4f } ) );
     EXPECT_TRUE( tinymath::allclose( lightRef->diffuse(), { 0.8f, 0.8f, 0.8f } ) );

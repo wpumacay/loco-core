@@ -3,8 +3,9 @@
 #include <visualizer/loco_visualizer_light.h>
 #include <loco_visualizer_opengl_common.h>
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     class TOpenGLLightAdapter : public TVizLightAdapter
     {
     public :
@@ -39,4 +40,4 @@ namespace loco
 
         engine::CILight* m_glLightRef;
     };
-}
+}}

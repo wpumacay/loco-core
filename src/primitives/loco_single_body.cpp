@@ -60,7 +60,7 @@ namespace primitives {
         m_AngularVelocity0 = { 0.0, 0.0, 0.0 };
 
         m_Collider = std::make_unique<TSingleBodyCollider>( m_name + loco::SUFFIX_COLLIDER, m_Data.collision );
-        m_Drawable = std::make_unique<TDrawable>( m_name + loco::SUFFIX_DRAWABLE, m_Data.visual );
+        m_Drawable = std::make_unique<visualizer::TDrawable>( m_name + loco::SUFFIX_DRAWABLE, m_Data.visual );
         m_Collider->SetParentBody( this );
         m_Drawable->SetParentObject( this );
 
@@ -112,7 +112,7 @@ namespace primitives {
         m_Constraint->SetParentBody( this );
     }
 
-    void TSingleBody::SetDrawable( std::unique_ptr<TDrawable> drawable )
+    void TSingleBody::SetDrawable( std::unique_ptr<visualizer::TDrawable> drawable )
     {
         LOCO_CORE_ASSERT( drawable, "TSingleBody::SetDrawable >>> tried adding nullptr to body {0}", m_name );
 

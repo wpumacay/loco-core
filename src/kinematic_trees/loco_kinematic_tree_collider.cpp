@@ -57,7 +57,7 @@ namespace kintree {
         m_ColliderAdapterRef = collider_adapter_ref;
     }
 
-    void TKinematicTreeCollider::SetDrawableAdapter( TIDrawableAdapter* drawable_adapter_ref )
+    void TKinematicTreeCollider::SetDrawableAdapter( visualizer::TIDrawableAdapter* drawable_adapter_ref )
     {
         LOCO_CORE_ASSERT( drawable_adapter_ref, "TKinematicTreeCollider::SetDrawable >>> tried adding nullptr as drawable-adapter to collider {0}", m_name );
         m_DrawableAdapterRef = drawable_adapter_ref;

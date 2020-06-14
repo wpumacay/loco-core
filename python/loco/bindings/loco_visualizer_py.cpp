@@ -4,8 +4,9 @@
 
 namespace py = pybind11;
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     void bindings_visualizer( py::module& m )
     {
         // Bindings for visualizer-related enumerators
@@ -132,20 +133,20 @@ namespace loco
                 .value( "KEY_RIGHT_SUPER", loco::Keys::KEY_RIGHT_SUPER )
                 .value( "KEY_MENU", loco::Keys::KEY_MENU );
 
-            py::enum_<loco::eVizCameraType>( m, "VizCameraType", py::arithmetic() )
-                .value( "ORBIT", loco::eVizCameraType::ORBIT )
-                .value( "FPS", loco::eVizCameraType::FPS )
-                .value( "FIXED", loco::eVizCameraType::FIXED );
+            py::enum_<eVizCameraType>( m, "VizCameraType", py::arithmetic() )
+                .value( "ORBIT", eVizCameraType::ORBIT )
+                .value( "FPS", eVizCameraType::FPS )
+                .value( "FIXED", eVizCameraType::FIXED );
 
-            py::enum_<loco::eVizLightType>( m, "VizLightType", py::arithmetic() )
-                .value( "DIRECTIONAL", loco::eVizLightType::DIRECTIONAL )
-                .value( "POINT", loco::eVizLightType::POINT )
-                .value( "SPOT", loco::eVizLightType::SPOT );
+            py::enum_<eVizLightType>( m, "VizLightType", py::arithmetic() )
+                .value( "DIRECTIONAL", eVizLightType::DIRECTIONAL )
+                .value( "POINT", eVizLightType::POINT )
+                .value( "SPOT", eVizLightType::SPOT );
 
-            py::enum_<loco::eRenderMode>( m, "RenderMode", py::arithmetic() )
-                .value( "NORMAL", loco::eRenderMode::NORMAL )
-                .value( "SEMANTIC", loco::eRenderMode::SEMANTIC )
-                .value( "DEPTH", loco::eRenderMode::DEPTH );
+            py::enum_<eRenderMode>( m, "RenderMode", py::arithmetic() )
+                .value( "NORMAL", eRenderMode::NORMAL )
+                .value( "SEMANTIC", eRenderMode::SEMANTIC )
+                .value( "DEPTH", eRenderMode::DEPTH );
         }
 
         // Bindings for TDrawable class (user-exposed drawable)
@@ -346,7 +347,7 @@ namespace loco
                         auto _strrep = std::string( "VizCamera(\n" );
                         _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "name        : " + self->name() + "\n";
-                        _strrep += "type        : " + loco::ToString( self->type() ) + "\n";
+                        _strrep += "type        : " + ToString( self->type() ) + "\n";
                         _strrep += "position    : " + loco::ToString( self->position() ) + "\n";
                         _strrep += "target      : " + loco::ToString( self->target() ) + "\n";
                         return _strrep;
@@ -427,7 +428,7 @@ namespace loco
                         auto _strrep = std::string( "VizLight(\n" );
                         _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "name        : " + self->name() + "\n";
-                        _strrep += "type        : " + loco::ToString( self->type() ) + "\n";
+                        _strrep += "type        : " + ToString( self->type() ) + "\n";
                         _strrep += "position    : " + loco::ToString( self->position() ) + "\n";
                         _strrep += "direction   : " + loco::ToString( self->direction() ) + "\n";
                         _strrep += "ambient     : " + loco::ToString( self->ambient() ) + "\n";
@@ -634,4 +635,4 @@ namespace loco
                       py::arg( "renderOffscreen" ) = false ); // no ownership nor nurse-patient required
         }
     }
-}
+}}

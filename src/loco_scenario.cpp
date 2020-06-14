@@ -117,7 +117,7 @@ namespace loco
 ////             terrainGenerator->DetachViz();
     }
 
-    TDrawable* TScenario::AddDrawable( std::unique_ptr<TDrawable> drawable )
+    visualizer::TDrawable* TScenario::AddDrawable( std::unique_ptr<visualizer::TDrawable> drawable )
     {
         LOCO_CORE_ASSERT( drawable, "TScenario::AddDrawable >>> tried adding nullptr" );
 
@@ -181,7 +181,7 @@ namespace loco
 ////         return m_TerrainGenerators.back().get();
 ////     }
 
-    const TDrawable* TScenario::GetDrawableByName( const std::string& name ) const
+    const visualizer::TDrawable* TScenario::GetDrawableByName( const std::string& name ) const
     {
         if ( !HasDrawableNamed( name ) )
         {
@@ -225,7 +225,7 @@ namespace loco
 ////         return get_terrainGenerator( m_TerrainGeneratorsMap.at( name ) );
 ////     }
 
-    TDrawable* TScenario::GetDrawableByName( const std::string& name )
+    visualizer::TDrawable* TScenario::GetDrawableByName( const std::string& name )
     {
         if( !HasSingleBodyNamed( name ) )
         {
@@ -369,9 +369,9 @@ namespace loco
 ////         return m_TerrainGeneratorsMap.find( name ) != m_TerrainGeneratorsMap.end();
 ////     }
 
-    std::vector<const TDrawable*> TScenario::GetDrawablesList() const
+    std::vector<const visualizer::TDrawable*> TScenario::GetDrawablesList() const
     {
-        std::vector<const TDrawable*> drawables_list;
+        std::vector<const visualizer::TDrawable*> drawables_list;
         for ( auto& drawable : m_Drawables )
             drawables_list.push_back( drawable.get() );
         return drawables_list;
@@ -401,9 +401,9 @@ namespace loco
 ////         return _terrainGeneratorsList;
 ////     }
 
-    std::vector<TDrawable*> TScenario::GetDrawablesList()
+    std::vector<visualizer::TDrawable*> TScenario::GetDrawablesList()
     {
-        std::vector<TDrawable*> drawables_list;
+        std::vector<visualizer::TDrawable*> drawables_list;
         for ( auto& drawable : m_Drawables )
             drawables_list.push_back( drawable.get() );
         return drawables_list;
@@ -461,7 +461,7 @@ namespace loco
 ////         m_TerrainGenerators.erase( m_TerrainGenerators.begin() + index );
 ////     }
 
-    const TDrawable* TScenario::get_drawable( ssize_t index ) const
+    const visualizer::TDrawable* TScenario::get_drawable( ssize_t index ) const
     {
         LOCO_CORE_ASSERT( ( index >= 0 && index < m_Drawables.size() ), "TScenario::get_drawable >>> \
                           index {0} out of range [0,{1}]", index, m_Drawables.size() );
@@ -489,7 +489,7 @@ namespace loco
 ////         return m_TerrainGenerators[index].get();
 ////     }
 
-    TDrawable* TScenario::get_mutable_drawable( ssize_t index )
+    visualizer::TDrawable* TScenario::get_mutable_drawable( ssize_t index )
     {
         LOCO_CORE_ASSERT( ( index >= 0 && index < m_Drawables.size() ), "TScenario::get_mutable_drawable >>> \
                           index {0} our of range [0,...,{1}]", index, m_Drawables.size() );

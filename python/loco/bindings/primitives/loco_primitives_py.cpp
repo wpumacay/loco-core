@@ -136,11 +136,11 @@ namespace primitives {
                             self->SetCollider( std::move( collider ) );
                         }, py::keep_alive<1, 2>() )
                 .def_property( "drawable",
-                    []( TSingleBody* self ) -> TDrawable*
+                    []( TSingleBody* self ) -> visualizer::TDrawable*
                         {
                             return self->drawable();
                         },
-                    []( TSingleBody* self, std::unique_ptr<TDrawable> drawable ) -> void
+                    []( TSingleBody* self, std::unique_ptr<visualizer::TDrawable> drawable ) -> void
                         {
                             self->SetDrawable( std::move( drawable ) );
                         }, py::keep_alive<1, 2>() )

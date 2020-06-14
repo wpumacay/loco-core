@@ -1,8 +1,9 @@
 
 #include <visualizer/loco_visualizer_drawable.h>
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     TDrawable::TDrawable( const std::string& name,
                           const TVisualData& visual_data )
         : TObject( name )
@@ -261,4 +262,4 @@ namespace loco
         if ( m_DrawableAdapter )
             m_DrawableAdapter->SetTransform( transform );
     }
-}
+}}

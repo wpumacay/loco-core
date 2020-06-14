@@ -22,7 +22,7 @@ namespace kintree {
 
         for ( auto drawable_data : body_data.drawables )
         {
-            m_Drawables.push_back( std::make_unique<TDrawable>( name + SUFFIX_DRAWABLE, drawable_data ) );
+            m_Drawables.push_back( std::make_unique<visualizer::TDrawable>( name + SUFFIX_DRAWABLE, drawable_data ) );
             m_Drawables.back()->SetParentObject( this );
             m_Drawables.back()->SetLocalTransform( drawable_data.localTransform );
         }
@@ -120,7 +120,7 @@ namespace kintree {
         m_tf = m_ParentBodyRef->tf() * m_LocalTf;
     }
 
-    void TKinematicTreeBody::AddDrawable( std::unique_ptr<TDrawable> drawable, const TMat4& local_tf )
+    void TKinematicTreeBody::AddDrawable( std::unique_ptr<visualizer::TDrawable> drawable, const TMat4& local_tf )
     {
         LOCO_CORE_ASSERT( drawable, "TKinematicTreeBody::AddDrawable >>> tried adding nullptr to kintree-body {0}", m_name );
         m_Drawables.push_back( std::move( drawable ) );

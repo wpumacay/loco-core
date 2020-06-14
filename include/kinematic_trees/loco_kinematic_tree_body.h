@@ -8,8 +8,9 @@
 #include <kinematic_trees/loco_kinematic_tree_body_adapter.h>
 
 namespace loco {
+namespace visualizer {
     class TDrawable;
-}
+}}
 
 namespace loco {
 namespace kintree {
@@ -50,7 +51,7 @@ namespace kintree {
 
         void SetParentBody( TKinematicTreeBody* parent_body_ref, const TMat4& local_tf );
 
-        void AddDrawable( std::unique_ptr<TDrawable> drawable, const TMat4& local_tf );
+        void AddDrawable( std::unique_ptr<visualizer::TDrawable> drawable, const TMat4& local_tf );
 
         void AddCollider( std::unique_ptr<TKinematicTreeCollider> collider, const TMat4& local_tf );
 
@@ -82,9 +83,9 @@ namespace kintree {
 
         const TIKinematicTreeBodyAdapter* adapter() const { return m_BodyAdapterRef; }
 
-        std::vector<TDrawable*> drawables();
+        std::vector<visualizer::TDrawable*> drawables();
 
-        std::vector<const TDrawable*> drawables() const;
+        std::vector<const visualizer::TDrawable*> drawables() const;
 
         std::vector<TKinematicTreeCollider*> colliders();
 
@@ -128,7 +129,7 @@ namespace kintree {
 
         TIKinematicTreeBodyAdapter* m_BodyAdapterRef = nullptr;
 
-        std::vector<std::unique_ptr<TDrawable>> m_Drawables;
+        std::vector<std::unique_ptr<visualizer::TDrawable>> m_Drawables;
 
         std::vector<std::unique_ptr<TKinematicTreeCollider>> m_Colliders;
 
@@ -142,5 +143,4 @@ namespace kintree {
 
         TMat4 m_LocalTf;
     };
-
 }}

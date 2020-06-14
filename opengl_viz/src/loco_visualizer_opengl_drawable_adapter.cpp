@@ -1,8 +1,9 @@
 
 #include <loco_visualizer_opengl_drawable_adapter.h>
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     TOpenGLDrawableAdapter::TOpenGLDrawableAdapter( TObject* owner_ref,
                                                     const TShapeData& shapeData,
                                                     engine::CIRenderable* gl_renderableRef )
@@ -279,12 +280,12 @@ namespace loco
         std::vector<engine::CVec2> new_texCoords( num_vertices );
         std::vector<engine::CInd3> new_faces( num_faces );
 
-        glviz::CreateMeshVertexDataFromUserData( vertices, faces,
-                                                 new_vertices_unique,
-                                                 new_vertices,
-                                                 new_normals,
-                                                 new_texCoords,
-                                                 new_faces );
+        loco::visualizer::CreateMeshVertexDataFromUserData( vertices, faces,
+                                                            new_vertices_unique,
+                                                            new_vertices,
+                                                            new_normals,
+                                                            new_texCoords,
+                                                            new_faces );
 
         if ( auto gl_mesh = dynamic_cast<engine::CMesh*>( m_glRenderableRef ) )
         {
@@ -331,7 +332,7 @@ namespace loco
                                                       m_data.size.x() / 2.0f,
                                                       m_data.size.y() / 2.0f,
                                                       heightsScaled,
-                                                      glviz::HFIELD_HEIGHT_BASE,
+                                                      loco::visualizer::HFIELD_HEIGHT_BASE,
                                                       engine::eAxis::Z,
                                                       new_vertices, new_normals, new_texCoords, new_indices,
                                                       max_height, min_height );
@@ -378,4 +379,4 @@ namespace loco
         if ( m_glRenderableRef )
             m_glRenderableRef->setVisibility( false );
     }
-}
+}}

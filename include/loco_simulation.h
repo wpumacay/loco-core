@@ -8,10 +8,13 @@
 //// #include <adapters/loco_terrain_generator_adapter.h>
 #include <visualizer/loco_visualizer.h>
 
+namespace loco {
+namespace visualizer {
+    class TIVisualizer;
+}}
+
 namespace loco
 {
-    class TIVisualizer;
-
     /// Simulation interface for all backend-specific simulations
     ///
     /// @details 
@@ -78,7 +81,7 @@ namespace loco
         void SetGravity( const TVec3& gravity );
 
         /// Updates the reference to the visualizer
-        void SetVisualizer( TIVisualizer* visualizerRef );
+        void SetVisualizer( visualizer::TIVisualizer* visualizerRef );
 
         /// Returns whether or not the simulation is currently running or if it's paused
         bool running() const { return m_Running; }
@@ -90,10 +93,10 @@ namespace loco
         const TScenario* scenario() const { return m_ScenarioRef; }
 
         /// Returns a mutable reference to the visualizer currently rendering the scenario
-        TIVisualizer* visualizer() { return m_VisualizerRef; }
+        visualizer::TIVisualizer* visualizer() { return m_VisualizerRef; }
 
         /// Returns an unmutable reference to the visualizer currently rendering the scenario
-        const TIVisualizer* visualizer() const { return m_VisualizerRef; }
+        const visualizer::TIVisualizer* visualizer() const { return m_VisualizerRef; }
 
         /// Returns the string identifier of the internal physics backend being used for simulation
         std::string backendId() const { return m_BackendId; }
@@ -137,7 +140,7 @@ namespace loco
         virtual void _SetGravityInternal( const TVec3& gravity ) = 0;
 
         /// Internal method used to setup|collect any required information from the visualizer in charge of rendering the scenario being simulated
-        virtual void _SetVisualizerInternal( TIVisualizer* visualizerRef ) {};
+        virtual void _SetVisualizerInternal( visualizer::TIVisualizer* visualizerRef ) {};
 
     protected :
 
@@ -148,7 +151,7 @@ namespace loco
         TScenario* m_ScenarioRef;
 
         // A reference to the visualizer (if available) (we don't take ownership)
-        TIVisualizer* m_VisualizerRef;
+        visualizer::TIVisualizer* m_VisualizerRef;
 
         /// Container used to store the single-body resources used for the simulation
         std::vector< std::unique_ptr<primitives::TISingleBodyAdapter> > m_SingleBodyAdapters;

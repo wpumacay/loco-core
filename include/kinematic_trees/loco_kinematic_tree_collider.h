@@ -24,7 +24,7 @@ namespace kintree {
 
         void SetColliderAdapter( TIKinematicTreeColliderAdapter* collider_adapter_ref );
 
-        void SetDrawableAdapter( TIDrawableAdapter* drawable_adapter_ref );
+        void SetDrawableAdapter( visualizer::TIDrawableAdapter* drawable_adapter_ref );
 
         void SetVisible( bool visible );
 
@@ -72,9 +72,9 @@ namespace kintree {
 
         const TIKinematicTreeColliderAdapter* collider_adapter() const { return m_ColliderAdapterRef; }
 
-        TIDrawableAdapter* drawable_adapter() { return m_DrawableAdapterRef; }
+        visualizer::TIDrawableAdapter* drawable_adapter() { return m_DrawableAdapterRef; }
 
-        const TIDrawableAdapter* drawable_adapter() const { return m_DrawableAdapterRef; }
+        const visualizer::TIDrawableAdapter* drawable_adapter() const { return m_DrawableAdapterRef; }
 
         static eObjectType GetStaticType() { return eObjectType::KINEMATIC_TREE_COLLIDER; }
 
@@ -105,7 +105,7 @@ namespace kintree {
         // Reference to the parent-body of this collider object
         TKinematicTreeBody* m_ParentBodyRef;
         // Reference to the drawable resource used for visualization
-        TIDrawableAdapter* m_DrawableAdapterRef;
+        visualizer::TIDrawableAdapter* m_DrawableAdapterRef;
         // Reference to the adapter object that gives access to the low-level API for a specific backend
         TIKinematicTreeColliderAdapter* m_ColliderAdapterRef;
         // Flag that indicates the collider's drawable visibility

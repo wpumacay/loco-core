@@ -55,7 +55,7 @@ TEST( TestLocoComponents, TestVisualObject )
     vis_data.type = loco::eShapeType::SPHERE;
     vis_data.size = { 0.1, 0.1, 0.1 };
 
-    auto vis_obj = std::make_unique<loco::TDrawable>( "vis_0", vis_data );
+    auto vis_obj = std::make_unique<loco::visualizer::TDrawable>( "vis_0", vis_data );
     // Call methods (nothing should happen, as the visual is not part of a visualizer)
     vis_obj->Initialize();
     vis_obj->PreStep();
@@ -127,7 +127,7 @@ TEST( TestLocoComponents, TestSingleBodyObject )
     col_data_2.type = loco::eShapeType::CYLINDER;
     col_data_2.size = { 0.1, 0.2, 0.1 };
 
-    auto vis_obj_2 = std::make_unique<loco::TDrawable>( "vis_2_replacement", vis_data_2 );
+    auto vis_obj_2 = std::make_unique<loco::visualizer::TDrawable>( "vis_2_replacement", vis_data_2 );
     auto col_obj_2 = std::make_unique<loco::primitives::TSingleBodyCollider>( "col_2_replacement", col_data_2 );
     body_obj->SetDrawable( std::move( vis_obj_2 ) );
     body_obj->SetCollider( std::move( col_obj_2 ) );

@@ -51,7 +51,7 @@ int main( int argc, char* argv[] )
     floor_ref->drawable()->ChangeTexture( "built_in_chessboard" );
     floor_ref->drawable()->ChangeColor( { 0.3f, 0.5f, 0.7f } );
 
-    loco::eRenderMode render_mode = loco::eRenderMode::NORMAL;
+    loco::visualizer::eRenderMode render_mode = loco::visualizer::eRenderMode::NORMAL;
     tinyutils::Profiler::BeginSession( "whole-framework" );
     while ( visualizer->IsActive() )
     {
@@ -80,11 +80,11 @@ int main( int argc, char* argv[] )
         else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_LEFT ) )
             sphere_ref->AddForceCOM( { -200.0, 0.0, 0.0 } );
         else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_N ) )
-            render_mode = loco::eRenderMode::NORMAL;
+            render_mode = loco::visualizer::eRenderMode::NORMAL;
         else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_S ) )
-            render_mode = loco::eRenderMode::SEMANTIC;
+            render_mode = loco::visualizer::eRenderMode::SEMANTIC;
         else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_D ) )
-            render_mode = loco::eRenderMode::DEPTH;
+            render_mode = loco::visualizer::eRenderMode::DEPTH;
 
         simulation->Step();
         visualizer->Render( render_mode );

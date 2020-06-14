@@ -1,8 +1,9 @@
 
 #include <visualizer/loco_visualizer.h>
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     TIVisualizer::TIVisualizer( TScenario* scenarioRef,
                                 size_t windowWidth,
                                 size_t windowHeight,
@@ -400,4 +401,4 @@ namespace loco
             std::cout << "Loco::Allocs: Destroyed TNullVisualizer @ " << tinyutils::PointerToHexAddress( this ) << std::endl;
     #endif
     }
-}
+}}

@@ -1,8 +1,9 @@
 
 #include <loco_visualizer_opengl_camera.h>
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     TOpenGLCameraAdapter::TOpenGLCameraAdapter( TVizCamera* cameraRef, engine::CICamera* gl_cameraRef )
         : TVizCameraAdapter( cameraRef )
     {
@@ -66,4 +67,4 @@ namespace loco
 
         dstTarget = m_glCameraRef->target_point();
     }
-}
+}}

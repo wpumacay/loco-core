@@ -6,7 +6,7 @@
 #include <CEngine.h>
 
 namespace loco {
-namespace glviz {
+namespace visualizer {
 
     const float HFIELD_HEIGHT_BASE = 1.0f;
 

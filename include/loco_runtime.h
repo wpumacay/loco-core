@@ -6,15 +6,21 @@
 // @todo-windows: search for alternative in windows-platform
 #include <dlfcn.h>
 
+namespace loco {
+namespace visualizer {
+    class TIVisualizer;
+}}
+
+namespace loco {
+    class TISimulation;
+}
+
 namespace loco
 {
-    class TISimulation;
-    class TIVisualizer;
-
     typedef TISimulation* FcnCreateSim( TScenario* scenarioRef );
-    typedef TIVisualizer* FcnCreateViz( TScenario* scenarioRef,
-                                        size_t windowWidth, size_t windowHeight,
-                                        bool windowResizable, bool renderOffscreen );
+    typedef visualizer::TIVisualizer* FcnCreateViz( TScenario* scenarioRef,
+                                                    size_t windowWidth, size_t windowHeight,
+                                                    bool windowResizable, bool renderOffscreen );
 
     class TRuntime
     {
@@ -32,11 +38,11 @@ namespace loco
 
         TISimulation* CreateSimulation( TScenario* scenarioRef );
 
-        TIVisualizer* CreateVisualizer( TScenario* scenarioRef,
-                                        size_t windowWidth = 1280,
-                                        size_t windowHeight = 800,
-                                        bool windowResizable = true,
-                                        bool renderOffscreen = false );
+        visualizer::TIVisualizer* CreateVisualizer( TScenario* scenarioRef,
+                                                    size_t windowWidth = 1280,
+                                                    size_t windowHeight = 800,
+                                                    bool windowResizable = true,
+                                                    bool renderOffscreen = false );
 
         void DestroySimulation();
 
@@ -50,9 +56,9 @@ namespace loco
 
         const TISimulation* GetCurrentSimulation() const { return m_simulation.get(); }
 
-        TIVisualizer* GetCurrentVisualizer() { return m_visualizer.get(); }
+        visualizer::TIVisualizer* GetCurrentVisualizer() { return m_visualizer.get(); }
 
-        const TIVisualizer* GetCurrentVisualizer() const { return m_visualizer.get(); }
+        const visualizer::TIVisualizer* GetCurrentVisualizer() const { return m_visualizer.get(); }
 
     protected :
 
@@ -81,6 +87,6 @@ namespace loco
         // Simulation object (loaded from a specific backend)
         std::unique_ptr<TISimulation> m_simulation;
         // Visualizer object (loaded from a specific backend)
-        std::unique_ptr<TIVisualizer> m_visualizer;
+        std::unique_ptr<visualizer::TIVisualizer> m_visualizer;
     };
 }

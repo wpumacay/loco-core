@@ -1,8 +1,9 @@
 
 #include <visualizer/loco_visualizer_camera.h>
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     std::string ToString( const eVizCameraType& type )
     {
         if ( type == eVizCameraType::ORBIT ) return "orbit";
@@ -84,4 +85,4 @@ namespace loco
         if ( m_adapterRef )
             m_adapterRef->SetTarget( target );
     }
-}
+}}

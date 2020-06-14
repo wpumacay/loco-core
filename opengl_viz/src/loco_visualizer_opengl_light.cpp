@@ -1,8 +1,9 @@
 
 #include <loco_visualizer_opengl_light.h>
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     TOpenGLLightAdapter::TOpenGLLightAdapter( TVizLight* lightRef, engine::CILight* gl_lightRef )
         : TVizLightAdapter( lightRef )
     {
@@ -129,4 +130,4 @@ namespace loco
 
         m_glLightRef->outerCutoff = outerCutoff;
     }
-}
+}}

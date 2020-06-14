@@ -118,7 +118,7 @@ namespace loco
         }
     }
 
-    void TISimulation::SetVisualizer( TIVisualizer* visualizerRef )
+    void TISimulation::SetVisualizer( visualizer::TIVisualizer* visualizerRef )
     {
         m_VisualizerRef = visualizerRef;
         _SetVisualizerInternal( m_VisualizerRef );

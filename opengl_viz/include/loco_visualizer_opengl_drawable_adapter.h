@@ -3,8 +3,9 @@
 #include <visualizer/loco_visualizer_drawable_adapter.h>
 #include <loco_visualizer_opengl_common.h>
 
-namespace loco
-{
+namespace loco {
+namespace visualizer {
+
     class TOpenGLDrawableAdapter : public TIDrawableAdapter
     {
     public :
@@ -47,4 +48,4 @@ namespace loco
 
         TShapeData m_data;
     };
-}
+}}

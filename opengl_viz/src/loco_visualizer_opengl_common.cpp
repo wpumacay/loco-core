@@ -2,7 +2,7 @@
 #include <loco_visualizer_opengl_common.h>
 
 namespace loco {
-namespace glviz {
+namespace visualizer {
 
     std::unique_ptr<engine::CICamera> CreateCamera( TVizCamera* vizCameraRef )
     {
@@ -18,7 +18,7 @@ namespace glviz {
 
         switch ( vizCameraRef->type() )
         {
-            case loco::eVizCameraType::ORBIT :
+            case eVizCameraType::ORBIT :
             {
                 camera = std::make_unique<engine::COrbitCamera>( vizCameraRef->name(),
                                                                  vizCameraRef->position(),
@@ -27,7 +27,7 @@ namespace glviz {
                                                                  cameraProjData );
                 break;
             }
-            case loco::eVizCameraType::FPS :
+            case eVizCameraType::FPS :
             {
                 camera = std::make_unique<engine::CFpsCamera>( vizCameraRef->name(),
                                                                vizCameraRef->position(),
@@ -36,7 +36,7 @@ namespace glviz {
                                                                cameraProjData );
                 break;
             }
-            case loco::eVizCameraType::FIXED :
+            case eVizCameraType::FIXED :
             {
                 camera = std::make_unique<engine::CFixedCamera>( vizCameraRef->name(),
                                                                  vizCameraRef->position(),
@@ -56,7 +56,7 @@ namespace glviz {
 
         switch ( vizLightRef->type() )
         {
-            case loco::eVizLightType::DIRECTIONAL :
+            case eVizLightType::DIRECTIONAL :
             {
                 light = std::make_unique<engine::CDirectionalLight>( vizLightRef->name(),
                                                                      vizLightRef->ambient(),
@@ -65,7 +65,7 @@ namespace glviz {
                                                                      vizLightRef->direction() );
                 break;
             }
-            case loco::eVizLightType::POINT :
+            case eVizLightType::POINT :
             {
                 const float attenuationFactorConstant = 1.0f;
                 const float attenuationFactorLinear = 0.01f;
@@ -81,7 +81,7 @@ namespace glviz {
                                                                attenuationFactorQuadratic );
                 break;
             }
-            case loco::eVizLightType::SPOT :
+            case eVizLightType::SPOT :
             {
                 const float attenuationFactorConstant = 1.0f;
                 const float attenuationFactorLinear = 0.01f;
@@ -111,27 +111,27 @@ namespace glviz {
 
         switch ( data.type )
         {
-            case loco::eShapeType::PLANE :
+            case eShapeType::PLANE :
             {
                 renderable = engine::CMeshBuilder::createPlane( data.size.x(), data.size.y(), engine::eAxis::Z );
                 break;
             }
-            case loco::eShapeType::BOX :
+            case eShapeType::BOX :
             {
                 renderable = engine::CMeshBuilder::createBox( data.size.x(), data.size.y(), data.size.z() );
                 break;
             }
-            case loco::eShapeType::SPHERE :
+            case eShapeType::SPHERE :
             {
                 renderable = engine::CMeshBuilder::createSphere( data.size.x() );
                 break;
             }
-            case loco::eShapeType::CYLINDER :
+            case eShapeType::CYLINDER :
             {
                 renderable = engine::CMeshBuilder::createCylinder( data.size.x(), data.size.y(), engine::eAxis::Z );
                 break;
             }
-            case loco::eShapeType::CAPSULE :
+            case eShapeType::CAPSULE :
             {
                 renderable = std::make_unique<engine::CModel>( "capsule_compmesh" );
                 static_cast<engine::CModel*>( renderable.get() )->addMesh( engine::CMeshBuilder::createCylinder( data.size.x(), data.size.y(), engine::eAxis::Z ),
@@ -142,12 +142,12 @@ namespace glviz {
                                                                            engine::CMat4( engine::CMat3(), { 0.0f, 0.0f, -0.5f * data.size.y() } ) );
                 break;
             }
-            case loco::eShapeType::ELLIPSOID :
+            case eShapeType::ELLIPSOID :
             {
                 renderable = engine::CMeshBuilder::createEllipsoid( data.size.x(), data.size.y(), data.size.z() );
                 break;
             }
-            case loco::eShapeType::MESH :
+            case eShapeType::MESH :
             {
                 auto& mesh_data = data.mesh_data;
                 if ( mesh_data.filename != "" )
@@ -160,7 +160,7 @@ namespace glviz {
                     renderable->scale = { data.size.x(), data.size.y(), data.size.z() };
                 break;
             }
-            case loco::eShapeType::HFIELD :
+            case eShapeType::HFIELD :
             {
                 // Unnormalize the heights data (use data.size.z() as scaler)
                 auto heightsScaled = data.hfield_data.heights;
