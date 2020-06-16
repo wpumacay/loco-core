@@ -8,3 +8,4 @@ function( FcnBuildExampleLoco pSourcesList pExecutableName )
 endfunction()
 
 add_subdirectory( single_bodies )
+add_subdirectory( kinematic_trees )
