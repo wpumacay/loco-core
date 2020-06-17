@@ -411,6 +411,7 @@ namespace visualizer {
                         gl_drawableAdapter->SetDiffuseColor( kintree_drawable->data().diffuse );
                         gl_drawableAdapter->SetSpecularColor( kintree_drawable->data().specular );
                         gl_drawableAdapter->SetShininess( kintree_drawable->data().shininess );
+                        kintree_drawable->SetDrawableAdapter( gl_drawableAdapter.get() );
                         m_vizDrawableAdapters.push_back( std::move( gl_drawableAdapter ) );
                     }
                 }

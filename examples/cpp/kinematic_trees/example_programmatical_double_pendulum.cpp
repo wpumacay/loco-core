@@ -16,7 +16,7 @@ public :
     {
         this->base = new loco::kintree::TBox( name + "_base", { 0.1f, 0.1f, 0.1f } );
         this->link_1 = new loco::kintree::TCapsule( name + "_link_1", 0.05f, link_l1 );
-        this->link_2 = new loco::kintree::TCapsule( name + "_link_2", 0.05f, link_l2 );
+        this->link_2 = new loco::kintree::TCapsule( name + "_link_2", 0.04f, link_l2 );
 
         const auto tf_jnt_1_to_link_1 = loco::TMat4( loco::TMat3(), { 0.0f, 0.0f, 0.5f * link_l1 } );
         const auto tf_jnt_2_to_link_2 = loco::TMat4( loco::TMat3(), { 0.0f, 0.0f, 0.5f * link_l2 } );
@@ -76,16 +76,15 @@ int main( int argc, char* argv[] )
     LOCO_TRACE( "Rendering-Backend: {0}", RENDERING_BACKEND );
 
     auto scenario = std::make_unique<loco::TScenario>();
-    scenario->AddSingleBody( std::make_unique<loco::primitives::TPlane>( "floor", 10.0f, 10.0f, loco::TVec3(), loco::TMat3() ) );
-    scenario->AddKinematicTree( std::make_unique<DoublePendulum>() );
+    auto floor = scenario->AddSingleBody( std::make_unique<loco::primitives::TPlane>( "floor", 10.0f, 10.0f, loco::TVec3(), loco::TMat3() ) );
+    auto double_pendulum = scenario->AddKinematicTree( std::make_unique<DoublePendulum>() );
 
     auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, RENDERING_BACKEND );
     auto simulation = runtime->CreateSimulation( scenario.get() );
     auto visualizer = runtime->CreateVisualizer( scenario.get() );
 
-    auto floor_ref = scenario->GetSingleBodyByName( "floor" );
-    floor_ref->drawable()->ChangeTexture( "built_in_chessboard" );
-    floor_ref->drawable()->ChangeColor( { 0.3f, 0.5f, 0.7f } );
+    floor->drawable()->ChangeTexture( "built_in_chessboard" );
+    floor->drawable()->ChangeColor( { 0.3f, 0.5f, 0.7f } );
 
     while ( visualizer->IsActive() )
     {
@@ -98,6 +97,10 @@ int main( int argc, char* argv[] )
 
         simulation->Step( 1. / 60. );
         visualizer->Render();
+
+        //// LOCO_TRACE( "base-worldtf  : \n{0}", loco::ToString( static_cast<DoublePendulum*>( double_pendulum )->base->tf() ) );
+        //// LOCO_TRACE( "link-1-worldtf: \n{0}", loco::ToString( static_cast<DoublePendulum*>( double_pendulum )->link_1->tf() ) );
+        //// LOCO_TRACE( "link-2-worldtf: \n{0}", loco::ToString( static_cast<DoublePendulum*>( double_pendulum )->link_2->tf() ) );
     }
 
     runtime->DestroySimulation();
