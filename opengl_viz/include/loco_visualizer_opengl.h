@@ -59,9 +59,7 @@ namespace visualizer {
 
         void _CollectDrawables();
         void _CollectSingleBodies();
-        //// void _CollectCompounds();
-        //// void _CollectKintreeAgents();
-        //// void _CollectKintreeSensors();
+        void _CollectKinematicTrees();
         //// void _CollectTerrainGenerators();
 
         void _CollectDetached();

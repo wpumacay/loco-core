@@ -29,7 +29,7 @@ public :
         const bool is_root = true;
         const auto tf_link_1_to_base = loco::TMat4( loco::TMat3(), { 0.0f, 0.0f, -0.5f * link_l1 } );
         const auto tf_link_2_to_link_1 = loco::TMat4( loco::TMat3(), { 0.0f, 0.0f, -0.5f * link_l1 - 0.5f * link_l2 } );
-        this->AddBody( std::unique_ptr<loco::kintree::TKinematicTreeBody>( this->base ), is_root );
+        this->SetRoot( std::unique_ptr<loco::kintree::TKinematicTreeBody>( this->base ) );
         this->base->AddJoint( std::unique_ptr<loco::kintree::TKinematicTreeJoint>( this->jnt_base ), loco::TMat4() );
         this->base->AddChild( std::unique_ptr<loco::kintree::TKinematicTreeBody>( this->link_1 ), tf_link_1_to_base );
         this->link_1->AddJoint( std::unique_ptr<loco::kintree::TKinematicTreeJoint>( this->jnt_1 ), tf_jnt_1_to_link_1 );
@@ -76,11 +76,16 @@ int main( int argc, char* argv[] )
     LOCO_TRACE( "Rendering-Backend: {0}", RENDERING_BACKEND );
 
     auto scenario = std::make_unique<loco::TScenario>();
+    scenario->AddSingleBody( std::make_unique<loco::primitives::TPlane>( "floor", 10.0f, 10.0f, loco::TVec3(), loco::TMat3() ) );
     scenario->AddKinematicTree( std::make_unique<DoublePendulum>() );
 
     auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, RENDERING_BACKEND );
     auto simulation = runtime->CreateSimulation( scenario.get() );
     auto visualizer = runtime->CreateVisualizer( scenario.get() );
+
+    auto floor_ref = scenario->GetSingleBodyByName( "floor" );
+    floor_ref->drawable()->ChangeTexture( "built_in_chessboard" );
+    floor_ref->drawable()->ChangeColor( { 0.3f, 0.5f, 0.7f } );
 
     while ( visualizer->IsActive() )
     {

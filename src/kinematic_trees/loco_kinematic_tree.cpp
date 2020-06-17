@@ -33,7 +33,6 @@ namespace kintree {
         m_UrdfModel = nullptr;
         m_RlsimModel = nullptr;
 
-        m_Bodies.clear();
         m_BodiesMap.clear();
 
     #if defined(LOCO_CORE_USE_TRACK_ALLOCS)
@@ -50,33 +49,36 @@ namespace kintree {
         m_KintreeAdapterRef = kintree_adapter_ref;
     }
 
-    void TKinematicTree::AddBody( std::unique_ptr<TKinematicTreeBody> kintree_body, bool is_root )
+    void TKinematicTree::SetRoot( std::unique_ptr<TKinematicTreeBody> body )
     {
-        m_Bodies.push_back( std::move( kintree_body ) );
-        m_Bodies.back()->SetKintree( this );
-        m_BodiesMap[m_Bodies.back()->name()] = m_Bodies.size() - 1;
-
-        if ( is_root )
-        {
-            LOCO_CORE_ASSERT( !m_Root, "TKinematicTree::AddBody >>> tried adding root of the tree more than once, for kintree {0}", m_name );
-            m_Root = m_Bodies.back().get();
-        }
+        LOCO_CORE_ASSERT( body, "TKinematicTree::SetRoot >>> tried setting nullptr as root to the kintree {0}", m_name );
+        m_Root = std::move( body );
+        m_Root->SetKintree( this );
+        RegisterBody( m_Root.get() );
     }
 
-    void TKinematicTree::AddBodyJointPair( std::unique_ptr<TKinematicTreeBody> kintree_body,
-                                           std::unique_ptr<TKinematicTreeJoint> kintree_joint,
-                                           const TMat4& tf_joint_wrt_body,
-                                           bool is_root )
+    void TKinematicTree::RegisterBody( TKinematicTreeBody* body )
     {
-        kintree_body->AddJoint( std::move( kintree_joint ), tf_joint_wrt_body );
-        m_Bodies.push_back( std::move( kintree_body ) );
-        m_Bodies.back()->SetKintree( this );
-        m_BodiesMap[m_Bodies.back()->name()] = m_Bodies.size() - 1;
-
-        if ( is_root )
+        LOCO_CORE_ASSERT( body, "TKinematicTreeBody::RegisterBody >>> tried registering nullptr to the kintree {0}", m_name );
+        if ( HasBody( body->name() ) )
         {
-            LOCO_CORE_ASSERT( !m_Root, "TKinematicTree::AddBodyJointPair >>> tried adding root of the tree more than once, for kintree {0}", m_name );
-            m_Root = m_Bodies.back().get();
+            LOCO_CORE_WARN( "TKinematicTreeBody::RegisterBody >>> tried registering body {0} more than once, for kintree {1}", body->name(), m_name );
+            return;
+        }
+
+        std::stack<TKinematicTreeBody*> bodies_to_register;
+        while ( bodies_to_register.size() > 0 )
+        {
+            auto body_to_register = bodies_to_register.top();
+            bodies_to_register.pop();
+            if ( !body_to_register )
+                continue;
+
+            m_BodiesMap[body_to_register->name()] = body_to_register;
+            m_NumKintreeBodies++;
+            auto children = body_to_register->children();
+            for ( auto child_body : children )
+                bodies_to_register.push( child_body );
         }
     }
 
@@ -92,19 +94,12 @@ namespace kintree {
             LOCO_CORE_ERROR( "TKinematicTree::RemoveBodyByName >>> kintree-body {0}  not found on the kinematic tree {1}", name, m_name );
             return;
         }
-        const ssize_t idx_body = m_BodiesMap[name];
-        RemoveBodyByIndex( idx_body );
-        for ( auto kv : m_BodiesMap )
-            if ( kv.second > idx_body )
-                m_BodiesMap[kv.first]--;
-        m_BodiesMap.erase( name );
-    }
 
-    void TKinematicTree::RemoveBodyByIndex( ssize_t index )
-    {
-        LOCO_CORE_ASSERT( ( index >= 0 && index < m_Bodies.size() ), "TKinematicTree::RemoveBodyByIndex >>> \
-                          index {0} out of range (0,{1}) while working with kintree {2}", index, m_Bodies.size() - 1, m_name );
-        m_Bodies.erase( m_Bodies.begin() + index );
+        if ( m_Root->name() == name )
+            m_Root = nullptr;
+        else
+            m_BodiesMap[name]->parent()->RemoveChild( name );
+        m_BodiesMap.erase( name );
     }
 
     TKinematicTreeBody* TKinematicTree::GetBodyByName( const std::string& name )
@@ -114,7 +109,7 @@ namespace kintree {
             LOCO_CORE_ERROR( "TKinematicTree::GetBodyByName >>> kintree-body {0} not found on the kinematic tree {1}", name, m_name );
             return nullptr;
         }
-        return GetBodyByIndex( m_BodiesMap.at( name ) );
+        return m_BodiesMap.at( name );
     }
 
     const TKinematicTreeBody* TKinematicTree::GetBodyByName( const std::string& name ) const
@@ -124,36 +119,46 @@ namespace kintree {
             LOCO_CORE_ERROR( "TKinematicTree::GetBodyByName >>> kintree-body {0} not found on the kinematic tree {1}", name, m_name );
             return nullptr;
         }
-        return GetBodyByIndex( m_BodiesMap.at( name ) );
-    }
-
-    TKinematicTreeBody* TKinematicTree::GetBodyByIndex( ssize_t index )
-    {
-        LOCO_CORE_ASSERT( ( index >= 0 && index < m_Bodies.size() ), "TKinematicTree::GetBodyByIndex >>> \
-                          index {0} out of range (0,{1}) while working with kintree {2}", index, m_Bodies.size() - 1, m_name );
-        return m_Bodies[index].get();
-    }
-
-    const TKinematicTreeBody* TKinematicTree::GetBodyByIndex( ssize_t index ) const
-    {
-        LOCO_CORE_ASSERT( ( index >= 0 && index < m_Bodies.size() ), "TKinematicTree::GetBodyByIndex >>> \
-                          index {0} out of range (0,{1}) while working with kintree {2}", index, m_Bodies.size() - 1, m_name );
-        return m_Bodies[index].get();
+        return m_BodiesMap.at( name );
     }
 
     std::vector<TKinematicTreeBody*> TKinematicTree::GetBodiesList()
     {
         std::vector<TKinematicTreeBody*> bodies_list;
-        for ( auto& kintree_body : m_Bodies )
-            bodies_list.push_back( kintree_body.get() );
+        std::stack<TKinematicTreeBody*> dfs_bodies;
+        dfs_bodies.push( m_Root.get() );
+        while ( dfs_bodies.size() > 0 )
+        {
+            auto kintree_body = dfs_bodies.top();
+            dfs_bodies.pop();
+            if ( !kintree_body )
+                continue;
+
+            bodies_list.push_back( kintree_body );
+            auto children = kintree_body->children();
+            for ( auto child_body : children )
+                dfs_bodies.push( child_body );
+        }
         return bodies_list;
     }
 
     std::vector<const TKinematicTreeBody*> TKinematicTree::GetBodiesList() const
     {
         std::vector<const TKinematicTreeBody*> bodies_list;
-        for ( auto& kintree_body : m_Bodies )
-            bodies_list.push_back( kintree_body.get() );
+        std::stack<const TKinematicTreeBody*> dfs_bodies;
+        dfs_bodies.push( m_Root.get() );
+        while ( dfs_bodies.size() > 0 )
+        {
+            auto kintree_body = dfs_bodies.top();
+            dfs_bodies.pop();
+            if ( !kintree_body )
+                continue;
+
+            bodies_list.push_back( kintree_body );
+            auto children = kintree_body->children();
+            for ( auto child_body : children )
+                dfs_bodies.push( child_body );
+        }
         return bodies_list;
     }
 

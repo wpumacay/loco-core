@@ -23,12 +23,9 @@ namespace kintree {
 
         void SetKintreeAdapter( TIKinematicTreeAdapter* kintree_adapter_ref );
 
-        void AddBody( std::unique_ptr<TKinematicTreeBody> kintree_body, bool is_root = false );
+        void SetRoot( std::unique_ptr<TKinematicTreeBody> body );
 
-        void AddBodyJointPair( std::unique_ptr<TKinematicTreeBody> kintree_body,
-                               std::unique_ptr<TKinematicTreeJoint> kintree_joint,
-                               const TMat4& tf_joint_wrt_body,
-                               bool is_root = false );
+        void RegisterBody( TKinematicTreeBody* body );
 
         void SetInitialPosition( const TVec3& position0 ) { m_tf0.set( position0, 3 ); }
 
@@ -40,21 +37,15 @@ namespace kintree {
 
         void SetInitialTransform( const TMat4& transform0 ) { m_tf0 = transform0; }
 
-        ssize_t GetNumBodies() const { return m_Bodies.size(); }
+        ssize_t GetNumBodies() const { return m_NumKintreeBodies; }
 
         bool HasBody( const std::string& name ) const;
 
         void RemoveBodyByName( const std::string& name );
 
-        void RemoveBodyByIndex( ssize_t index );
-
         TKinematicTreeBody* GetBodyByName( const std::string& name );
 
         const TKinematicTreeBody* GetBodyByName( const std::string& name ) const;
-
-        TKinematicTreeBody* GetBodyByIndex( ssize_t index );
-
-        const TKinematicTreeBody* GetBodyByIndex( ssize_t index ) const;
 
         std::vector<TKinematicTreeBody*> GetBodiesList();
 
@@ -82,9 +73,9 @@ namespace kintree {
 
         const parsing::TElement* rlsim_model() const { return m_RlsimModel.get(); }
 
-        TKinematicTreeBody* root() { return m_Root; }
+        TKinematicTreeBody* root() { return m_Root.get(); }
 
-        const TKinematicTreeBody* root() const { return m_Root; }
+        const TKinematicTreeBody* root() const { return m_Root.get(); }
 
         TIKinematicTreeAdapter* adapter() { return m_KintreeAdapterRef; }
 
@@ -112,14 +103,14 @@ namespace kintree {
 
     protected :
 
-        /// Reference to the root body of this kinematic-tree
-        TKinematicTreeBody* m_Root = nullptr;
+        /// Root kintree-body of this kinematic-tree
+        std::unique_ptr<TKinematicTreeBody> m_Root = nullptr;
         /// Reference to the adapter for this kinematic-tree
         TIKinematicTreeAdapter* m_KintreeAdapterRef = nullptr;
-        /// Container of owned kinematic-tree-bodies
-        std::vector<std::unique_ptr<TKinematicTreeBody>> m_Bodies;
-        /// Hashmap with the ids of the bodies based on their names
-        std::unordered_map<std::string, ssize_t> m_BodiesMap;
+        /// Number of kintree-bodies registered in this kintree
+        ssize_t m_NumKintreeBodies = 0;
+        /// Hashmap for kintree-bodies registered in this kintree
+        std::unordered_map<std::string, TKinematicTreeBody*> m_BodiesMap;
         /// Model information for MuJoCo's mjcf file format
         std::unique_ptr<parsing::TElement> m_MjcfModel = nullptr;
         /// Model information for URDF-Xml file format

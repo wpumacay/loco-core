@@ -73,6 +73,8 @@ namespace kintree {
 
         void AddTorqueCOM( const TVec3& torque );
 
+        void RemoveChild( const std::string& body_name );
+
         void Forward();
 
         const TMat4& local_tf() const { return m_LocalTf; }

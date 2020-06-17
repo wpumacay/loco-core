@@ -94,9 +94,6 @@ namespace kintree {
         DetachSim();
         DetachViz();
 
-        if ( m_KinematicTreeRef )
-            m_KinematicTreeRef->RemoveBodyByName( m_name );
-
         m_KinematicTreeRef = nullptr;
         m_BodyAdapterRef = nullptr;
         m_ParentBodyRef = nullptr;
@@ -160,6 +157,8 @@ namespace kintree {
         LOCO_CORE_ASSERT( body, "TKinematicTreeBody::AddChild >>> tried adding nullptr to kintree-body {0}", m_name );
         m_Children.push_back( std::move( body ) );
         m_Children.back()->SetParentBody( this, local_tf );
+        if ( m_KinematicTreeRef )
+            m_KinematicTreeRef->RegisterBody( m_Children.back().get() );
     }
 
     void TKinematicTreeBody::AddForceCOM( const TVec3& force )
@@ -170,6 +169,18 @@ namespace kintree {
     void TKinematicTreeBody::AddTorqueCOM( const TVec3& torque )
     {
         m_TotalTorque = m_TotalTorque + torque;
+    }
+
+    void TKinematicTreeBody::RemoveChild( const std::string& body_name )
+    {
+        for ( ssize_t i = 0; i < m_Children.size(); i++ )
+        {
+            if ( m_Children[i]->name() == body_name )
+            {
+                m_Children.erase( m_Children.begin() + i );
+                break;
+            }
+        }
     }
 
     void TKinematicTreeBody::Forward()
@@ -217,6 +228,70 @@ namespace kintree {
 
         for ( auto& child_body : m_Children )
             child_body->Forward();
+    }
+
+    std::vector<visualizer::TDrawable*> TKinematicTreeBody::drawables()
+    {
+        std::vector<visualizer::TDrawable*> drawables_list;
+        for ( auto& drawable : m_Drawables )
+            drawables_list.push_back( drawable.get() );
+        return drawables_list;
+    }
+
+    std::vector<const visualizer::TDrawable*> TKinematicTreeBody::drawables() const
+    {
+        std::vector<const visualizer::TDrawable*> drawables_list;
+        for ( auto& drawable : m_Drawables )
+            drawables_list.push_back( drawable.get() );
+        return drawables_list;
+    }
+
+    std::vector<TKinematicTreeCollider*> TKinematicTreeBody::colliders()
+    {
+        std::vector<TKinematicTreeCollider*> colliders_list;
+        for ( auto& collider : m_Colliders )
+            colliders_list.push_back( collider.get() );
+        return colliders_list;
+    }
+
+    std::vector<const TKinematicTreeCollider*> TKinematicTreeBody::colliders() const
+    {
+        std::vector<const TKinematicTreeCollider*> colliders_list;
+        for ( auto& collider : m_Colliders )
+            colliders_list.push_back( collider.get() );
+        return colliders_list;
+    }
+
+    std::vector<TKinematicTreeJoint*> TKinematicTreeBody::joints()
+    {
+        std::vector<TKinematicTreeJoint*> joints_list;
+        for ( auto& joint : m_Joints )
+            joints_list.push_back( joint.get() );
+        return joints_list;
+    }
+
+    std::vector<const TKinematicTreeJoint*> TKinematicTreeBody::joints() const
+    {
+        std::vector<const TKinematicTreeJoint*> joints_list;
+        for ( auto& joint : m_Joints )
+            joints_list.push_back( joint.get() );
+        return joints_list;
+    }
+
+    std::vector<TKinematicTreeBody*> TKinematicTreeBody::children()
+    {
+        std::vector<TKinematicTreeBody*> children_list;
+        for ( auto& child_body : m_Children )
+            children_list.push_back( child_body.get() );
+        return children_list;
+    }
+
+    std::vector<const TKinematicTreeBody*> TKinematicTreeBody::children() const
+    {
+        std::vector<const TKinematicTreeBody*> children_list;
+        for ( auto& child_body : m_Children )
+            children_list.push_back( child_body.get() );
+        return children_list;
     }
 
     void TKinematicTreeBody::_InitializeInternal()

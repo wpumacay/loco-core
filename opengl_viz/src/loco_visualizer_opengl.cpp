@@ -51,9 +51,7 @@ namespace visualizer {
 
         _CollectDrawables();
         _CollectSingleBodies();
-        //// _CollectCompounds();
-        //// _CollectKintreeAgents();
-        //// _CollectKintreeSensors();
+        _CollectKinematicTrees();
         //// _CollectTerrainGenerators();
     }
 
@@ -61,9 +59,7 @@ namespace visualizer {
     {
         _CollectDrawables();
         _CollectSingleBodies();
-        //// _CollectCompounds();
-        //// _CollectKintreeAgents();
-        //// _CollectKintreeSensors();
+        _CollectKinematicTrees();
         //// _CollectTerrainGenerators();
     }
 
@@ -153,21 +149,6 @@ namespace visualizer {
             m_glApplication->setGuiUtilsActive( !m_glApplication->guiUtilsActive() );
         }
     #endif
-
-////         auto renderables = m_glApplication->scene()->GetRenderablesList();
-////         for ( auto renderable : renderables )
-////         {
-////             if ( auto mesh = dynamic_cast<engine::CMesh*>( renderable ) )
-////             {
-////                 engine::CDebugDrawer::DrawNormals( mesh, { 0.0, 0.0, 1.0 } );
-////             }
-////             else if ( auto model = dynamic_cast<engine::CModel*>( renderable ) )
-////             {
-////                 auto meshes = model->meshes();
-////                 for ( auto mesh : meshes )
-////                     engine::CDebugDrawer::DrawNormals( mesh, { 0.0, 0.0, 1.0 } );
-////             }
-////         }
 
         if ( mode == eRenderMode::NORMAL )
             m_glApplication->renderOptions().mode = engine::eRenderMode::NORMAL;
@@ -395,21 +376,48 @@ namespace visualizer {
         }
     }
 
-////     void TOpenGLVisualizer::_CollectCompounds()
-////     {
-//// 
-////     }
-//// 
-////     void TOpenGLVisualizer::_CollectKintreeAgents()
-////     {
-//// 
-////     }
-//// 
-////     void TOpenGLVisualizer::_CollectKintreeSensors()
-////     {
-//// 
-////     }
-//// 
+    void TOpenGLVisualizer::_CollectKinematicTrees()
+    {
+        auto kinematic_trees_list = m_scenarioRef->GetKinematicTreesList();
+        for ( auto kinematic_tree : kinematic_trees_list )
+        {
+            auto kintree_bodies = kinematic_tree->GetBodiesList();
+            for ( auto kintree_body : kintree_bodies )
+            {
+                auto kintree_colliders = kintree_body->colliders();
+                for ( auto kintree_collider : kintree_colliders )
+                {
+                    auto gl_renderable = loco::visualizer::CreateRenderable( kintree_collider->data() );
+                    if ( gl_renderable )
+                    {
+                        auto gl_renderableRef = m_glApplication->scene()->AddRenderable( std::move( gl_renderable ) );
+                        auto gl_drawableAdapter = std::make_unique<TOpenGLDrawableAdapter>( kintree_collider, kintree_collider->data(), gl_renderableRef );
+                        gl_drawableAdapter->SetVisible( false );
+                        gl_drawableAdapter->SetWireframe( true );
+                        kintree_collider->SetDrawableAdapter( gl_drawableAdapter.get() );
+                        m_vizDrawableAdapters.push_back( std::move( gl_drawableAdapter ) );
+                    }
+                }
+
+                auto kintree_drawables = kintree_body->drawables();
+                for ( auto kintree_drawable : kintree_drawables )
+                {
+                    auto gl_renderable = loco::visualizer::CreateRenderable( kintree_drawable->data() );
+                    if ( gl_renderable )
+                    {
+                        auto gl_renderableRef = m_glApplication->scene()->AddRenderable( std::move( gl_renderable ) );
+                        auto gl_drawableAdapter = std::make_unique<TOpenGLDrawableAdapter>( kintree_drawable, kintree_drawable->data(), gl_renderableRef );
+                        gl_drawableAdapter->SetAmbientColor( kintree_drawable->data().ambient );
+                        gl_drawableAdapter->SetDiffuseColor( kintree_drawable->data().diffuse );
+                        gl_drawableAdapter->SetSpecularColor( kintree_drawable->data().specular );
+                        gl_drawableAdapter->SetShininess( kintree_drawable->data().shininess );
+                        m_vizDrawableAdapters.push_back( std::move( gl_drawableAdapter ) );
+                    }
+                }
+            }
+        }
+    }
+
 ////     void TOpenGLVisualizer::_CollectTerrainGenerators()
 ////     {
 //// 
