@@ -77,7 +77,7 @@ int main( int argc, char* argv[] )
 
     auto scenario = std::make_unique<loco::TScenario>();
     auto floor = scenario->AddSingleBody( std::make_unique<loco::primitives::TPlane>( "floor", 10.0f, 10.0f, loco::TVec3(), loco::TMat3() ) );
-    auto double_pendulum = scenario->AddKinematicTree( std::make_unique<DoublePendulum>() );
+    auto double_pendulum = static_cast<DoublePendulum*>( scenario->AddKinematicTree( std::make_unique<DoublePendulum>() ) );
 
     auto runtime = std::make_unique<loco::TRuntime>( PHYSICS_BACKEND, RENDERING_BACKEND );
     auto simulation = runtime->CreateSimulation( scenario.get() );
@@ -95,12 +95,15 @@ int main( int argc, char* argv[] )
         else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_P ) )
             simulation->running() ? simulation->Pause() : simulation->Resume();
 
+        double_pendulum->jnt_1->SetAngle( double_pendulum->jnt_1->angle() + 0.01f );
+        double_pendulum->jnt_2->SetAngle( double_pendulum->jnt_2->angle() + 0.005f );
+
         simulation->Step( 1. / 60. );
         visualizer->Render();
 
-        //// LOCO_TRACE( "base-worldtf  : \n{0}", loco::ToString( static_cast<DoublePendulum*>( double_pendulum )->base->tf() ) );
-        //// LOCO_TRACE( "link-1-worldtf: \n{0}", loco::ToString( static_cast<DoublePendulum*>( double_pendulum )->link_1->tf() ) );
-        //// LOCO_TRACE( "link-2-worldtf: \n{0}", loco::ToString( static_cast<DoublePendulum*>( double_pendulum )->link_2->tf() ) );
+        //// LOCO_TRACE( "base-worldtf  : \n{0}", loco::ToString( double_pendulum->base->tf() ) );
+        //// LOCO_TRACE( "link-1-worldtf: \n{0}", loco::ToString( double_pendulum->link_1->tf() ) );
+        //// LOCO_TRACE( "link-2-worldtf: \n{0}", loco::ToString( double_pendulum->link_2->tf() ) );
     }
 
     runtime->DestroySimulation();

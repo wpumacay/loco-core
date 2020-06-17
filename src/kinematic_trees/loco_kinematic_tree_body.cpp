@@ -194,10 +194,17 @@ namespace kintree {
             }
             else if ( m_Joints.size() == 1 )
             {
-                const eJointType joint_type = m_Joints[0]->type();
+                const auto joint_ref = m_Joints[0].get();
+                const auto joint_type = joint_ref->type();
                 /**/ if ( joint_type == eJointType::REVOLUTE ) // Do FK using DH-table for revolute joints
                 {
-                    // @todo: implement this functionality
+                    const auto revolute_joint_ref = static_cast<const TKinematicTreeRevoluteJoint*>( joint_ref );
+                    // Transform of the joint w.r.t. the parent of this body at its zero|rest|initial configuration
+                    const auto tf_parent_to_joint_init = m_LocalTf * revolute_joint_ref->local_tf();
+                    // Rotation along the revolution axis
+                    const auto tf_rotation_joint = TMat4( tinymath::rotation( revolute_joint_ref->axis(), revolute_joint_ref->angle() ) );
+                    // Compute the world-transform of this body
+                    m_tf = m_ParentBodyRef->tf() * tf_parent_to_joint_init * tf_rotation_joint * revolute_joint_ref->local_tf().inverse();
                 }
                 else if ( joint_type == eJointType::PRISMATIC ) // Do FK using DH-table for prismatic joints
                 {
