@@ -43,6 +43,24 @@ namespace kintree {
     #endif
     }
 
+    void TKinematicTree::LoadFromMjcf( const std::string& filepath_mjcf )
+    {
+        TKinematicTreeMjcfParser mjcf_parser( this );
+        mjcf_parser.parse_kintree( filepath_mjcf );
+    }
+
+    void TKinematicTree::LoadFromUrdf( const std::string& filepath_urdf )
+    {
+        //// TUrdfParser urdf_parser( this );
+        //// urdf_parser->parse_kintree( filepath_urdf );
+    }
+
+    void TKinematicTree::LoadFromRlsim( const std::string& filepath_rlsim )
+    {
+        //// TRlsimParser rlsim_parser( this );
+        //// rlsim_parser->parse_kintree( filepath_rlsim );
+    }
+
     void TKinematicTree::SetKintreeAdapter( TIKinematicTreeAdapter* kintree_adapter_ref )
     {
         LOCO_CORE_ASSERT( kintree_adapter_ref, "TKinematicTree:.SetKintreeAdapter >>> tried adding nullptr to kintree {0}", m_name );

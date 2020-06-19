@@ -80,6 +80,10 @@ namespace parsing {
 
         const TElement* get_child( size_t index ) const;
 
+        TElement* parent() { return m_parentRef; }
+
+        const TElement* parent() const { return m_parentRef; }
+
         std::string elementType() const { return m_elementType; }
 
         eSchemaType schemaType() const { return m_schemaType; }

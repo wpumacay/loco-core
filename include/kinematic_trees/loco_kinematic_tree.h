@@ -3,13 +3,18 @@
 #include <utils/loco_parsing_element.h>
 #include <kinematic_trees/loco_kinematic_tree_body.h>
 #include <kinematic_trees/loco_kinematic_tree_adapter.h>
+#include <kinematic_trees/parsers/loco_kinematic_tree_mjcf_parser.h>
 
 namespace loco {
 namespace kintree {
-
     class TKinematicTreeBody;
     class TKinematicTreeJoint;
     class TIKinematicTreeAdapter;
+    class TKinematicTreeMjcfParser;
+}}
+
+namespace loco {
+namespace kintree {
 
     class TKinematicTree : public TObject
     {
@@ -20,6 +25,12 @@ namespace kintree {
                         const TMat3& rotation );
 
         ~TKinematicTree();
+
+        void LoadFromMjcf( const std::string& filepath_mjcf );
+
+        void LoadFromUrdf( const std::string& filepath_urdf );
+
+        void LoadFromRlsim( const std::string& filepath_rlsim );
 
         void SetKintreeAdapter( TIKinematicTreeAdapter* kintree_adapter_ref );
 
