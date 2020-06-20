@@ -14,6 +14,11 @@ namespace kintree {
 namespace loco {
 namespace kintree {
 
+    const std::string MJCF_WORLDBODY_TAG = "worldbody";
+    const std::string MJCF_BODY_TAG = "body";
+    const std::string MJCF_GEOM_TAG = "geom";
+    const std::string MJCF_JOINT_TAG = "joint";
+
     class TKinematicTreeMjcfParser
     {
     public :
@@ -66,6 +71,10 @@ namespace kintree {
 
         TSizef get_array_float( const parsing::TElement* elm, const std::string& attrib_id, const TSizef& default_value ) const;
 
+        TMat4 get_transform( const parsing::TElement* elm ) const;
+
+        TVec3 get_standard_size( const parsing::TElement* elm ) const;
+
         std::string get_class( const parsing::TElement* elm, const std::string& attrib_id ) const;
 
         bool has_default_no_class( const std::string& elm_type, const std::string& attrib_id ) const;
@@ -94,5 +103,12 @@ namespace kintree {
         bool m_OptUseLocalCoordinates = true;
         /// Flag used to indicate whether or not to use degrees or radians for angles
         bool m_OptUseDegrees = true;
+
+    private :
+
+        static ssize_t NUM_UNNAMED_DRAWABLES;
+        static ssize_t NUM_UNNAMED_COLLIDERS;
+        static ssize_t NUM_UNNAMED_JOINTS;
+        static ssize_t NUM_UNNAMED_BODIES;
     };
 }}

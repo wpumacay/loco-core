@@ -29,14 +29,16 @@ namespace kintree {
     /// Struct with the details required to create a kinematic-tree body
     struct TKinematicTreeBodyData
     {
-        /// Inertial properties of the body
-        TInertialData inertia;
         /// List of all colliders owned by the body
         std::vector<TCollisionData> colliders;
         /// List of all drawables owned by the body
         std::vector<TVisualData> drawables;
         /// List of all joints owned by the body
         std::vector<TKinematicTreeJointData> joints;
+        /// Inertial properties of the body
+        TInertialData inertia;
+        /// Local transform w.r.t. parent body (if any)
+        TMat4 local_tf;
     };
 
     class TKinematicTreeCollider;

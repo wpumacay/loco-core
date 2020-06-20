@@ -4,6 +4,11 @@
 namespace loco {
 namespace kintree {
 
+    ssize_t TKinematicTreeMjcfParser::NUM_UNNAMED_DRAWABLES = 0;
+    ssize_t TKinematicTreeMjcfParser::NUM_UNNAMED_COLLIDERS = 0;
+    ssize_t TKinematicTreeMjcfParser::NUM_UNNAMED_JOINTS = 0;
+    ssize_t TKinematicTreeMjcfParser::NUM_UNNAMED_BODIES = 0;
+
     void TKinematicTreeMjcfParser::parse_kintree( const std::string& filepath_mjcf )
     {
         m_MjcfModel = parsing::TElement::CreateFromXmlFile( parsing::eSchemaType::MJCF, filepath_mjcf );
@@ -34,7 +39,72 @@ namespace kintree {
         collect_defaults_with_class( m_MjcfModel->GetFirstChildOfType( "default" ) );
         collect_defaults_with_no_class( m_MjcfModel->GetFirstChildOfType( "default" ) );
 
+        auto worldbody_elm = m_MjcfModel->GetFirstChildOfType( MJCF_WORLDBODY_TAG );
+        if ( !worldbody_elm )
+        {
+            LOCO_CORE_ERROR( "TKinematicTreeMjcfParser::parse_kintree >>> tried parsing mjcf-model {0} which \
+                              didn't contain a worldbody element", m_CurrentFilepath );
+            return;
+        }
 
+        auto rootbody_elm = worldbody_elm->GetFirstChildOfType( MJCF_BODY_TAG );
+        if ( !rootbody_elm )
+        {
+            LOCO_CORE_ERROR( "TKinematicTreeMjcfParser::parse_kintree >>> tried parsing mjcf-model {0} which \
+                              didn't contain any body element", m_CurrentFilepath );
+            return;
+        }
+
+        std::stack<std::pair<const parsing::TElement*, TKinematicTreeBody*>> dfs_bodies;
+        dfs_bodies.push( { rootbody_elm, nullptr } );
+
+        while ( !dfs_bodies.empty() )
+        {
+            auto elm_bodyparent_pair = dfs_bodies.top();
+            auto body_elm = elm_bodyparent_pair.first;
+            auto body_parent = elm_bodyparent_pair.second;
+            dfs_bodies.pop();
+            if ( !body_elm )
+                continue;
+
+            auto kintree_body = parse_body( body_elm );
+            kintree_body->SetKintree( m_KintreeRef );
+            for ( ssize_t i = 0; i < body_elm->num_children(); i++ )
+            {
+                const auto child_elm = body_elm->get_child( i );
+                const auto elm_type = child_elm->elementType();
+                /**/ if ( elm_type == MJCF_GEOM_TAG )
+                {
+                    auto kintree_collider = parse_collider( child_elm );
+                    auto kintree_collider_local_tf = kintree_collider->data().localTransform;
+                    kintree_body->AddCollider( std::move( kintree_collider ), kintree_collider_local_tf );
+
+                    auto kintree_drawable = parse_drawable( child_elm );
+                    auto kintree_drawable_local_tf = kintree_drawable->data().localTransform;
+                    kintree_body->AddDrawable( std::move( kintree_drawable ), kintree_drawable_local_tf );
+                }
+                else if ( elm_type == MJCF_JOINT_TAG )
+                {
+                    auto kintree_joint = parse_joint( child_elm );
+                    auto kintree_joint_local_tf = kintree_joint->data().local_tf;
+                    kintree_body->AddJoint( std::move( kintree_joint ), kintree_joint_local_tf );
+                }
+                else if ( elm_type == MJCF_BODY_TAG )
+                {
+                    dfs_bodies.push( { child_elm, kintree_body.get() } );
+                }
+            }
+
+            if ( !body_parent )
+            {
+                m_KintreeRef->SetRoot( std::move( kintree_body ) );
+            }
+            else
+            {
+                auto kintree_body_local_tf = kintree_body->data().local_tf;
+                body_parent->AddChild( std::move( kintree_body ), kintree_body_local_tf );
+            }
+        }
     }
 
     std::unique_ptr<TKinematicTreeBody> TKinematicTreeMjcfParser::parse_body( const parsing::TElement* body_elm )
@@ -44,17 +114,102 @@ namespace kintree {
 
     std::unique_ptr<TKinematicTreeCollider> TKinematicTreeMjcfParser::parse_collider( const parsing::TElement* collider_elm )
     {
-        return nullptr;
+        TCollisionData kintree_collider_data;
+        std::string kintree_collider_name;
+        if ( collider_elm->HasAttributeString( "name" ) )
+            kintree_collider_name = m_KintreeRef->name() + "_" + collider_elm->GetString( "name" ) + loco::SUFFIX_COLLIDER;
+        else
+            kintree_collider_name = m_KintreeRef->name() + "_collider:" + std::to_string( NUM_UNNAMED_COLLIDERS++ ) + loco::SUFFIX_COLLIDER;
+        kintree_collider_data.localTransform = get_transform( collider_elm );
+        kintree_collider_data.type = loco::ToEnumShape( get_string( collider_elm, "type", "sphere" ) );
+        kintree_collider_data.size = get_standard_size( collider_elm );
+        if ( kintree_collider_data.type == eShapeType::MESH ) // @todo: check how to extract the mesh-id correctly
+            kintree_collider_data.mesh_data.filename = get_string( collider_elm, "mesh", "" );
+
+        kintree_collider_data.collisionGroup = get_int( collider_elm, "contype", 1 );
+        kintree_collider_data.collisionMask = get_int( collider_elm, "conaffinity", 1 );
+        kintree_collider_data.friction = get_vec3( collider_elm, "friction", { 1.0f, 0.005f, 0.0001f } );
+        kintree_collider_data.density = get_float( collider_elm, "density", loco::DEFAULT_DENSITY );
+
+        return std::make_unique<TKinematicTreeCollider>( kintree_collider_name, kintree_collider_data );
     }
 
     std::unique_ptr<visualizer::TDrawable> TKinematicTreeMjcfParser::parse_drawable( const parsing::TElement* drawable_elm )
     {
-        return nullptr;
+        TVisualData kintree_drawable_data;
+        std::string kintree_drawable_name;
+        if ( drawable_elm->HasAttributeString( "name" ) )
+            kintree_drawable_name = m_KintreeRef->name() + "_" + drawable_elm->GetString( "name" ) + loco::SUFFIX_COLLIDER;
+        else
+            kintree_drawable_name = m_KintreeRef->name() + "_visual:" + std::to_string( NUM_UNNAMED_DRAWABLES++ ) + loco::SUFFIX_COLLIDER;
+        kintree_drawable_data.localTransform = get_transform( drawable_elm );
+        kintree_drawable_data.type = loco::ToEnumShape( get_string( drawable_elm, "type", "sphere" ) );
+        kintree_drawable_data.size = get_standard_size( drawable_elm );
+        if ( kintree_drawable_data.type == eShapeType::MESH ) // @todo: check how to extract the mesh-id correctly
+            kintree_drawable_data.mesh_data.filename = get_string( drawable_elm, "mesh", "" );
+
+        auto rgba_color = loco::DEFAULT_RGBA_COLOR; // ambient + diffuse components of the material
+        auto specular_color = loco::DEFAULT_SPECULAR_COLOR; // specular component of the material
+        auto shininess = loco::DEFAULT_SHININESS; // shininess of the material
+        const std::string material_id = get_string( drawable_elm, "material", "" );
+
+        if ( drawable_elm->HasAttributeVec4( "rgba" ) )
+        {
+            rgba_color = drawable_elm->GetVec4( "rgba", loco::DEFAULT_RGBA_COLOR );
+            specular_color = { rgba_color.x(), rgba_color.y(), rgba_color.z() };
+            shininess = loco::DEFAULT_SHININESS;
+        }
+        else if ( m_AssetsMaterials.find( material_id ) != m_AssetsMaterials.end() )
+        {
+            rgba_color = m_AssetsMaterials[material_id].GetVec4( "rgba", loco::DEFAULT_RGBA_COLOR );
+            specular_color = { m_AssetsMaterials[material_id].GetFloat( "specular", loco::DEFAULT_SPECULAR_COLOR.x() ),
+                               m_AssetsMaterials[material_id].GetFloat( "specular", loco::DEFAULT_SPECULAR_COLOR.y() ),
+                               m_AssetsMaterials[material_id].GetFloat( "specular", loco::DEFAULT_SPECULAR_COLOR.z() ) };
+            shininess = m_AssetsMaterials[material_id].GetFloat( "shininess", loco::DEFAULT_SHININESS );
+        }
+        kintree_drawable_data.ambient = { rgba_color.x(), rgba_color.y(), rgba_color.z() };
+        kintree_drawable_data.diffuse = { rgba_color.x(), rgba_color.y(), rgba_color.z() };
+        kintree_drawable_data.specular = specular_color;
+        kintree_drawable_data.shininess = shininess;
+
+        return std::make_unique<visualizer::TDrawable>( kintree_drawable_name, kintree_drawable_data );
     }
 
     std::unique_ptr<TKinematicTreeJoint> TKinematicTreeMjcfParser::parse_joint( const parsing::TElement* joint_elm )
     {
-        return nullptr;
+        TKinematicTreeJointData kintree_joint_data;
+        std::string kintree_joint_name;
+        if ( joint_elm->HasAttributeString( "name" ) )
+            kintree_joint_name = m_KintreeRef->name() + "_" + joint_elm->GetString( "name" ) + loco::SUFFIX_JOINT;
+        else
+            kintree_joint_name = m_KintreeRef->name() + "_joint:" + std::to_string( NUM_UNNAMED_JOINTS ) + loco::SUFFIX_JOINT;
+        kintree_joint_data.type = loco::ToEnumJoint( get_string( joint_elm, "type", "hinge" ) );
+        kintree_joint_data.local_tf = get_transform( joint_elm );
+        kintree_joint_data.local_axis = get_vec3( joint_elm, "axis", { 1.0f, 0.0f, 0.0f } );
+        const bool is_limited = ( get_string( joint_elm, "limited", "false" ) == "true" );
+        if ( is_limited )
+        {
+            if ( m_OptUseDegrees )
+            {
+                const auto limits = get_vec2( joint_elm, "range", { -180.0f, 180.0f } );
+                kintree_joint_data.limits = { loco::Degrees2rad( limits.x() ), loco::Degrees2rad( limits.y() ) };
+            }
+            else
+            {
+                const auto limits = get_vec2( joint_elm, "range", { -loco::PI, loco::PI } );
+                kintree_joint_data.limits = { limits.x(), limits.y() };
+            }
+        }
+        else
+        {
+            kintree_joint_data.limits = { 1.0f, -1.0f }; // min. > max. <=> free-range
+        }
+
+        kintree_joint_data.stiffness = get_float( joint_elm, "stiffness", 0.0f );
+        kintree_joint_data.armature = get_float( joint_elm, "armature", 0.0f );
+        kintree_joint_data.damping = get_float( joint_elm, "damping", 0.0f );
+
+        return std::make_unique<TKinematicTreeJoint>( kintree_joint_name, kintree_joint_data );
     }
 
     void TKinematicTreeMjcfParser::collect_settings( const parsing::TElement* model_elm )
@@ -111,7 +266,6 @@ namespace kintree {
             {
                 LOCO_CORE_WARN( "TKinematicTreeMjcfParser::collect_assets >>> asset of type \"{0}\" isn't supported yet (while parsing model {1})", m_CurrentFilepath, child_asset_type );
             }
-
         }
     }
 
@@ -210,11 +364,9 @@ namespace kintree {
         }
     }
 
-
-
     std::string TKinematicTreeMjcfParser::get_string( const parsing::TElement* elm,
-                                                const std::string& attrib_id,
-                                                const std::string& default_value ) const
+                                                      const std::string& attrib_id,
+                                                      const std::string& default_value ) const
     {
         if ( elm->HasAttributeString( attrib_id ) )
             return elm->GetString( attrib_id );
@@ -230,8 +382,8 @@ namespace kintree {
     }
 
     ssize_t TKinematicTreeMjcfParser::get_int( const parsing::TElement* elm,
-                                         const std::string& attrib_id,
-                                         const ssize_t& default_value ) const
+                                               const std::string& attrib_id,
+                                               const ssize_t& default_value ) const
     {
         if ( elm->HasAttributeInt( attrib_id ) )
             return elm->GetInt( attrib_id );
@@ -247,8 +399,8 @@ namespace kintree {
     }
 
     float TKinematicTreeMjcfParser::get_float( const parsing::TElement* elm,
-                                         const std::string& attrib_id,
-                                         const float& default_value ) const
+                                               const std::string& attrib_id,
+                                               const float& default_value ) const
     {
         if ( elm->HasAttributeFloat( attrib_id ) )
             return elm->GetFloat( attrib_id );
@@ -346,6 +498,16 @@ namespace kintree {
         if ( has_default_no_class( elm_type, attrib_id ) )
             return m_DefaultsNoClass.at( elm_type ).GetSizef( attrib_id, default_value );
         return default_value;
+    }
+
+    TMat4 TKinematicTreeMjcfParser::get_transform( const parsing::TElement* elm ) const
+    {
+        return TMat4();
+    }
+
+    TVec3 TKinematicTreeMjcfParser::get_standard_size( const parsing::TElement* elm ) const
+    {
+        return TVec3();
     }
 
     std::string TKinematicTreeMjcfParser::get_class( const parsing::TElement* elm, const std::string& attrib_id ) const

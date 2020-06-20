@@ -18,6 +18,8 @@ namespace kintree {
         TScalar stiffness = 0.0f;
         /// Extra term added to the inertia matrix diagonal to make simulation more stable
         TScalar armature = 0.0f;
+        /// Damping applied to all degrees of freedom of this joint (force linear in velocity)
+        TScalar damping = 0.0f;
         /// Axis-1 used to define the plane for planar joints
         TVec3 plane_axis_1 = { 1.0f, 0.0f, 0.0f };
         /// Axis-2 used to define the plane for planar joints
@@ -75,6 +77,8 @@ namespace kintree {
         TScalar stiffness() const { return m_Data.stiffness; }
 
         TScalar armature() const { return m_Data.armature; }
+
+        TScalar damping() const { return m_Data.damping; }
 
         const TMat4& local_tf() const { return m_LocalTf; }
 

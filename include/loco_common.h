@@ -76,7 +76,7 @@ namespace loco
     /// Default rgb diffuse color used for drawables
     const TVec3 DEFAULT_DIFFUSE_COLOR = { 0.7f, 0.5f, 0.3f };
     /// Default rgb specular color used for drawables
-    const TVec3 DEFAULT_SPECULAR_COLOR = { 0.7f, 0.5f, 0.3f };
+    const TVec3 DEFAULT_SPECULAR_COLOR = { 1.0f, 1.0f, 1.0f };
     /// Default rgba color used for drawables
     const TVec4 DEFAULT_RGBA_COLOR = { 0.7f, 0.5f, 0.3f, 1.0f };
     /// Default shininess factor used for drawables
