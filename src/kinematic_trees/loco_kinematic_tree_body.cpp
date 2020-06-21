@@ -127,6 +127,7 @@ namespace kintree {
         LOCO_CORE_ASSERT( parent_body_ref, "TKinematicTreeBody::SetParentBody >>> tried adding nullptr to kintree-body {0}", m_name );
         m_ParentBodyRef = parent_body_ref;
         m_LocalTf = local_tf;
+        m_Data.local_tf = local_tf;
         m_tf = m_ParentBodyRef->tf() * m_LocalTf;
     }
 
@@ -181,6 +182,14 @@ namespace kintree {
                 break;
             }
         }
+    }
+
+    void TKinematicTreeBody::SetLocalTransform( const TMat4& local_tf )
+    {
+        m_LocalTf = local_tf;
+        m_Data.local_tf = local_tf;
+        if ( m_ParentBodyRef )
+            m_tf = m_ParentBodyRef->tf() * m_LocalTf;
     }
 
     void TKinematicTreeBody::Forward()

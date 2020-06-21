@@ -64,6 +64,8 @@ namespace loco
     /// Prefix-string used as a namespace for light-resources
     const std::string PREFIX_LIGHT = "light_";
 
+    /// Suffix string used for body resources
+    const std::string SUFFIX_BODY = "_bdy";
     /// Suffix-string used for collider-resources
     const std::string SUFFIX_COLLIDER = "_col";
     /// Suffix-string used for drawable-resources

@@ -77,6 +77,8 @@ namespace kintree {
 
         void RemoveChild( const std::string& body_name );
 
+        void SetLocalTransform( const TMat4& local_tf );
+
         void Forward();
 
         const TMat4& local_tf() const { return m_LocalTf; }

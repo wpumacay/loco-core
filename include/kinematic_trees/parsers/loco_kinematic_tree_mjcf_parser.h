@@ -43,6 +43,8 @@ namespace kintree {
 
         std::unique_ptr<TKinematicTreeJoint> parse_joint( const parsing::TElement* joint_elm );
 
+        TInertialData parse_inertia( const parsing::TElement* inertial_elm );
+
     private :
 
         void parse_kintree();
@@ -80,6 +82,8 @@ namespace kintree {
         bool has_default_no_class( const std::string& elm_type, const std::string& attrib_id ) const;
 
         bool has_default_from_class( const std::string& elm_type, const std::string& attrib_id, const std::string& elm_class ) const;
+
+        TMat4 convert_global_to_local_transform( const TMat4& parent_world_tf, const TMat4& this_world_tf );
 
     private :
 

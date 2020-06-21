@@ -105,11 +105,68 @@ namespace kintree {
                 body_parent->AddChild( std::move( kintree_body ), kintree_body_local_tf );
             }
         }
+
+        if ( !m_OptUseLocalCoordinates )
+        {
+            std::stack<std::pair<TKinematicTreeBody*, TMat4>> dfs_body_parentTf;
+            auto kintree_root_body = m_KintreeRef->root();
+            dfs_body_parentTf.push( { kintree_root_body, TMat4() } );
+
+            while( !dfs_body_parentTf.empty() )
+            {
+                auto body_parentTf_pair = dfs_body_parentTf.top();
+                auto kinbody = body_parentTf_pair.first;
+                const auto parent_world_tf = body_parentTf_pair.second;
+                dfs_body_parentTf.pop();
+                if ( !kinbody )
+                    continue;
+                // Grab global|world transform (recall in global coordinates the local-tfs are world-tfs)
+                const auto body_world_tf = kinbody->local_tf();
+
+                kinbody->SetLocalTransform( convert_global_to_local_transform( parent_world_tf, body_world_tf ) );
+
+                auto kinbody_joints = kinbody->joints();
+                for ( auto kin_joint : kinbody_joints )
+                {
+                    // Grab global|world transform (recall in global coordinates the local-tfs are world-tfs)
+                    const auto joint_world_tf = kin_joint->local_tf();
+                    kin_joint->SetLocalTransform( convert_global_to_local_transform( body_world_tf, joint_world_tf ) );
+                }
+                auto kinbody_colliders = kinbody->colliders();
+                for ( auto kin_collider : kinbody_colliders )
+                {
+                    // Grab global|world transform (recall in global coordinates the local-tfs are world-tfs)
+                    const auto collider_world_tf = kin_collider->local_tf();
+                    kin_collider->SetLocalTransform( convert_global_to_local_transform( body_world_tf, collider_world_tf ) );
+                }
+                auto kinbody_drawables = kinbody->drawables();
+                for ( auto kin_drawable : kinbody_drawables )
+                {
+                    // Grab global|world transform (recall in global coordinates the local-tfs are world-tfs)
+                    const auto drawable_world_tf = kin_drawable->local_tf();
+                    kin_drawable->SetLocalTransform( convert_global_to_local_transform( body_world_tf, drawable_world_tf ) );
+                }
+
+                auto kinbody_children = kinbody->children();
+                for ( auto kin_child_body : kinbody_children )
+                    dfs_body_parentTf.push( { kin_child_body, body_world_tf } );
+            }
+        }
     }
 
     std::unique_ptr<TKinematicTreeBody> TKinematicTreeMjcfParser::parse_body( const parsing::TElement* body_elm )
     {
-        return nullptr;
+        TKinematicTreeBodyData kintree_body_data;
+        std::string kintree_body_name;
+        if ( body_elm->HasAttributeString( "name" ) )
+            kintree_body_name = m_KintreeRef->name() + "_" + body_elm->GetString( "name" ) + loco::SUFFIX_BODY;
+        else
+            kintree_body_name = m_KintreeRef->name() + "_collider:" + std::to_string( NUM_UNNAMED_BODIES++ ) + loco::SUFFIX_BODY;
+        kintree_body_data.local_tf = get_transform( body_elm );
+        if ( body_elm->HasChildOfType( "inertial" ) )
+            kintree_body_data.inertia = parse_inertia( body_elm->GetFirstChildOfType( "inertial" ) );
+
+        return std::make_unique<TKinematicTreeBody>( kintree_body_name, kintree_body_data );
     }
 
     std::unique_ptr<TKinematicTreeCollider> TKinematicTreeMjcfParser::parse_collider( const parsing::TElement* collider_elm )
@@ -182,7 +239,7 @@ namespace kintree {
         if ( joint_elm->HasAttributeString( "name" ) )
             kintree_joint_name = m_KintreeRef->name() + "_" + joint_elm->GetString( "name" ) + loco::SUFFIX_JOINT;
         else
-            kintree_joint_name = m_KintreeRef->name() + "_joint:" + std::to_string( NUM_UNNAMED_JOINTS ) + loco::SUFFIX_JOINT;
+            kintree_joint_name = m_KintreeRef->name() + "_joint:" + std::to_string( NUM_UNNAMED_JOINTS++ ) + loco::SUFFIX_JOINT;
         kintree_joint_data.type = loco::ToEnumJoint( get_string( joint_elm, "type", "hinge" ) );
         kintree_joint_data.local_tf = get_transform( joint_elm );
         kintree_joint_data.local_axis = get_vec3( joint_elm, "axis", { 1.0f, 0.0f, 0.0f } );
@@ -209,7 +266,70 @@ namespace kintree {
         kintree_joint_data.armature = get_float( joint_elm, "armature", 0.0f );
         kintree_joint_data.damping = get_float( joint_elm, "damping", 0.0f );
 
-        return std::make_unique<TKinematicTreeJoint>( kintree_joint_name, kintree_joint_data );
+        /**/ if ( kintree_joint_data.type == eJointType::REVOLUTE )
+            return std::make_unique<TKinematicTreeRevoluteJoint>( kintree_joint_name,
+                                                                  kintree_joint_data.local_tf,
+                                                                  kintree_joint_data.local_axis,
+                                                                  kintree_joint_data.limits,
+                                                                  kintree_joint_data.stiffness,
+                                                                  kintree_joint_data.armature );
+        else if ( kintree_joint_data.type == eJointType::PRISMATIC )
+            return std::make_unique<TKinematicTreePrismaticJoint>( kintree_joint_name,
+                                                                   kintree_joint_data.local_tf,
+                                                                   kintree_joint_data.local_axis,
+                                                                   kintree_joint_data.limits,
+                                                                   kintree_joint_data.stiffness,
+                                                                   kintree_joint_data.armature );
+        else if ( kintree_joint_data.type == eJointType::SPHERICAL )
+            return std::make_unique<TKinematicTreeSphericalJoint>( kintree_joint_name,
+                                                                   kintree_joint_data.local_tf,
+                                                                   kintree_joint_data.limits,
+                                                                   kintree_joint_data.stiffness,
+                                                                   kintree_joint_data.armature );
+        else if ( kintree_joint_data.type == eJointType::PLANAR )
+            return std::make_unique<TKinematicTreePlanarJoint>( kintree_joint_name,
+                                                                kintree_joint_data.plane_axis_1,
+                                                                kintree_joint_data.plane_axis_2 );
+        else if ( kintree_joint_data.type == eJointType::FIXED )
+            return std::make_unique<TKinematicTreeFixedJoint>( kintree_joint_name,
+                                                               kintree_joint_data.local_tf );
+        else if ( kintree_joint_data.type == eJointType::FREE )
+            return std::make_unique<TKinematicTreeFreeJoint>( kintree_joint_name );
+        return nullptr;
+    }
+
+    TInertialData TKinematicTreeMjcfParser::parse_inertia( const parsing::TElement* inertial_elm )
+    {
+        TInertialData kintree_body_inertial_data;
+        kintree_body_inertial_data.localTransform = get_transform( inertial_elm );
+        kintree_body_inertial_data.mass = inertial_elm->GetFloat( "mass", 1.0f );
+        /**/ if ( inertial_elm->HasAttributeVec3( "diaginertia" ) )
+        {
+            const auto inertia_diag = inertial_elm->GetVec3( "diaginertia" );
+            kintree_body_inertial_data.ixx = inertia_diag.x();
+            kintree_body_inertial_data.iyy = inertia_diag.y();
+            kintree_body_inertial_data.izz = inertia_diag.z();
+            kintree_body_inertial_data.ixy = 0.0f;
+            kintree_body_inertial_data.ixz = 0.0f;
+            kintree_body_inertial_data.iyz = 0.0f;
+        }
+        else if ( inertial_elm->HasAttributeArrayFloat( "fullinertia" ) )
+        {
+            const auto inertia_arr = inertial_elm->GetArrayFloat( "fullinertia" );
+            kintree_body_inertial_data.ixx = inertia_arr[0];
+            kintree_body_inertial_data.iyy = inertia_arr[1];
+            kintree_body_inertial_data.izz = inertia_arr[2];
+            kintree_body_inertial_data.ixy = inertia_arr[3];
+            kintree_body_inertial_data.ixz = inertia_arr[4];
+            kintree_body_inertial_data.iyz = inertia_arr[5];
+        }
+        else
+        {
+            LOCO_CORE_ERROR( "TKinematicTreeMjcfParser::parse_inertia >>> no valid inertia-matrix found \
+                              in model {0}, while constructing kintree {1}", m_CurrentFilepath, m_KintreeRef->name() );
+        }
+
+        return kintree_body_inertial_data;
     }
 
     void TKinematicTreeMjcfParser::collect_settings( const parsing::TElement* model_elm )
@@ -502,12 +622,160 @@ namespace kintree {
 
     TMat4 TKinematicTreeMjcfParser::get_transform( const parsing::TElement* elm ) const
     {
+        const std::string elm_type = elm->elementType();
+
+        if ( elm->HasAttributeArrayFloat( "fromto" ) || has_default_no_class( elm_type, "fromto" ) ||
+             has_default_from_class( elm_type, "fromto", get_class( elm, "fromto" ) ) )
+        {
+            const auto fromto_arr = elm->GetArrayFloat( "fromto" );
+            const TVec3 v_start( fromto_arr[0], fromto_arr[1], fromto_arr[2] );
+            const TVec3 v_end( fromto_arr[3], fromto_arr[4], fromto_arr[5] );
+            const TVec3 v_delta = v_end - v_start;
+            const TVec3 z_axis_world = { 0.0f, 0.0f, 1.0f };
+            const TVec3 z_axis_local = v_delta.normalized();
+            const TVec3 pos_fromto = 0.5f * ( v_start + v_end );
+            const TMat3 rot_fromto = tinymath::rotation( loco::ShortestArcQuat( z_axis_world, z_axis_local ) );
+
+            return TMat4( rot_fromto, pos_fromto );
+        }
+        else
+        {
+            const TVec3 pos_local = get_vec3( elm, "pos", { 0.0f, 0.0f, 0.0f } );
+
+            /**/ if ( elm->HasAttributeVec3( "euler" ) || has_default_no_class( elm_type, "euler" ) ||
+                      has_default_from_class( elm_type, "euler", get_class( elm, "euler" ) ) ) 
+            {
+                auto euler_local = get_vec3( elm, "euler", { 0.0f, 0.0f, 0.0f } );
+                if ( m_OptUseDegrees )
+                {
+                    euler_local.x() = loco::Degrees2rad( euler_local.x() );
+                    euler_local.y() = loco::Degrees2rad( euler_local.y() );
+                    euler_local.z() = loco::Degrees2rad( euler_local.z() );
+                }
+                const TMat3 rot_local = tinymath::rotation( euler_local );
+
+                return TMat4( rot_local, pos_local );
+            }
+            else if ( elm->HasAttributeVec4( "quat" ) || has_default_no_class( elm_type, "quat" ) ||
+                      has_default_from_class( elm_type, "quat", get_class( elm, "quat" ) ) )
+            {
+                auto quat_local = get_vec4( elm, "quat", { 1.0f, 0.0f, 0.0f, 0.0f } );
+                quat_local = { quat_local.y(), quat_local.z(), quat_local.w(), quat_local.x() }; // compensate -> mjcf (wxyz), ours (xyzw)
+                const TMat3 rot_local = tinymath::rotation( quat_local );
+
+                return TMat4( rot_local, pos_local );
+            }
+            else if ( elm->HasAttributeVec3( "zaxis" ) || has_default_no_class( elm_type, "zaxis" ) ||
+                      has_default_from_class( elm_type, "zaxis", get_class( elm, "zaxis" ) ) )
+            {
+                const TVec3 z_axis_world = { 0.0f, 0.0f, 1.0f };
+                const TVec3 z_axis_local = get_vec3( elm, "zaxis", { 0.0f, 0.0f, 1.0f } );
+                const TMat3 rot_local = tinymath::rotation( loco::ShortestArcQuat( z_axis_world, z_axis_local ) );
+
+                return TMat4( rot_local, pos_local );
+            }
+            else
+            {
+                return TMat4( TMat3(), pos_local );
+            }
+            
+        }
+        LOCO_CORE_ERROR( "TKinematicTreeMjcfParser::get_transform >>> Unsupported pose description found \
+                          while parsing model {0} for kintree {1}", m_CurrentFilepath, m_KintreeRef->name() );
         return TMat4();
     }
 
-    TVec3 TKinematicTreeMjcfParser::get_standard_size( const parsing::TElement* elm ) const
+    TVec3 TKinematicTreeMjcfParser::get_standard_size( const parsing::TElement* geom_elm ) const
     {
-        return TVec3();
+        const std::string geom_name = geom_elm->GetString( "name" );
+        const auto geom_type = loco::ToEnumShape( get_string( geom_elm, "type", "sphere" ) );
+        const auto geom_size = get_array_float( geom_elm, "size", TSizef() );
+        const auto geom_fromto = get_array_float( geom_elm, "fromto", TSizef() );
+
+        /**/ if ( geom_type == eShapeType::BOX )
+        {
+            TVec3 half_extents( 0.1f, 0.1f, 0.1f );
+            if ( geom_size.ndim == 3 )
+                half_extents = { geom_size[0], geom_size[1], geom_size[2] };
+            else
+                LOCO_CORE_WARN( "TKinematicTreeMjcfParser::get_standard_size >>> got wrong size-ndim \
+                                 for box {0}, while parsing kintree {1}", geom_name, m_KintreeRef->name() );
+            return 2.0f * half_extents;
+
+        }
+        else if ( geom_type == eShapeType::SPHERE )
+        {
+            TScalar radius = 0.1f;
+            if ( geom_size.ndim >= 1 )
+                radius = geom_size[0];
+            else
+                LOCO_CORE_WARN( "TKinematicTreeMjcfParser::get_standard_size >>> got wrong size-ndim \
+                                 for sphere {0}, while parsing kintree {1}", geom_name, m_KintreeRef->name() );
+            return { radius, 0.0f, 0.0f };
+        }
+        else if ( geom_type == eShapeType::ELLIPSOID )
+        {
+            TVec3 radii( 0.1f, 0.1f, 0.1f );
+            if ( geom_size.ndim >= 3 )
+                radii = { geom_size[0], geom_size[1], geom_size[2] };
+            else
+                LOCO_CORE_WARN( "TKinematicTreeMjcfParser::get_standard_size >>> got wrong size-ndim \
+                                 for ellipsoid {0}, while parsing kintree {1}", geom_name, m_KintreeRef->name() );
+            return radii;
+        }
+        else if ( geom_type == eShapeType::CAPSULE || geom_type == eShapeType::CYLINDER )
+        {
+            TScalar c_length = 0.1f, c_radius = 0.05f;
+            if ( geom_elm->HasAttributeArrayFloat( "fromto" ) )
+            {
+                if ( geom_fromto.ndim >= 6 )
+                {
+                    const TVec3 v_start( geom_fromto[0], geom_fromto[1], geom_fromto[2] );
+                    const TVec3 v_end( geom_fromto[3], geom_fromto[4], geom_fromto[5]);
+                    c_length = ( v_end - v_start ).length();
+                    if ( geom_size.ndim >= 1 )
+                    {
+                        c_radius = geom_size[0];
+                    }
+                    else
+                    {
+                        LOCO_CORE_WARN( "TKinematicTreeMjcfParser::get_standard_size >>> got wrong size-ndim \
+                                         for capsule|cylinder {0} (fromto specification), while parsing kintree {1}", geom_name, m_KintreeRef->name() );
+                        c_radius = 0.25f * c_length;
+                    }
+                }
+                else
+                {
+                    LOCO_CORE_WARN( "TKinematicTreeMjcfParser::get_standard_size >>> got wrong fromto-size-ndim \
+                                     for capsule|cylinder {0} (fromto-specification), while parsing kintree {1}", geom_name, m_KintreeRef->name() );
+                }
+            }
+            else
+            {
+                if ( geom_size.ndim >= 2 )
+                {
+                    c_radius = geom_size[0];
+                    c_length = 2.0f * geom_size[1];
+                }
+                else
+                {
+                    LOCO_CORE_WARN( "TKinematicTreeMjcfParser::get_standard_size >>> got wrong size-ndim \
+                                     for capsule|cylinder {0}, while parsing kintree {1}", geom_name, m_KintreeRef->name() );
+                }
+            }
+            return { c_radius, c_length, 0.0f };
+        }
+        else if ( geom_type == eShapeType::MESH )
+        {
+            const auto mesh_id = get_string( geom_elm, "mesh", "" );
+            if ( m_AssetsMeshes.find( mesh_id ) != m_AssetsMeshes.end() )
+                return m_AssetsMeshes.at( mesh_id ).GetVec3( "scale", { 1.0f, 1.0f, 1.0f } );
+            else
+                return { 1.0f, 1.0f, 1.0f };
+        }
+        LOCO_CORE_ERROR( "TKinematicTreeMjcfParser::get_standard_size >>> unsupported geom-type {0}, \
+                          while parsing kintree {1}", geom_elm->GetString( "type" ), m_KintreeRef->name() );
+        return TVec3( 0.1f, 0.1f, 0.1f );
     }
 
     std::string TKinematicTreeMjcfParser::get_class( const parsing::TElement* elm, const std::string& attrib_id ) const
@@ -529,7 +797,7 @@ namespace kintree {
                 if ( has_default_from_class( curr_type, attrib_id, curr_class ) )
                     return curr_class;
             }
-            current_elm = elm->parent();
+            current_elm = current_elm->parent();
         }
         return "";
     }
@@ -550,5 +818,23 @@ namespace kintree {
         if ( m_DefaultsPerClass.at( elm_class ).find( elm_type ) == m_DefaultsPerClass.at( elm_class ).end() )
             return false;
         return m_DefaultsPerClass.at( elm_class ).at( elm_type ).HasParam( attrib_id );
+    }
+
+    TMat4 TKinematicTreeMjcfParser::convert_global_to_local_transform( const TMat4& parent_world_tf,
+                                                                       const TMat4& this_world_tf )
+    {
+        // Computes the relative transform between two frames, given their world transforms.
+        // Use the following relation:
+        //
+        //  b1 : parent
+        //  b2 : this
+        //
+        //     w       b1        w         b1       w -1     w   
+        //      T   *    T    =   T    ->   T   =    T    *   T  
+        //       b1       b2       b2        b2       b1       b2
+        auto b1_to_world = parent_world_tf;
+        auto b2_to_world = this_world_tf;
+        auto b2_to_b1 = b1_to_world.inverse() * b2_to_world;
+        return b2_to_b1;
     }
 }}
