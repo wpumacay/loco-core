@@ -391,6 +391,9 @@ namespace kintree {
 
     void TKinematicTreeMjcfParser::collect_defaults_with_class( const parsing::TElement* defaults_elm )
     {
+        if ( !defaults_elm )
+            return; // No defaults to grab
+
         std::stack<std::pair<const parsing::TElement*, std::string>> dfs_elements;
         auto children_defaults = defaults_elm->GetChildrenOfType( "default" );
         auto class_defaults = defaults_elm->GetString( "class", "" );
@@ -453,6 +456,9 @@ namespace kintree {
 
     void TKinematicTreeMjcfParser::collect_defaults_with_no_class( const parsing::TElement* defaults_elm )
     {
+        if ( !defaults_elm )
+            return; // No defaults to grab
+
         for ( ssize_t i = 0; i < defaults_elm->num_children(); i++ )
         {
             const auto child_elm = defaults_elm->get_child( i );

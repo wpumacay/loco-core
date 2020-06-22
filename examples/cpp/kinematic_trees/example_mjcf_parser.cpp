@@ -23,7 +23,7 @@ int main( int argc, char* argv[] )
             PHYSICS_BACKEND = loco::config::physics::NONE;
     }
 
-    std::string choice_model = "humanoid";
+    std::string choice_model = "walker2d_gym";
     if ( argc > 2 )
         choice_model = argv[2];
 
