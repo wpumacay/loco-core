@@ -627,7 +627,7 @@ namespace kintree {
         if ( elm->HasAttributeArrayFloat( "fromto" ) || has_default_no_class( elm_type, "fromto" ) ||
              has_default_from_class( elm_type, "fromto", get_class( elm, "fromto" ) ) )
         {
-            const auto fromto_arr = elm->GetArrayFloat( "fromto" );
+            const auto fromto_arr = get_array_float( elm, "fromto", TSizef() );
             const TVec3 v_start( fromto_arr[0], fromto_arr[1], fromto_arr[2] );
             const TVec3 v_end( fromto_arr[3], fromto_arr[4], fromto_arr[5] );
             const TVec3 v_delta = v_end - v_start;
@@ -688,6 +688,7 @@ namespace kintree {
     TVec3 TKinematicTreeMjcfParser::get_standard_size( const parsing::TElement* geom_elm ) const
     {
         const std::string geom_name = geom_elm->GetString( "name" );
+        const auto elm_type = geom_elm->elementType();
         const auto geom_type = loco::ToEnumShape( get_string( geom_elm, "type", "sphere" ) );
         const auto geom_size = get_array_float( geom_elm, "size", TSizef() );
         const auto geom_fromto = get_array_float( geom_elm, "fromto", TSizef() );
@@ -726,7 +727,8 @@ namespace kintree {
         else if ( geom_type == eShapeType::CAPSULE || geom_type == eShapeType::CYLINDER )
         {
             TScalar c_length = 0.1f, c_radius = 0.05f;
-            if ( geom_elm->HasAttributeArrayFloat( "fromto" ) )
+            if ( geom_elm->HasAttributeArrayFloat( "fromto" ) || has_default_no_class( elm_type, "fromto" ) ||
+                 has_default_from_class( elm_type, "fromto", get_class( geom_elm, "fromto" ) ) )
             {
                 if ( geom_fromto.ndim >= 6 )
                 {
@@ -780,22 +782,23 @@ namespace kintree {
 
     std::string TKinematicTreeMjcfParser::get_class( const parsing::TElement* elm, const std::string& attrib_id ) const
     {
+        if ( elm->HasAttributeString( "class" ) )
+        {
+            const std::string elm_type = elm->elementType();
+            const std::string elm_class = elm->GetString( "class" );
+            if ( has_default_from_class( elm_type, attrib_id, elm_class ) )
+                return elm_class;
+        }
+
         const parsing::TElement* current_elm = elm;
         while ( current_elm )
         {
-            if ( elm->HasAttributeString( "class" ) )
+            if ( current_elm->parent() && current_elm->parent()->HasAttributeString( "childclass" ) )
             {
-                const std::string curr_type = elm->elementType();
-                const std::string curr_class = elm->GetString( "class ");
-                if ( has_default_from_class( curr_type, attrib_id, curr_class ) )
-                    return curr_class;
-            }
-            if ( elm->parent() && elm->parent()->HasAttributeString( "childclass" ) )
-            {
-                const std::string curr_type = elm->elementType();
-                const std::string curr_class = elm->parent()->GetString( "childclass" );
-                if ( has_default_from_class( curr_type, attrib_id, curr_class ) )
-                    return curr_class;
+                const std::string elm_type = elm->elementType();
+                const std::string elm_class = current_elm->parent()->GetString( "childclass" );
+                if ( has_default_from_class( elm_type, attrib_id, elm_class ) )
+                    return elm_class;
             }
             current_elm = current_elm->parent();
         }
