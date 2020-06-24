@@ -13,5 +13,6 @@ pybind11_add_module( loco_sim
                      loco_simulation_py.cpp
                      loco_visualizer_py.cpp
                      loco_runtime_py.cpp
-                     primitives/loco_primitives_py.cpp )
+                     primitives/loco_primitives_py.cpp
+                     kintrees/loco_kintrees_py.cpp )
 target_link_libraries( loco_sim PRIVATE loco_core tinymath_python_lib )
