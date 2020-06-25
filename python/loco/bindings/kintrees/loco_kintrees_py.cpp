@@ -11,7 +11,7 @@ namespace kintree {
     {
         // Bindings for TKinematicTreeCollider
         {
-            py::class_<TKinematicTreeCollider, TObject>( m, "KinematicTreeCollider" )
+            py::class_<TKinematicTreeCollider, TObject>( m, "Collider" )
                 .def( py::init<const std::string&, const TCollisionData&>() )
                 .def( "data", []( TKinematicTreeCollider* self ) -> TCollisionData&
                     { 
@@ -92,7 +92,7 @@ namespace kintree {
                 .def_property_readonly( "shape", &TKinematicTreeCollider::shape )
                 .def( "__repr__", []( const TKinematicTreeCollider* self )
                     {
-                        auto strrep = std::string( "KinematicTreeCollider(\n" );
+                        auto strrep = std::string( "kintree.Collider(\n" );
                         strrep += "cpp-address  : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         strrep += "name         : " + self->name() + "\n";
                         strrep += "shape        : " + loco::ToString( self->shape() ) + "\n";
@@ -109,8 +109,10 @@ namespace kintree {
 
         // Bindings for TKinematicTreeJoint and related classes
         {
-            // TKinematicTreeJointData struct bindings
-            py::class_<TKinematicTreeJointData>( m, "KinematicTreeJointData" )
+            //------------------------------------------------------------------------------------//
+            //                       TKinematicTreeJointData struct bindings                      //
+            //------------------------------------------------------------------------------------//
+            py::class_<TKinematicTreeJointData>( m, "JointData" )
                 .def( py::init<>() )
                 .def_readwrite( "type", &TKinematicTreeJointData::type )
                 .def_property( "limits",
@@ -163,7 +165,7 @@ namespace kintree {
                         } )
                 .def( "__repr__", []( const TKinematicTreeJointData* self )
                     {
-                        auto strrep = std::string( "KinematicTreeJointData(\n" );
+                        auto strrep = std::string( "kintree.JointData(\n" );
                         strrep += "cpp-address  : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         strrep += "type         : " + loco::ToString( self->type ) + "\n";
                         strrep += "limits       : " + loco::ToString( self->limits ) + "\n";
@@ -178,8 +180,10 @@ namespace kintree {
                         return strrep;
                     } );
 
-            // TKinematicTreeJoint class bindings
-            py::class_<TKinematicTreeJoint, TObject>( m, "KinematicTreeJoint" )
+            //------------------------------------------------------------------------------------//
+            //                          TKinematicTreeJoint class bindings                        //
+            //------------------------------------------------------------------------------------//
+            py::class_<TKinematicTreeJoint, TObject>( m, "Joint" )
                 .def( py::init<const std::string&, const TKinematicTreeJointData&>() )
                 .def( "data", []( TKinematicTreeJoint* self ) -> TKinematicTreeJointData&
                     {
@@ -262,7 +266,7 @@ namespace kintree {
                 .def_property_readonly( "type", &TKinematicTreeJoint::type )
                 .def( "__repr__", []( const TKinematicTreeJoint* self )
                     {
-                        auto strrep = std::string( "KinematicTreeJoint(\n" );
+                        auto strrep = std::string( "kintree.Joint(\n" );
                         strrep += "cpp-address  : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         strrep += "name         : " + self->name() + "\n";
                         strrep += "type         : " + loco::ToString( self->type() ) + "\n";
@@ -285,14 +289,215 @@ namespace kintree {
                         return strrep;
                     } );
 
-            //// // Typed-kintree-joint class bindings
-            //// py::class_<TKinematicTreeRevoluteJoint, TKinematicTreeJoint>( m, "KinematicTreeRevoluteJoint" )
-            ////     .def( py::init( []( const std::string& name,
-            ////                         const py::array_t<TScalar>& arr_local_axis,
-            ////                         const py::array_t<TScalar>& arr_limits,
-            ////                         TScalar stiffness,
-            ////                         TScalar armature,
-            ////                         TScalar damping ) ) )
+            //------------------------------------------------------------------------------------//
+            //                          Typed-kintree-joint class bindings                        //
+            //------------------------------------------------------------------------------------//
+
+            py::class_<TKinematicTreeRevoluteJoint, TKinematicTreeJoint>( m, "RevoluteJoint" )
+                .def( py::init( []( const std::string& name,
+                                    const py::array_t<TScalar>& arr_local_axis,
+                                    const py::array_t<TScalar>& arr_limits,
+                                    TScalar stiffness,
+                                    TScalar armature,
+                                    TScalar damping )
+                    {
+                        return std::make_unique<TKinematicTreeRevoluteJoint>( name,
+                                                                              tinymath::nparray_to_vector<TScalar, 3>( arr_local_axis ),
+                                                                              tinymath::nparray_to_vector<TScalar, 2>( arr_limits ),
+                                                                              stiffness, armature, damping );
+                    } ),
+                     py::arg( "name" ), py::arg( "local_axis" ), py::arg( "limits" ),
+                     py::arg( "stiffness" ) = 0.0f, py::arg( "armature" ) = 0.0f, py::arg( "damping" ) = 0.0f )
+                .def_property( "angle", &TKinematicTreeRevoluteJoint::angle, &TKinematicTreeRevoluteJoint::SetAngle )
+                .def_property( "axis",
+                    []( const TKinematicTreeRevoluteJoint* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 3>( self->axis() );
+                        },
+                    []( TKinematicTreeRevoluteJoint* self, const py::array_t<TScalar>& arr_axis )
+                        {
+                            self->SetAxis( tinymath::nparray_to_vector<TScalar, 3>( arr_axis ) );
+                        } )
+                .def_property( "limits",
+                    []( const TKinematicTreeRevoluteJoint* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 2>( self->limits() );
+                        },
+                    []( TKinematicTreeRevoluteJoint* self, const py::array_t<TScalar>& arr_limits )
+                        {
+                            self->SetLimits( tinymath::nparray_to_vector<TScalar, 2>( arr_limits ) );
+                        } )
+                .def( "__repr__", []( const TKinematicTreeRevoluteJoint* self )
+                    {
+                        auto strrep = std::string( "kintree.RevoluteJoint(\n" );
+                        strrep += "cpp-address  : " + tinyutils::PointerToHexAddress( self ) + "\n";
+                        strrep += "name         : " + self->name() + "\n";
+                        strrep += "parent       : " + ( self->parent() ? self->parent()->name() : std::string( "nullptr" ) ) + "\n";
+                        strrep += "stiffness    : " + std::to_string( self->stiffness() ) + "\n";
+                        strrep += "armature     : " + std::to_string( self->armature() ) + "\n";
+                        strrep += "damping      : " + std::to_string( self->damping() ) + "\n";
+                        strrep += "angle        : " + std::to_string( self->angle() ) + "\n";
+                        strrep += "axis         : " + loco::ToString( self->axis() ) + "\n";
+                        strrep += "limits       : " + loco::ToString( self->limits() ) + "\n";
+                        strrep += "local_tf     :\n" + loco::ToString( self->local_tf() ) + "\n";
+                        strrep += "world_tf     :\n" + loco::ToString( self->tf() ) + "\n";
+                        strrep += ")";
+                        return strrep;
+                    } );
+
+            py::class_<TKinematicTreePrismaticJoint, TKinematicTreeJoint>( m, "PrismaticJoint" )
+                .def( py::init( []( const std::string& name,
+                                    const py::array_t<TScalar>& arr_local_axis,
+                                    const py::array_t<TScalar>& arr_limits,
+                                    TScalar stiffness,
+                                    TScalar armature,
+                                    TScalar damping )
+                    {
+                        return std::make_unique<TKinematicTreePrismaticJoint>( name,
+                                                                               tinymath::nparray_to_vector<TScalar, 3>( arr_local_axis ),
+                                                                               tinymath::nparray_to_vector<TScalar, 2>( arr_limits ),
+                                                                               stiffness, armature, damping );
+                    } ),
+                     py::arg( "name" ), py::arg( "local_axis" ), py::arg( "limits" ),
+                     py::arg( "stiffness" ) = 0.0f, py::arg( "armature" ) = 0.0f, py::arg( "damping" ) = 0.0f )
+                .def_property( "position", &TKinematicTreePrismaticJoint::position, &TKinematicTreePrismaticJoint::SetPosition )
+                .def_property( "axis",
+                    []( const TKinematicTreePrismaticJoint* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 3>( self->axis() );
+                        },
+                    []( TKinematicTreePrismaticJoint* self, const py::array_t<TScalar>& arr_axis )
+                        {
+                            self->SetAxis( tinymath::nparray_to_vector<TScalar, 3>( arr_axis ) );
+                        } )
+                .def_property( "limits",
+                    []( const TKinematicTreePrismaticJoint* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 2>( self->limits() );
+                        },
+                    []( TKinematicTreePrismaticJoint* self, const py::array_t<TScalar>& arr_limits )
+                        {
+                            self->SetLimits( tinymath::nparray_to_vector<TScalar, 2>( arr_limits ) );
+                        } )
+                .def( "__repr__", []( const TKinematicTreePrismaticJoint* self )
+                    {
+                        auto strrep = std::string( "kintree.PrismaticJoint(\n" );
+                        strrep += "cpp-address  : " + tinyutils::PointerToHexAddress( self ) + "\n";
+                        strrep += "name         : " + self->name() + "\n";
+                        strrep += "parent       : " + ( self->parent() ? self->parent()->name() : std::string( "nullptr" ) ) + "\n";
+                        strrep += "stiffness    : " + std::to_string( self->stiffness() ) + "\n";
+                        strrep += "armature     : " + std::to_string( self->armature() ) + "\n";
+                        strrep += "damping      : " + std::to_string( self->damping() ) + "\n";
+                        strrep += "position     : " + std::to_string( self->position() ) + "\n";
+                        strrep += "axis         : " + loco::ToString( self->axis() ) + "\n";
+                        strrep += "limits       : " + loco::ToString( self->limits() ) + "\n";
+                        strrep += "local_tf     :\n" + loco::ToString( self->local_tf() ) + "\n";
+                        strrep += "world_tf     :\n" + loco::ToString( self->tf() ) + "\n";
+                        strrep += ")";
+                        return strrep;
+                    } );
+
+            py::class_<TKinematicTreeSphericalJoint, TKinematicTreeJoint>( m, "SphericalJoint" )
+                .def( py::init( []( const std::string& name,
+                                    const py::array_t<TScalar>& arr_limits,
+                                    TScalar stiffness,
+                                    TScalar armature,
+                                    TScalar damping )
+                    {
+                        return std::make_unique<TKinematicTreeSphericalJoint>( name,
+                                                                               tinymath::nparray_to_vector<TScalar, 2>( arr_limits ),
+                                                                               stiffness, armature, damping );
+                    } ),
+                     py::arg( "name" ), py::arg( "limits" ), py::arg( "stiffness" ) = 0.0f, py::arg( "armature" ) = 0.0f, py::arg( "damping" ) = 0.0f )
+                .def_property( "quat",
+                    []( const TKinematicTreeSphericalJoint* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 4>( self->quat() );
+                        },
+                    []( TKinematicTreeSphericalJoint* self, const py::array_t<TScalar>& arr_quat )
+                        {
+                            self->SetQuat( tinymath::nparray_to_vector<TScalar, 4>( arr_quat ) );
+                        } )
+                .def_property( "limits",
+                    []( const TKinematicTreeSphericalJoint* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 2>( self->limits() );
+                        },
+                    []( TKinematicTreeSphericalJoint* self, const py::array_t<TScalar>& arr_limits )
+                        {
+                            self->SetLimits( tinymath::nparray_to_vector<TScalar, 2>( arr_limits ) );
+                        } )
+                .def( "__repr__", []( const TKinematicTreeSphericalJoint* self )
+                    {
+                        auto strrep = std::string( "kintree.SphericalJoint(\n" );
+                        strrep += "cpp-address  : " + tinyutils::PointerToHexAddress( self ) + "\n";
+                        strrep += "name         : " + self->name() + "\n";
+                        strrep += "parent       : " + ( self->parent() ? self->parent()->name() : std::string( "nullptr" ) ) + "\n";
+                        strrep += "stiffness    : " + std::to_string( self->stiffness() ) + "\n";
+                        strrep += "armature     : " + std::to_string( self->armature() ) + "\n";
+                        strrep += "damping      : " + std::to_string( self->damping() ) + "\n";
+                        strrep += "quat         : " + loco::ToString( self->quat() ) + "\n";
+                        strrep += "limits       : " + loco::ToString( self->limits() ) + "\n";
+                        strrep += "local_tf     :\n" + loco::ToString( self->local_tf() ) + "\n";
+                        strrep += "world_tf     :\n" + loco::ToString( self->tf() ) + "\n";
+                        strrep += ")";
+                        return strrep;
+                    } );
+
+            py::class_<TKinematicTreePlanarJoint, TKinematicTreeJoint>( m, "PlanarJoint" )
+                .def( py::init( []( const std::string& name,
+                                    const py::array_t<TScalar>& arr_plane_axis_1,
+                                    const py::array_t<TScalar>& arr_plane_axis_2 )
+                    {
+                        return std::make_unique<TKinematicTreePlanarJoint>( name,
+                                                                            tinymath::nparray_to_vector<TScalar, 3>( arr_plane_axis_1 ),
+                                                                            tinymath::nparray_to_vector<TScalar, 3>( arr_plane_axis_2 ) );
+                    } ),
+                     py::arg( "name" ), py::arg( "plane_axis_1" ), py::arg( "plane_axis_2" ) )
+                .def( "__repr__", []( const TKinematicTreePlanarJoint* self )
+                    {
+                        auto strrep = std::string( "kintree.PlanarJoint(\n" );
+                        strrep += "cpp-address  : " + tinyutils::PointerToHexAddress( self ) + "\n";
+                        strrep += "name         : " + self->name() + "\n";
+                        strrep += "parent       : " + ( self->parent() ? self->parent()->name() : std::string( "nullptr" ) ) + "\n";
+                        strrep += "local_tf     :\n" + loco::ToString( self->local_tf() ) + "\n";
+                        strrep += "world_tf     :\n" + loco::ToString( self->tf() ) + "\n";
+                        strrep += ")";
+                        return strrep;
+                    } );
+
+            py::class_<TKinematicTreeFixedJoint, TKinematicTreeJoint>( m, "FixedJoint" )
+                .def( py::init<const std::string&>() )
+                .def( "__repr__", []( const TKinematicTreeFixedJoint* self )
+                    {
+                        auto strrep = std::string( "kintree.FixedJoint(\n" );
+                        strrep += "cpp-address  : " + tinyutils::PointerToHexAddress( self ) + "\n";
+                        strrep += "name         : " + self->name() + "\n";
+                        strrep += "parent       : " + ( self->parent() ? self->parent()->name() : std::string( "nullptr" ) ) + "\n";
+                        strrep += "local_tf     :\n" + loco::ToString( self->local_tf() ) + "\n";
+                        strrep += "world_tf     :\n" + loco::ToString( self->tf() ) + "\n";
+                        strrep += ")";
+                        return strrep;
+                    } );
+
+            py::class_<TKinematicTreeFreeJoint, TKinematicTreeJoint>( m, "FreeJoint" )
+                .def( py::init<const std::string&>() )
+                .def( "__repr__", []( const TKinematicTreeFreeJoint* self )
+                    {
+                        auto strrep = std::string( "kintree.FreeJoint(\n" );
+                        strrep += "cpp-address  : " + tinyutils::PointerToHexAddress( self ) + "\n";
+                        strrep += "name         : " + self->name() + "\n";
+                        strrep += "parent       : " + ( self->parent() ? self->parent()->name() : std::string( "nullptr" ) ) + "\n";
+                        strrep += "local_tf     :\n" + loco::ToString( self->local_tf() ) + "\n";
+                        strrep += "world_tf     :\n" + loco::ToString( self->tf() ) + "\n";
+                        strrep += ")";
+                        return strrep;
+                    } );
+        }
+
+        // Bindings for TKinematicTreeBody and related classes
+        {
+
         }
     }
 
