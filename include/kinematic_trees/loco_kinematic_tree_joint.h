@@ -58,6 +58,8 @@ namespace kintree {
 
         void SetArmature( const TScalar& armature );
 
+        void SetDamping( const TScalar& damping );
+
         void SetLocalTransform( const TMat4& local_tf );
 
         ssize_t num_qpos() const { return m_NumQpos; }
@@ -140,11 +142,11 @@ namespace kintree {
     public :
 
         TKinematicTreeRevoluteJoint( const std::string& name,
-                                     const TMat4& local_tf,
                                      const TVec3& local_axis,
                                      const TVec2& limits = { 1.0f, -1.0f },
                                      const TScalar& stiffness = 0.0f,
-                                     const TScalar& armature = 0.0f );
+                                     const TScalar& armature = 0.0f,
+                                     const TScalar& damping = 0.0f );
 
         ~TKinematicTreeRevoluteJoint() = default;
 
@@ -166,11 +168,11 @@ namespace kintree {
     public :
 
         TKinematicTreePrismaticJoint( const std::string& name,
-                                      const TMat4& local_tf,
                                       const TVec3& local_axis,
                                       const TVec2& limits = { 1.0f, -1.0f },
                                       const TScalar& stiffness = 0.0f,
-                                      const TScalar& armature = 0.0f );
+                                      const TScalar& armature = 0.0f,
+                                      const TScalar& damping = 0.0f );
 
         ~TKinematicTreePrismaticJoint() = default;
 
@@ -192,10 +194,10 @@ namespace kintree {
     public :
 
         TKinematicTreeSphericalJoint( const std::string& name,
-                                      const TMat4& local_tf,
                                       const TVec2& limits = { 1.0f, -1.0f },
                                       const TScalar& stiffness = 0.0f,
-                                      const TScalar& armature = 0.0f );
+                                      const TScalar& armature = 0.0f,
+                                      const TScalar& damping = 0.0f );
 
         ~TKinematicTreeSphericalJoint() = default;
 
@@ -223,8 +225,7 @@ namespace kintree {
     {
     public :
 
-        TKinematicTreeFixedJoint( const std::string& name,
-                                  const TMat4& local_tf );
+        TKinematicTreeFixedJoint( const std::string& name );
 
         ~TKinematicTreeFixedJoint() = default;
     };
@@ -237,5 +238,4 @@ namespace kintree {
 
         ~TKinematicTreeFreeJoint() = default;
     };
-
 }}

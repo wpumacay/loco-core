@@ -45,35 +45,33 @@ namespace kintree {
             /**/ if ( joint_data.type == eJointType::REVOLUTE )
                 m_Joints.push_back( std::make_unique<TKinematicTreeRevoluteJoint>( 
                                                         name + SUFFIX_JOINT,
-                                                        joint_data.local_tf,
                                                         joint_data.local_axis,
                                                         joint_data.limits,
                                                         joint_data.stiffness,
-                                                        joint_data.armature ) );
+                                                        joint_data.armature,
+                                                        joint_data.damping ) );
             else if ( joint_data.type == eJointType::PRISMATIC )
                 m_Joints.push_back( std::make_unique<TKinematicTreePrismaticJoint>(
                                                         name + SUFFIX_JOINT,
-                                                        joint_data.local_tf,
                                                         joint_data.local_axis,
                                                         joint_data.limits,
                                                         joint_data.stiffness,
-                                                        joint_data.armature ) );
+                                                        joint_data.armature,
+                                                        joint_data.damping ) );
             else if ( joint_data.type == eJointType::SPHERICAL )
                 m_Joints.push_back( std::make_unique<TKinematicTreeSphericalJoint>(
                                                         name + SUFFIX_JOINT,
-                                                        joint_data.local_tf,
                                                         joint_data.limits,
                                                         joint_data.stiffness,
-                                                        joint_data.armature ) );
+                                                        joint_data.armature,
+                                                        joint_data.damping ) );
             else if ( joint_data.type == eJointType::PLANAR )
                 m_Joints.push_back( std::make_unique<TKinematicTreePlanarJoint>(
                                                         name + SUFFIX_JOINT,
                                                         joint_data.plane_axis_1,
                                                         joint_data.plane_axis_2 ) );
             else if ( joint_data.type == eJointType::FIXED )
-                m_Joints.push_back( std::make_unique<TKinematicTreeFixedJoint>(
-                                                        name + SUFFIX_JOINT,
-                                                        joint_data.local_tf ) );
+                m_Joints.push_back( std::make_unique<TKinematicTreeFixedJoint>( name + SUFFIX_JOINT ) );
             else if ( joint_data.type == eJointType::FREE )
                 m_Joints.push_back( std::make_unique<TKinematicTreeFreeJoint>( name + SUFFIX_JOINT ) );
             else

@@ -107,8 +107,9 @@ namespace kintree {
                     } );
         }
 
-        // Bindings for TKinematicTreeJoint
+        // Bindings for TKinematicTreeJoint and related classes
         {
+            // TKinematicTreeJointData struct bindings
             py::class_<TKinematicTreeJointData>( m, "KinematicTreeJointData" )
                 .def( py::init<>() )
                 .def_readwrite( "type", &TKinematicTreeJointData::type )
@@ -177,6 +178,7 @@ namespace kintree {
                         return strrep;
                     } );
 
+            // TKinematicTreeJoint class bindings
             py::class_<TKinematicTreeJoint, TObject>( m, "KinematicTreeJoint" )
                 .def( py::init<const std::string&, const TKinematicTreeJointData&>() )
                 .def( "data", []( TKinematicTreeJoint* self ) -> TKinematicTreeJointData&
@@ -237,6 +239,15 @@ namespace kintree {
                         {
                             self->SetArmature( armature );
                         } )
+                .def_property( "damping",
+                    []( const TKinematicTreeJoint* self )
+                        {
+                            return self->damping();
+                        },
+                    []( TKinematicTreeJoint* self, TScalar damping )
+                        {
+                            self->SetDamping( damping );
+                        } )
                 .def_property( "local_tf",
                     []( const TKinematicTreeJoint* self ) -> py::array_t<TScalar>
                         {
@@ -246,14 +257,8 @@ namespace kintree {
                         {
                             self->SetLocalTransform( tinymath::nparray_to_matrix<TScalar, 4>( arr_local_tf ) );
                         } )
-                .def_property_readonly( "num_qpos", []( const TKinematicTreeJoint* self )
-                    {
-                        return self->num_qpos();
-                    } )
-                .def_property_readonly( "num_qvel", []( const TKinematicTreeJoint* self )
-                    {
-                        return self->num_qvel();
-                    } )
+                .def_property_readonly( "num_qpos", &TKinematicTreeJoint::num_qpos )
+                .def_property_readonly( "num_qvel", &TKinematicTreeJoint::num_qvel )
                 .def_property_readonly( "type", &TKinematicTreeJoint::type )
                 .def( "__repr__", []( const TKinematicTreeJoint* self )
                     {
@@ -261,6 +266,7 @@ namespace kintree {
                         strrep += "cpp-address  : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         strrep += "name         : " + self->name() + "\n";
                         strrep += "type         : " + loco::ToString( self->type() ) + "\n";
+                        strrep += "parent       : " + ( self->parent() ? self->parent()->name() : std::string( "nullptr" ) ) + "\n";
                         strrep += "stiffness    : " + std::to_string( self->stiffness() ) + "\n";
                         strrep += "armature     : " + std::to_string( self->armature() ) + "\n";
                         strrep += "damping      : " + std::to_string( self->damping() ) + "\n";
@@ -278,6 +284,15 @@ namespace kintree {
                         strrep += ")";
                         return strrep;
                     } );
+
+            //// // Typed-kintree-joint class bindings
+            //// py::class_<TKinematicTreeRevoluteJoint, TKinematicTreeJoint>( m, "KinematicTreeRevoluteJoint" )
+            ////     .def( py::init( []( const std::string& name,
+            ////                         const py::array_t<TScalar>& arr_local_axis,
+            ////                         const py::array_t<TScalar>& arr_limits,
+            ////                         TScalar stiffness,
+            ////                         TScalar armature,
+            ////                         TScalar damping ) ) )
         }
     }
 

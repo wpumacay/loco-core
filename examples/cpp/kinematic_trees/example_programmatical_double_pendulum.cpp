@@ -18,17 +18,17 @@ public :
         this->link_1 = new loco::kintree::TCapsule( name + "_link_1", 0.05f, link_l1 );
         this->link_2 = new loco::kintree::TCapsule( name + "_link_2", 0.04f, link_l2 );
 
-        const auto tf_jnt_1_to_link_1 = loco::TMat4( loco::TMat3(), { 0.0f, 0.0f, 0.5f * link_l1 } );
-        const auto tf_jnt_2_to_link_2 = loco::TMat4( loco::TMat3(), { 0.0f, 0.0f, 0.5f * link_l2 } );
         const auto jnt_1_axis = loco::TVec3( 1.0f, 0.0f, 0.0f );
         const auto jnt_2_axis = loco::TVec3( 1.0f, 0.0f, 0.0f );
-        this->jnt_base = new loco::kintree::TKinematicTreeFixedJoint( name + "_jnt_fixed", loco::TMat4() );
-        this->jnt_1 = new loco::kintree::TKinematicTreeRevoluteJoint( name + "_jnt_rev_1", tf_jnt_1_to_link_1, jnt_1_axis );
-        this->jnt_2 = new loco::kintree::TKinematicTreeRevoluteJoint( name + "_jnt_rev_2", tf_jnt_2_to_link_2, jnt_2_axis );
+        this->jnt_base = new loco::kintree::TKinematicTreeFixedJoint( name + "_jnt_fixed" );
+        this->jnt_1 = new loco::kintree::TKinematicTreeRevoluteJoint( name + "_jnt_rev_1", jnt_1_axis );
+        this->jnt_2 = new loco::kintree::TKinematicTreeRevoluteJoint( name + "_jnt_rev_2", jnt_2_axis );
 
-        const bool is_root = true;
         const auto tf_link_1_to_base = loco::TMat4( loco::TMat3(), { 0.0f, 0.0f, -0.5f * link_l1 } );
         const auto tf_link_2_to_link_1 = loco::TMat4( loco::TMat3(), { 0.0f, 0.0f, -0.5f * link_l1 - 0.5f * link_l2 } );
+        const auto tf_jnt_1_to_link_1 = loco::TMat4( loco::TMat3(), { 0.0f, 0.0f, 0.5f * link_l1 } );
+        const auto tf_jnt_2_to_link_2 = loco::TMat4( loco::TMat3(), { 0.0f, 0.0f, 0.5f * link_l2 } );
+
         this->SetRoot( std::unique_ptr<loco::kintree::TKinematicTreeBody>( this->base ) );
         this->base->AddJoint( std::unique_ptr<loco::kintree::TKinematicTreeJoint>( this->jnt_base ), loco::TMat4() );
         this->base->AddChild( std::unique_ptr<loco::kintree::TKinematicTreeBody>( this->link_1 ), tf_link_1_to_base );

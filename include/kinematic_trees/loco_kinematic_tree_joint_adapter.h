@@ -33,6 +33,8 @@ namespace kintree {
 
         virtual void ChangeArmature( const TScalar& armature ) = 0;
 
+        virtual void ChangeDamping( const TScalar& damping ) = 0;
+
         virtual void ChangeAxis( const TVec3& axis ) = 0;
 
         virtual void ChangeLimits( const TVec2& limits ) = 0;

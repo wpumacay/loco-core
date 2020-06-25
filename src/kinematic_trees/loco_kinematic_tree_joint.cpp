@@ -41,7 +41,7 @@ namespace kintree {
     {
         LOCO_CORE_ASSERT( parent_body_ref, "TKinematicTreeJoint::SetParentBody >>> tried adding nullptr as parent to joint {0}", m_name );
         m_ParentBodyRef = parent_body_ref;
-        m_LocalTf = local_tf;
+        m_LocalTf = local_tf; m_Data.local_tf = local_tf;
         m_tf = m_ParentBodyRef->tf() * m_LocalTf;
     }
 
@@ -109,6 +109,13 @@ namespace kintree {
         m_Data.armature = armature;
         if ( m_JointAdapterRef )
             m_JointAdapterRef->ChangeArmature( armature );
+    }
+
+    void TKinematicTreeJoint::SetDamping( const TScalar& damping )
+    {
+        m_Data.damping = damping;
+        if ( m_JointAdapterRef )
+            m_JointAdapterRef->ChangeDamping( damping );
     }
 
     void TKinematicTreeJoint::SetLocalTransform( const TMat4& local_tf )
@@ -179,19 +186,19 @@ namespace kintree {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     TKinematicTreeRevoluteJoint::TKinematicTreeRevoluteJoint( const std::string& name,
-                                                              const TMat4& local_tf,
                                                               const TVec3& local_axis,
                                                               const TVec2& limits,
                                                               const TScalar& stiffness,
-                                                              const TScalar& armature )
+                                                              const TScalar& armature,
+                                                              const TScalar& damping )
         : TKinematicTreeJoint( name, TKinematicTreeJointData() )
     {
         m_Data.type = eJointType::REVOLUTE;
         m_Data.limits = limits;
         m_Data.stiffness = stiffness;
         m_Data.armature = armature;
+        m_Data.damping = damping;
         m_Data.local_axis = local_axis;
-        m_Data.local_tf = local_tf;
 
         m_NumQpos = 1;
         m_NumQvel = 1;
@@ -225,19 +232,19 @@ namespace kintree {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     TKinematicTreePrismaticJoint::TKinematicTreePrismaticJoint( const std::string& name,
-                                                                const TMat4& local_tf,
                                                                 const TVec3& local_axis,
                                                                 const TVec2& limits,
                                                                 const TScalar& stiffness,
-                                                                const TScalar& armature )
+                                                                const TScalar& armature,
+                                                                const TScalar& damping )
         : TKinematicTreeJoint( name, TKinematicTreeJointData() )
     {
         m_Data.type = eJointType::PRISMATIC;
         m_Data.limits = limits;
         m_Data.stiffness = stiffness;
         m_Data.armature = armature;
+        m_Data.damping = damping;
         m_Data.local_axis = local_axis;
-        m_Data.local_tf = local_tf;
 
         m_NumQpos = 1;
         m_NumQvel = 1;
@@ -271,17 +278,17 @@ namespace kintree {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     TKinematicTreeSphericalJoint::TKinematicTreeSphericalJoint( const std::string& name,
-                                                                const TMat4& local_tf,
                                                                 const TVec2& limits,
                                                                 const TScalar& stiffness,
-                                                                const TScalar& armature )
+                                                                const TScalar& armature,
+                                                                const TScalar& damping )
         : TKinematicTreeJoint( name, TKinematicTreeJointData() )
     {
         m_Data.type = eJointType::SPHERICAL;
         m_Data.limits = limits;
         m_Data.stiffness = stiffness;
         m_Data.armature = armature;
-        m_Data.local_tf = local_tf;
+        m_Data.damping = damping;
 
         m_NumQpos = 4;
         m_NumQvel = 3;
@@ -331,12 +338,10 @@ namespace kintree {
     ////                                                                                        ////
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    TKinematicTreeFixedJoint::TKinematicTreeFixedJoint( const std::string& name,
-                                                        const TMat4& local_tf )
+    TKinematicTreeFixedJoint::TKinematicTreeFixedJoint( const std::string& name )
         : TKinematicTreeJoint( name, TKinematicTreeJointData() )
     {
         m_Data.type = eJointType::FIXED;
-        m_Data.local_tf = local_tf;
 
         m_NumQpos = 0;
         m_NumQvel = 0;

@@ -67,7 +67,9 @@ namespace kintree {
             if ( !body_elm )
                 continue;
 
-            auto kintree_body = parse_body( body_elm );
+            auto kintree_body_local_tf_pair = parse_body( body_elm );
+            auto kintree_body = std::move( kintree_body_local_tf_pair.first );
+            auto kintree_body_local_tf = kintree_body_local_tf_pair.second;
             kintree_body->SetKintree( m_KintreeRef );
             for ( ssize_t i = 0; i < body_elm->num_children(); i++ )
             {
@@ -75,18 +77,21 @@ namespace kintree {
                 const auto elm_type = child_elm->elementType();
                 /**/ if ( elm_type == MJCF_GEOM_TAG )
                 {
-                    auto kintree_collider = parse_collider( child_elm );
-                    auto kintree_collider_local_tf = kintree_collider->data().localTransform;
+                    auto kintree_collider_local_tf_pair = parse_collider( child_elm );
+                    auto kintree_collider = std::move( kintree_collider_local_tf_pair.first );
+                    auto kintree_collider_local_tf = kintree_collider_local_tf_pair.second;
                     kintree_body->AddCollider( std::move( kintree_collider ), kintree_collider_local_tf );
 
-                    auto kintree_drawable = parse_drawable( child_elm );
-                    auto kintree_drawable_local_tf = kintree_drawable->data().localTransform;
+                    auto kintree_drawable_local_tf_pair = parse_drawable( child_elm );
+                    auto kintree_drawable = std::move( kintree_drawable_local_tf_pair.first );
+                    auto kintree_drawable_local_tf = kintree_drawable_local_tf_pair.second;
                     kintree_body->AddDrawable( std::move( kintree_drawable ), kintree_drawable_local_tf );
                 }
                 else if ( elm_type == MJCF_JOINT_TAG )
                 {
-                    auto kintree_joint = parse_joint( child_elm );
-                    auto kintree_joint_local_tf = kintree_joint->data().local_tf;
+                    auto kintree_joint_local_tf_pair = parse_joint( child_elm );
+                    auto kintree_joint = std::move( kintree_joint_local_tf_pair.first );
+                    auto kintree_joint_local_tf = kintree_joint_local_tf_pair.second;
                     kintree_body->AddJoint( std::move( kintree_joint ), kintree_joint_local_tf );
                 }
                 else if ( elm_type == MJCF_BODY_TAG )
@@ -96,14 +101,9 @@ namespace kintree {
             }
 
             if ( !body_parent )
-            {
                 m_KintreeRef->SetRoot( std::move( kintree_body ) );
-            }
             else
-            {
-                auto kintree_body_local_tf = kintree_body->data().local_tf;
                 body_parent->AddChild( std::move( kintree_body ), kintree_body_local_tf );
-            }
         }
 
         if ( !m_OptUseLocalCoordinates )
@@ -154,7 +154,7 @@ namespace kintree {
         }
     }
 
-    std::unique_ptr<TKinematicTreeBody> TKinematicTreeMjcfParser::parse_body( const parsing::TElement* body_elm )
+    std::pair<std::unique_ptr<TKinematicTreeBody>, TMat4> TKinematicTreeMjcfParser::parse_body( const parsing::TElement* body_elm )
     {
         TKinematicTreeBodyData kintree_body_data;
         std::string kintree_body_name;
@@ -166,10 +166,12 @@ namespace kintree {
         if ( body_elm->HasChildOfType( "inertial" ) )
             kintree_body_data.inertia = parse_inertia( body_elm->GetFirstChildOfType( "inertial" ) );
 
-        return std::make_unique<TKinematicTreeBody>( kintree_body_name, kintree_body_data );
+        auto kintree_body = std::make_unique<TKinematicTreeBody>( kintree_body_name, kintree_body_data );
+        auto kintree_body_local_tf = kintree_body_data.local_tf;
+        return { std::move( kintree_body ), kintree_body_local_tf };
     }
 
-    std::unique_ptr<TKinematicTreeCollider> TKinematicTreeMjcfParser::parse_collider( const parsing::TElement* collider_elm )
+    std::pair<std::unique_ptr<TKinematicTreeCollider>, TMat4> TKinematicTreeMjcfParser::parse_collider( const parsing::TElement* collider_elm )
     {
         TCollisionData kintree_collider_data;
         std::string kintree_collider_name;
@@ -188,10 +190,12 @@ namespace kintree {
         kintree_collider_data.friction = get_vec3( collider_elm, "friction", { 1.0f, 0.005f, 0.0001f } );
         kintree_collider_data.density = get_float( collider_elm, "density", loco::DEFAULT_DENSITY );
 
-        return std::make_unique<TKinematicTreeCollider>( kintree_collider_name, kintree_collider_data );
+        auto kintree_collider = std::make_unique<TKinematicTreeCollider>( kintree_collider_name, kintree_collider_data );
+        auto kintree_collider_local_tf = kintree_collider_data.localTransform;
+        return { std::move( kintree_collider ), kintree_collider_local_tf };
     }
 
-    std::unique_ptr<visualizer::TDrawable> TKinematicTreeMjcfParser::parse_drawable( const parsing::TElement* drawable_elm )
+    std::pair<std::unique_ptr<visualizer::TDrawable>, TMat4> TKinematicTreeMjcfParser::parse_drawable( const parsing::TElement* drawable_elm )
     {
         TVisualData kintree_drawable_data;
         std::string kintree_drawable_name;
@@ -229,10 +233,12 @@ namespace kintree {
         kintree_drawable_data.specular = specular_color;
         kintree_drawable_data.shininess = shininess;
 
-        return std::make_unique<visualizer::TDrawable>( kintree_drawable_name, kintree_drawable_data );
+        auto kintree_drawable = std::make_unique<visualizer::TDrawable>( kintree_drawable_name, kintree_drawable_data );
+        auto kintree_drawable_local_tf = kintree_drawable_data.localTransform;
+        return { std::move( kintree_drawable ), kintree_drawable_local_tf };
     }
 
-    std::unique_ptr<TKinematicTreeJoint> TKinematicTreeMjcfParser::parse_joint( const parsing::TElement* joint_elm )
+    std::pair<std::unique_ptr<TKinematicTreeJoint>, TMat4> TKinematicTreeMjcfParser::parse_joint( const parsing::TElement* joint_elm )
     {
         TKinematicTreeJointData kintree_joint_data;
         std::string kintree_joint_name;
@@ -266,36 +272,37 @@ namespace kintree {
         kintree_joint_data.armature = get_float( joint_elm, "armature", 0.0f );
         kintree_joint_data.damping = get_float( joint_elm, "damping", 0.0f );
 
+        auto kintree_joint_local_tf = kintree_joint_data.local_tf;
+        std::unique_ptr<TKinematicTreeJoint> kintree_joint = nullptr;
         /**/ if ( kintree_joint_data.type == eJointType::REVOLUTE )
-            return std::make_unique<TKinematicTreeRevoluteJoint>( kintree_joint_name,
-                                                                  kintree_joint_data.local_tf,
-                                                                  kintree_joint_data.local_axis,
-                                                                  kintree_joint_data.limits,
-                                                                  kintree_joint_data.stiffness,
-                                                                  kintree_joint_data.armature );
+            kintree_joint = std::make_unique<TKinematicTreeRevoluteJoint>( kintree_joint_name,
+                                                                           kintree_joint_data.local_axis,
+                                                                           kintree_joint_data.limits,
+                                                                           kintree_joint_data.stiffness,
+                                                                           kintree_joint_data.armature,
+                                                                           kintree_joint_data.damping );
         else if ( kintree_joint_data.type == eJointType::PRISMATIC )
-            return std::make_unique<TKinematicTreePrismaticJoint>( kintree_joint_name,
-                                                                   kintree_joint_data.local_tf,
-                                                                   kintree_joint_data.local_axis,
-                                                                   kintree_joint_data.limits,
-                                                                   kintree_joint_data.stiffness,
-                                                                   kintree_joint_data.armature );
+            kintree_joint = std::make_unique<TKinematicTreePrismaticJoint>( kintree_joint_name,
+                                                                            kintree_joint_data.local_axis,
+                                                                            kintree_joint_data.limits,
+                                                                            kintree_joint_data.stiffness,
+                                                                            kintree_joint_data.armature,
+                                                                            kintree_joint_data.damping );
         else if ( kintree_joint_data.type == eJointType::SPHERICAL )
-            return std::make_unique<TKinematicTreeSphericalJoint>( kintree_joint_name,
-                                                                   kintree_joint_data.local_tf,
-                                                                   kintree_joint_data.limits,
-                                                                   kintree_joint_data.stiffness,
-                                                                   kintree_joint_data.armature );
+            kintree_joint = std::make_unique<TKinematicTreeSphericalJoint>( kintree_joint_name,
+                                                                            kintree_joint_data.limits,
+                                                                            kintree_joint_data.stiffness,
+                                                                            kintree_joint_data.armature,
+                                                                            kintree_joint_data.damping );
         else if ( kintree_joint_data.type == eJointType::PLANAR )
-            return std::make_unique<TKinematicTreePlanarJoint>( kintree_joint_name,
-                                                                kintree_joint_data.plane_axis_1,
-                                                                kintree_joint_data.plane_axis_2 );
+            kintree_joint = std::make_unique<TKinematicTreePlanarJoint>( kintree_joint_name,
+                                                                         kintree_joint_data.plane_axis_1,
+                                                                         kintree_joint_data.plane_axis_2 );
         else if ( kintree_joint_data.type == eJointType::FIXED )
-            return std::make_unique<TKinematicTreeFixedJoint>( kintree_joint_name,
-                                                               kintree_joint_data.local_tf );
+            kintree_joint = std::make_unique<TKinematicTreeFixedJoint>( kintree_joint_name );
         else if ( kintree_joint_data.type == eJointType::FREE )
-            return std::make_unique<TKinematicTreeFreeJoint>( kintree_joint_name );
-        return nullptr;
+            kintree_joint = std::make_unique<TKinematicTreeFreeJoint>( kintree_joint_name );
+        return { std::move( kintree_joint ), kintree_joint_local_tf };
     }
 
     TInertialData TKinematicTreeMjcfParser::parse_inertia( const parsing::TElement* inertial_elm )
