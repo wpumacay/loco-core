@@ -868,5 +868,101 @@ namespace kintree {
                             self->SetScale( scale );
                         } );
         }
+
+        // Bindings for TKinematicTree
+        {
+            py::class_<TKinematicTree, TObject>( m, "KinematicTree" )
+                .def( py::init( []( const std::string& name,
+                                    const py::array_t<TScalar>& arr_position,
+                                    const py::array_t<TScalar>& arr_rotation )
+                    {
+                        return std::make_unique<TKinematicTree>( name,
+                                                                 tinymath::nparray_to_vector<TScalar, 3>( arr_position ),
+                                                                 tinymath::nparray_to_matrix<TScalar, 3>( arr_rotation ) );
+                    } ),
+                     py::arg( "name" ), py::arg( "position" ), py::arg( "rotation" ) )
+                .def( "LoadFromMjcf", &TKinematicTree::LoadFromMjcf )
+                .def( "LoadFromUrdf", &TKinematicTree::LoadFromUrdf )
+                .def( "LoadFromRlsim", &TKinematicTree::LoadFromRlsim )
+                .def( "SetRoot", []( TKinematicTree* self, std::unique_ptr<TKinematicTreeBody> body )
+                    {
+                        self->SetRoot( std::move( body ) );
+                    }, py::keep_alive<1, 2>() )
+                .def_property( "pos0",
+                    []( const TKinematicTree* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 3>( self->pos0() );
+                        },
+                    []( TKinematicTree* self, const py::array_t<TScalar>& arr_pos0 )
+                        {
+                            self->SetInitialPosition( tinymath::nparray_to_vector<TScalar, 3>( arr_pos0 ) );
+                        } )
+                .def_property( "rot0",
+                    []( const TKinematicTree* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::matrix_to_nparray<TScalar, 3>( self->rot0() );
+                        },
+                    []( TKinematicTree* self, const py::array_t<TScalar>& arr_rot0 )
+                        {
+                            self->SetInitialRotation( tinymath::nparray_to_matrix<TScalar, 3>( arr_rot0 ) );
+                        } )
+                .def_property( "euler0",
+                    []( const TKinematicTree* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 3>( self->euler0() );
+                        },
+                    []( TKinematicTree* self, const py::array_t<TScalar>& arr_euler0 )
+                        {
+                            self->SetInitialEuler( tinymath::nparray_to_vector<TScalar, 3>( arr_euler0 ) );
+                        } )
+                .def_property( "quat0",
+                    []( const TKinematicTree* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::vector_to_nparray<TScalar, 4>( self->quat0() );
+                        },
+                    []( TKinematicTree* self, const py::array_t<TScalar>& arr_quat0 )
+                        {
+                            self->SetInitialQuaternion( tinymath::nparray_to_vector<TScalar, 4>( arr_quat0 ) );
+                        } )
+                .def_property( "tf0",
+                    []( const TKinematicTree* self ) -> py::array_t<TScalar>
+                        {
+                            return tinymath::matrix_to_nparray<TScalar, 4>( self->tf0() );
+                        },
+                    []( TKinematicTree* self, const py::array_t<TScalar>& arr_tf0 )
+                        {
+                            self->SetInitialTransform( tinymath::nparray_to_matrix<TScalar, 4>( arr_tf0 ) );
+                        } )
+                .def( "GetNumBodies", &TKinematicTree::GetNumBodies )
+                .def( "HasBody", &TKinematicTree::HasBody )
+                .def( "RemoveBodyByName", &TKinematicTree::RemoveBodyByName )
+                //// .def( "GetBodyByName", []( TKinematicTree* self, const std::string& name ) -> TKinematicTreeBody*
+                ////     {
+                ////         return self->GetBodyByName( name );
+                ////     }, py::return_value_policy::reference )
+                //// .def( "GetBodiesList", []( TKinematicTree* self ) -> std::vector<TKinematicTreeBody*>
+                ////     {
+                ////         return self->GetBodiesList();
+                ////     }, py::return_value_policy::reference )
+                .def( "__repr__", []( const TKinematicTree* self )
+                    {
+                        std::string strrep = "kintree.KinematicTree(\n";
+                        strrep += "cpp-address  : " + tinyutils::PointerToHexAddress( self ) + "\n";
+                        strrep += "name         : " + self->name() + "\n";
+                        strrep += "position     : " + loco::ToString( self->pos() ) + "\n";
+                        strrep += "euler        : " + loco::ToString( self->euler() ) + "\n";
+                        strrep += "quaternion   : " + loco::ToString( self->quat() ) + "\n";
+                        strrep += "world_tf     : " + loco::ToString( self->tf() ) + "\n";
+                        strrep += "root         : " + ( self->root() ? self->root()->name() : std::string( "nullptr" ) ) + "\n";
+                        strrep += "bodies       : [ ";
+                            auto bodies = self->GetBodiesList();
+                            for ( ssize_t i = 0; i < bodies.size(); i++ )
+                                if ( bodies[i] )
+                                    strrep += bodies[i]->name() + " ";
+                            strrep += "]";
+                        strrep += ")";
+                        return strrep;
+                    } );
+        }
     }
 }}

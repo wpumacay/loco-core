@@ -22,15 +22,9 @@ namespace loco
                 .def( "AddSingleBody", &TScenario::AddSingleBody, py::arg( "single_body" ),
                       py::return_value_policy::reference,
                       py::keep_alive<1, 2>() )
-                //// .def( "AddCompound", &TScenario::AddCompound, py::arg( "compound" ),
-                ////       py::return_value_policy::reference,
-                ////       py::keep_alive<1, 2>() )
-                //// .def( "AddKinematicTree", &TScenario::AddKinematicTree, py::arg( "kinematic_tree" ),
-                ////       py::return_value_policy::reference,
-                ////       py::keep_alive<1, 2>() )
-                //// .def( "AddKinematicTreeSensor", &TScenario::AddKinematicTreeSensor, py::arg( "kinematic_tree_sensor" ),
-                ////       py::return_value_policy::reference,
-                ////       py::keep_alive<1, 2>() )
+                .def( "AddKinematicTree", &TScenario::AddKinematicTree, py::arg( "kinematic_tree" ),
+                      py::return_value_policy::reference,
+                      py::keep_alive<1, 2>() )
                 //// .def( "AddTerrainGenerator", &TScenario::AddTerrainGenerator, py::arg( "terrain_generator" ),
                 ////       py::return_value_policy::reference,
                 ////       py::keep_alive<1, 2>() )
@@ -44,21 +38,11 @@ namespace loco
                         return self->GetSingleBodyByName( name );
                     },
                     py::arg( "name" ), py::return_value_policy::reference )
-                //// .def( "GetCompoundByName", []( TScenario* self, const std::string& name ) -> TCompound*
-                ////     {
-                ////         return self->GetCompoundByName( name );
-                ////     },
-                ////     py::arg( "name" ), py::return_value_policy::reference )
-                //// .def( "GetKinematicTreeByName", []( TScenario* self, const std::string& name ) -> TKinematicTree*
-                ////     {
-                ////         return self->GetKinematicTreeByName( name );
-                ////     },
-                ////     py::arg( "name" ), py::return_value_policy::reference )
-                //// .def( "GetKinematicTreeSensorByName", []( TScenario* self, const std::string& name ) -> TKinematicTree*
-                ////     {
-                ////         return self->GetKinematicTreeSensorByName( name );
-                ////     },
-                ////     py::arg( "name" ), py::return_value_policy::reference )
+                .def( "GetKinematicTreeByName", []( TScenario* self, const std::string& name ) -> kintree::TKinematicTree*
+                    {
+                        return self->GetKinematicTreeByName( name );
+                    },
+                    py::arg( "name" ), py::return_value_policy::reference )
                 //// .def( "GetTerrainGeneratorByName", []( TScenario* self, const std::string& name ) -> TITerrainGenerator*
                 ////     {
                 ////         return self->GetTerrainGeneratorByName( name );
@@ -66,21 +50,15 @@ namespace loco
                 ////     py::arg( "name" ), py::return_value_policy::reference )
                 .def( "RemoveDrawableByName", &TScenario::RemoveDrawableByName )
                 .def( "RemoveSingleBodyByName", &TScenario::RemoveSingleBodyByName )
-                //// .def( "RemoveCompoundByName", &TScenario::RemoveCompoundByName )
-                //// .def( "RemoveKinematicTreeByName", &TScenario::RemoveKinematicTreeByName )
-                //// .def( "RemoveKinematicTreeSensorByName", &TScenario::RemoveKinematicTreeSensorByName )
+                .def( "RemoveKinematicTreeByName", &TScenario::RemoveKinematicTreeByName )
                 //// .def( "RemoveTerrainGeneratorByName", &TScenario::RemoveTerrainGeneratorByName )
                 .def( "GetNumDrawables", &TScenario::GetNumDrawables )
                 .def( "GetNumSingleBodies", &TScenario::GetNumSingleBodies )
-                //// .def( "GetNumCompounds", &TScenario::GetNumCompounds )
-                //// .def( "GetNumKinematicTrees", &TScenario::GetNumKinematicTrees )
-                //// .def( "GetNumKinematicTreeSensors", &TScenario::GetNumKinematicTreeSensors )
+                .def( "GetNumKinematicTrees", &TScenario::GetNumKinematicTrees )
                 //// .def( "GetNumTerrainGenerators", &TScenario::GetNumTerrainGenerators )
                 .def( "HasDrawableNamed", &TScenario::HasDrawableNamed, py::arg( "name" ) )
                 .def( "HasSingleBodyNamed", &TScenario::HasSingleBodyNamed, py::arg( "name" ) )
-                //// .def( "HasCompoundNamed", &TScenario::HasCompoundNamed, py::arg( "name" ) )
-                //// .def( "HasKinematicTreeNamed", &TScenario::HasKinematicTreeNamed, py::arg( "name" ) )
-                //// .def( "HasKinematicTreeSensorNamed", &TScenario::HasKinematicTreeSensorNamed, py::arg( "name" ) )
+                .def( "HasKinematicTreeNamed", &TScenario::HasKinematicTreeNamed, py::arg( "name" ) )
                 //// .def( "HasTerrainGeneratorNamed", &TScenario::HasTerrainGeneratorNamed, py::arg( "name" ) )
                 .def( "GetDrawablesList", []( TScenario* self ) -> std::vector<visualizer::TDrawable*>
                     {
@@ -92,21 +70,11 @@ namespace loco
                         return self->GetSingleBodiesList();
                     },
                     py::return_value_policy::reference )
-                //// .def( "GetCompoundsList", []( TScenario* self ) -> std::vector<TCompound*>
-                ////     {
-                ////         return self->GetCompoundsList();
-                ////     },
-                ////     py::return_value_policy::reference )
-                //// .def( "GetKinematicTreesList", []( TScenario* self ) -> std::vector<TKinematicTree*>
-                ////     {
-                ////         return self->GetKinematicTreesList();
-                ////     },
-                ////     py::return_value_policy::reference )
-                //// .def( "GetKinematicTreeSensorsList", []( TScenario* self ) -> std::vector<TKinematicTreeSensor*>
-                ////     {
-                ////         return self->GetKinematicTreeSensorsList();
-                ////     },
-                ////     py::return_value_policy::reference )
+                .def( "GetKinematicTreesList", []( TScenario* self ) -> std::vector<kintree::TKinematicTree*>
+                    {
+                        return self->GetKinematicTreesList();
+                    },
+                    py::return_value_policy::reference )
                 //// .def( "GetTerrainGeneratorsList", []( TScenario* self ) -> std::vector<TITerrainGenerator*>
                 ////     {
                 ////         return self->GetTerrainGeneratorsList();
@@ -114,9 +82,7 @@ namespace loco
                 ////     py::return_value_policy::reference )
                 .def( "remove_drawable", &TScenario::remove_drawable )
                 .def( "remove_single_body", &TScenario::remove_single_body )
-                //// .def( "remove_compound", &TScenario::remove_compound )
-                //// .def( "remove_kinematic_tree", &TScenario::remove_kinematic_tree )
-                //// .def( "remove_kinematic_tree_sensor", &TScenario::remove_kinematic_tree_sensor )
+                .def( "remove_kinematic_tree", &TScenario::remove_kinematic_tree )
                 //// .def( "remove_terrain_generator", &TScenario::remove_terrain_generator )
                 .def( "__repr__", []( const TScenario* self )
                     {
@@ -124,9 +90,7 @@ namespace loco
                         _strrep += "cpp-address         : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "num-drawables       : " + std::to_string( self->GetNumDrawables() ) + "\n";
                         _strrep += "num-single-bodies   : " + std::to_string( self->GetNumSingleBodies() ) + "\n";
-                        //// _strrep += "num-compounds       : " + std::to_string( self->GetNumCompounds() ) + "\n";
-                        //// _strrep += "num-kintrees        : " + std::to_string( self->GetNumKinematicTrees() ) + "\n";
-                        //// _strrep += "num-kintree-sensors : " + std::to_string( self->GetNumKinematicTreeSensors() ) + "\n";
+                        _strrep += "num-kintrees        : " + std::to_string( self->GetNumKinematicTrees() ) + "\n";
                         //// _strrep += "num-terrain-gens.   : " + std::to_string( self->GetNumTerrainGenerator() ) + "\n";
                         _strrep += "drawables           :\n";
                         auto drawablesList = self->GetDrawablesList();
