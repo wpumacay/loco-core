@@ -89,7 +89,7 @@ namespace kintree {
 
         /// Reference to the kinematic-tree being constructed from the loaded mjcf-model
         TKinematicTree* m_KintreeRef = nullptr;
-        /// Model data used to construct the kinematic-tree (loaded either from file or programmatically)
+        /// Model data used to construct the kinematic-tree
         std::unique_ptr<parsing::TElement> m_MjcfModel = nullptr;
         /// Container for defaults of the model that are not related to specific class id
         std::unordered_map<std::string, TGenericParams> m_DefaultsNoClass;

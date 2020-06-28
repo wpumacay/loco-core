@@ -51,8 +51,8 @@ namespace kintree {
 
     void TKinematicTree::LoadFromUrdf( const std::string& filepath_urdf )
     {
-        //// TUrdfParser urdf_parser( this );
-        //// urdf_parser->parse_kintree( filepath_urdf );
+        TKinematicTreeUrdfParser urdf_parser( this );
+        urdf_parser.parse_kintree( filepath_urdf );
     }
 
     void TKinematicTree::LoadFromRlsim( const std::string& filepath_rlsim )

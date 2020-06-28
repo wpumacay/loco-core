@@ -4,6 +4,7 @@
 #include <kinematic_trees/loco_kinematic_tree_body.h>
 #include <kinematic_trees/loco_kinematic_tree_adapter.h>
 #include <kinematic_trees/parsers/loco_kinematic_tree_mjcf_parser.h>
+#include <kinematic_trees/parsers/loco_kinematic_tree_urdf_parser.h>
 
 namespace loco {
 namespace kintree {
