@@ -407,9 +407,16 @@ namespace visualizer {
                     {
                         auto gl_renderableRef = m_glApplication->scene()->AddRenderable( std::move( gl_renderable ) );
                         auto gl_drawableAdapter = std::make_unique<TOpenGLDrawableAdapter>( kintree_drawable, kintree_drawable->data(), gl_renderableRef );
-                        gl_drawableAdapter->SetAmbientColor( kintree_drawable->data().ambient );
-                        gl_drawableAdapter->SetDiffuseColor( kintree_drawable->data().diffuse );
-                        gl_drawableAdapter->SetSpecularColor( kintree_drawable->data().specular );
+                        const bool use_mesh_color = ( kintree_drawable->shape() == eShapeType::MESH &&
+                                                      tinymath::allclose( kintree_drawable->data().ambient, loco::DEFAULT_AMBIENT_COLOR ) &&
+                                                      tinymath::allclose( kintree_drawable->data().diffuse, loco::DEFAULT_DIFFUSE_COLOR ) &&
+                                                      tinymath::allclose( kintree_drawable->data().specular, loco::DEFAULT_SPECULAR_COLOR ) );
+                        if ( !use_mesh_color )
+                        {
+                            gl_drawableAdapter->SetAmbientColor( kintree_drawable->data().ambient );
+                            gl_drawableAdapter->SetDiffuseColor( kintree_drawable->data().diffuse );
+                            gl_drawableAdapter->SetSpecularColor( kintree_drawable->data().specular );
+                        }
                         gl_drawableAdapter->SetShininess( kintree_drawable->data().shininess );
                         kintree_drawable->SetDrawableAdapter( gl_drawableAdapter.get() );
                         m_vizDrawableAdapters.push_back( std::move( gl_drawableAdapter ) );
