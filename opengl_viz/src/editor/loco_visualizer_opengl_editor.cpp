@@ -258,7 +258,7 @@ namespace visualizer {
                         ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-z##C.ConvMesh", &collider_size.z(), change_rate_size, min_size, max_size );
                         break;
                     }
-                    const eShapeType::TRIANGULAR_MESH :
+                    case eShapeType::TRIANGULAR_MESH :
                     {
                         ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-x##C.TriMesh", &collider_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
                         ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-y##C.TriMesh", &collider_size.y(), change_rate_size, min_size, max_size ); ImGui::SameLine();
