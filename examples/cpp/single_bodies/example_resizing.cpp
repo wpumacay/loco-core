@@ -40,7 +40,7 @@ int main( int argc, char* argv[] )
     auto cylinder = scenario->AddSingleBody( std::make_unique<loco::primitives::TCylinder>( "cylinder", 0.2f, 0.5f, pos_cylinder, loco::TMat3() ) );
     auto capsule = scenario->AddSingleBody( std::make_unique<loco::primitives::TCapsule>( "capsule", 0.2f, 0.5f, pos_capsule, loco::TMat3() ) );
     auto ellipsoid = scenario->AddSingleBody( std::make_unique<loco::primitives::TEllipsoid>( "ellipsoid", loco::TVec3( 0.2f, 0.3f, 0.4f ), pos_ellipsoid, loco::TMat3() ) );
-    auto mesh = scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "monkey",
+    auto mesh = scenario->AddSingleBody( std::make_unique<loco::primitives::TConvexMesh>( "monkey",
                                                                         loco::PATH_RESOURCES + "meshes/monkey.stl",
                                                                         loco::PATH_RESOURCES + "meshes/monkey.obj",
                                                                         0.2f, pos_mesh, loco::TMat3() ) );
@@ -97,7 +97,7 @@ int main( int argc, char* argv[] )
             else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_8 ) )
                 static_cast<loco::primitives::TCapsule*>( capsule )->SetHeight( static_cast<loco::primitives::TCapsule*>( capsule )->height() + ( increasing ? 0.1f : -0.1f ) );
             else if ( visualizer->CheckSingleKeyPress( loco::Keys::KEY_9 ) )
-                static_cast<loco::primitives::TMesh*>( mesh )->SetScale( static_cast<loco::primitives::TMesh*>( mesh )->scale() + ( increasing ? 0.01f : -0.01f ) );
+                static_cast<loco::primitives::TConvexMesh*>( mesh )->SetScale( static_cast<loco::primitives::TConvexMesh*>( mesh )->scale() + ( increasing ? 0.01f : -0.01f ) );
         }
 
         simulation->Step(1./60.);

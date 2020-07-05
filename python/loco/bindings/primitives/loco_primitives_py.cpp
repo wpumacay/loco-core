@@ -538,7 +538,7 @@ namespace primitives {
                             self->SetRadiusZ( radius_z );
                         } );
 
-            py::class_< TMesh, TSingleBody >( m, "Mesh" )
+            py::class_< TConvexMesh, TSingleBody >( m, "ConvexMesh" )
                 .def( py::init( []( const std::string& name,
                                     const std::string& mesh_collider_filepath,
                                     const std::string& mesh_visual_filepath,
@@ -549,7 +549,7 @@ namespace primitives {
                                     const int& collision_group,
                                     const int& collision_mask )
                     {
-                        return std::make_unique<TMesh>( name,
+                        return std::make_unique<TConvexMesh>( name,
                                                         mesh_collider_filepath,
                                                         mesh_visual_filepath,
                                                         mesh_scale,
@@ -570,7 +570,7 @@ namespace primitives {
                                     const int& collision_group,
                                     const int& collision_mask )
                     {
-                        return std::make_unique<TMesh>( name,
+                        return std::make_unique<TConvexMesh>( name,
                                                         loco::nparray_to_stdvec<float>( arr_mesh_vertices ),
                                                         loco::nparray_to_stdvec<int>( arr_mesh_faces ),
                                                         mesh_scale,
@@ -582,11 +582,11 @@ namespace primitives {
                      py::arg( "mesh_scale" ), py::arg( "position" ), py::arg( "rotation" ),
                      py::arg( "dyntype" ) = eDynamicsType::DYNAMIC, py::arg( "collision_group" ) = 1, py::arg( "collision_mask" ) = 1 )
                 .def_property( "scale",
-                    []( const TMesh* self ) -> TScalar
+                    []( const TConvexMesh* self ) -> TScalar
                         {
                             return self->scale();
                         },
-                    []( TMesh* self, const TScalar& scale ) -> void
+                    []( TConvexMesh* self, const TScalar& scale ) -> void
                         {
                             self->SetScale( scale );
                         } );

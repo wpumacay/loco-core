@@ -79,7 +79,7 @@ int main( int argc, char* argv[] )
         scenario->AddSingleBody( std::make_unique<loco::primitives::TEllipsoid>( "ellipsoid_" + std::to_string( i ), loco::TVec3( 0.2f, 0.3f, 0.4f ),
                                                                      random_position(), tinymath::rotation( random_rotation() ) ) );
     for ( ssize_t i = 0; i < NUM_MESHES; i++ )
-        scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "monkey_",
+        scenario->AddSingleBody( std::make_unique<loco::primitives::TConvexMesh>( "monkey_",
                                                                 loco::PATH_RESOURCES + "meshes/monkey.stl",
                                                                 loco::PATH_RESOURCES + "meshes/monkey.obj",
                                                                 0.25f, random_position(), tinymath::rotation( random_rotation() ) ) );

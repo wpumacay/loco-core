@@ -346,7 +346,7 @@ namespace primitives {
     //                            Convex-Mesh primitive Implementation                            //
     //********************************************************************************************//
 
-    TMesh::TMesh( const std::string& name,
+    TConvexMesh::TConvexMesh( const std::string& name,
                   const std::string& mesh_collider_filepath,
                   const std::string& mesh_visual_filepath,
                   const TScalar& mesh_scale,
@@ -384,7 +384,7 @@ namespace primitives {
         m_Scale = mesh_scale;
     }
 
-    TMesh::TMesh( const std::string& name,
+    TConvexMesh::TConvexMesh( const std::string& name,
                   const std::vector<float>& mesh_vertices,
                   const std::vector<int>& mesh_faces,
                   const TScalar& mesh_scale,
@@ -424,14 +424,14 @@ namespace primitives {
         m_Scale = mesh_scale;
     }
 
-    void TMesh::SetScale( const TScalar& scale )
+    void TConvexMesh::SetScale( const TScalar& scale )
     {
         m_Scale = scale;
         m_Collider->ChangeSize( { m_Scale, m_Scale, m_Scale } );
         m_Drawable->ChangeSize( { m_Scale, m_Scale, m_Scale } );
     }
 
-    void TMesh::SetVertexData( const std::vector<float>& vertices, const std::vector<int>& faces )
+    void TConvexMesh::SetVertexData( const std::vector<float>& vertices, const std::vector<int>& faces )
     {
         m_Collider->ChangeVertexData( vertices, faces );
         m_Drawable->ChangeVertexData( vertices, faces );

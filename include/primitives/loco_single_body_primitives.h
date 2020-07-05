@@ -451,7 +451,7 @@ namespace primitives {
     /// which can be loaded from a file or from user-defined vertex-data. The mesh-collider implementation
     /// depends on the specific backend used, and could be the mesh's convex-hull or a tri-mesh. This body
     /// exposes its scale as a user modifiable parameter, which can be changed at runtime
-    class TMesh : public TSingleBody
+    class TConvexMesh : public TSingleBody
     {
     public :
 
@@ -476,7 +476,7 @@ namespace primitives {
         /// @param dyntype                  Dynamics type, either DYNAMIC or STATIC
         /// @param collision_group          Collision group used for collision filtering
         /// @param collision_mask           Collision mask used for collision filtering
-        TMesh( const std::string& name,
+        TConvexMesh( const std::string& name,
                const std::string& mesh_collider_filepath,
                const std::string& mesh_visual_filepath,
                const TScalar& mesh_scale,
@@ -507,7 +507,7 @@ namespace primitives {
         /// @param dyntype          Dynamics type, either DYNAMIC or STATIC
         /// @param collision_group  Collision group used for collision filtering
         /// @param collision_mask   Collision mask used for collision filtering
-        TMesh( const std::string& name,
+        TConvexMesh( const std::string& name,
                const std::vector<float>& mesh_vertices,
                const std::vector<int>& mesh_faces,
                const TScalar& mesh_scale,
@@ -517,11 +517,11 @@ namespace primitives {
                const int& collision_group = 1,
                const int& collision_mask = 1 );
 
-        TMesh( const TMesh& other ) = delete;
+        TConvexMesh( const TConvexMesh& other ) = delete;
 
-        TMesh& operator=( const TMesh& other ) = delete;
+        TConvexMesh& operator=( const TConvexMesh& other ) = delete;
 
-        ~TMesh() = default;
+        ~TConvexMesh() = default;
 
         /// Sets the scale of the mesh collider|drawable
         ///

@@ -37,7 +37,7 @@ int main( int argc, char* argv[] )
     scenario->AddSingleBody( std::make_unique<loco::primitives::TCylinder>( "cylinder", 0.2f, 0.5f, loco::TVec3( -1.0f, 1.0f, 2.0f ), rotation ) );
     scenario->AddSingleBody( std::make_unique<loco::primitives::TCapsule>( "capsule", 0.2f, 0.5f, loco::TVec3( 1.0f, 1.0f, 2.0f ), rotation ) );
     scenario->AddSingleBody( std::make_unique<loco::primitives::TEllipsoid>( "ellipsoid", loco::TVec3( 0.2f, 0.3f, 0.4f ), loco::TVec3( 0.0f, 0.0f, 2.0f ), rotation ) );
-    scenario->AddSingleBody( std::make_unique<loco::primitives::TMesh>( "monkey",
+    scenario->AddSingleBody( std::make_unique<loco::primitives::TConvexMesh>( "monkey",
                                                                         loco::PATH_RESOURCES + "meshes/monkey.stl",
                                                                         loco::PATH_RESOURCES + "meshes/monkey.obj",
                                                                         0.2f, loco::TVec3( 2.0f, 2.0f, 2.0f ), rotation ) );
