@@ -358,7 +358,7 @@ namespace primitives {
         : TSingleBody( name, position, rotation )
     {
         auto collider_data = TCollisionData();
-        collider_data.type = eShapeType::MESH;
+        collider_data.type = eShapeType::CONVEX_MESH;
         collider_data.size = { mesh_scale, mesh_scale, mesh_scale };
         collider_data.mesh_data.filename = mesh_collider_filepath;
         collider_data.collisionGroup = collision_group;
@@ -367,7 +367,7 @@ namespace primitives {
         m_Collider->SetParentBody( this );
 
         auto visual_data = TVisualData();
-        visual_data.type = eShapeType::MESH;
+        visual_data.type = eShapeType::CONVEX_MESH;
         visual_data.size = { mesh_scale, mesh_scale, mesh_scale };
         visual_data.mesh_data.filename = mesh_visual_filepath;
         visual_data.ambient = loco::DEFAULT_AMBIENT_COLOR;
@@ -396,7 +396,7 @@ namespace primitives {
         : TSingleBody( name, position, rotation )
     {
         auto collider_data = TCollisionData();
-        collider_data.type = eShapeType::MESH;
+        collider_data.type = eShapeType::CONVEX_MESH;
         collider_data.size = { mesh_scale, mesh_scale, mesh_scale };
         collider_data.mesh_data.vertices = mesh_vertices;
         collider_data.mesh_data.faces = mesh_faces;
@@ -406,7 +406,7 @@ namespace primitives {
         m_Collider->SetParentBody( this );
 
         auto visual_data = TVisualData();
-        visual_data.type = eShapeType::MESH;
+        visual_data.type = eShapeType::CONVEX_MESH;
         visual_data.size = { mesh_scale, mesh_scale, mesh_scale };
         visual_data.mesh_data.vertices = mesh_vertices;
         visual_data.mesh_data.faces = mesh_faces;
@@ -454,7 +454,7 @@ namespace primitives {
         : TSingleBody( name, position, rotation )
     {
         auto collider_data = TCollisionData();
-        collider_data.type = eShapeType::HFIELD;
+        collider_data.type = eShapeType::HEIGHTFIELD;
         collider_data.size = { width_extent, depth_extent, 1.0f };
         collider_data.hfield_data.nWidthSamples = num_width_samples;
         collider_data.hfield_data.nDepthSamples = num_depth_samples;
@@ -465,7 +465,7 @@ namespace primitives {
         m_Collider->SetParentBody( this );
 
         auto visual_data = TVisualData();
-        visual_data.type = eShapeType::HFIELD;
+        visual_data.type = eShapeType::HEIGHTFIELD;
         visual_data.size = { width_extent, depth_extent, 1.0f };
         visual_data.hfield_data.nWidthSamples = num_width_samples;
         visual_data.hfield_data.nDepthSamples = num_depth_samples;

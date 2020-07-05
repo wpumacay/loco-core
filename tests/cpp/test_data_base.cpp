@@ -38,7 +38,7 @@ TEST( TestLocoDataBase, TestShapeDataBase )
     const ssize_t nWidthSamples = 10;
     const ssize_t nDepthSamples = 20;
     auto shapeData = loco::TShapeData();
-    shapeData.type = loco::eShapeType::HFIELD;
+    shapeData.type = loco::eShapeType::HEIGHTFIELD;
     shapeData.size = { 1.0f, 1.0f, 2.0f };
     shapeData.localTransform.setIdentity();
     shapeData.mesh_data.filename = "";

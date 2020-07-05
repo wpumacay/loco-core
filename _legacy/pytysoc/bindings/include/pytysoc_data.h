@@ -153,8 +153,8 @@ namespace pytysoc
             .value( "SPHERE", tysoc::eShapeType::SPHERE ) \
             .value( "CYLINDER", tysoc::eShapeType::CYLINDER ) \
             .value( "CAPSULE", tysoc::eShapeType::CAPSULE ) \
-            .value( "MESH", tysoc::eShapeType::MESH ) \
-            .value( "HFIELD", tysoc::eShapeType::HFIELD ); \
+            .value( "MESH", tysoc::eShapeType::CONVEX_MESH ) \
+            .value( "HFIELD", tysoc::eShapeType::HEIGHTFIELD ); \
     py::enum_<tysoc::eJointType>(m, "eJointType", py::arithmetic()) \
             .value( "FREE", tysoc::eJointType::FREE ) \
             .value( "REVOLUTE", tysoc::eJointType::REVOLUTE ) \

@@ -189,14 +189,14 @@ namespace tysoc {
             // scale according to height
             m_scale.z = m_size.y / m_size0.y;
         }
-        else if ( m_type == eShapeType::MESH )
+        else if ( m_type == eShapeType::CONVEX_MESH )
         {
             // scale every dimension
             m_scale.x = m_size.x / m_size0.x;
             m_scale.y = m_size.y / m_size0.y;
             m_scale.z = m_size.z / m_size0.z;
         }
-        else if ( m_type == eShapeType::HFIELD )
+        else if ( m_type == eShapeType::HEIGHTFIELD )
         {
             LOCO_CORE_WARN( "Hfield shapes don't support changing the scale. Change the elevation data instead" );
         }
@@ -209,7 +209,7 @@ namespace tysoc {
 
     void TGLDrawable::changeElevationData( const std::vector< float >& heightData )
     {
-        if ( m_data.type != eShapeType::HFIELD )
+        if ( m_data.type != eShapeType::HEIGHTFIELD )
         {
             LOCO_CORE_WARN( "Method changeElevationData expectes hfield shape, but {0} was given", tysoc::toString( m_data.type ) );
             return;

@@ -8,15 +8,16 @@ namespace loco
     /// Type of shape, used for collider-related objects in the simulation
     enum class eShapeType : uint8_t
     {
-        NONE = 0,   ///< Dummy collision shape
-        BOX,        ///< Box collision shape, defined by its width, depth, and height
-        PLANE,      ///< Plane collision shape, defined by its width and depth
-        SPHERE,     ///< Sphere collision shape, defined by its radius
-        CYLINDER,   ///< Cylinder collision shape, defined by its radius and height
-        CAPSULE,    ///< Capsule collision shape, defined by its radius and cylindrical-part height
-        ELLIPSOID,  ///< Ellipsoid collision shape, defined by its three radii (x,y,z)
-        MESH,       ///< Mesh collision shape, defined by a file-resource, or user-defined vertex-data
-        HFIELD      ///< Heightfield collision-shape, defined by user-defined elevation data
+        NONE = 0,       ///< Dummy collision shape
+        BOX,            ///< Box collision shape, defined by its width, depth, and height
+        PLANE,          ///< Plane collision shape, defined by its width and depth
+        SPHERE,         ///< Sphere collision shape, defined by its radius
+        CYLINDER,       ///< Cylinder collision shape, defined by its radius and height
+        CAPSULE,        ///< Capsule collision shape, defined by its radius and cylindrical-part height
+        ELLIPSOID,      ///< Ellipsoid collision shape, defined by its three radii (x,y,z)
+        CONVEX_MESH,    ///< Convex-mesh collision shape, defined by a file-resource, or user-defined vertex-data
+        TRIANGULAR_MESH,///< Triangular-mesh collision shape, defined by a file-resources, or user defined vertex-data
+        HEIGHTFIELD     ///< Heightfield collision-shape, defined by user-defined elevation data
     };
 
     /// Type of joint, used for joint-related objects in the simulation

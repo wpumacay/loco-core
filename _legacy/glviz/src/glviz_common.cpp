@@ -80,7 +80,7 @@ namespace tysoc {
         {
             _renderable = engine::CMeshBuilder::createCylinder( size.x, size.y );
         }
-        else if ( type == eShapeType::MESH )
+        else if ( type == eShapeType::CONVEX_MESH )
         {
             _renderable = engine::CMeshBuilder::createModelFromFile( filename );
             _renderable->scale = { size.x, size.y, size.z };
@@ -120,13 +120,13 @@ namespace tysoc {
             _renderable = engine::CMeshBuilder::createCapsule( data.size.x,
                                                                   data.size.y );
         }
-        else if ( data.type == eShapeType::MESH )
+        else if ( data.type == eShapeType::CONVEX_MESH )
         {
             _renderable = engine::CMeshBuilder::createModelFromFile( data.filename );
             if ( _renderable )
                 _renderable->scale = { data.size.x, data.size.y, data.size.z };
         }
-        else if ( data.type == eShapeType::HFIELD )
+        else if ( data.type == eShapeType::HEIGHTFIELD )
         {
             auto _heightDataScaled = data.hdata.heightData;
             for ( size_t i = 0; i < _heightDataScaled.size(); i++ )
@@ -231,14 +231,14 @@ namespace tysoc {
             // scale according to height
             renderable->scale.z = newSize.y / baseSize.y;
         }
-        else if ( type == eShapeType::MESH )
+        else if ( type == eShapeType::CONVEX_MESH )
         {
             // scale every dimension
             renderable->scale.x = newSize.x / baseSize.x;
             renderable->scale.y = newSize.y / baseSize.y;
             renderable->scale.z = newSize.z / baseSize.z;
         }
-        else if ( type == eShapeType::HFIELD )
+        else if ( type == eShapeType::HEIGHTFIELD )
         {
             LOCO_CORE_WARN( "Hfield shapes don't support changing the scale. Change the elevation data instead" );
         }

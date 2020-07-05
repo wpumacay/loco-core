@@ -146,7 +146,7 @@ namespace loco
 
     void TVisual::ChangeElevationData( const std::vector< float >& heights )
     {
-        if ( m_data.type != eShapeType::HFIELD )
+        if ( m_data.type != eShapeType::HEIGHTFIELD )
         {
             LOCO_CORE_WARN( "TVisual::ChangeElevationData >>> collision shape {0} is not a hfield", m_name );
             return;

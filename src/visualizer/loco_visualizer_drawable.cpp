@@ -114,7 +114,7 @@ namespace visualizer {
 
     void TDrawable::ChangeVertexData( const std::vector<float>& vertices, const std::vector<int>& faces )
     {
-        if ( m_Data.type != eShapeType::MESH )
+        if ( m_Data.type != eShapeType::CONVEX_MESH )
         {
             LOCO_CORE_WARN( "TDrawable::ChangeElevationData >>> collision shape {0} is not a mesh", m_name );
             return;
@@ -129,7 +129,7 @@ namespace visualizer {
 
     void TDrawable::ChangeElevationData( const std::vector< float >& heights )
     {
-        if ( m_Data.type != eShapeType::HFIELD )
+        if ( m_Data.type != eShapeType::HEIGHTFIELD )
         {
             LOCO_CORE_WARN( "TDrawable::ChangeElevationData >>> collision shape {0} is not a hfield", m_name );
             return;

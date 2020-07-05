@@ -61,7 +61,7 @@ namespace tysoc {
             {
                 _renderable->material()->setType( eMaterialType::BLINN_PHONG );
 
-                if ( _visual->data.type != eShapeType::MESH || !_visual->data.usesMaterialFromMesh )
+                if ( _visual->data.type != eShapeType::CONVEX_MESH || !_visual->data.usesMaterialFromMesh )
                 {
                     setRenderableColor( _renderable, 
                                         _visual->data.ambient, 

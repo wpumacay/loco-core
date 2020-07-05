@@ -48,14 +48,14 @@ tysoc::TSingleBody* createHfield( const std::string& name, const tysoc::TVec3& p
     }
 
     tysoc::TCollisionData _collisionData;
-    _collisionData.type = tysoc::eShapeType::HFIELD;
+    _collisionData.type = tysoc::eShapeType::HEIGHTFIELD;
     _collisionData.size = { xExtent, yExtent, _maxHeight };
     _collisionData.hdata.nWidthSamples = nxSamples;
     _collisionData.hdata.nDepthSamples = nySamples;
     _collisionData.hdata.heightData = _heightData;
 
     tysoc::TVisualData _visualData;
-    _visualData.type = tysoc::eShapeType::HFIELD;
+    _visualData.type = tysoc::eShapeType::HEIGHTFIELD;
     _visualData.size = { xExtent, yExtent, _maxHeight };
     _visualData.hdata.nWidthSamples = nxSamples;
     _visualData.hdata.nDepthSamples = nySamples;
@@ -114,11 +114,11 @@ tysoc::TSingleBody* createSimpleBody( const std::string& name, const std::string
     }
     else if ( type == "mesh" )
     {
-        _collisionData.type = tysoc::eShapeType::MESH;
+        _collisionData.type = tysoc::eShapeType::CONVEX_MESH;
         _collisionData.size = { 0.2, 0.2, 0.2 };
         _collisionData.filename = tysoc::PATH_RESOURCES + "meshes/monkey.stl";
 
-        _visualData.type = tysoc::eShapeType::MESH;
+        _visualData.type = tysoc::eShapeType::CONVEX_MESH;
         _visualData.size = { 0.2, 0.2, 0.2 };
         _visualData.filename = tysoc::PATH_RESOURCES + "meshes/monkey.stl";
     }

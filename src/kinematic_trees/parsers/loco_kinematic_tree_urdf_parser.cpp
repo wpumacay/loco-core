@@ -432,7 +432,7 @@ namespace kintree {
             auto mesh_elm = geometry_elm->GetFirstChildOfType( "mesh" );
             const auto scale = mesh_elm->GetVec3( "scale", { 1.0f, 1.0f, 1.0f } );
             const auto filename = mesh_elm->GetString( "filename", "" );
-            dst_shape_data.type = eShapeType::MESH;
+            dst_shape_data.type = eShapeType::CONVEX_MESH;
             dst_shape_data.size = scale;
             dst_shape_data.mesh_data.filename = m_CurrentFolderpath + filename;
         }

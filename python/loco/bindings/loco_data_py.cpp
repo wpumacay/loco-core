@@ -18,8 +18,8 @@ namespace loco
                 .value( "CYLINDER", loco::eShapeType::CYLINDER )
                 .value( "CAPSULE", loco::eShapeType::CAPSULE )
                 .value( "ELLIPSOID", loco::eShapeType::ELLIPSOID )
-                .value( "MESH", loco::eShapeType::MESH )
-                .value( "HFIELD", loco::eShapeType::HFIELD );
+                .value( "MESH", loco::eShapeType::CONVEX_MESH )
+                .value( "HFIELD", loco::eShapeType::HEIGHTFIELD );
 
             py::enum_< loco::eJointType >( m, "JointType", py::arithmetic() )
                 .value( "FREE", loco::eJointType::FREE )
@@ -104,14 +104,14 @@ namespace loco
                         _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "type        : " + loco::ToString( self->type ) + "\n";
                         _strrep += "size        : " + loco::ToString( self->size ) + "\n";
-                        if ( self->type == eShapeType::MESH )
+                        if ( self->type == eShapeType::CONVEX_MESH )
                         {
                             auto& mesh_data = self->mesh_data;
                             _strrep += "mesh-file   : " + mesh_data.filename + "\n";
                             _strrep += "mesh-nverts : " + std::to_string( mesh_data.vertices.size() ) + "\n";
                             _strrep += "mesh-nfaces : " + std::to_string( mesh_data.faces.size() ) + "\n";
                         }
-                        if ( self->type == eShapeType::HFIELD )
+                        if ( self->type == eShapeType::HEIGHTFIELD )
                         {
                             auto& hfield_data = self->hfield_data;
                             _strrep += "nwidth-sampl: " + std::to_string( hfield_data.nWidthSamples ) + "\n";
@@ -145,14 +145,14 @@ namespace loco
                         _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "type        : " + loco::ToString( self->type ) + "\n";
                         _strrep += "size        : " + loco::ToString( self->size ) + "\n";
-                        if ( self->type == eShapeType::MESH )
+                        if ( self->type == eShapeType::CONVEX_MESH )
                         {
                             auto& mesh_data = self->mesh_data;
                             _strrep += "mesh-file   : " + mesh_data.filename + "\n";
                             _strrep += "mesh-nverts : " + std::to_string( mesh_data.vertices.size() ) + "\n";
                             _strrep += "mesh-nfaces : " + std::to_string( mesh_data.faces.size() ) + "\n";
                         }
-                        if ( self->type == eShapeType::HFIELD )
+                        if ( self->type == eShapeType::HEIGHTFIELD )
                         {
                             auto& hfield_data = self->hfield_data;
                             _strrep += "nwidth-sampl: " + std::to_string( hfield_data.nWidthSamples ) + "\n";
@@ -205,14 +205,14 @@ namespace loco
                         _strrep += "cpp-address : " + tinyutils::PointerToHexAddress( self ) + "\n";
                         _strrep += "type        : " + loco::ToString( self->type ) + "\n";
                         _strrep += "size        : " + loco::ToString( self->size ) + "\n";
-                        if ( self->type == eShapeType::MESH )
+                        if ( self->type == eShapeType::CONVEX_MESH )
                         {
                             auto& mesh_data = self->mesh_data;
                             _strrep += "mesh-file   : " + mesh_data.filename + "\n";
                             _strrep += "mesh-nverts : " + std::to_string( mesh_data.vertices.size() ) + "\n";
                             _strrep += "mesh-nfaces : " + std::to_string( mesh_data.faces.size() ) + "\n";
                         }
-                        if ( self->type == eShapeType::HFIELD )
+                        if ( self->type == eShapeType::HEIGHTFIELD )
                         {
                             auto& hfield_data = self->hfield_data;
                             _strrep += "nwidth-sampl: " + std::to_string( hfield_data.nWidthSamples ) + "\n";

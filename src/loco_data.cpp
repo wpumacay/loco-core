@@ -10,8 +10,8 @@ namespace loco
         else if ( type == eShapeType::SPHERE ) return "sphere";
         else if ( type == eShapeType::CYLINDER ) return "cylinder";
         else if ( type == eShapeType::CAPSULE ) return "capsule";
-        else if ( type == eShapeType::MESH ) return "mesh";
-        else if ( type == eShapeType::HFIELD ) return "hfield";
+        else if ( type == eShapeType::CONVEX_MESH ) return "mesh";
+        else if ( type == eShapeType::HEIGHTFIELD ) return "hfield";
         else if ( type == eShapeType::ELLIPSOID ) return "ellipsoid";
         else if ( type == eShapeType::NONE ) return "none";
 
@@ -69,8 +69,8 @@ namespace loco
         else if ( shape == "capsule" ) return eShapeType::CAPSULE;
         else if ( shape == "cylinder" ) return eShapeType::CYLINDER;
         else if ( shape == "ellipsoid" ) return eShapeType::ELLIPSOID;
-        else if ( shape == "mesh" ) return eShapeType::MESH;
-        else if ( shape == "hfield" ) return eShapeType::HFIELD;
+        else if ( shape == "mesh" ) return eShapeType::CONVEX_MESH;
+        else if ( shape == "hfield" ) return eShapeType::HEIGHTFIELD;
 
         LOCO_CORE_ERROR( "Unsupported shape type: {0}", shape );
         return eShapeType::NONE;
@@ -145,7 +145,7 @@ namespace loco
         {
             _volume = ( 4.0f / 3.0f ) * loco::PI * ( shapeData.size.x() * shapeData.size.y() * shapeData.size.z() );
         }
-        else if ( shapeData.type == eShapeType::MESH )
+        else if ( shapeData.type == eShapeType::CONVEX_MESH )
         {
             std::pair<TVec3, TVec3> _aabb;
             if ( shapeData.mesh_data.filename != "" )
@@ -156,7 +156,7 @@ namespace loco
                                 ( _aabb.second.y() - _aabb.first.y() ) * shapeData.size.y() *
                                 ( _aabb.second.z() - _aabb.first.z() ) * shapeData.size.z() );
         }
-        else if ( shapeData.type == eShapeType::HFIELD )
+        else if ( shapeData.type == eShapeType::HEIGHTFIELD )
         {
             _volume = 0.0f; // heightfields are only static|kinematic
         }

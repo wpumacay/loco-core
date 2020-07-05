@@ -182,7 +182,7 @@ namespace kintree {
         kintree_collider_data.localTransform = get_transform( collider_elm );
         kintree_collider_data.type = loco::ToEnumShape( get_string( collider_elm, "type", "sphere" ) );
         kintree_collider_data.size = get_standard_size( collider_elm );
-        if ( kintree_collider_data.type == eShapeType::MESH ) // @todo: check how to extract the mesh-id correctly
+        if ( kintree_collider_data.type == eShapeType::CONVEX_MESH ) // @todo: check how to extract the mesh-id correctly
             kintree_collider_data.mesh_data.filename = get_string( collider_elm, "mesh", "" );
 
         kintree_collider_data.collisionGroup = get_int( collider_elm, "contype", 1 );
@@ -206,7 +206,7 @@ namespace kintree {
         kintree_drawable_data.localTransform = get_transform( drawable_elm );
         kintree_drawable_data.type = loco::ToEnumShape( get_string( drawable_elm, "type", "sphere" ) );
         kintree_drawable_data.size = get_standard_size( drawable_elm );
-        if ( kintree_drawable_data.type == eShapeType::MESH ) // @todo: check how to extract the mesh-id correctly
+        if ( kintree_drawable_data.type == eShapeType::CONVEX_MESH ) // @todo: check how to extract the mesh-id correctly
             kintree_drawable_data.mesh_data.filename = get_string( drawable_elm, "mesh", "" );
 
         auto rgba_color = loco::DEFAULT_RGBA_COLOR; // ambient + diffuse components of the material
@@ -780,7 +780,7 @@ namespace kintree {
             }
             return { c_radius, c_length, 0.0f };
         }
-        else if ( geom_type == eShapeType::MESH )
+        else if ( geom_type == eShapeType::CONVEX_MESH )
         {
             const auto mesh_id = get_string( geom_elm, "mesh", "" );
             if ( m_AssetsMeshes.find( mesh_id ) != m_AssetsMeshes.end() )

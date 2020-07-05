@@ -239,7 +239,7 @@ namespace visualizer {
                 m_Scale.z() = m_Size.z() / m_Size0.z();
                 break;
             }
-            case eShapeType::MESH :
+            case eShapeType::CONVEX_MESH :
             {
                 // scale every dimension
                 m_Scale.x() = m_Size.x();
@@ -249,7 +249,7 @@ namespace visualizer {
                 m_Size0 = m_Size;
                 break;
             }
-            case eShapeType::HFIELD :
+            case eShapeType::HEIGHTFIELD :
             {
                 LOCO_CORE_WARN( "TOpenGLDrawableAdapter::ChangeSize >>> Hfield shapes don't support changing the scale. Change the elevation data instead" );
                 break;

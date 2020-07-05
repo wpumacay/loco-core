@@ -251,14 +251,14 @@ namespace visualizer {
                         ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Rad-z##C.Ell", &collider_size.z(), change_rate_size, min_size, max_size );
                         break;
                     }
-                    case eShapeType::MESH :
+                    case eShapeType::CONVEX_MESH :
                     {
                         ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-x##C.Mesh", &collider_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
                         ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-y##C.Mesh", &collider_size.y(), change_rate_size, min_size, max_size ); ImGui::SameLine();
                         ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-z##C.Mesh", &collider_size.z(), change_rate_size, min_size, max_size );
                         break;
                     }
-                    case eShapeType::HFIELD :
+                    case eShapeType::HEIGHTFIELD :
                     {
                         ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Width##C.Hfield", &collider_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
                         ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Depth##C.Hfield", &collider_size.y(), change_rate_size, min_size, max_size ); ImGui::SameLine();
@@ -309,14 +309,14 @@ namespace visualizer {
                         ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Rad-z##V.Ell", &visual_size.z(), change_rate_size, min_size, max_size );
                         break;
                     }
-                    case eShapeType::MESH :
+                    case eShapeType::CONVEX_MESH :
                     {
                         ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-x##V.Mesh", &visual_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
                         ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-y##V.Mesh", &visual_size.y(), change_rate_size, min_size, max_size ); ImGui::SameLine();
                         ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-z##V.Mesh", &visual_size.z(), change_rate_size, min_size, max_size );
                         break;
                     }
-                    case eShapeType::HFIELD :
+                    case eShapeType::HEIGHTFIELD :
                     {
                         ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Width##V.Hfield", &visual_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
                         ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Depth##V.Hfield", &visual_size.y(), change_rate_size, min_size, max_size ); ImGui::SameLine();

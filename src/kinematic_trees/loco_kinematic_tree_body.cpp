@@ -711,7 +711,7 @@ namespace kintree {
         : TKinematicTreeBody( name )
     {
         auto collider_data = TCollisionData();
-        collider_data.type = eShapeType::MESH;
+        collider_data.type = eShapeType::CONVEX_MESH;
         collider_data.size = { mesh_scale, mesh_scale, mesh_scale };
         collider_data.mesh_data.filename = mesh_collider_filepath;
         collider_data.collisionGroup = collision_group;
@@ -720,7 +720,7 @@ namespace kintree {
         m_Colliders.back()->SetParentBody( this, TMat4() );
 
         auto visual_data = TVisualData();
-        visual_data.type = eShapeType::MESH;
+        visual_data.type = eShapeType::CONVEX_MESH;
         visual_data.size = { mesh_scale, mesh_scale, mesh_scale };
         visual_data.mesh_data.filename = mesh_visual_filepath;
         visual_data.ambient = loco::DEFAULT_AMBIENT_COLOR;

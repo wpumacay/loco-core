@@ -147,7 +147,7 @@ namespace visualizer {
                 renderable = engine::CMeshBuilder::createEllipsoid( data.size.x(), data.size.y(), data.size.z() );
                 break;
             }
-            case eShapeType::MESH :
+            case eShapeType::CONVEX_MESH :
             {
                 auto& mesh_data = data.mesh_data;
                 if ( mesh_data.filename != "" )
@@ -160,7 +160,7 @@ namespace visualizer {
                     renderable->scale = { data.size.x(), data.size.y(), data.size.z() };
                 break;
             }
-            case eShapeType::HFIELD :
+            case eShapeType::HEIGHTFIELD :
             {
                 // Unnormalize the heights data (use data.size.z() as scaler)
                 auto heightsScaled = data.hfield_data.heights;
