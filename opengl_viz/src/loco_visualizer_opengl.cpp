@@ -407,7 +407,8 @@ namespace visualizer {
                     {
                         auto gl_renderableRef = m_glApplication->scene()->AddRenderable( std::move( gl_renderable ) );
                         auto gl_drawableAdapter = std::make_unique<TOpenGLDrawableAdapter>( kintree_drawable, kintree_drawable->data(), gl_renderableRef );
-                        const bool use_mesh_color = ( kintree_drawable->shape() == eShapeType::CONVEX_MESH &&
+                        const auto shape_type = kintree_drawable->shape();
+                        const bool use_mesh_color = ( ( shape_type == eShapeType::CONVEX_MESH || shape_type == eShapeType::TRIANGULAR_MESH ) &&
                                                       tinymath::allclose( kintree_drawable->data().ambient, loco::DEFAULT_AMBIENT_COLOR ) &&
                                                       tinymath::allclose( kintree_drawable->data().diffuse, loco::DEFAULT_DIFFUSE_COLOR ) &&
                                                       tinymath::allclose( kintree_drawable->data().specular, loco::DEFAULT_SPECULAR_COLOR ) );

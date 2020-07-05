@@ -240,6 +240,7 @@ namespace visualizer {
                 break;
             }
             case eShapeType::CONVEX_MESH :
+            case eShapeType::TRIANGULAR_MESH :
             {
                 // scale every dimension
                 m_Scale.x() = m_Size.x();

@@ -253,9 +253,16 @@ namespace visualizer {
                     }
                     case eShapeType::CONVEX_MESH :
                     {
-                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-x##C.Mesh", &collider_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
-                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-y##C.Mesh", &collider_size.y(), change_rate_size, min_size, max_size ); ImGui::SameLine();
-                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-z##C.Mesh", &collider_size.z(), change_rate_size, min_size, max_size );
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-x##C.ConvMesh", &collider_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-y##C.ConvMesh", &collider_size.y(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-z##C.ConvMesh", &collider_size.z(), change_rate_size, min_size, max_size );
+                        break;
+                    }
+                    const eShapeType::TRIANGULAR_MESH :
+                    {
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-x##C.TriMesh", &collider_size.x(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-y##C.TriMesh", &collider_size.y(), change_rate_size, min_size, max_size ); ImGui::SameLine();
+                        ImGui::SetNextItemWidth( 80 ); ImGui::DragFloat( "Scale-z##C.TriMesh", &collider_size.z(), change_rate_size, min_size, max_size );
                         break;
                     }
                     case eShapeType::HEIGHTFIELD :

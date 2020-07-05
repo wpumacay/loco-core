@@ -148,6 +148,7 @@ namespace visualizer {
                 break;
             }
             case eShapeType::CONVEX_MESH :
+            case eShapeType::TRIANGULAR_MESH :
             {
                 auto& mesh_data = data.mesh_data;
                 if ( mesh_data.filename != "" )

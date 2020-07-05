@@ -10,9 +10,10 @@ namespace loco
         else if ( type == eShapeType::SPHERE ) return "sphere";
         else if ( type == eShapeType::CYLINDER ) return "cylinder";
         else if ( type == eShapeType::CAPSULE ) return "capsule";
-        else if ( type == eShapeType::CONVEX_MESH ) return "mesh";
-        else if ( type == eShapeType::HEIGHTFIELD ) return "hfield";
         else if ( type == eShapeType::ELLIPSOID ) return "ellipsoid";
+        else if ( type == eShapeType::CONVEX_MESH ) return "convex-mesh";
+        else if ( type == eShapeType::TRIANGULAR_MESH ) return "triangular-mesh";
+        else if ( type == eShapeType::HEIGHTFIELD ) return "heightfield";
         else if ( type == eShapeType::NONE ) return "none";
 
         return "undefined";
@@ -70,6 +71,7 @@ namespace loco
         else if ( shape == "cylinder" ) return eShapeType::CYLINDER;
         else if ( shape == "ellipsoid" ) return eShapeType::ELLIPSOID;
         else if ( shape == "mesh" ) return eShapeType::CONVEX_MESH;
+        else if ( shape == "trimesh" ) return eShapeType::TRIANGULAR_MESH;
         else if ( shape == "hfield" ) return eShapeType::HEIGHTFIELD;
 
         LOCO_CORE_ERROR( "Unsupported shape type: {0}", shape );
@@ -114,7 +116,7 @@ namespace loco
     {
         TScalar _volume = 0.1f;
 
-        if ( shapeData.type == eShapeType::BOX )
+        /**/ if ( shapeData.type == eShapeType::BOX )
         {
             _volume = ( shapeData.size.x() * shapeData.size.y() * shapeData.size.z() );
         }
@@ -156,9 +158,13 @@ namespace loco
                                 ( _aabb.second.y() - _aabb.first.y() ) * shapeData.size.y() *
                                 ( _aabb.second.z() - _aabb.first.z() ) * shapeData.size.z() );
         }
+        else if ( shapeData.type == eShapeType::TRIANGULAR_MESH )
+        {
+            _volume = 0.0f; // triangular meshes are only static
+        }
         else if ( shapeData.type == eShapeType::HEIGHTFIELD )
         {
-            _volume = 0.0f; // heightfields are only static|kinematic
+            _volume = 0.0f; // heightfields are only static
         }
         else
         {
