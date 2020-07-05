@@ -343,7 +343,7 @@ namespace primitives {
     }
 
     //********************************************************************************************//
-    //                               Mesh primitive Implementation                                //
+    //                            Convex-Mesh primitive Implementation                            //
     //********************************************************************************************//
 
     TMesh::TMesh( const std::string& name,
@@ -435,6 +435,92 @@ namespace primitives {
     {
         m_Collider->ChangeVertexData( vertices, faces );
         m_Drawable->ChangeVertexData( vertices, faces );
+    }
+    //********************************************************************************************//
+    //                          Triangular-Mesh primitive Implementation                          //
+    //********************************************************************************************//
+
+    TTriMesh::TTriMesh( const std::string& name,
+                        const std::string& mesh_collider_filepath,
+                        const std::string& mesh_visual_filepath,
+                        const TScalar& mesh_scale,
+                        const TVec3& position,
+                        const TMat3& rotation,
+                        const int& collision_group,
+                        const int& collision_mask )
+        : TSingleBody( name, position, rotation )
+    {
+        auto collider_data = TCollisionData();
+        collider_data.type = eShapeType::TRIANGULAR_MESH;
+        collider_data.size = { mesh_scale, mesh_scale, mesh_scale };
+        collider_data.mesh_data.filename = mesh_collider_filepath;
+        collider_data.collisionGroup = collision_group;
+        collider_data.collisionMask = collision_mask;
+        m_Collider = std::make_unique<TSingleBodyCollider>( name + loco::SUFFIX_COLLIDER, collider_data );
+        m_Collider->SetParentBody( this );
+
+        auto visual_data = TVisualData();
+        visual_data.type = eShapeType::TRIANGULAR_MESH;
+        visual_data.size = { mesh_scale, mesh_scale, mesh_scale };
+        visual_data.mesh_data.filename = mesh_visual_filepath;
+        visual_data.ambient = loco::DEFAULT_AMBIENT_COLOR;
+        visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
+        visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
+        visual_data.shininess = loco::DEFAULT_SHININESS;
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable->SetParentObject( this );
+
+        m_Data.dyntype = eDynamicsType::STATIC;
+        m_Data.collision = collider_data;
+        m_Data.visual = visual_data;
+
+        m_Scale = mesh_scale;
+    }
+
+    TTriMesh::TTriMesh( const std::string& name,
+                        const std::vector<float>& mesh_vertices,
+                        const std::vector<int>& mesh_faces,
+                        const TScalar& mesh_scale,
+                        const TVec3& position,
+                        const TMat3& rotation,
+                        const int& collision_group,
+                        const int& collision_mask )
+        : TSingleBody( name, position, rotation )
+    {
+        auto collider_data = TCollisionData();
+        collider_data.type = eShapeType::TRIANGULAR_MESH;
+        collider_data.size = { mesh_scale, mesh_scale, mesh_scale };
+        collider_data.mesh_data.vertices = mesh_vertices;
+        collider_data.mesh_data.faces = mesh_faces;
+        collider_data.collisionGroup = collision_group;
+        collider_data.collisionMask = collision_mask;
+        m_Collider = std::make_unique<TSingleBodyCollider>( name + loco::SUFFIX_COLLIDER, collider_data );
+        m_Collider->SetParentBody( this );
+
+        auto visual_data = TVisualData();
+        visual_data.type = eShapeType::TRIANGULAR_MESH;
+        visual_data.size = { mesh_scale, mesh_scale, mesh_scale };
+        visual_data.mesh_data.vertices = mesh_vertices;
+        visual_data.mesh_data.faces = mesh_faces;
+        visual_data.ambient = loco::DEFAULT_AMBIENT_COLOR;
+        visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
+        visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
+        visual_data.shininess = loco::DEFAULT_SHININESS;
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable->SetParentObject( this );
+
+        m_Data.dyntype = eDynamicsType::STATIC;
+        m_Data.collision = collider_data;
+        m_Data.visual = visual_data;
+
+        m_Scale = mesh_scale;
+    }
+
+    void TTriMesh::SetScale( const TScalar& scale )
+    {
+        m_Scale = scale;
+        m_Collider->ChangeSize( { m_Scale, m_Scale, m_Scale } );
+        m_Drawable->ChangeSize( { m_Scale, m_Scale, m_Scale } );
     }
 
     //********************************************************************************************//

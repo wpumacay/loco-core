@@ -545,6 +545,50 @@ namespace primitives {
         TScalar m_Scale;
     };
 
+    class TTriMesh : public TSingleBody
+    {
+    public :
+
+        TTriMesh( const std::string& name,
+                  const std::string& trimesh_collider_filepath,
+                  const std::string& trimesh_visual_filepath,
+                  const TScalar& trimesh_scale,
+                  const TVec3& position,
+                  const TMat3& rotation,
+                  const int& collision_group = 0x7fffffff,
+                  const int& collision_mask = 0x7fffffff );
+
+        TTriMesh( const std::string& name,
+                  const std::vector<float>& trimesh_vertices,
+                  const std::vector<int>& trimesh_faces,
+                  const TScalar& trimesh_scale,
+                  const TVec3& position,
+                  const TMat3& rotation,
+                  const int& collision_group = 0x7fffffff,
+                  const int& collision_mask = 0x7fffffff );
+
+        TTriMesh( const TTriMesh& other ) = delete;
+
+        TTriMesh& operator=( const TTriMesh& other ) = delete;
+
+        ~TTriMesh() = default;
+
+        /// Sets the scale of the triangular-mesh collider|drawable
+        ///
+        /// @param scale    Scale factor applied to the triangular-mesh collider|drawable
+        void SetScale( const TScalar& scale );
+
+        /// Gets the scale of the triangular-mesh collider|drawable
+        ///
+        /// @return Scale factor of the triangular-mesh collider|drawable
+        TScalar scale() const { return m_Scale; }
+
+    private :
+
+        /// Scale of the mesh collider|drawable
+        TScalar m_Scale;
+    };
+
     /// Heightfield primitive, corresponding to a single-body with a heightfield collider|drawable
     ///
     /// @details
