@@ -73,6 +73,14 @@ namespace kintree {
 
         TMat4 tf0() const { return m_tf0; }
 
+        TVec3 linear_vel() const { return m_LinearVel; }
+
+        TVec3 angular_vel() const { return m_AngularVel; }
+
+        TVec3 linear_vel0() const { return m_LinearVel0; }
+
+        TVec3 angular_vel0() const { return m_AngularVel0; }
+
         parsing::TElement* mjcf_model() { return m_MjcfModel.get(); }
 
         const parsing::TElement* mjcf_model() const { return m_MjcfModel.get(); }
