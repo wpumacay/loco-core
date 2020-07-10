@@ -15,7 +15,8 @@ namespace loco
         KINEMATIC_TREE_BODY,
         KINEMATIC_TREE_COLLIDER,
         KINEMATIC_TREE_JOINT,
-        KINEMATIC_TREE_ACTUATOR
+        KINEMATIC_TREE_ACTUATOR,
+        TERRAIN_GENERATOR
     };
 
     std::string ToString( const eObjectType& obj_type );
