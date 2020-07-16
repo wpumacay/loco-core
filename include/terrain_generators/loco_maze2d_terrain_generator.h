@@ -50,6 +50,8 @@ namespace terrain {
 
         TVec2 bottom_left_pos() const { return m_BottomLeftPos; }
 
+        std::string ToString() const;
+
         std::string str_layout2d() const;
 
         std::vector<char> vec_layout2d() const;
@@ -75,6 +77,8 @@ namespace terrain {
         ssize_t m_CountX;
 
         ssize_t m_CountY;
+
+        ssize_t m_NumTotalCells;
 
         TVec3 m_CellSize;
 
