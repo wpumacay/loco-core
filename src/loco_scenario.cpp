@@ -38,8 +38,8 @@ namespace loco
         for ( auto& kinematic_tree : m_KinematicTrees )
             kinematic_tree->Initialize();
 
-////         for ( auto& terrainGenerator : m_TerrainGenerators )
-////             terrainGenerator->Initialize();
+        for ( auto& terrain_generator : m_TerrainGenerators )
+            terrain_generator->Initialize();
     }
 
     void TScenario::PreStep()
@@ -53,8 +53,8 @@ namespace loco
         for ( auto& kinematic_tree : m_KinematicTrees )
             kinematic_tree->PreStep();
 
-////         for ( auto& terrainGenerator : m_TerrainGenerators )
-////             terrainGenerator->PreStep();
+        for ( auto& terrain_generator : m_TerrainGenerators )
+            terrain_generator->PreStep();
     }
 
     void TScenario::PostStep()
@@ -68,9 +68,9 @@ namespace loco
         for ( auto& kinematic_tree : m_KinematicTrees )
             kinematic_tree->PostStep();
 
-////         for ( auto& terrainGenerator : m_TerrainGenerators )
-////             terrainGenerator->PostStep();
-}
+        for ( auto& terrain_generator : m_TerrainGenerators )
+            terrain_generator->PostStep();
+    }
 
     void TScenario::Reset()
     {
@@ -83,8 +83,8 @@ namespace loco
         for ( auto& kinematic_tree : m_KinematicTrees )
             kinematic_tree->Reset();
 
-////         for ( auto& terrainGenerator : m_TerrainGenerators )
-////             terrainGenerator->Reset();
+        for ( auto& terrain_generator : m_TerrainGenerators )
+            terrain_generator->Reset();
     }
 
     void TScenario::DetachSim()
@@ -98,8 +98,8 @@ namespace loco
         for ( auto& kinematic_tree : m_KinematicTrees )
             kinematic_tree->DetachSim();
 
-////         for ( auto& terrainGenerator : m_TerrainGenerators )
-////             terrainGenerator->DetachSim();
+        for ( auto& terrain_generator : m_TerrainGenerators )
+            terrain_generator->DetachSim();
     }
 
     void TScenario::DetachViz()
@@ -113,8 +113,8 @@ namespace loco
         for ( auto& kinematic_tree : m_KinematicTrees )
             kinematic_tree->DetachViz();
 
-////         for ( auto& terrainGenerator : m_TerrainGenerators )
-////             terrainGenerator->DetachViz();
+        for ( auto& terrain_generator : m_TerrainGenerators )
+            terrain_generator->DetachViz();
     }
 
     visualizer::TDrawable* TScenario::AddDrawable( std::unique_ptr<visualizer::TDrawable> drawable )
@@ -165,21 +165,21 @@ namespace loco
          return m_KinematicTrees.back().get();
      }
 
-////     TTerrainGenerator* TScenario::AddTerrainGenerator( std::unique_ptr< TTerrainGenerator > terrainGenerator )
-////     {
-////         LOCO_CORE_ASSERT( terrainGenerator, "TScenario::AddTerrainGenerator >>> tried adding nullptr" );
-//// 
-////         if ( HasTerrainGeneratorNamed( terrainGenerator->name() ) )
-////         {
-////             LOCO_CORE_WARN( "TScenario::AddTerrainGenerator >>> terrainGenerator with name {0} already exists. \
-////                              New one won't be added, returning nullptr instead.", terrainGenerator->name() );
-////             return nullptr;
-////         }
-//// 
-////         m_TerrainGeneratorsMap[terrainGenerator->name()] = m_TerrainGenerators.size();
-////         m_TerrainGenerators.push_back( std::move( terrainGenerator ) );
-////         return m_TerrainGenerators.back().get();
-////     }
+    terrain::TITerrainGenerator* TScenario::AddTerrainGenerator( std::unique_ptr<terrain::TITerrainGenerator> terrain_generator )
+    {
+        LOCO_CORE_ASSERT( terrain_generator, "TScenario::AddTerrainGenerator >>> tried adding nullptr" );
+
+        if ( HasTerrainGeneratorNamed( terrain_generator->name() ) )
+        {
+            LOCO_CORE_WARN( "TScenario::AddTerrainGenerator >>> terrain_generator with name {0} already exists. \
+                             New one won't be added, returning nullptr instead.", terrain_generator->name() );
+            return nullptr;
+        }
+
+        m_TerrainGeneratorsMap[terrain_generator->name()] = m_TerrainGenerators.size();
+        m_TerrainGenerators.push_back( std::move( terrain_generator ) );
+        return m_TerrainGenerators.back().get();
+    }
 
     const visualizer::TDrawable* TScenario::GetDrawableByName( const std::string& name ) const
     {
@@ -200,7 +200,7 @@ namespace loco
             return nullptr;
         }
 
-        return get_singleBody( m_SingleBodiesMap.at( name ) );
+        return get_single_body( m_SingleBodiesMap.at( name ) );
     }
 
     const kintree::TKinematicTree* TScenario::GetKinematicTreeByName( const std::string& name ) const
@@ -214,16 +214,16 @@ namespace loco
         return get_kinematic_tree( m_KinematicTreesMap.at( name ) );
     }
 
-////     const TTerrainGenerator* TScenario::GetTerrainGeneratorByName( const std::string& name ) const
-////     {
-////         if( !HasTerrainGeneratorNamed( name ) )
-////         {
-////             LOCO_CORE_ERROR( "TScenario::GetTerrainGeneratorByName >>> terrainGenerator with name {0} not found", name );
-////             return nullptr;
-////         }
-//// 
-////         return get_terrainGenerator( m_TerrainGeneratorsMap.at( name ) );
-////     }
+    const terrain::TITerrainGenerator* TScenario::GetTerrainGeneratorByName( const std::string& name ) const
+    {
+        if( !HasTerrainGeneratorNamed( name ) )
+        {
+            LOCO_CORE_ERROR( "TScenario::GetTerrainGeneratorByName >>> terrain_generator with name {0} not found", name );
+            return nullptr;
+        }
+
+        return get_terrain_generator( m_TerrainGeneratorsMap.at( name ) );
+    }
 
     visualizer::TDrawable* TScenario::GetDrawableByName( const std::string& name )
     {
@@ -258,16 +258,16 @@ namespace loco
         return get_mutable_kinematic_tree( m_KinematicTreesMap.at( name ) );
     }
 
-////     TTerrainGenerator* TScenario::GetTerrainGeneratorByName( const std::string& name )
-////     {
-////         if( !HasTerrainGeneratorNamed( name ) )
-////         {
-////             LOCO_CORE_ERROR( "TScenario::GetTerrainGeneratorByName >>> terrainGenerator with name {0} not found", name );
-////             return nullptr;
-////         }
-//// 
-////         return get_mutable_terrainGenerator( m_TerrainGeneratorsMap.at( name ) );
-////     }
+    terrain::TITerrainGenerator* TScenario::GetTerrainGeneratorByName( const std::string& name )
+    {
+        if( !HasTerrainGeneratorNamed( name ) )
+        {
+            LOCO_CORE_ERROR( "TScenario::GetTerrainGeneratorByName >>> terrain_generator with name {0} not found", name );
+            return nullptr;
+        }
+
+        return get_mutable_terrainGenerator( m_TerrainGeneratorsMap.at( name ) );
+    }
 
     void TScenario::RemoveDrawableByName( const std::string& name )
     {
@@ -314,40 +314,20 @@ namespace loco
         m_KinematicTreesMap.erase( name );
     }
 
-    // void TScenario::RemoveTerrainGeneratorByName( const std::string& name )
-    // {
-    //     if ( !HasTerrainGeneratorNamed( name ) )
-    //     {
-    //         LOCO_CORE_ERROR( "TScenario::RemoveTerrainGeneratorByName >>> tried removing unexistent terrain generator \"{0}\"", name );
-    //         return;
-    //     }
-    //     const ssize_t idx_terrain_generator = m_TerrainGeneratorsMap.at( name );
-    //     remove_terrain_generator( idx_terrain_generator );
-    //     for ( auto kv : m_TerrainGeneratorsMap )
-    //         if ( kv.second > idx_terrain_generator )
-    //             m_TerrainGeneratorsMap[kv.first]--;
-    //     m_TerrainGeneratorsMap.erase( name );
-    // }
-
-    size_t TScenario::GetNumDrawables() const
+    void TScenario::RemoveTerrainGeneratorByName( const std::string& name )
     {
-        return m_Drawables.size();
+        if ( !HasTerrainGeneratorNamed( name ) )
+        {
+            LOCO_CORE_ERROR( "TScenario::RemoveTerrainGeneratorByName >>> tried removing unexistent terrain generator \"{0}\"", name );
+            return;
+        }
+        const ssize_t idx_terrain_generator = m_TerrainGeneratorsMap.at( name );
+        remove_terrain_generator( idx_terrain_generator );
+        for ( auto kv : m_TerrainGeneratorsMap )
+            if ( kv.second > idx_terrain_generator )
+                m_TerrainGeneratorsMap[kv.first]--;
+        m_TerrainGeneratorsMap.erase( name );
     }
-
-    size_t TScenario::GetNumSingleBodies() const
-    {
-        return m_SingleBodies.size();
-    }
-
-    size_t TScenario::GetNumKinematicTrees() const
-    {
-        return m_KinematicTrees.size();
-    }
-
-////     size_t TScenario::GetNumTerrainGenerators() const
-////     {
-////         return m_TerrainGenerators.size();
-////     }
 
     bool TScenario::HasDrawableNamed( const std::string& name ) const
     {
@@ -364,10 +344,10 @@ namespace loco
         return m_KinematicTreesMap.find( name ) != m_KinematicTreesMap.end();
     }
 
-////     bool TScenario::HasTerrainGeneratorNamed( const std::string& name ) const
-////     {
-////         return m_TerrainGeneratorsMap.find( name ) != m_TerrainGeneratorsMap.end();
-////     }
+    bool TScenario::HasTerrainGeneratorNamed( const std::string& name ) const
+    {
+        return m_TerrainGeneratorsMap.find( name ) != m_TerrainGeneratorsMap.end();
+    }
 
     std::vector<const visualizer::TDrawable*> TScenario::GetDrawablesList() const
     {
@@ -393,13 +373,13 @@ namespace loco
         return kinematic_trees_list;
     }
 
-////     std::vector<const TTerrainGenerator*> TScenario::GetTerrainGeneratorsList() const
-////     {
-////         std::vector<const TTerrainGenerator*> _terrainGeneratorsList;
-////         for ( auto& terrainGenerator : m_TerrainGenerators )
-////             _terrainGeneratorsList.push_back( terrainGenerator.get() );
-////         return _terrainGeneratorsList;
-////     }
+    std::vector<const terrain::TITerrainGenerator*> TScenario::GetTerrainGeneratorsList() const
+    {
+        std::vector<const terrain::TITerrainGenerator*> terrain_generators_list;
+        for ( auto& terrain_generator : m_TerrainGenerators )
+            terrain_generators_list.push_back( terrain_generator.get() );
+        return terrain_generators_list;
+    }
 
     std::vector<visualizer::TDrawable*> TScenario::GetDrawablesList()
     {
@@ -425,13 +405,13 @@ namespace loco
         return kinematic_trees_list;
     }
 
-////     std::vector<TTerrainGenerator*> TScenario::GetTerrainGeneratorsList()
-////     {
-////         std::vector<TTerrainGenerator*> _terrainGeneratorsList;
-////         for ( auto& terrainGenerator : m_TerrainGenerators )
-////             _terrainGeneratorsList.push_back( terrainGenerator.get() );
-////         return _terrainGeneratorsList;
-////     }
+    std::vector<terrain::TITerrainGenerator*> TScenario::GetTerrainGeneratorsList()
+    {
+        std::vector<terrain::TITerrainGenerator*> terrain_generators_list;
+        for ( auto& terrain_generator : m_TerrainGenerators )
+            terrain_generators_list.push_back( terrain_generator.get() );
+        return terrain_generators_list;
+    }
 
     void TScenario::remove_drawable( ssize_t index )
     {
@@ -454,12 +434,12 @@ namespace loco
         m_KinematicTrees.erase( m_KinematicTrees.begin() + index );
     }
 
-////     void TScenario::remove_terrain_generator( ssize_t index )
-////     {
-////         LOCO_CORE_ASSERT( ( index >= 0 && index < m_TerrainGenerators.size() ), "TScenario::remove_terrain_generator >>> \
-////                           index {0} out of range [0,{1}]", index, m_TerrainGenerators.size() - 1 );
-////         m_TerrainGenerators.erase( m_TerrainGenerators.begin() + index );
-////     }
+    void TScenario::remove_terrain_generator( ssize_t index )
+    {
+        LOCO_CORE_ASSERT( ( index >= 0 && index < m_TerrainGenerators.size() ), "TScenario::remove_terrain_generator >>> \
+                          index {0} out of range [0,{1}]", index, m_TerrainGenerators.size() - 1 );
+        m_TerrainGenerators.erase( m_TerrainGenerators.begin() + index );
+    }
 
     const visualizer::TDrawable* TScenario::get_drawable( ssize_t index ) const
     {
@@ -468,9 +448,9 @@ namespace loco
         return m_Drawables[index].get();
     }
 
-    const primitives::TSingleBody* TScenario::get_singleBody( ssize_t index ) const
+    const primitives::TSingleBody* TScenario::get_single_body( ssize_t index ) const
     {
-        LOCO_CORE_ASSERT( ( index >= 0 && index < m_SingleBodies.size() ), "TScenario::get_singleBody >>> \
+        LOCO_CORE_ASSERT( ( index >= 0 && index < m_SingleBodies.size() ), "TScenario::get_single_body >>> \
                           index {0} out of range [0,{1}]", index, m_SingleBodies.size() );
         return m_SingleBodies[index].get();
     }
@@ -482,12 +462,12 @@ namespace loco
         return m_KinematicTrees[index].get();
     }
 
-////     const TTerrainGenerator* TScenario::get_terrainGenerator( ssize_t index ) const
-////     {
-////         LOCO_CORE_ASSERT( ( index >= 0 && index < m_TerrainGenerators.size() ), "TScenario::get_terrainGenerator >>> \
-////                           index {0} out of range [0,{1}]", index, m_TerrainGenerators.size() );
-////         return m_TerrainGenerators[index].get();
-////     }
+    const terrain::TITerrainGenerator* TScenario::get_terrain_generator( ssize_t index ) const
+    {
+        LOCO_CORE_ASSERT( ( index >= 0 && index < m_TerrainGenerators.size() ), "TScenario::get_terrain_generator >>> \
+                          index {0} out of range [0,{1}]", index, m_TerrainGenerators.size() );
+        return m_TerrainGenerators[index].get();
+    }
 
     visualizer::TDrawable* TScenario::get_mutable_drawable( ssize_t index )
     {
@@ -510,10 +490,10 @@ namespace loco
         return m_KinematicTrees[index].get();
     }
 
-////     TTerrainGenerator* TScenario::get_mutable_terrainGenerator( ssize_t index )
-////     {
-////         LOCO_CORE_ASSERT( ( index >= 0 && index < m_TerrainGenerators.size() ), "TScenario::get_mutable_terrainGenerator >>> \
-////                           index {0} out of range [0,...,{1}]", index, m_TerrainGenerators.size() );
-////         return m_TerrainGenerators[index].get();
-////     }
+    terrain::TITerrainGenerator* TScenario::get_mutable_terrainGenerator( ssize_t index )
+    {
+        LOCO_CORE_ASSERT( ( index >= 0 && index < m_TerrainGenerators.size() ), "TScenario::get_mutable_terrainGenerator >>> \
+                          index {0} out of range [0,...,{1}]", index, m_TerrainGenerators.size() );
+        return m_TerrainGenerators[index].get();
+    }
 }

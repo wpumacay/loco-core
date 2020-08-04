@@ -10,6 +10,8 @@
 #include <kinematic_trees/loco_kinematic_tree_joint.h>
 #include <kinematic_trees/loco_kinematic_tree_body.h>
 #include <kinematic_trees/loco_kinematic_tree.h>
+#include <terrain_generators/loco_terrain_generator.h>
+#include <terrain_generators/loco_maze2d_terrain_generator.h>
 #include <loco_scenario.h>
 #include <loco_simulation.h>
 #include <visualizer/loco_visualizer_drawable.h>

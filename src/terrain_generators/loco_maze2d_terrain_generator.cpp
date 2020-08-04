@@ -98,8 +98,8 @@ namespace terrain {
             for ( ssize_t iy = 0; iy < m_CountY; iy++ )
             {
                 const ssize_t cell_index = ix + iy * m_CountX;
-                const auto cell_pos = TVec3( ( ix + 0.5f ) * m_CellSize.x() + ix * 0.2f + m_BottomLeftPos.x(),
-                                             ( iy + 0.5f ) * m_CellSize.y() + iy * 0.2f + m_BottomLeftPos.y(),
+                const auto cell_pos = TVec3( ( ix + 0.5f ) * m_CellSize.x() + m_BottomLeftPos.x(),
+                                             ( iy + 0.5f ) * m_CellSize.y() + m_BottomLeftPos.y(),
                                              0.5f * m_CellSize.z() + 100.0f ); // Send cells to its rest|inactive position
                 m_SingleBodiesRefs[cell_index]->SetPosition( cell_pos );
             }
@@ -131,8 +131,8 @@ namespace terrain {
             for ( ssize_t iy = 0; iy < m_CountY; iy++ )
             {
                 const auto cell_name = m_name + "_cell_" + std::to_string( ix ) + "_" + std::to_string( iy );
-                const auto cell_pos = TVec3( ( ix + 0.5f ) * m_CellSize.x() + ix * 0.2f + m_BottomLeftPos.x(),
-                                             ( iy + 0.5f ) * m_CellSize.y() + iy * 0.2f + m_BottomLeftPos.y(),
+                const auto cell_pos = TVec3( ( ix + 0.5f ) * m_CellSize.x() + m_BottomLeftPos.x(),
+                                             ( iy + 0.5f ) * m_CellSize.y() + m_BottomLeftPos.y(),
                                              0.5f * m_CellSize.z() + 100.0f ); // Send cells to its rest|inactive position
                 const auto cell_rot = TMat3();
                 auto cell = m_ScenarioRef->AddSingleBody( std::make_unique<primitives::TBox>( 
@@ -161,7 +161,24 @@ namespace terrain {
 
     void TMaze2dTerrainGenerator::_SetTransformInternal( const TMat4& tf )
     {
-
+        const auto position = TVec3( tf.col( 3 ) );
+        m_BottomLeftPos.x() = position.x();
+        m_BottomLeftPos.y() = position.y();
+        for ( ssize_t ix = 0; ix < m_CountX; ix++ )
+        {
+            for ( ssize_t iy = 0; iy < m_CountY; iy++ )
+            {
+                const ssize_t cell_index = ix + iy * m_CountX;
+                if ( m_Layout2d[cell_index] == CELL_BLOCKED )
+                    m_SingleBodiesRefs[cell_index]->SetPosition( { ( ix + 0.5f ) * m_CellSize.x() + m_BottomLeftPos.x(), 
+                                                                   ( iy + 0.5f ) * m_CellSize.y() + m_BottomLeftPos.y(), 
+                                                                   0.5f * m_CellSize.z() } );
+                else
+                    m_SingleBodiesRefs[cell_index]->SetPosition( { ( ix + 0.5f ) * m_CellSize.x() + m_BottomLeftPos.x(),
+                                                                   ( iy + 0.5f ) * m_CellSize.y() + m_BottomLeftPos.y(),
+                                                                   0.5f * m_CellSize.z() + 100.0f } );
+            }
+        }
     }
 
     std::string TMaze2dTerrainGenerator::ToString() const

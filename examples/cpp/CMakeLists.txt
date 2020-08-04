@@ -9,3 +9,4 @@ endfunction()
 
 add_subdirectory( single_bodies )
 add_subdirectory( kinematic_trees )
+add_subdirectory( terrain_generators )
