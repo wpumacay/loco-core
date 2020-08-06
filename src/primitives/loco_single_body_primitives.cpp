@@ -580,4 +580,62 @@ namespace primitives {
         m_Collider->ChangeElevationData( m_Heights );
         m_Drawable->ChangeElevationData( m_Heights );
     }
+
+    //********************************************************************************************//
+    //                              Compound primitive Implementation                             //
+    //********************************************************************************************//
+
+    TCompound::TCompound( const std::string& name,
+                          const TVec3& position,
+                          const TMat3& rotation,
+                          const eDynamicsType& dyntype,
+                          const int& collision_group,
+                          const int& collision_mask )
+        : TSingleBody( name, position, rotation )
+    {
+        auto collider_data = TCollisionData();
+        collider_data.type = eShapeType::COMPOUND;
+        collider_data.size = { 1.0f, 1.0f, 1.0f };
+        collider_data.collisionGroup = collision_group;
+        collider_data.collisionMask = collision_mask;
+        m_Collider = std::make_unique<TSingleBodyCollider>( name + loco::SUFFIX_COLLIDER, collider_data );
+        m_Collider->SetParentBody( this );
+
+        auto visual_data = TVisualData();
+        visual_data.type = eShapeType::COMPOUND;
+        visual_data.size = { 1.0f, 1.0f, 1.0f };
+        visual_data.ambient = loco::DEFAULT_AMBIENT_COLOR;
+        visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
+        visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
+        visual_data.shininess = loco::DEFAULT_SHININESS;
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable->SetParentObject( this );
+
+        m_Data.dyntype = dyntype;
+        m_Data.collision = collider_data;
+        m_Data.visual = visual_data;
+    }
+
+    void TCompound::AddChild( const TShapeData& child_data, const TMat4& child_local_tf )
+    {
+        if ( !m_Collider || !m_Drawable )
+            return;
+
+        m_Collider->AddChild( child_data, child_local_tf );
+        m_Drawable->AddChild( child_data, child_local_tf );
+    }
+
+    std::vector<TShapeData> TCompound::children() const
+    {
+        if ( m_Collider )
+            return m_Collider->data().children;
+        return {};
+    }
+
+    ssize_t TCompound::num_children() const
+    {
+        if ( m_Collider )
+            return m_Collider->data().children.size();
+        return 0;
+    }
 }}

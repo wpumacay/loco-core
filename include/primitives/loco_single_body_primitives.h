@@ -680,4 +680,28 @@ namespace primitives {
         /// Elevation data of the heightfield
         std::vector<float> m_Heights;
     };
+
+    class TCompound : public TSingleBody
+    {
+    public :
+
+        TCompound( const std::string& name,
+                   const TVec3& position,
+                   const TMat3& rotation,
+                   const eDynamicsType& dyntype = eDynamicsType::DYNAMIC,
+                   const int& collision_group = 1,
+                   const int& collision_mask = 1 );
+
+        TCompound( const TCompound& other ) = delete;
+
+        TCompound& operator=( const TCompound& other ) = delete;
+
+        ~TCompound() = default;
+
+        void AddChild( const TShapeData& child_data, const TMat4& child_local_tf );
+
+        std::vector<TShapeData> children() const;
+
+        ssize_t num_children() const;
+    };
 }}

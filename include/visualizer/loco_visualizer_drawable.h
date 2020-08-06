@@ -23,6 +23,8 @@ namespace visualizer {
 
         void SetWireframe( bool wireframe );
 
+        void AddChild( const TShapeData& child_data, const TMat4& child_local_tf );
+
         void SetLocalPosition( const TVec3& local_pos );
 
         void SetLocalRotation( const TMat3& local_rot );

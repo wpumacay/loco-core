@@ -17,7 +17,8 @@ namespace loco
         ELLIPSOID,      ///< Ellipsoid collision shape, defined by its three radii (x,y,z)
         CONVEX_MESH,    ///< Convex-mesh collision shape, defined by a file-resource, or user-defined vertex-data
         TRIANGULAR_MESH,///< Triangular-mesh collision shape, defined by a file-resources, or user defined vertex-data
-        HEIGHTFIELD     ///< Heightfield collision-shape, defined by user-defined elevation data
+        HEIGHTFIELD,    ///< Heightfield collision-shape, defined by user-defined elevation data
+        COMPOUND        ///< Compound of multiple collision-shapes, defined by combining various colliders
     };
 
     /// Type of joint, used for joint-related objects in the simulation
@@ -92,11 +93,20 @@ namespace loco
 
     struct TShapeData
     {
-        eShapeType          type;               // type of collision shape (see enum above)
-        TVec3               size;               // size of the collision shape (e.g. x->radius for sphere shapes)
-        TMeshData           mesh_data;          // struct with required data for mesh-type objects
-        THeightFieldData    hfield_data;        // struct with required data for hfield-type objects
-        TMat4               localTransform;     // relative transform of this shape (visual|collision) w.r.t. owner (body)
+        /// Type of shape used for collider|drawable
+        eShapeType type;
+        /// Size of the collider|drawable's shape
+        TVec3 size;
+        /// Data structure with required information for mesh-type shapes
+        TMeshData mesh_data;
+        /// Data structure with required information for hfield-type shapes
+        THeightFieldData hfield_data;
+        /// Children shape-data required for building compound-type shapes
+        std::vector<TShapeData> children;
+        /// Children relative-transforms required for building compound-type shapes
+        std::vector<TMat4> children_tfs;
+        /// Relative transform of this shape (drawable|collidern) w.r.t. owner (body)
+        TMat4 localTransform;
     };
 
     std::string ToString( const TShapeData& shapeData );

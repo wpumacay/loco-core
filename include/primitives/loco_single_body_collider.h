@@ -30,6 +30,8 @@ namespace primitives {
 
         void SetWireframe( bool wireframe );
 
+        void AddChild( const TShapeData& child_data, const TMat4& child_local_tf );
+
         void ChangeSize( const TVec3& new_size );
 
         void ChangeVertexData( const std::vector<float>& vertices, const std::vector<int>& faces );

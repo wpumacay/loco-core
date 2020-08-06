@@ -83,6 +83,19 @@ namespace primitives {
             m_DrawableAdapterRef->SetWireframe( wireframe );
     }
 
+    void TSingleBodyCollider::AddChild( const TShapeData& child_data, const TMat4& child_local_tf )
+    {
+        if ( m_Data.type != eShapeType::COMPOUND )
+        {
+            LOCO_CORE_WARN( "TSingleBodyCollider::AddChild >>> child shapes can only be added to "
+                            "compound colliders, but this collider called {0} has shape {1} instead", m_name, ToString( m_Data.type ) );
+            return;
+        }
+
+        m_Data.children.push_back( child_data );
+        m_Data.children_tfs.push_back( child_local_tf );
+    }
+
     void TSingleBodyCollider::ChangeSize( const TVec3& new_size )
     {
         m_Data.size = new_size;
