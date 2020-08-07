@@ -32,7 +32,6 @@ int main( int argc, char* argv[] )
 
     auto scenario = std::make_unique<loco::TScenario>();
     scenario->AddSingleBody( std::make_unique<loco::primitives::TPlane>( "floor", 10.0f, 10.0f, loco::TVec3(), loco::TMat3() ) );
-    scenario->AddSingleBody( std::make_unique<loco::primitives::TBox>( "box", loco::TVec3( 0.2f, 0.3f, 0.4f ), loco::TVec3( -1.0f, -1.0f, 2.0f ), rotation ) );
     scenario->AddSingleBody( std::make_unique<loco::primitives::TSphere>( "sphere", 0.1f, loco::TVec3( 1.0f, -1.0f, 2.0f ), rotation ) );
 
     auto compound = std::make_unique<loco::primitives::TCompound>( "humanoid-top", loco::TVec3( 1.0f, 1.0f, 2.0f ), rotation );

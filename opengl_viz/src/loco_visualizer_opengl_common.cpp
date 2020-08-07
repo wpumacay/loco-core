@@ -133,7 +133,8 @@ namespace visualizer {
             }
             case eShapeType::CAPSULE :
             {
-                renderable = std::make_unique<engine::CModel>( "capsule_compmesh" );
+                static ssize_t num_capsules = 0;
+                renderable = std::make_unique<engine::CModel>( "capsule_compmesh_" + std::to_string( num_capsules++ ) );
                 static_cast<engine::CModel*>( renderable.get() )->addMesh( engine::CMeshBuilder::createCylinder( data.size.x(), data.size.y(), engine::eAxis::Z ),
                                                                            engine::CMat4() /* set cylindrical part in the center */ );
                 static_cast<engine::CModel*>( renderable.get() )->addMesh( engine::CMeshBuilder::createSphere( data.size.x() ),
@@ -176,6 +177,31 @@ namespace visualizer {
                                                                       heightsScaled,
                                                                       HFIELD_HEIGHT_BASE,
                                                                       engine::eAxis::Z );
+                break;
+            }
+            case eShapeType::COMPOUND :
+            {
+                static ssize_t num_compounds = 0;
+                renderable = std::make_unique<engine::CModel>( "compound_mesh_" + std::to_string( num_compounds++ ) );
+                auto children_data = data.children;
+                auto children_tfs = data.children_tfs;
+                for ( ssize_t i = 0; i < children_data.size(); i++ )
+                {
+                    std::unique_ptr<engine::CMesh> child_mesh = nullptr;
+                    /**/ if ( children_data[i].type == eShapeType::BOX )
+                        child_mesh = engine::CMeshBuilder::createBox( children_data[i].size.x(), children_data[i].size.y(), children_data[i].size.z() );
+                    else if ( children_data[i].type == eShapeType::SPHERE )
+                        child_mesh = engine::CMeshBuilder::createSphere( children_data[i].size.x() );
+                    else if ( children_data[i].type == eShapeType::CYLINDER )
+                        child_mesh = engine::CMeshBuilder::createCylinder( children_data[i].size.x(), children_data[i].size.y(), engine::eAxis::Z );
+                    else if ( children_data[i].type == eShapeType::CAPSULE )
+                        child_mesh = engine::CMeshBuilder::createCapsule( children_data[i].size.x(), children_data[i].size.y(), engine::eAxis::Z );
+                    else if ( children_data[i].type == eShapeType::ELLIPSOID )
+                        child_mesh = engine::CMeshBuilder::createEllipsoid( children_data[i].size.x(), children_data[i].size.y(), children_data[i].size.z() );
+
+                    if ( child_mesh )
+                        static_cast<engine::CModel*>( renderable.get() )->addMesh( std::move( child_mesh ), children_tfs[i] );
+                }
                 break;
             }
         }
