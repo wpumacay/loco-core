@@ -3,9 +3,7 @@
 
 #include <loco_scenario.h>
 #include <primitives/loco_single_body_adapter.h>
-//// #include <adapters/loco_compound_adapter.h>
-//// #include <adapters/loco_kintree_agent_adapter.h>
-//// #include <adapters/loco_terrain_generator_adapter.h>
+#include <kinematic_trees/loco_kinematic_tree_adapter.h>
 #include <visualizer/loco_visualizer.h>
 
 namespace loco {
@@ -156,8 +154,14 @@ namespace loco
         /// Container used to store the single-body resources used for the simulation
         std::vector< std::unique_ptr<primitives::TISingleBodyAdapter> > m_SingleBodyAdapters;
 
-        /// Container used to store recycled single-body resources previously in use for the simulation
+        /// Container used to store recycled single-body resources previously in use by the simulation
         std::vector< std::unique_ptr<primitives::TISingleBodyAdapter> > m_SingleBodyAdaptersRecycled;
+
+        /// Container used to store the kinematic-tree resources used for the simulation
+        std::vector< std::unique_ptr<kintree::TIKinematicTreeAdapter> > m_KinematicTreeAdapters;
+
+        /// Container used to store recycled kinematic-tree resources previously in use by the simulation
+        std::vector< std::unique_ptr<kintree::TIKinematicTreeAdapter> > m_KinematicTreeAdaptersRecycled;
 
         // Fixed time-step used for the internal engine's integrator
         TScalar m_FixedTimeStep;

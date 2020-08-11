@@ -177,6 +177,10 @@ namespace parsing {
                     xml_child_element = xml_child_element->NextSiblingElement();
                 }
             }
+
+            const bool recursive = xml_element->BoolAttribute( "recursive", false );
+            if ( recursive )
+                m_childrenMap[xml_element_name].emplace( xml_element_name );
         }
     }
 

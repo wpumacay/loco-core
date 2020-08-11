@@ -46,13 +46,9 @@ namespace loco
         for ( auto& bodyAdapter : m_SingleBodyAdapters )
             bodyAdapter->Build();
 
-////         // Build backend-specific resources for compounds (should recursively build compound-bodies, joints, colliders and visual adapters)
-////         for ( auto& compoundAdapter : m_compoundAdapters )
-////             compoundAdapter->Build();
-//// 
-////         // Build backend-specific resources for kintree-agents (should recursively build adapters for its components: bodies, colliders, joints, etc.)
-////         for ( auto& kintreeAgentAdapter : m_kintreeAgentAdapters )
-////             kintreeAgentAdapter->Build();
+        // Build backend-specific resources for kintree-agents (should recursively build adapters for its components: bodies, colliders, joints, etc.)
+        for ( auto& kinematicTreeAdapter : m_KinematicTreeAdapters )
+            kinematicTreeAdapter->Build();
 
         // Initialize backend resources (assemble them, set internal configuration, etc.)
         m_Running = _InitializeInternal();
@@ -115,6 +111,14 @@ namespace loco
                 continue;
             m_SingleBodyAdaptersRecycled.push_back( std::move( m_SingleBodyAdapters[i] ) );
             m_SingleBodyAdapters.erase( m_SingleBodyAdapters.begin() + (i--) );
+        }
+
+        for ( ssize_t i = 0; i < m_KinematicTreeAdapters.size(); i++ )
+        {
+            if ( !m_KinematicTreeAdapters[i]->detached() )
+                continue;
+            m_KinematicTreeAdaptersRecycled.push_back( std::move( m_KinematicTreeAdapters[i] ) );
+            m_KinematicTreeAdapters.erase( m_KinematicTreeAdapters.begin() + (i--) );
         }
     }
 
