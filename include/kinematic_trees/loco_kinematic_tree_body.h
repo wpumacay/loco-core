@@ -14,11 +14,6 @@ namespace visualizer {
 
 namespace loco {
 namespace kintree {
-    struct TKinematicTreeJointData;
-}}
-
-namespace loco {
-namespace kintree {
 
     //--------------------------------------------------------------------------------------------//
     //                                                                                            //
@@ -29,12 +24,12 @@ namespace kintree {
     /// Struct with the details required to create a kinematic-tree body
     struct TKinematicTreeBodyData
     {
-        /// List of all colliders owned by the body
-        std::vector<TCollisionData> colliders;
-        /// List of all drawables owned by the body
-        std::vector<TVisualData> drawables;
-        /// List of all joints owned by the body
-        std::vector<TKinematicTreeJointData> joints;
+        /// Collider owned by the body
+        TCollisionData collider;
+        /// Drawable owned by the body
+        TVisualData drawable;
+        /// Joint owned by the body
+        TKinematicTreeJointData joint;
         /// Inertial properties of the body
         TInertialData inertia;
         /// Local transform w.r.t. parent body (if any)
@@ -63,11 +58,11 @@ namespace kintree {
 
         void SetParentBody( TKinematicTreeBody* parent_body_ref, const TMat4& local_tf );
 
-        void AddDrawable( std::unique_ptr<visualizer::TDrawable> drawable, const TMat4& local_tf );
+        void SetDrawable( std::unique_ptr<visualizer::TDrawable> drawable, const TMat4& local_tf );
 
-        void AddCollider( std::unique_ptr<TKinematicTreeCollider> collider, const TMat4& local_tf );
+        void SetCollider( std::unique_ptr<TKinematicTreeCollider> collider, const TMat4& local_tf );
 
-        void AddJoint( std::unique_ptr<TKinematicTreeJoint> joint, const TMat4& local_tf );
+        void SetJoint( std::unique_ptr<TKinematicTreeJoint> joint, const TMat4& local_tf );
 
         void AddChild( std::unique_ptr<TKinematicTreeBody> body, const TMat4& local_tf );
 
@@ -99,17 +94,17 @@ namespace kintree {
 
         const TIKinematicTreeBodyAdapter* adapter() const { return m_BodyAdapterRef; }
 
-        std::vector<visualizer::TDrawable*> drawables();
+        visualizer::TDrawable* drawable() { return m_Drawable.get(); }
 
-        std::vector<const visualizer::TDrawable*> drawables() const;
+        const visualizer::TDrawable* drawable() const { return m_Drawable.get(); }
 
-        std::vector<TKinematicTreeCollider*> colliders();
+        TKinematicTreeCollider* collider() { return m_Collider.get(); }
 
-        std::vector<const TKinematicTreeCollider*> colliders() const;
+        const TKinematicTreeCollider* collider() const { return m_Collider.get(); }
 
-        std::vector<TKinematicTreeJoint*> joints();
+        TKinematicTreeJoint* joint() { return m_Joint.get(); }
 
-        std::vector<const TKinematicTreeJoint*> joints() const;
+        const TKinematicTreeJoint* joint() const { return m_Joint.get(); }
 
         std::vector<TKinematicTreeBody*> children();
 
@@ -145,11 +140,11 @@ namespace kintree {
 
         TIKinematicTreeBodyAdapter* m_BodyAdapterRef = nullptr;
 
-        std::vector<std::unique_ptr<visualizer::TDrawable>> m_Drawables;
+        std::unique_ptr<visualizer::TDrawable> m_Drawable = nullptr;
 
-        std::vector<std::unique_ptr<TKinematicTreeCollider>> m_Colliders;
+        std::unique_ptr<TKinematicTreeCollider> m_Collider = nullptr;
 
-        std::vector<std::unique_ptr<TKinematicTreeJoint>> m_Joints;
+        std::unique_ptr<TKinematicTreeJoint> m_Joint = nullptr;
 
         std::vector<std::unique_ptr<TKinematicTreeBody>> m_Children;
 

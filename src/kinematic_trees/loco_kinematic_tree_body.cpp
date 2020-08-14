@@ -11,15 +11,7 @@ namespace kintree {
     //--------------------------------------------------------------------------------------------//
 
     TKinematicTreeBody::TKinematicTreeBody( const std::string& name )
-        : TObject( name )
-    {
-    #if defined(LOCO_CORE_USE_TRACK_ALLOCS)
-        if ( tinyutils::Logger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Created TKinematicTreeBody {0} @ {1} ", m_name, tinyutils::PointerToHexAddress( this ) );
-        else
-            std::cout << "Loco::Allocs: Created TKinematicTreeBody " << m_name << " @ " << tinyutils::PointerToHexAddress( this );
-    #endif
-    }
+        : TObject( name ) {}
 
     TKinematicTreeBody::TKinematicTreeBody( const std::string& name,
                                             const TKinematicTreeBodyData& body_data )
@@ -27,64 +19,47 @@ namespace kintree {
     {
         m_Data = body_data;
 
-        for ( auto collider_data : body_data.colliders )
-        {
-            m_Colliders.push_back( std::make_unique<TKinematicTreeCollider>( name + SUFFIX_COLLIDER, collider_data ) );
-            m_Colliders.back()->SetParentBody( this, collider_data.localTransform );
-        }
+        const auto& collider_data = body_data.collider;
+        m_Collider = std::make_unique<TKinematicTreeCollider>( name + SUFFIX_COLLIDER, collider_data );
+        m_Collider->SetParentBody( this, collider_data.localTransform );
 
-        for ( auto drawable_data : body_data.drawables )
-        {
-            m_Drawables.push_back( std::make_unique<visualizer::TDrawable>( name + SUFFIX_DRAWABLE, drawable_data ) );
-            m_Drawables.back()->SetParentObject( this );
-            m_Drawables.back()->SetLocalTransform( drawable_data.localTransform );
-        }
+        const auto& drawable_data = body_data.drawable;
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + SUFFIX_DRAWABLE, drawable_data );
+        m_Drawable->SetParentObject( this );
+        m_Drawable->SetLocalTransform( drawable_data.localTransform );
 
-        for ( auto joint_data : body_data.joints )
-        {
-            /**/ if ( joint_data.type == eJointType::REVOLUTE )
-                m_Joints.push_back( std::make_unique<TKinematicTreeRevoluteJoint>( 
-                                                        name + SUFFIX_JOINT,
-                                                        joint_data.local_axis,
-                                                        joint_data.limits,
-                                                        joint_data.stiffness,
-                                                        joint_data.armature,
-                                                        joint_data.damping ) );
-            else if ( joint_data.type == eJointType::PRISMATIC )
-                m_Joints.push_back( std::make_unique<TKinematicTreePrismaticJoint>(
-                                                        name + SUFFIX_JOINT,
-                                                        joint_data.local_axis,
-                                                        joint_data.limits,
-                                                        joint_data.stiffness,
-                                                        joint_data.armature,
-                                                        joint_data.damping ) );
-            else if ( joint_data.type == eJointType::SPHERICAL )
-                m_Joints.push_back( std::make_unique<TKinematicTreeSphericalJoint>(
-                                                        name + SUFFIX_JOINT,
-                                                        joint_data.limits,
-                                                        joint_data.stiffness,
-                                                        joint_data.armature,
-                                                        joint_data.damping ) );
-            else if ( joint_data.type == eJointType::PLANAR )
-                m_Joints.push_back( std::make_unique<TKinematicTreePlanarJoint>(
-                                                        name + SUFFIX_JOINT,
-                                                        joint_data.plane_axis_1,
-                                                        joint_data.plane_axis_2 ) );
-            else if ( joint_data.type == eJointType::FIXED )
-                m_Joints.push_back( std::make_unique<TKinematicTreeFixedJoint>( name + SUFFIX_JOINT ) );
-            else if ( joint_data.type == eJointType::FREE )
-                m_Joints.push_back( std::make_unique<TKinematicTreeFreeJoint>( name + SUFFIX_JOINT ) );
-            else
-                LOCO_CORE_CRITICAL( "TKinematicTreeBody >>> found undefined joint-type while constructing kintree-body {0}", m_name );
-            m_Joints.back()->SetParentBody( this, joint_data.local_tf );
-        }
-
-    #if defined(LOCO_CORE_USE_TRACK_ALLOCS)
-        if ( tinyutils::Logger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Created TKinematicTreeBody {0} @ {1} ", m_name, tinyutils::PointerToHexAddress( this ) );
+        const auto& joint_data = body_data.joint;
+        /**/ if ( joint_data.type == eJointType::REVOLUTE )
+            m_Joint = std::make_unique<TKinematicTreeRevoluteJoint>( name + SUFFIX_JOINT,
+                                                                     joint_data.local_axis,
+                                                                     joint_data.limits,
+                                                                     joint_data.stiffness,
+                                                                     joint_data.armature,
+                                                                     joint_data.damping );
+        else if ( joint_data.type == eJointType::PRISMATIC )
+            m_Joint = std::make_unique<TKinematicTreePrismaticJoint>( name + SUFFIX_JOINT,
+                                                                      joint_data.local_axis,
+                                                                      joint_data.limits,
+                                                                      joint_data.stiffness,
+                                                                      joint_data.armature,
+                                                                      joint_data.damping );
+        else if ( joint_data.type == eJointType::SPHERICAL )
+            m_Joint = std::make_unique<TKinematicTreeSphericalJoint>( name + SUFFIX_JOINT,
+                                                                      joint_data.limits,
+                                                                      joint_data.stiffness,
+                                                                      joint_data.armature,
+                                                                      joint_data.damping );
+        else if ( joint_data.type == eJointType::PLANAR )
+            m_Joint = std::make_unique<TKinematicTreePlanarJoint>( name + SUFFIX_JOINT,
+                                                                   joint_data.plane_axis_1,
+                                                                   joint_data.plane_axis_2 );
+        else if ( joint_data.type == eJointType::FIXED )
+            m_Joint = std::make_unique<TKinematicTreeFixedJoint>( name + SUFFIX_JOINT );
+        else if ( joint_data.type == eJointType::FREE )
+            m_Joint = std::make_unique<TKinematicTreeFreeJoint>( name + SUFFIX_JOINT );
         else
-            std::cout << "Loco::Allocs: Created TKinematicTreeBody " << m_name << " @ " << tinyutils::PointerToHexAddress( this );
-    #endif
+            LOCO_CORE_CRITICAL( "TKinematicTreeBody >>> found undefined joint-type while constructing kintree-body {0}", m_name );
+        m_Joint->SetParentBody( this, joint_data.local_tf );
     }
 
     TKinematicTreeBody::~TKinematicTreeBody()
@@ -96,16 +71,9 @@ namespace kintree {
         m_BodyAdapterRef = nullptr;
         m_ParentBodyRef = nullptr;
 
-        m_Colliders.clear();
-        m_Drawables.clear();
-        m_Joints.clear();
-
-    #if defined(LOCO_CORE_USE_TRACK_ALLOCS)
-        if ( tinyutils::Logger::IsActive() )
-            LOCO_CORE_TRACE( "Loco::Allocs: Destroyed TKinematicTreeBody {0} @ {1} ", m_name, tinyutils::PointerToHexAddress( this ) );
-        else
-            std::cout << "Loco::Allocs: Destroyed TKinematicTreeBody " << m_name << " @ " << tinyutils::PointerToHexAddress( this );
-    #endif
+        m_Collider = nullptr;
+        m_Drawable = nullptr;
+        m_Joint = nullptr;
     }
 
     void TKinematicTreeBody::SetBodyAdapter( TIKinematicTreeBodyAdapter* body_adapter_ref )
@@ -129,26 +97,26 @@ namespace kintree {
         m_tf = m_ParentBodyRef->tf() * m_LocalTf;
     }
 
-    void TKinematicTreeBody::AddDrawable( std::unique_ptr<visualizer::TDrawable> drawable, const TMat4& local_tf )
+    void TKinematicTreeBody::SetDrawable( std::unique_ptr<visualizer::TDrawable> drawable, const TMat4& local_tf )
     {
-        LOCO_CORE_ASSERT( drawable, "TKinematicTreeBody::AddDrawable >>> tried adding nullptr to kintree-body {0}", m_name );
-        m_Drawables.push_back( std::move( drawable ) );
-        m_Drawables.back()->SetParentObject( this );
-        m_Drawables.back()->SetLocalTransform( local_tf );
+        LOCO_CORE_ASSERT( drawable, "TKinematicTreeBody::SetDrawable >>> tried setting nullptr to kintree-body {0}", m_name );
+        m_Drawable = std::move( drawable );
+        m_Drawable->SetParentObject( this );
+        m_Drawable->SetLocalTransform( local_tf );
     }
 
-    void TKinematicTreeBody::AddCollider( std::unique_ptr<TKinematicTreeCollider> collider, const TMat4& local_tf )
+    void TKinematicTreeBody::SetCollider( std::unique_ptr<TKinematicTreeCollider> collider, const TMat4& local_tf )
     {
-        LOCO_CORE_ASSERT( collider, "TKinematicTreeBody::AddCollider >>> tried adding nullptr to kintree-body {0}", m_name );
-        m_Colliders.push_back( std::move( collider ) );
-        m_Colliders.back()->SetParentBody( this, local_tf );
+        LOCO_CORE_ASSERT( collider, "TKinematicTreeBody::SetCollider >>> tried setting nullptr to kintree-body {0}", m_name );
+        m_Collider = std::move( collider );
+        m_Collider->SetParentBody( this, local_tf );
     }
 
-    void TKinematicTreeBody::AddJoint( std::unique_ptr<TKinematicTreeJoint> joint, const TMat4& local_tf )
+    void TKinematicTreeBody::SetJoint( std::unique_ptr<TKinematicTreeJoint> joint, const TMat4& local_tf )
     {
-        LOCO_CORE_ASSERT( joint, "TKinematicTreeBody::AddJoint >>> tried adding nullptr to kintree-body {0}", m_name );
-        m_Joints.push_back( std::move( joint ) );
-        m_Joints.back()->SetParentBody( this, local_tf );
+        LOCO_CORE_ASSERT( joint, "TKinematicTreeBody::SetJoint >>> tried setting nullptr to kintree-body {0}", m_name );
+        m_Joint = std::move( joint );
+        m_Joint->SetParentBody( this, local_tf );
     }
 
     void TKinematicTreeBody::AddChild( std::unique_ptr<TKinematicTreeBody> body, const TMat4& local_tf )
@@ -194,14 +162,9 @@ namespace kintree {
     {
         if ( m_ParentBodyRef ) // Non-root bodies update from its parent's transform and the joint-transform
         {
-            if ( m_Joints.size() > 1 ) // For multiple-joint bodies, we have to do some different computation
+            if ( m_Joint )
             {
-                LOCO_CORE_WARN( "TKinematicTreeBody::Forward >>> multi-joint kintree bodies don't support forward-kin. yet \
-                                (while processing kintree-body {0})", m_name );
-            }
-            else if ( m_Joints.size() == 1 )
-            {
-                const auto joint_ref = m_Joints[0].get();
+                const auto joint_ref = m_Joint.get();
                 const auto joint_type = joint_ref->type();
                 /**/ if ( joint_type == eJointType::REVOLUTE ) // Do FK using DH-table for revolute joints
                 {
@@ -227,69 +190,22 @@ namespace kintree {
                 }
                 else
                 {
-                    LOCO_CORE_WARN( "TKinematicTreeBody::Forward >>> FK using DH-representation is not \
-                                     supported for joint type {0} (while processing kintree-body {1})", loco::ToString( joint_type ), m_name );
+                    LOCO_CORE_WARN( "TKinematicTreeBody::Forward >>> FK using DH-representation is not "
+                                    "supported for joint type {0} (while processing kintree-body {1})",
+                                    loco::ToString( joint_type ), m_name );
                 }
             }
             else
             {
-                LOCO_CORE_WARN( "TKinematicTreeBody::Forward >>> kintree-body {0} has no joints (should at leas be connected through 1", m_name );
+                LOCO_CORE_WARN( "TKinematicTreeBody::Forward >>> kintree-body {0} has no joint", m_name );
             }
         }
-        else if ( m_KinematicTreeRef )
+        else if ( m_KinematicTreeRef ) // Root-bodies should update using the kintree world-tf
         {
         }
 
         for ( auto& child_body : m_Children )
             child_body->Forward();
-    }
-
-    std::vector<visualizer::TDrawable*> TKinematicTreeBody::drawables()
-    {
-        std::vector<visualizer::TDrawable*> drawables_list;
-        for ( auto& drawable : m_Drawables )
-            drawables_list.push_back( drawable.get() );
-        return drawables_list;
-    }
-
-    std::vector<const visualizer::TDrawable*> TKinematicTreeBody::drawables() const
-    {
-        std::vector<const visualizer::TDrawable*> drawables_list;
-        for ( auto& drawable : m_Drawables )
-            drawables_list.push_back( drawable.get() );
-        return drawables_list;
-    }
-
-    std::vector<TKinematicTreeCollider*> TKinematicTreeBody::colliders()
-    {
-        std::vector<TKinematicTreeCollider*> colliders_list;
-        for ( auto& collider : m_Colliders )
-            colliders_list.push_back( collider.get() );
-        return colliders_list;
-    }
-
-    std::vector<const TKinematicTreeCollider*> TKinematicTreeBody::colliders() const
-    {
-        std::vector<const TKinematicTreeCollider*> colliders_list;
-        for ( auto& collider : m_Colliders )
-            colliders_list.push_back( collider.get() );
-        return colliders_list;
-    }
-
-    std::vector<TKinematicTreeJoint*> TKinematicTreeBody::joints()
-    {
-        std::vector<TKinematicTreeJoint*> joints_list;
-        for ( auto& joint : m_Joints )
-            joints_list.push_back( joint.get() );
-        return joints_list;
-    }
-
-    std::vector<const TKinematicTreeJoint*> TKinematicTreeBody::joints() const
-    {
-        std::vector<const TKinematicTreeJoint*> joints_list;
-        for ( auto& joint : m_Joints )
-            joints_list.push_back( joint.get() );
-        return joints_list;
     }
 
     std::vector<TKinematicTreeBody*> TKinematicTreeBody::children()
@@ -320,12 +236,13 @@ namespace kintree {
         if ( m_BodyAdapterRef )
             m_BodyAdapterRef->Initialize();
 
-        for ( auto& joint : m_Joints )
-            joint->Initialize();
-        for ( auto& collider : m_Colliders )
-            collider->Initialize();
-        for ( auto& drawable : m_Drawables )
-            drawable->Initialize();
+        if ( m_Joint )
+            m_Joint->Initialize();
+        if ( m_Collider )
+            m_Collider->Initialize();
+        if ( m_Drawable )
+            m_Drawable->Initialize();
+
         for ( auto& child_body : m_Children )
             child_body->Initialize();
     }
@@ -338,12 +255,13 @@ namespace kintree {
             m_BodyAdapterRef->SetTorqueCOM( m_TotalTorque );
         }
 
-        for ( auto& joint : m_Joints )
-            joint->PreStep();
-        for ( auto& collider : m_Colliders )
-            collider->PreStep();
-        for ( auto& drawable : m_Drawables )
-            drawable->PreStep();
+        if ( m_Joint )
+            m_Joint->PreStep();
+        if ( m_Collider )
+            m_Collider->PreStep();
+        if ( m_Drawable )
+            m_Drawable->PreStep();
+
         for ( auto& child_body : m_Children )
             child_body->PreStep();
     }
@@ -353,12 +271,13 @@ namespace kintree {
         if ( m_BodyAdapterRef )
             m_BodyAdapterRef->GetTransform( m_tf );
 
-        for ( auto& joint : m_Joints )
-            joint->PostStep();
-        for ( auto& collider : m_Colliders )
-            collider->PostStep();
-        for ( auto& drawable : m_Drawables )
-            drawable->PostStep();
+        if ( m_Joint )
+            m_Joint->PostStep();
+        if ( m_Collider )
+            m_Collider->PostStep();
+        if ( m_Drawable )
+            m_Drawable->PostStep();
+
         for ( auto& child_body : m_Children )
             child_body->PostStep();
 
@@ -378,12 +297,13 @@ namespace kintree {
         if ( m_BodyAdapterRef )
             m_BodyAdapterRef->Reset();
 
-        for ( auto& joint : m_Joints )
-            joint->Reset();
-        for ( auto& collider : m_Colliders )
-            collider->Reset();
-        for ( auto& drawable : m_Drawables )
-            drawable->Reset();
+        if ( m_Joint )
+            m_Joint->Reset();
+        if ( m_Collider )
+            m_Collider->Reset();
+        if ( m_Drawable )
+            m_Drawable->Reset();
+
         for ( auto& child_body : m_Children )
             child_body->Reset();
 
@@ -397,24 +317,26 @@ namespace kintree {
             m_BodyAdapterRef->OnDetach();
         m_BodyAdapterRef = nullptr;
 
-        for ( auto& joint : m_Joints )
-            joint->DetachSim();
-        for ( auto& collider : m_Colliders )
-            collider->DetachSim();
-        for ( auto& drawable : m_Drawables )
-            drawable->DetachSim();
+        if ( m_Joint )
+            m_Joint->DetachSim();
+        if ( m_Collider )
+            m_Collider->DetachSim();
+        if ( m_Drawable )
+            m_Drawable->DetachSim();
+
         for ( auto& child_body : m_Children )
             child_body->DetachSim();
     }
 
     void TKinematicTreeBody::_DetachVizInternal()
     {
-        for ( auto& joint : m_Joints )
-            joint->DetachViz();
-        for ( auto& collider : m_Colliders )
-            collider->DetachViz();
-        for ( auto& drawable : m_Drawables )
-            drawable->DetachViz();
+        if ( m_Joint )
+            m_Joint->DetachViz();
+        if ( m_Collider )
+            m_Collider->DetachViz();
+        if ( m_Drawable )
+            m_Drawable->DetachViz();
+
         for ( auto& child_body : m_Children )
             child_body->DetachViz();
     }
@@ -448,8 +370,8 @@ namespace kintree {
         collider_data.size = extents;
         collider_data.collisionGroup = collision_group;
         collider_data.collisionMask = collision_mask;
-        m_Colliders.push_back( std::make_unique<TKinematicTreeCollider>( name + loco::SUFFIX_COLLIDER, collider_data ) );
-        m_Colliders.back()->SetParentBody( this, TMat4() );
+        m_Collider = std::make_unique<TKinematicTreeCollider>( name + loco::SUFFIX_COLLIDER, collider_data );
+        m_Collider->SetParentBody( this, TMat4() );
 
         auto visual_data = TVisualData();
         visual_data.type = eShapeType::BOX;
@@ -458,41 +380,41 @@ namespace kintree {
         visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
         visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
         visual_data.shininess = loco::DEFAULT_SHININESS;
-        m_Drawables.push_back( std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data ) );
-        m_Drawables.back()->SetParentObject( this );
-        m_Drawables.back()->SetLocalTransform( TMat4() );
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable->SetParentObject( this );
+        m_Drawable->SetLocalTransform( TMat4() );
 
-        m_Data.colliders.push_back( collider_data );
-        m_Data.drawables.push_back( visual_data );
+        m_Data.collider = collider_data;
+        m_Data.drawable = visual_data;
         m_Extents = extents;
     }
 
     void TBox::SetExtents( const TVec3& extents )
     {
         m_Extents = extents;
-        m_Colliders.back()->ChangeSize( m_Extents );
-        m_Drawables.back()->ChangeSize( m_Extents );
+        m_Collider->ChangeSize( m_Extents );
+        m_Drawable->ChangeSize( m_Extents );
     }
 
     void TBox::SetWidth( const TScalar& width )
     {
         m_Extents.x() = width;
-        m_Colliders.back()->ChangeSize( m_Extents );
-        m_Drawables.back()->ChangeSize( m_Extents );
+        m_Collider->ChangeSize( m_Extents );
+        m_Drawable->ChangeSize( m_Extents );
     }
 
     void TBox::SetDepth( const TScalar& depth )
     {
         m_Extents.y() = depth;
-        m_Colliders.back()->ChangeSize( m_Extents );
-        m_Drawables.back()->ChangeSize( m_Extents );
+        m_Collider->ChangeSize( m_Extents );
+        m_Drawable->ChangeSize( m_Extents );
     }
 
     void TBox::SetHeight( const TScalar& height )
     {
         m_Extents.z() = height;
-        m_Colliders.back()->ChangeSize( m_Extents );
-        m_Drawables.back()->ChangeSize( m_Extents );
+        m_Collider->ChangeSize( m_Extents );
+        m_Drawable->ChangeSize( m_Extents );
     }
 
     //********************************************************************************************//
@@ -510,8 +432,8 @@ namespace kintree {
         collider_data.size = { radius, 0.0f, 0.0f };
         collider_data.collisionGroup = collision_group;
         collider_data.collisionMask = collision_mask;
-        m_Colliders.push_back( std::make_unique<TKinematicTreeCollider>( name + loco::SUFFIX_COLLIDER, collider_data ) );
-        m_Colliders.back()->SetParentBody( this, TMat4() );
+        m_Collider = std::make_unique<TKinematicTreeCollider>( name + loco::SUFFIX_COLLIDER, collider_data );
+        m_Collider->SetParentBody( this, TMat4() );
 
         auto visual_data = TVisualData();
         visual_data.type = eShapeType::SPHERE;
@@ -520,20 +442,20 @@ namespace kintree {
         visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
         visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
         visual_data.shininess = loco::DEFAULT_SHININESS;
-        m_Drawables.push_back( std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data ) );
-        m_Drawables.back()->SetParentObject( this );
-        m_Drawables.back()->SetLocalTransform( TMat4() );
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable->SetParentObject( this );
+        m_Drawable->SetLocalTransform( TMat4() );
 
-        m_Data.colliders.push_back( collider_data );
-        m_Data.drawables.push_back( visual_data );
+        m_Data.collider = collider_data;
+        m_Data.drawable = visual_data;
         m_Radius = radius;
     }
 
     void TSphere::SetRadius( const TScalar& radius )
     {
         m_Radius = radius;
-        m_Colliders.back()->ChangeSize( { m_Radius, 0.0f, 0.0f } );
-        m_Drawables.back()->ChangeSize( { m_Radius, 0.0f, 0.0f } );
+        m_Collider->ChangeSize( { m_Radius, 0.0f, 0.0f } );
+        m_Drawable->ChangeSize( { m_Radius, 0.0f, 0.0f } );
     }
 
     //********************************************************************************************//
@@ -552,8 +474,8 @@ namespace kintree {
         collider_data.size = { radius, height, 0.0f };
         collider_data.collisionGroup = collision_group;
         collider_data.collisionMask = collision_mask;
-        m_Colliders.push_back( std::make_unique<TKinematicTreeCollider>( name + loco::SUFFIX_COLLIDER, collider_data ) );
-        m_Colliders.back()->SetParentBody( this, TMat4() );
+        m_Collider = std::make_unique<TKinematicTreeCollider>( name + loco::SUFFIX_COLLIDER, collider_data );
+        m_Collider->SetParentBody( this, TMat4() );
 
         auto visual_data = TVisualData();
         visual_data.type = eShapeType::CYLINDER;
@@ -562,12 +484,12 @@ namespace kintree {
         visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
         visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
         visual_data.shininess = loco::DEFAULT_SHININESS;
-        m_Drawables.push_back( std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data ) );
-        m_Drawables.back()->SetParentObject( this );
-        m_Drawables.back()->SetLocalTransform( TMat4() );
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable->SetParentObject( this );
+        m_Drawable->SetLocalTransform( TMat4() );
 
-        m_Data.colliders.push_back( collider_data );
-        m_Data.drawables.push_back( visual_data );
+        m_Data.collider = collider_data;
+        m_Data.drawable = visual_data;
         m_Radius = radius;
         m_Height = height;
     }
@@ -575,15 +497,15 @@ namespace kintree {
     void TCylinder::SetRadius( const TScalar& radius )
     {
         m_Radius = radius;
-        m_Colliders.back()->ChangeSize( { m_Radius, m_Height, 0.0f } );
-        m_Drawables.back()->ChangeSize( { m_Radius, m_Height, 0.0f } );
+        m_Collider->ChangeSize( { m_Radius, m_Height, 0.0f } );
+        m_Drawable->ChangeSize( { m_Radius, m_Height, 0.0f } );
     }
 
     void TCylinder::SetHeight( const TScalar& height )
     {
         m_Height = height;
-        m_Colliders.back()->ChangeSize( { m_Radius, m_Height, 0.0f } );
-        m_Drawables.back()->ChangeSize( { m_Radius, m_Height, 0.0f } );
+        m_Collider->ChangeSize( { m_Radius, m_Height, 0.0f } );
+        m_Drawable->ChangeSize( { m_Radius, m_Height, 0.0f } );
     }
 
     //********************************************************************************************//
@@ -602,8 +524,8 @@ namespace kintree {
         collider_data.size = { radius, height, 0.0f };
         collider_data.collisionGroup = collision_group;
         collider_data.collisionMask = collision_mask;
-        m_Colliders.push_back( std::make_unique<TKinematicTreeCollider>( name + loco::SUFFIX_COLLIDER, collider_data ) );
-        m_Colliders.back()->SetParentBody( this, TMat4() );
+        m_Collider = std::make_unique<TKinematicTreeCollider>( name + loco::SUFFIX_COLLIDER, collider_data );
+        m_Collider->SetParentBody( this, TMat4() );
 
         auto visual_data = TVisualData();
         visual_data.type = eShapeType::CAPSULE;
@@ -612,12 +534,12 @@ namespace kintree {
         visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
         visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
         visual_data.shininess = loco::DEFAULT_SHININESS;
-        m_Drawables.push_back( std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data ) );
-        m_Drawables.back()->SetParentObject( this );
-        m_Drawables.back()->SetLocalTransform( TMat4() );
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable->SetParentObject( this );
+        m_Drawable->SetLocalTransform( TMat4() );
 
-        m_Data.colliders.push_back( collider_data );
-        m_Data.drawables.push_back( visual_data );
+        m_Data.collider = collider_data;
+        m_Data.drawable = visual_data;
         m_Radius = radius;
         m_Height = height;
     }
@@ -625,15 +547,15 @@ namespace kintree {
     void TCapsule::SetRadius( const TScalar& radius )
     {
         m_Radius = radius;
-        m_Colliders.back()->ChangeSize( { m_Radius, m_Height, 0.0f } );
-        m_Drawables.back()->ChangeSize( { m_Radius, m_Height, 0.0f } );
+        m_Collider->ChangeSize( { m_Radius, m_Height, 0.0f } );
+        m_Drawable->ChangeSize( { m_Radius, m_Height, 0.0f } );
     }
 
     void TCapsule::SetHeight( const TScalar& height )
     {
         m_Height = height;
-        m_Colliders.back()->ChangeSize( { m_Radius, m_Height, 0.0f } );
-        m_Drawables.back()->ChangeSize( { m_Radius, m_Height, 0.0f } );
+        m_Collider->ChangeSize( { m_Radius, m_Height, 0.0f } );
+        m_Drawable->ChangeSize( { m_Radius, m_Height, 0.0f } );
     }
 
     //********************************************************************************************//
@@ -651,8 +573,8 @@ namespace kintree {
         collider_data.size = radii;
         collider_data.collisionGroup = collision_group;
         collider_data.collisionMask = collision_mask;
-        m_Colliders.push_back( std::make_unique<TKinematicTreeCollider>( name + loco::SUFFIX_COLLIDER, collider_data ) );
-        m_Colliders.back()->SetParentBody( this, TMat4() );
+        m_Collider = std::make_unique<TKinematicTreeCollider>( name + loco::SUFFIX_COLLIDER, collider_data );
+        m_Collider->SetParentBody( this, TMat4() );
 
         auto visual_data = TVisualData();
         visual_data.type = eShapeType::ELLIPSOID;
@@ -661,41 +583,41 @@ namespace kintree {
         visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
         visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
         visual_data.shininess = loco::DEFAULT_SHININESS;
-        m_Drawables.push_back( std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data ) );
-        m_Drawables.back()->SetParentObject( this );
-        m_Drawables.back()->SetLocalTransform( TMat4() );
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable->SetParentObject( this );
+        m_Drawable->SetLocalTransform( TMat4() );
 
-        m_Data.colliders.push_back( collider_data );
-        m_Data.drawables.push_back( visual_data );
+        m_Data.collider = collider_data;
+        m_Data.drawable = visual_data;
         m_Radii = radii;
     }
 
     void TEllipsoid::SetRadii( const TVec3& radii )
     {
         m_Radii = radii;
-        m_Colliders.back()->ChangeSize( m_Radii );
-        m_Drawables.back()->ChangeSize( m_Radii );
+        m_Collider->ChangeSize( m_Radii );
+        m_Drawable->ChangeSize( m_Radii );
     }
 
     void TEllipsoid::SetRadiusX( const TScalar& radius_x )
     {
         m_Radii.x() = radius_x;
-        m_Colliders.back()->ChangeSize( m_Radii );
-        m_Drawables.back()->ChangeSize( m_Radii );
+        m_Collider->ChangeSize( m_Radii );
+        m_Drawable->ChangeSize( m_Radii );
     }
 
     void TEllipsoid::SetRadiusY( const TScalar& radius_y )
     {
         m_Radii.y() = radius_y;
-        m_Colliders.back()->ChangeSize( m_Radii );
-        m_Drawables.back()->ChangeSize( m_Radii );
+        m_Collider->ChangeSize( m_Radii );
+        m_Drawable->ChangeSize( m_Radii );
     }
 
     void TEllipsoid::SetRadiusZ( const TScalar& radius_z )
     {
         m_Radii.z() = radius_z;
-        m_Colliders.back()->ChangeSize( m_Radii );
-        m_Drawables.back()->ChangeSize( m_Radii );
+        m_Collider->ChangeSize( m_Radii );
+        m_Drawable->ChangeSize( m_Radii );
     }
 
     //********************************************************************************************//
@@ -716,8 +638,8 @@ namespace kintree {
         collider_data.mesh_data.filename = mesh_collider_filepath;
         collider_data.collisionGroup = collision_group;
         collider_data.collisionMask = collision_mask;
-        m_Colliders.push_back( std::make_unique<TKinematicTreeCollider>( name + loco::SUFFIX_COLLIDER, collider_data ) );
-        m_Colliders.back()->SetParentBody( this, TMat4() );
+        m_Collider = std::make_unique<TKinematicTreeCollider>( name + loco::SUFFIX_COLLIDER, collider_data );
+        m_Collider->SetParentBody( this, TMat4() );
 
         auto visual_data = TVisualData();
         visual_data.type = eShapeType::CONVEX_MESH;
@@ -727,19 +649,19 @@ namespace kintree {
         visual_data.diffuse = loco::DEFAULT_DIFFUSE_COLOR;
         visual_data.specular = loco::DEFAULT_SPECULAR_COLOR;
         visual_data.shininess = loco::DEFAULT_SHININESS;
-        m_Drawables.push_back( std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data ) );
-        m_Drawables.back()->SetParentObject( this );
-        m_Drawables.back()->SetLocalTransform( TMat4() );
+        m_Drawable = std::make_unique<visualizer::TDrawable>( name + loco::SUFFIX_DRAWABLE, visual_data );
+        m_Drawable->SetParentObject( this );
+        m_Drawable->SetLocalTransform( TMat4() );
 
-        m_Data.colliders.push_back( collider_data );
-        m_Data.drawables.push_back( visual_data );
+        m_Data.collider = collider_data;
+        m_Data.drawable = visual_data;
         m_Scale = mesh_scale;
     }
 
     void TConvexMesh::SetScale( const TScalar& scale )
     {
         m_Scale = scale;
-        m_Colliders.back()->ChangeSize( { m_Scale, m_Scale, m_Scale } );
-        m_Drawables.back()->ChangeSize( { m_Scale, m_Scale, m_Scale } );
+        m_Collider->ChangeSize( { m_Scale, m_Scale, m_Scale } );
+        m_Drawable->ChangeSize( { m_Scale, m_Scale, m_Scale } );
     }
 }}

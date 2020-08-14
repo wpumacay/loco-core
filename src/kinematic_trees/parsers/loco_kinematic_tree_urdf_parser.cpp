@@ -81,21 +81,23 @@ namespace kintree {
         for ( auto body_elm : bodies_elms )
         {
             auto kintree_body = parse_body( body_elm );
+            // @todo: handle multiple colliders into a single compound collider
             auto colliders_elms = body_elm->GetChildrenOfType( "collision" );
             for ( auto collider_elm : colliders_elms )
             {
                 auto kintree_collider_local_tf_pair = parse_collider( collider_elm, kintree_body->name() );
                 auto kintree_collider = std::move( kintree_collider_local_tf_pair.first );
                 auto kintree_collider_local_tf = kintree_collider_local_tf_pair.second;
-                kintree_body->AddCollider( std::move( kintree_collider ), kintree_collider_local_tf );
+                kintree_body->SetCollider( std::move( kintree_collider ), kintree_collider_local_tf );
             }
+            // @todo: handle multiple drawables into a single compound drawable
             auto drawables_elms = body_elm->GetChildrenOfType( "visual" );
             for ( auto drawable_elm : drawables_elms )
             {
                 auto kintree_drawable_local_tf_pair = parse_drawable( drawable_elm, kintree_body->name() );
                 auto kintree_drawable = std::move( kintree_drawable_local_tf_pair.first );
                 auto kintree_drawable_local_tf = kintree_drawable_local_tf_pair.second;
-                kintree_body->AddDrawable( std::move( kintree_drawable ), kintree_drawable_local_tf );
+                kintree_body->SetDrawable( std::move( kintree_drawable ), kintree_drawable_local_tf );
             }
             const auto body_name = kintree_body->name();
             m_TempStorageBodies[body_name] = std::move( kintree_body );
@@ -145,7 +147,7 @@ namespace kintree {
             auto kintree_joint = std::move( m_TempStorageJoints[joint_name] );
             auto kintree_parent_body = std::move( m_TempStorageBodies[parent_link_name] );
             auto kintree_child_body = std::move( m_TempStorageBodies[child_link_name] );
-            kintree_child_body->AddJoint( std::move( kintree_joint ), TMat4() ); // Joint frame concides with owner body frame
+            kintree_child_body->SetJoint( std::move( kintree_joint ), TMat4() ); // Joint frame concides with owner body frame
             kintree_parent_body->AddChild( std::move( kintree_child_body ), tf_child_link_to_parent_link );
             m_TempStorageBodies[parent_link_name] = std::move( kintree_parent_body );
         }

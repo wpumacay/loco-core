@@ -30,11 +30,11 @@ public :
         const auto tf_jnt_2_to_link_2 = loco::TMat4( loco::TMat3(), { 0.0f, 0.0f, 0.5f * link_l2 } );
 
         this->SetRoot( std::unique_ptr<loco::kintree::TKinematicTreeBody>( this->base ) );
-        this->base->AddJoint( std::unique_ptr<loco::kintree::TKinematicTreeJoint>( this->jnt_base ), loco::TMat4() );
+        this->base->SetJoint( std::unique_ptr<loco::kintree::TKinematicTreeJoint>( this->jnt_base ), loco::TMat4() );
         this->base->AddChild( std::unique_ptr<loco::kintree::TKinematicTreeBody>( this->link_1 ), tf_link_1_to_base );
-        this->link_1->AddJoint( std::unique_ptr<loco::kintree::TKinematicTreeJoint>( this->jnt_1 ), tf_jnt_1_to_link_1 );
+        this->link_1->SetJoint( std::unique_ptr<loco::kintree::TKinematicTreeJoint>( this->jnt_1 ), tf_jnt_1_to_link_1 );
         this->link_1->AddChild( std::unique_ptr<loco::kintree::TKinematicTreeBody>( this->link_2 ), tf_link_2_to_link_1 );
-        this->link_2->AddJoint( std::unique_ptr<loco::kintree::TKinematicTreeJoint>( this->jnt_2 ), tf_jnt_2_to_link_2 );
+        this->link_2->SetJoint( std::unique_ptr<loco::kintree::TKinematicTreeJoint>( this->jnt_2 ), tf_jnt_2_to_link_2 );
     }
 
     ~DoublePendulum()

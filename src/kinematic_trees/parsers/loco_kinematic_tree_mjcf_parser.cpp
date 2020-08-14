@@ -71,6 +71,9 @@ namespace kintree {
             auto kintree_body = std::move( kintree_body_local_tf_pair.first );
             auto kintree_body_local_tf = kintree_body_local_tf_pair.second;
             kintree_body->SetKintree( m_KintreeRef );
+            // @todo: handle colliders|joints separatedly
+            // @todo: combine multiple colliders into single compound-collider
+            // @todo: handle multiple joints using dummy bodies
             for ( ssize_t i = 0; i < body_elm->num_children(); i++ )
             {
                 const auto child_elm = body_elm->get_child( i );
@@ -80,19 +83,19 @@ namespace kintree {
                     auto kintree_collider_local_tf_pair = parse_collider( child_elm );
                     auto kintree_collider = std::move( kintree_collider_local_tf_pair.first );
                     auto kintree_collider_local_tf = kintree_collider_local_tf_pair.second;
-                    kintree_body->AddCollider( std::move( kintree_collider ), kintree_collider_local_tf );
+                    kintree_body->SetCollider( std::move( kintree_collider ), kintree_collider_local_tf );
 
                     auto kintree_drawable_local_tf_pair = parse_drawable( child_elm );
                     auto kintree_drawable = std::move( kintree_drawable_local_tf_pair.first );
                     auto kintree_drawable_local_tf = kintree_drawable_local_tf_pair.second;
-                    kintree_body->AddDrawable( std::move( kintree_drawable ), kintree_drawable_local_tf );
+                    kintree_body->SetDrawable( std::move( kintree_drawable ), kintree_drawable_local_tf );
                 }
                 else if ( elm_type == MJCF_JOINT_TAG )
                 {
                     auto kintree_joint_local_tf_pair = parse_joint( child_elm );
                     auto kintree_joint = std::move( kintree_joint_local_tf_pair.first );
                     auto kintree_joint_local_tf = kintree_joint_local_tf_pair.second;
-                    kintree_body->AddJoint( std::move( kintree_joint ), kintree_joint_local_tf );
+                    kintree_body->SetJoint( std::move( kintree_joint ), kintree_joint_local_tf );
                 }
                 else if ( elm_type == MJCF_BODY_TAG )
                 {
@@ -125,27 +128,28 @@ namespace kintree {
 
                 kinbody->SetLocalTransform( convert_global_to_local_transform( parent_world_tf, body_world_tf ) );
 
-                auto kinbody_joints = kinbody->joints();
-                for ( auto kin_joint : kinbody_joints )
-                {
-                    // Grab global|world transform (recall in global coordinates the local-tfs are world-tfs)
-                    const auto joint_world_tf = kin_joint->local_tf();
-                    kin_joint->SetLocalTransform( convert_global_to_local_transform( body_world_tf, joint_world_tf ) );
-                }
-                auto kinbody_colliders = kinbody->colliders();
-                for ( auto kin_collider : kinbody_colliders )
-                {
-                    // Grab global|world transform (recall in global coordinates the local-tfs are world-tfs)
-                    const auto collider_world_tf = kin_collider->local_tf();
-                    kin_collider->SetLocalTransform( convert_global_to_local_transform( body_world_tf, collider_world_tf ) );
-                }
-                auto kinbody_drawables = kinbody->drawables();
-                for ( auto kin_drawable : kinbody_drawables )
-                {
-                    // Grab global|world transform (recall in global coordinates the local-tfs are world-tfs)
-                    const auto drawable_world_tf = kin_drawable->local_tf();
-                    kin_drawable->SetLocalTransform( convert_global_to_local_transform( body_world_tf, drawable_world_tf ) );
-                }
+// @todo: handle single-resource cases properly
+////                 auto kinbody_joints = kinbody->joints();
+////                 for ( auto kin_joint : kinbody_joints )
+////                 {
+////                     // Grab global|world transform (recall in global coordinates the local-tfs are world-tfs)
+////                     const auto joint_world_tf = kin_joint->local_tf();
+////                     kin_joint->SetLocalTransform( convert_global_to_local_transform( body_world_tf, joint_world_tf ) );
+////                 }
+////                 auto kinbody_colliders = kinbody->colliders();
+////                 for ( auto kin_collider : kinbody_colliders )
+////                 {
+////                     // Grab global|world transform (recall in global coordinates the local-tfs are world-tfs)
+////                     const auto collider_world_tf = kin_collider->local_tf();
+////                     kin_collider->SetLocalTransform( convert_global_to_local_transform( body_world_tf, collider_world_tf ) );
+////                 }
+////                 auto kinbody_drawables = kinbody->drawables();
+////                 for ( auto kin_drawable : kinbody_drawables )
+////                 {
+////                     // Grab global|world transform (recall in global coordinates the local-tfs are world-tfs)
+////                     const auto drawable_world_tf = kin_drawable->local_tf();
+////                     kin_drawable->SetLocalTransform( convert_global_to_local_transform( body_world_tf, drawable_world_tf ) );
+////                 }
 
                 auto kinbody_children = kinbody->children();
                 for ( auto kin_child_body : kinbody_children )

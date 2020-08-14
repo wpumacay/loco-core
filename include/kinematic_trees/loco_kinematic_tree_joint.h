@@ -1,8 +1,6 @@
 #pragma once
 
 #include <loco_data.h>
-#include <kinematic_trees/loco_kinematic_tree_body.h>
-#include <kinematic_trees/loco_kinematic_tree_joint_adapter.h>
 
 namespace loco {
 namespace kintree {
@@ -29,6 +27,13 @@ namespace kintree {
         /// Relative transform of the joint w.r.t. its body owner
         TMat4 local_tf;
     };
+}}
+
+#include <kinematic_trees/loco_kinematic_tree_body.h>
+#include <kinematic_trees/loco_kinematic_tree_joint_adapter.h>
+
+namespace loco {
+namespace kintree {
 
     class TKinematicTreeBody;
     class TIKinematicTreeJointAdapter;

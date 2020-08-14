@@ -502,12 +502,12 @@ namespace kintree {
             //------------------------------------------------------------------------------------//
             py::class_<TKinematicTreeBodyData>( m, "BodyData" )
                 .def( py::init<>() )
-                .def_property_readonly( "colliders", []( TKinematicTreeBodyData* self ) -> std::vector<TCollisionData>
-                    { return self->colliders; } )
-                .def_property_readonly( "drawables", []( TKinematicTreeBodyData* self ) -> std::vector<TVisualData>
-                    { return self->drawables; } )
-                .def_property_readonly( "joints", []( TKinematicTreeBodyData* self ) -> std::vector<TKinematicTreeJointData>
-                    { return self->joints; } )
+                .def_property_readonly( "collider", []( TKinematicTreeBodyData* self ) -> TCollisionData
+                    { return self->collider; } )
+                .def_property_readonly( "drawable", []( TKinematicTreeBodyData* self ) -> TVisualData
+                    { return self->drawable; } )
+                .def_property_readonly( "joint", []( TKinematicTreeBodyData* self ) -> TKinematicTreeJointData
+                    { return self->joint; } )
                 .def_property_readonly( "inertia", []( TKinematicTreeBodyData* self ) -> TInertialData
                     { return self->inertia; } )
                 .def_property( "local_tf",
@@ -525,24 +525,25 @@ namespace kintree {
             //------------------------------------------------------------------------------------//
             py::class_<TKinematicTreeBody, TObject>( m, "Body" )
                 .def( py::init<const std::string&>() )
-                .def( "AddDrawable", []( TKinematicTreeBody* self, 
-                                         std::unique_ptr<visualizer::TDrawable> drawable,
-                                         const py::array_t<TScalar>& arr_local_tf )
-                    {
-                        self->AddDrawable( std::move( drawable ), tinymath::nparray_to_matrix<TScalar, 4>( arr_local_tf ) );
-                    }, py::keep_alive<1, 2>() )
-                .def( "AddCollider", []( TKinematicTreeBody* self,
-                                         std::unique_ptr<TKinematicTreeCollider> collider,
-                                         const py::array_t<TScalar>& arr_local_tf )
-                    {
-                        self->AddCollider( std::move( collider ), tinymath::nparray_to_matrix<TScalar, 4>( arr_local_tf ) );
-                    }, py::keep_alive<1, 2>() )
-                .def( "AddJoint", []( TKinematicTreeBody* self,
-                                      std::unique_ptr<TKinematicTreeJoint> joint,
-                                      const py::array_t<TScalar>& arr_local_tf )
-                    {
-                        self->AddJoint( std::move( joint ), tinymath::nparray_to_matrix<TScalar, 4>( arr_local_tf ) );
-                    }, py::keep_alive<1, 2>() )
+// @todo: handle single-resource cases properly
+////                 .def( "AddDrawable", []( TKinematicTreeBody* self, 
+////                                          std::unique_ptr<visualizer::TDrawable> drawable,
+////                                          const py::array_t<TScalar>& arr_local_tf )
+////                     {
+////                         self->AddDrawable( std::move( drawable ), tinymath::nparray_to_matrix<TScalar, 4>( arr_local_tf ) );
+////                     }, py::keep_alive<1, 2>() )
+////                 .def( "AddCollider", []( TKinematicTreeBody* self,
+////                                          std::unique_ptr<TKinematicTreeCollider> collider,
+////                                          const py::array_t<TScalar>& arr_local_tf )
+////                     {
+////                         self->AddCollider( std::move( collider ), tinymath::nparray_to_matrix<TScalar, 4>( arr_local_tf ) );
+////                     }, py::keep_alive<1, 2>() )
+////                 .def( "AddJoint", []( TKinematicTreeBody* self,
+////                                       std::unique_ptr<TKinematicTreeJoint> joint,
+////                                       const py::array_t<TScalar>& arr_local_tf )
+////                     {
+////                         self->AddJoint( std::move( joint ), tinymath::nparray_to_matrix<TScalar, 4>( arr_local_tf ) );
+////                     }, py::keep_alive<1, 2>() )
                 .def( "AddChild", []( TKinematicTreeBody* self,
                                       std::unique_ptr<TKinematicTreeBody> body,
                                       const py::array_t<TScalar>& arr_local_tf )
@@ -561,18 +562,18 @@ namespace kintree {
                 .def( "Forward", &TKinematicTreeBody::Forward )
                 .def( "data", []( TKinematicTreeBody* self ) -> TKinematicTreeBodyData&
                     { return self->data(); }, py::return_value_policy::reference )
-                .def( "drawables", []( TKinematicTreeBody* self ) -> std::vector<visualizer::TDrawable*>
-                    {
-                        return self->drawables();
-                    }, py::return_value_policy::reference )
-                .def( "colliders", []( TKinematicTreeBody* self ) -> std::vector<TKinematicTreeCollider*>
-                    {
-                        return self->colliders();
-                    }, py::return_value_policy::reference )
-                .def( "joints", []( TKinematicTreeBody* self ) -> std::vector<TKinematicTreeJoint*>
-                    {
-                        return self->joints();
-                    }, py::return_value_policy::reference )
+////                 .def( "drawables", []( TKinematicTreeBody* self ) -> std::vector<visualizer::TDrawable*>
+////                     {
+////                         return self->drawables();
+////                     }, py::return_value_policy::reference )
+////                 .def( "colliders", []( TKinematicTreeBody* self ) -> std::vector<TKinematicTreeCollider*>
+////                     {
+////                         return self->colliders();
+////                     }, py::return_value_policy::reference )
+////                 .def( "joints", []( TKinematicTreeBody* self ) -> std::vector<TKinematicTreeJoint*>
+////                     {
+////                         return self->joints();
+////                     }, py::return_value_policy::reference )
                 .def( "children_names", []( TKinematicTreeBody* self ) -> std::vector<std::string>
                     {
                         auto children = self->children();
@@ -607,23 +608,23 @@ namespace kintree {
                         strrep += "parent       : " + ( self->parent() ? self->parent()->name() : std::string( "nullptr" ) ) + "\n";
                         strrep += "kintree      : " + ( self->kintree() ? self->kintree()->name() : std::string( "nullptr" ) ) + "\n";
                         strrep += "drawables    : [";
-                            auto drawables = self->drawables();
-                            for ( ssize_t i = 0; i < drawables.size(); i++ )
-                                if ( drawables[i] )
-                                    strrep += drawables[i]->name() + " ";
-                            strrep += "]";
-                        strrep += "colliders    : [";
-                            auto colliders = self->colliders();
-                            for ( ssize_t i = 0; i < colliders.size(); i++ )
-                                if ( colliders[i] )
-                                    strrep += colliders[i]->name() + " ";
-                            strrep += "]";
-                        strrep += "joints       : [";
-                            auto joints = self->joints();
-                            for ( ssize_t i = 0; i < joints.size(); i++ )
-                                if ( joints[i] )
-                                    strrep += joints[i]->name() + " ";
-                            strrep += "]";
+////                             auto drawables = self->drawables();
+////                             for ( ssize_t i = 0; i < drawables.size(); i++ )
+////                                 if ( drawables[i] )
+////                                     strrep += drawables[i]->name() + " ";
+////                             strrep += "]";
+////                         strrep += "colliders    : [";
+////                             auto colliders = self->colliders();
+////                             for ( ssize_t i = 0; i < colliders.size(); i++ )
+////                                 if ( colliders[i] )
+////                                     strrep += colliders[i]->name() + " ";
+////                             strrep += "]";
+////                         strrep += "joints       : [";
+////                             auto joints = self->joints();
+////                             for ( ssize_t i = 0; i < joints.size(); i++ )
+////                                 if ( joints[i] )
+////                                     strrep += joints[i]->name() + " ";
+////                             strrep += "]";
                         strrep += "children     : [";
                             auto children = self->children();
                             for ( ssize_t i = 0; i < children.size(); i++ )
