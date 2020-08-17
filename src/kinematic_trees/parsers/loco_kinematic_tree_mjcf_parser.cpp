@@ -71,37 +71,81 @@ namespace kintree {
             auto kintree_body = std::move( kintree_body_local_tf_pair.first );
             auto kintree_body_local_tf = kintree_body_local_tf_pair.second;
             kintree_body->SetKintree( m_KintreeRef );
-            // @todo: handle colliders|joints separatedly
-            // @todo: combine multiple colliders into single compound-collider
-            // @todo: handle multiple joints using dummy bodies
-            for ( ssize_t i = 0; i < body_elm->num_children(); i++ )
-            {
-                const auto child_elm = body_elm->get_child( i );
-                const auto elm_type = child_elm->elementType();
-                /**/ if ( elm_type == MJCF_GEOM_TAG )
-                {
-                    auto kintree_collider_local_tf_pair = parse_collider( child_elm );
-                    auto kintree_collider = std::move( kintree_collider_local_tf_pair.first );
-                    auto kintree_collider_local_tf = kintree_collider_local_tf_pair.second;
-                    kintree_body->SetCollider( std::move( kintree_collider ), kintree_collider_local_tf );
 
-                    auto kintree_drawable_local_tf_pair = parse_drawable( child_elm );
-                    auto kintree_drawable = std::move( kintree_drawable_local_tf_pair.first );
-                    auto kintree_drawable_local_tf = kintree_drawable_local_tf_pair.second;
-                    kintree_body->SetDrawable( std::move( kintree_drawable ), kintree_drawable_local_tf );
-                }
-                else if ( elm_type == MJCF_JOINT_TAG )
+            auto children_geoms = body_elm->GetChildrenOfType( MJCF_GEOM_TAG );
+            /**/ if ( children_geoms.size() > 1 ) // Handle all geoms into a single compound-shape collider
+            {
+                auto kintree_collider = parse_compound_collider( children_geoms, kintree_body->name() + "_compound_collider" );
+                auto kintree_collider_local_tf = loco::TMat4();
+                kintree_body->SetCollider( std::move( kintree_collider ), kintree_collider_local_tf );
+
+                auto kintree_drawable = parse_compound_drawable( children_geoms, kintree_body->name() + "_compound_visual" );
+                auto kintree_drawable_local_tf = loco::TMat4();
+                kintree_body->SetDrawable( std::move( kintree_drawable ), kintree_drawable_local_tf );
+            }
+            else if ( children_geoms.size() == 1 ) // Handle the single geom into a normal collider (not compound)
+            {
+                auto kintree_collider_local_tf_pair = parse_primitive_collider( children_geoms.front() );
+                auto kintree_collider = std::move( kintree_collider_local_tf_pair.first );
+                auto kintree_collider_local_tf = kintree_collider_local_tf_pair.second;
+                kintree_body->SetCollider( std::move( kintree_collider ), kintree_collider_local_tf );
+
+                auto kintree_drawable_local_tf_pair = parse_primitive_drawable( children_geoms.front() );
+                auto kintree_drawable = std::move( kintree_drawable_local_tf_pair.first );
+                auto kintree_drawable_local_tf = kintree_drawable_local_tf_pair.second;
+                kintree_body->SetDrawable( std::move( kintree_drawable ), kintree_drawable_local_tf );
+            }
+            else
+            {
+                LOCO_CORE_ERROR( "TKinematicTreeMjcfParser::parse_kintree >>> body {0} has no geoms attached", kintree_body->name() );
+            }
+
+            auto children_joints = body_elm->GetChildrenOfType( MJCF_JOINT_TAG );
+            /**/ if ( children_joints.size() > 1 ) // Handle multiple joints using dummy bodies
+            {
+                // The first joint is related to the current kintree-body
                 {
-                    auto kintree_joint_local_tf_pair = parse_joint( child_elm );
+                    auto kintree_joint_local_tf_pair = parse_joint( children_joints.front() );
                     auto kintree_joint = std::move( kintree_joint_local_tf_pair.first );
                     auto kintree_joint_local_tf = kintree_joint_local_tf_pair.second;
                     kintree_body->SetJoint( std::move( kintree_joint ), kintree_joint_local_tf );
                 }
-                else if ( elm_type == MJCF_BODY_TAG )
+
+                // Add current kintree-body as child of its parent (as it should be)
+                auto current_kintree_body_ptr = kintree_body.get();
+                body_parent->AddChild( std::move( kintree_body ), kintree_body_local_tf );
+                body_parent = current_kintree_body_ptr;
+
+                // All joints but the first one are related to a dummy body (current body "kintree_body" will have
+                // to change as we append new dummy bodies as they are being created by their associated joints)
+                for ( ssize_t i = 1; i < children_joints.size(); i++ )
                 {
-                    dfs_bodies.push( { child_elm, kintree_body.get() } );
+                    const std::string kintree_body_name = kintree_body->name() + "_dummy_" + std::to_string( i - 1 );
+                    kintree_body = std::make_unique<TKinematicTreeBody>( kintree_body_name, TKinematicTreeBodyData() );
+                    auto kintree_joint_for_dummy_local_tf_pair = parse_joint( children_joints[i] );
+                    auto kintree_joint_for_dummy = std::move( kintree_joint_for_dummy_local_tf_pair.first );
+                    auto kintree_joint_for_dummy_local_tf = kintree_joint_for_dummy_local_tf_pair.second;
+                    kintree_body->SetJoint( std::move( kintree_joint_for_dummy ), kintree_joint_for_dummy_local_tf );
+                    if ( i == children_joints.size() - 1 )
+                        break; // Last dummy-body is added in the section below, and remains as the current kintree_body
+
+                    // Set current kintree_body as parent of the new dummy body
+                    auto current_kintree_dummy_body_ptr = kintree_body.get();
+                    body_parent->AddChild( std::move( kintree_body ), loco::TMat4() );
+                    body_parent = current_kintree_dummy_body_ptr;
                 }
             }
+            else if ( children_joints.size() == 1 ) // Handle the single-joints into a normal joint (no dummies)
+            {
+                auto kintree_joint_local_tf_pair = parse_joint( children_joints.front() );
+                auto kintree_joint = std::move( kintree_joint_local_tf_pair.first );
+                auto kintree_joint_local_tf = kintree_joint_local_tf_pair.second;
+                kintree_body->SetJoint( std::move( kintree_joint ), kintree_joint_local_tf );
+            }
+
+            auto children_bodies = body_elm->GetChildrenOfType( MJCF_BODY_TAG );
+            for ( ssize_t i = 0; i < children_bodies.size(); i++ )
+                dfs_bodies.push( { children_bodies[i], kintree_body.get() } );
 
             if ( !body_parent )
                 m_KintreeRef->SetRoot( std::move( kintree_body ) );
@@ -175,7 +219,7 @@ namespace kintree {
         return { std::move( kintree_body ), kintree_body_local_tf };
     }
 
-    std::pair<std::unique_ptr<TKinematicTreeCollider>, TMat4> TKinematicTreeMjcfParser::parse_collider( const parsing::TElement* collider_elm )
+    std::pair<std::unique_ptr<TKinematicTreeCollider>, TMat4> TKinematicTreeMjcfParser::parse_primitive_collider( const parsing::TElement* collider_elm )
     {
         TCollisionData kintree_collider_data;
         std::string kintree_collider_name;
@@ -199,7 +243,38 @@ namespace kintree {
         return { std::move( kintree_collider ), kintree_collider_local_tf };
     }
 
-    std::pair<std::unique_ptr<visualizer::TDrawable>, TMat4> TKinematicTreeMjcfParser::parse_drawable( const parsing::TElement* drawable_elm )
+    std::unique_ptr<TKinematicTreeCollider> TKinematicTreeMjcfParser::parse_compound_collider( std::vector<const parsing::TElement*> colliders_elms, const std::string& collider_name )
+    {
+        TCollisionData kintree_collider_data;
+        kintree_collider_data.type = eShapeType::COMPOUND;
+        kintree_collider_data.size = { 1.0f, 1.0f, 1.0f };
+        for ( ssize_t i = 0; i < colliders_elms.size(); i++ )
+        {
+            auto child_geom_elm = colliders_elms[i];
+            auto child_geom_type = loco::ToEnumShape( get_string( child_geom_elm, "type", "sphere" ) );
+            if ( child_geom_type == eShapeType::CONVEX_MESH || child_geom_type == eShapeType::PLANE ||
+                 child_geom_type == eShapeType::HEIGHTFIELD || child_geom_type == eShapeType::COMPOUND ||
+                 child_geom_type == eShapeType::TRIANGULAR_MESH )
+                continue; // Only allow primitives as children of compound-shapes
+
+            auto child_shape_data = loco::TShapeData();
+            child_shape_data.type = child_geom_type;
+            child_shape_data.size = get_standard_size( child_geom_elm );
+            auto child_shape_tf = get_transform( child_geom_elm );
+            kintree_collider_data.children.push_back( child_shape_data );
+            kintree_collider_data.children_tfs.push_back( child_shape_tf );
+        }
+        // Grab the remaining collider information from the first collider (assume all children share the same properties)
+        auto first_geom_elm = colliders_elms.front();
+        kintree_collider_data.collisionGroup = get_int( first_geom_elm, "contype", 1 );
+        kintree_collider_data.collisionMask = get_int( first_geom_elm, "conaffinity", 1 );
+        kintree_collider_data.friction = get_vec3( first_geom_elm, "friction", { 1.0f, 0.005f, 0.0001f } );
+        kintree_collider_data.density = get_float( first_geom_elm, "density", loco::DEFAULT_DENSITY );
+
+        return std::make_unique<TKinematicTreeCollider>( collider_name, kintree_collider_data );
+    }
+
+    std::pair<std::unique_ptr<visualizer::TDrawable>, TMat4> TKinematicTreeMjcfParser::parse_primitive_drawable( const parsing::TElement* drawable_elm )
     {
         TVisualData kintree_drawable_data;
         std::string kintree_drawable_name;
@@ -240,6 +315,56 @@ namespace kintree {
         auto kintree_drawable = std::make_unique<visualizer::TDrawable>( kintree_drawable_name, kintree_drawable_data );
         auto kintree_drawable_local_tf = kintree_drawable_data.localTransform;
         return { std::move( kintree_drawable ), kintree_drawable_local_tf };
+    }
+
+    std::unique_ptr<visualizer::TDrawable> TKinematicTreeMjcfParser::parse_compound_drawable( std::vector<const parsing::TElement*> drawables_elms, const std::string& drawable_name )
+    {
+        TVisualData kintree_drawable_data;
+        kintree_drawable_data.type = eShapeType::COMPOUND;
+        kintree_drawable_data.size = { 1.0f, 1.0f, 1.0f };
+        for ( ssize_t i = 0; i < drawables_elms.size(); i++ )
+        {
+            auto child_geom_elm = drawables_elms[i];
+            auto child_geom_type = loco::ToEnumShape( get_string( child_geom_elm, "type", "sphere" ) );
+            if ( child_geom_type == eShapeType::CONVEX_MESH || child_geom_type == eShapeType::PLANE ||
+                 child_geom_type == eShapeType::HEIGHTFIELD || child_geom_type == eShapeType::COMPOUND ||
+                 child_geom_type == eShapeType::TRIANGULAR_MESH )
+                continue; // Only allow primitives as children of compound-shapes
+
+            auto child_shape_data = loco::TShapeData();
+            child_shape_data.type = child_geom_type;
+            child_shape_data.size = get_standard_size( child_geom_elm );
+            auto child_shape_tf = get_transform( child_geom_elm );
+            kintree_drawable_data.children.push_back( child_shape_data );
+            kintree_drawable_data.children_tfs.push_back( child_shape_tf );
+        }
+        // Grab the remaining drawable information from the first drawable (assume all children share the same properties)
+        auto first_geom_elm = drawables_elms.front();
+        auto rgba_color = loco::DEFAULT_RGBA_COLOR; // ambient + diffuse components of the material
+        auto specular_color = loco::DEFAULT_SPECULAR_COLOR; // specular component of the material
+        auto shininess = loco::DEFAULT_SHININESS; // shininess of the material
+        const std::string material_id = get_string( first_geom_elm, "material", "" );
+
+        if ( first_geom_elm->HasAttributeVec4( "rgba" ) )
+        {
+            rgba_color = first_geom_elm->GetVec4( "rgba", loco::DEFAULT_RGBA_COLOR );
+            specular_color = { rgba_color.x(), rgba_color.y(), rgba_color.z() };
+            shininess = loco::DEFAULT_SHININESS;
+        }
+        else if ( m_AssetsMaterials.find( material_id ) != m_AssetsMaterials.end() )
+        {
+            rgba_color = m_AssetsMaterials[material_id].GetVec4( "rgba", loco::DEFAULT_RGBA_COLOR );
+            specular_color = { m_AssetsMaterials[material_id].GetFloat( "specular", loco::DEFAULT_SPECULAR_COLOR.x() ),
+                               m_AssetsMaterials[material_id].GetFloat( "specular", loco::DEFAULT_SPECULAR_COLOR.y() ),
+                               m_AssetsMaterials[material_id].GetFloat( "specular", loco::DEFAULT_SPECULAR_COLOR.z() ) };
+            shininess = m_AssetsMaterials[material_id].GetFloat( "shininess", loco::DEFAULT_SHININESS );
+        }
+        kintree_drawable_data.ambient = { rgba_color.x(), rgba_color.y(), rgba_color.z() };
+        kintree_drawable_data.diffuse = { rgba_color.x(), rgba_color.y(), rgba_color.z() };
+        kintree_drawable_data.specular = specular_color;
+        kintree_drawable_data.shininess = shininess;
+
+        return std::make_unique<visualizer::TDrawable>( drawable_name, kintree_drawable_data );
     }
 
     std::pair<std::unique_ptr<TKinematicTreeJoint>, TMat4> TKinematicTreeMjcfParser::parse_joint( const parsing::TElement* joint_elm )
