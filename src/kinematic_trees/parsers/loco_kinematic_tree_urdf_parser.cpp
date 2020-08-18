@@ -81,24 +81,47 @@ namespace kintree {
         for ( auto body_elm : bodies_elms )
         {
             auto kintree_body = parse_body( body_elm );
-            // @todo: handle multiple colliders into a single compound collider
+
+            // Grab colliders appropriately
             auto colliders_elms = body_elm->GetChildrenOfType( "collision" );
-            for ( auto collider_elm : colliders_elms )
+            /**/ if ( colliders_elms.size() > 1 ) // Handle all colliders into a single compound-shape collider
             {
-                auto kintree_collider_local_tf_pair = parse_collider( collider_elm, kintree_body->name() );
+                auto kintree_collider = parse_compound_collider( colliders_elms, kintree_body->name() + "_compound_collider" );
+                auto kintree_collider_local_tf = loco::TMat4();
+                kintree_body->SetCollider( std::move( kintree_collider ), kintree_collider_local_tf );
+            }
+            else if ( colliders_elms.size() == 1 )
+            {
+                auto kintree_collider_local_tf_pair = parse_primitive_collider( colliders_elms.front(), kintree_body->name() );
                 auto kintree_collider = std::move( kintree_collider_local_tf_pair.first );
                 auto kintree_collider_local_tf = kintree_collider_local_tf_pair.second;
                 kintree_body->SetCollider( std::move( kintree_collider ), kintree_collider_local_tf );
             }
-            // @todo: handle multiple drawables into a single compound drawable
-            auto drawables_elms = body_elm->GetChildrenOfType( "visual" );
-            for ( auto drawable_elm : drawables_elms )
+            else
             {
-                auto kintree_drawable_local_tf_pair = parse_drawable( drawable_elm, kintree_body->name() );
+                LOCO_CORE_ERROR( "TKinematicTreeUrdfParser::collect_bodies >>> body {0} has no colliders attached", kintree_body->name() );
+            }
+
+            // Grab drawables appropriately
+            auto drawables_elms = body_elm->GetChildrenOfType( "visual" );
+            /**/ if ( drawables_elms.size() > 1 ) // Handle all drawables into a single compound-shape drawable
+            {
+                auto kintree_drawable = parse_compound_drawable( drawables_elms, kintree_body->name() + "_compound_drawable" );
+                auto kintree_drawable_local_tf = loco::TMat4();
+                kintree_body->SetDrawable( std::move( kintree_drawable ), kintree_drawable_local_tf );
+            }
+            else if ( drawables_elms.size() == 1 )
+            {
+                auto kintree_drawable_local_tf_pair = parse_primitive_drawable( drawables_elms.front(), kintree_body->name() );
                 auto kintree_drawable = std::move( kintree_drawable_local_tf_pair.first );
                 auto kintree_drawable_local_tf = kintree_drawable_local_tf_pair.second;
                 kintree_body->SetDrawable( std::move( kintree_drawable ), kintree_drawable_local_tf );
             }
+            else
+            {
+                LOCO_CORE_ERROR( "TKinematicTreeUrdfParser::collect_bodies >>> body {0} has no drawables attached", kintree_body->name() );
+            }
+
             const auto body_name = kintree_body->name();
             m_TempStorageBodies[body_name] = std::move( kintree_body );
         }
@@ -236,7 +259,7 @@ namespace kintree {
         return std::make_unique<TKinematicTreeBody>( kintree_body_name, kintree_body_data );
     }
 
-    std::pair<std::unique_ptr<TKinematicTreeCollider>, TMat4> TKinematicTreeUrdfParser::parse_collider( 
+    std::pair<std::unique_ptr<TKinematicTreeCollider>, TMat4> TKinematicTreeUrdfParser::parse_primitive_collider( 
                                                                     const parsing::TElement* collider_elm, 
                                                                     const std::string& body_parent_name )
     {
@@ -261,7 +284,43 @@ namespace kintree {
         return { std::move( kintree_collider ), kintree_collider_local_tf };
     }
 
-    std::pair<std::unique_ptr<visualizer::TDrawable>, TMat4> TKinematicTreeUrdfParser::parse_drawable(
+    std::unique_ptr<TKinematicTreeCollider> TKinematicTreeUrdfParser::parse_compound_collider(
+                                                const std::vector<const parsing::TElement*>& colliders_elms,
+                                                const std::string& collider_name )
+    {
+        TCollisionData kintree_collider_data;
+        kintree_collider_data.type = eShapeType::COMPOUND;
+        kintree_collider_data.size = { 1.0f, 1.0f, 1.0f };
+        for ( ssize_t i = 0; i < colliders_elms.size(); i++ )
+        {
+            auto child_collider_elm = colliders_elms[i];
+            auto child_collider_data = TCollisionData();
+            get_shape_information( child_collider_elm->GetFirstChildOfType( "geometry" ), child_collider_data );
+
+            const auto child_collider_type = child_collider_data.type;
+            if ( child_collider_type == eShapeType::CONVEX_MESH || child_collider_type == eShapeType::PLANE ||
+                 child_collider_type == eShapeType::HEIGHTFIELD || child_collider_type == eShapeType::COMPOUND ||
+                 child_collider_type == eShapeType::TRIANGULAR_MESH )
+                continue; // Only allow primitives as children of compound-shapes
+
+            auto child_collider_tf = loco::TMat4();
+            if ( child_collider_elm->HasChildOfType( "origin" ) )
+                child_collider_tf = get_transform( child_collider_elm->GetFirstChildOfType( "origin" ) );
+
+            kintree_collider_data.children.push_back( child_collider_data );
+            kintree_collider_data.children_tfs.push_back( child_collider_tf );
+        }
+
+        // Use default values, as the URDF specification doesn't provide control over these parameters for the colliders
+        kintree_collider_data.collisionGroup = 1;
+        kintree_collider_data.collisionMask = 1;
+        kintree_collider_data.friction = { 1.0f, 0.005f, 0.0001f };
+        kintree_collider_data.density = loco::DEFAULT_DENSITY;
+
+        return std::make_unique<TKinematicTreeCollider>( collider_name, kintree_collider_data );
+    }
+
+    std::pair<std::unique_ptr<visualizer::TDrawable>, TMat4> TKinematicTreeUrdfParser::parse_primitive_drawable(
                                                                 const parsing::TElement* drawable_elm,
                                                                 const std::string& body_parent_name )
     {
@@ -287,6 +346,48 @@ namespace kintree {
         auto kintree_drawable = std::make_unique<visualizer::TDrawable>( kintree_drawable_name, kintree_drawable_data );
         auto kintree_drawable_local_tf = kintree_drawable_data.localTransform;
         return { std::move( kintree_drawable ), kintree_drawable_local_tf };
+    }
+
+    std::unique_ptr<visualizer::TDrawable> TKinematicTreeUrdfParser::parse_compound_drawable(
+                                                const std::vector<const parsing::TElement*>& drawables_elms,
+                                                const std::string& drawable_name )
+    {
+        TVisualData kintree_drawable_data;
+        kintree_drawable_data.type = eShapeType::COMPOUND;
+        kintree_drawable_data.size = { 1.0f, 1.0f, 1.0f };
+        for ( ssize_t i = 0; i < drawables_elms.size(); i++ )
+        {
+            auto child_drawable_elm = drawables_elms[i];
+            auto child_drawable_data = TVisualData();
+            get_shape_information( child_drawable_elm->GetFirstChildOfType( "geometry" ), child_drawable_data );
+
+            const auto child_drawable_type = child_drawable_data.type;
+            if ( child_drawable_type == eShapeType::CONVEX_MESH || child_drawable_type == eShapeType::PLANE ||
+                 child_drawable_type == eShapeType::HEIGHTFIELD || child_drawable_type == eShapeType::COMPOUND ||
+                 child_drawable_type == eShapeType::TRIANGULAR_MESH )
+                continue; // Only allow primitives as children of compound-shapes
+
+            auto child_drawable_tf = loco::TMat4();
+            if ( child_drawable_elm->HasChildOfType( "origin" ) )
+                child_drawable_tf = get_transform( child_drawable_elm->GetFirstChildOfType( "origin" ) );
+
+            kintree_drawable_data.children.push_back( child_drawable_data );
+            kintree_drawable_data.children_tfs.push_back( child_drawable_tf );
+        }
+
+        // Grab the remaining drawable information from the first drawable (assume all children share the same properties)
+        auto drawable_elm = drawables_elms.front();
+        if ( auto material_elm = drawable_elm->GetFirstChildOfType( "material" ) )
+        {
+            const auto material_name = material_elm->GetString( "name" );
+            const auto rgba = m_Materials[material_name].GetVec4( "rgba", loco::DEFAULT_RGBA_COLOR );
+            kintree_drawable_data.ambient = { rgba.x(), rgba.y(), rgba.z() };
+            kintree_drawable_data.diffuse = { rgba.x(), rgba.y(), rgba.z() };
+            kintree_drawable_data.specular = loco::DEFAULT_SPECULAR_COLOR;
+            kintree_drawable_data.shininess = loco::DEFAULT_SHININESS;
+        }
+
+        return std::make_unique<visualizer::TDrawable>( drawable_name, kintree_drawable_data );
     }
 
     std::unique_ptr<TKinematicTreeJoint> TKinematicTreeUrdfParser::parse_joint( const parsing::TElement* joint_elm )

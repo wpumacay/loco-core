@@ -35,9 +35,13 @@ namespace kintree {
 
         std::unique_ptr<TKinematicTreeJoint> parse_joint( const parsing::TElement* joint_elm );
 
-        std::pair<std::unique_ptr<TKinematicTreeCollider>, TMat4> parse_collider( const parsing::TElement* collider_elm, const std::string& body_parent_name );
+        std::pair<std::unique_ptr<TKinematicTreeCollider>, TMat4> parse_primitive_collider( const parsing::TElement* collider_elm, const std::string& body_parent_name );
 
-        std::pair<std::unique_ptr<visualizer::TDrawable>, TMat4> parse_drawable( const parsing::TElement* drawable_elm, const std::string& body_parent_name );
+        std::unique_ptr<TKinematicTreeCollider> parse_compound_collider( const std::vector<const parsing::TElement*>& colliders_elms, const std::string& collider_name );
+
+        std::pair<std::unique_ptr<visualizer::TDrawable>, TMat4> parse_primitive_drawable( const parsing::TElement* drawable_elm, const std::string& body_parent_name );
+
+        std::unique_ptr<visualizer::TDrawable> parse_compound_drawable( const std::vector<const parsing::TElement*>& drawables_elms, const std::string& drawable_name );
 
         TInertialData parse_inertia( const parsing::TElement* inertial_elm );
 
