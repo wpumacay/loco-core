@@ -172,28 +172,24 @@ namespace kintree {
 
                 kinbody->SetLocalTransform( convert_global_to_local_transform( parent_world_tf, body_world_tf ) );
 
-// @todo: handle single-resource cases properly
-////                 auto kinbody_joints = kinbody->joints();
-////                 for ( auto kin_joint : kinbody_joints )
-////                 {
-////                     // Grab global|world transform (recall in global coordinates the local-tfs are world-tfs)
-////                     const auto joint_world_tf = kin_joint->local_tf();
-////                     kin_joint->SetLocalTransform( convert_global_to_local_transform( body_world_tf, joint_world_tf ) );
-////                 }
-////                 auto kinbody_colliders = kinbody->colliders();
-////                 for ( auto kin_collider : kinbody_colliders )
-////                 {
-////                     // Grab global|world transform (recall in global coordinates the local-tfs are world-tfs)
-////                     const auto collider_world_tf = kin_collider->local_tf();
-////                     kin_collider->SetLocalTransform( convert_global_to_local_transform( body_world_tf, collider_world_tf ) );
-////                 }
-////                 auto kinbody_drawables = kinbody->drawables();
-////                 for ( auto kin_drawable : kinbody_drawables )
-////                 {
-////                     // Grab global|world transform (recall in global coordinates the local-tfs are world-tfs)
-////                     const auto drawable_world_tf = kin_drawable->local_tf();
-////                     kin_drawable->SetLocalTransform( convert_global_to_local_transform( body_world_tf, drawable_world_tf ) );
-////                 }
+                if ( auto kin_joint = kinbody->joint() )
+                {
+                    // Grab global|world transform (recall in global coordinates the local-tfs are world-tfs)
+                    const auto joint_world_tf = kin_joint->local_tf();
+                    kin_joint->SetLocalTransform( convert_global_to_local_transform( body_world_tf, joint_world_tf ) );
+                }
+                if ( auto kin_collider = kinbody->collider() )
+                {
+                    // Grab global|world transform (recall in global coordinates the local-tfs are world-tfs)
+                    const auto collider_world_tf = kin_collider->local_tf();
+                    kin_collider->SetLocalTransform( convert_global_to_local_transform( body_world_tf, collider_world_tf ) );
+                }
+                if ( auto kin_drawable = kinbody->drawable() )
+                {
+                    // Grab global|world transform (recall in global coordinates the local-tfs are world-tfs)
+                    const auto drawable_world_tf = kin_drawable->local_tf();
+                    kin_drawable->SetLocalTransform( convert_global_to_local_transform( body_world_tf, drawable_world_tf ) );
+                }
 
                 auto kinbody_children = kinbody->children();
                 for ( auto kin_child_body : kinbody_children )
