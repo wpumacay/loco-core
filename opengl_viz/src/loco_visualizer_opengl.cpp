@@ -336,8 +336,7 @@ namespace visualizer {
         auto singleBodiesList = m_scenarioRef->GetSingleBodiesList();
         for ( auto singleBody : singleBodiesList )
         {
-            auto collision = singleBody->collider();
-            if ( collision )
+            if ( auto collision = singleBody->collider() )
             {
                 auto gl_renderable = loco::visualizer::CreateRenderable( collision->data() );
                 if ( gl_renderable )
@@ -354,8 +353,7 @@ namespace visualizer {
                 }
             }
 
-            auto visual = singleBody->drawable();
-            if ( visual )
+            if ( auto visual = singleBody->drawable() )
             {
                 auto gl_renderable = loco::visualizer::CreateRenderable( visual->data() );
                 if ( gl_renderable )
@@ -382,49 +380,46 @@ namespace visualizer {
         for ( auto kinematic_tree : kinematic_trees_list )
         {
             auto kintree_bodies = kinematic_tree->GetBodiesList();
-// @todo: handle single-resource cases properly
-////             for ( auto kintree_body : kintree_bodies )
-////             {
-////                 auto kintree_colliders = kintree_body->colliders();
-////                 for ( auto kintree_collider : kintree_colliders )
-////                 {
-////                     auto gl_renderable = loco::visualizer::CreateRenderable( kintree_collider->data() );
-////                     if ( gl_renderable )
-////                     {
-////                         auto gl_renderableRef = m_glApplication->scene()->AddRenderable( std::move( gl_renderable ) );
-////                         auto gl_drawableAdapter = std::make_unique<TOpenGLDrawableAdapter>( kintree_collider, kintree_collider->data(), gl_renderableRef );
-////                         gl_drawableAdapter->SetVisible( false );
-////                         gl_drawableAdapter->SetWireframe( true );
-////                         kintree_collider->SetDrawableAdapter( gl_drawableAdapter.get() );
-////                         m_vizDrawableAdapters.push_back( std::move( gl_drawableAdapter ) );
-////                     }
-////                 }
-//// 
-////                 auto kintree_drawables = kintree_body->drawables();
-////                 for ( auto kintree_drawable : kintree_drawables )
-////                 {
-////                     auto gl_renderable = loco::visualizer::CreateRenderable( kintree_drawable->data() );
-////                     if ( gl_renderable )
-////                     {
-////                         auto gl_renderableRef = m_glApplication->scene()->AddRenderable( std::move( gl_renderable ) );
-////                         auto gl_drawableAdapter = std::make_unique<TOpenGLDrawableAdapter>( kintree_drawable, kintree_drawable->data(), gl_renderableRef );
-////                         const auto shape_type = kintree_drawable->shape();
-////                         const bool use_mesh_color = ( ( shape_type == eShapeType::CONVEX_MESH || shape_type == eShapeType::TRIANGULAR_MESH ) &&
-////                                                       tinymath::allclose( kintree_drawable->data().ambient, loco::DEFAULT_AMBIENT_COLOR ) &&
-////                                                       tinymath::allclose( kintree_drawable->data().diffuse, loco::DEFAULT_DIFFUSE_COLOR ) &&
-////                                                       tinymath::allclose( kintree_drawable->data().specular, loco::DEFAULT_SPECULAR_COLOR ) );
-////                         if ( !use_mesh_color )
-////                         {
-////                             gl_drawableAdapter->SetAmbientColor( kintree_drawable->data().ambient );
-////                             gl_drawableAdapter->SetDiffuseColor( kintree_drawable->data().diffuse );
-////                             gl_drawableAdapter->SetSpecularColor( kintree_drawable->data().specular );
-////                         }
-////                         gl_drawableAdapter->SetShininess( kintree_drawable->data().shininess );
-////                         kintree_drawable->SetDrawableAdapter( gl_drawableAdapter.get() );
-////                         m_vizDrawableAdapters.push_back( std::move( gl_drawableAdapter ) );
-////                     }
-////                 }
-////             }
+            for ( auto kintree_body : kintree_bodies )
+            {
+                if ( auto kintree_collider = kintree_body->collider() )
+                {
+                    auto gl_renderable = loco::visualizer::CreateRenderable( kintree_collider->data() );
+                    if ( gl_renderable )
+                    {
+                        auto gl_renderableRef = m_glApplication->scene()->AddRenderable( std::move( gl_renderable ) );
+                        auto gl_drawableAdapter = std::make_unique<TOpenGLDrawableAdapter>( kintree_collider, kintree_collider->data(), gl_renderableRef );
+                        gl_drawableAdapter->SetVisible( false );
+                        gl_drawableAdapter->SetWireframe( true );
+                        kintree_collider->SetDrawableAdapter( gl_drawableAdapter.get() );
+                        m_vizDrawableAdapters.push_back( std::move( gl_drawableAdapter ) );
+                    }
+                }
+
+                if ( auto kintree_drawable = kintree_body->drawable() )
+                {
+                    auto gl_renderable = loco::visualizer::CreateRenderable( kintree_drawable->data() );
+                    if ( gl_renderable )
+                    {
+                        auto gl_renderableRef = m_glApplication->scene()->AddRenderable( std::move( gl_renderable ) );
+                        auto gl_drawableAdapter = std::make_unique<TOpenGLDrawableAdapter>( kintree_drawable, kintree_drawable->data(), gl_renderableRef );
+                        const auto shape_type = kintree_drawable->shape();
+                        const bool use_mesh_color = ( ( shape_type == eShapeType::CONVEX_MESH || shape_type == eShapeType::TRIANGULAR_MESH ) &&
+                                                      tinymath::allclose( kintree_drawable->data().ambient, loco::DEFAULT_AMBIENT_COLOR ) &&
+                                                      tinymath::allclose( kintree_drawable->data().diffuse, loco::DEFAULT_DIFFUSE_COLOR ) &&
+                                                      tinymath::allclose( kintree_drawable->data().specular, loco::DEFAULT_SPECULAR_COLOR ) );
+                        if ( !use_mesh_color )
+                        {
+                            gl_drawableAdapter->SetAmbientColor( kintree_drawable->data().ambient );
+                            gl_drawableAdapter->SetDiffuseColor( kintree_drawable->data().diffuse );
+                            gl_drawableAdapter->SetSpecularColor( kintree_drawable->data().specular );
+                        }
+                        gl_drawableAdapter->SetShininess( kintree_drawable->data().shininess );
+                        kintree_drawable->SetDrawableAdapter( gl_drawableAdapter.get() );
+                        m_vizDrawableAdapters.push_back( std::move( gl_drawableAdapter ) );
+                    }
+                }
+            }
         }
     }
 
