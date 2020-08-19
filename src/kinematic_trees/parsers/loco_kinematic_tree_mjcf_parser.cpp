@@ -112,15 +112,20 @@ namespace kintree {
                 }
 
                 // Add current kintree-body as child of its parent (as it should be)
+                auto base_kintree_body_name = kintree_body->name();
                 auto current_kintree_body_ptr = kintree_body.get();
-                body_parent->AddChild( std::move( kintree_body ), kintree_body_local_tf );
+                if ( !body_parent )
+                    m_KintreeRef->SetRoot( std::move( kintree_body ) );
+                else
+                    body_parent->AddChild( std::move( kintree_body ), kintree_body_local_tf );
                 body_parent = current_kintree_body_ptr;
+                kintree_body_local_tf = loco::TMat4();
 
                 // All joints but the first one are related to a dummy body (current body "kintree_body" will have
                 // to change as we append new dummy bodies as they are being created by their associated joints)
                 for ( ssize_t i = 1; i < children_joints.size(); i++ )
                 {
-                    const std::string kintree_body_name = kintree_body->name() + "_dummy_" + std::to_string( i - 1 );
+                    const std::string kintree_body_name = base_kintree_body_name + "_dummy_" + std::to_string( i - 1 );
                     kintree_body = std::make_unique<TKinematicTreeBody>( kintree_body_name, TKinematicTreeBodyData() );
                     auto kintree_joint_for_dummy_local_tf_pair = parse_joint( children_joints[i] );
                     auto kintree_joint_for_dummy = std::move( kintree_joint_for_dummy_local_tf_pair.first );
@@ -131,7 +136,7 @@ namespace kintree {
 
                     // Set current kintree_body as parent of the new dummy body
                     auto current_kintree_dummy_body_ptr = kintree_body.get();
-                    body_parent->AddChild( std::move( kintree_body ), loco::TMat4() );
+                    body_parent->AddChild( std::move( kintree_body ), kintree_body_local_tf );
                     body_parent = current_kintree_dummy_body_ptr;
                 }
             }
