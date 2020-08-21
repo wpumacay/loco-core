@@ -89,6 +89,11 @@ namespace kintree {
 
         TMat4 convert_global_to_local_transform( const TMat4& parent_world_tf, const TMat4& this_world_tf );
 
+        bool is_planar_group( const std::vector<const parsing::TElement*>& joints_elms );
+
+        std::unique_ptr<TKinematicTreeJoint> make_planar_joint( const std::vector<const parsing::TElement*>& joints_elms,
+                                                                const std::string& joint_name );
+
     private :
 
         /// Reference to the kinematic-tree being constructed from the loaded mjcf-model

@@ -103,41 +103,49 @@ namespace kintree {
             auto children_joints = body_elm->GetChildrenOfType( MJCF_JOINT_TAG );
             /**/ if ( children_joints.size() > 1 ) // Handle multiple joints using dummy bodies
             {
-                // The first joint is related to the current kintree-body
+                if ( is_planar_group( children_joints ) ) // If all joints for a planar-group, replace joints by single planar joint
                 {
-                    auto kintree_joint_local_tf_pair = parse_joint( children_joints.front() );
-                    auto kintree_joint = std::move( kintree_joint_local_tf_pair.first );
-                    auto kintree_joint_local_tf = kintree_joint_local_tf_pair.second;
-                    kintree_body->SetJoint( std::move( kintree_joint ), kintree_joint_local_tf );
+                    auto kintree_joint = make_planar_joint( children_joints, kintree_body->name() + "_jnt_planar" );
+                    kintree_body->SetJoint( std::move( kintree_joint ), loco::TMat4() );
                 }
-
-                // Add current kintree-body as child of its parent (as it should be)
-                auto base_kintree_body_name = kintree_body->name();
-                auto current_kintree_body_ptr = kintree_body.get();
-                if ( !body_parent )
-                    m_KintreeRef->SetRoot( std::move( kintree_body ) );
-                else
-                    body_parent->AddChild( std::move( kintree_body ), kintree_body_local_tf );
-                body_parent = current_kintree_body_ptr;
-                kintree_body_local_tf = loco::TMat4();
-
-                // All joints but the first one are related to a dummy body (current body "kintree_body" will have
-                // to change as we append new dummy bodies as they are being created by their associated joints)
-                for ( ssize_t i = 1; i < children_joints.size(); i++ )
+                else // Non-planar group creates dummy bodies as usual
                 {
-                    const std::string kintree_body_name = base_kintree_body_name + "_dummy_" + std::to_string( i - 1 );
-                    kintree_body = std::make_unique<TKinematicTreeBody>( kintree_body_name, TKinematicTreeBodyData() );
-                    auto kintree_joint_for_dummy_local_tf_pair = parse_joint( children_joints[i] );
-                    auto kintree_joint_for_dummy = std::move( kintree_joint_for_dummy_local_tf_pair.first );
-                    auto kintree_joint_for_dummy_local_tf = kintree_joint_for_dummy_local_tf_pair.second;
-                    kintree_body->SetJoint( std::move( kintree_joint_for_dummy ), kintree_joint_for_dummy_local_tf );
-                    if ( i == children_joints.size() - 1 )
-                        break; // Last dummy-body is added in the section below, and remains as the current kintree_body
+                    // The first joint is related to the current kintree-body
+                    {
+                        auto kintree_joint_local_tf_pair = parse_joint( children_joints.front() );
+                        auto kintree_joint = std::move( kintree_joint_local_tf_pair.first );
+                        auto kintree_joint_local_tf = kintree_joint_local_tf_pair.second;
+                        kintree_body->SetJoint( std::move( kintree_joint ), kintree_joint_local_tf );
+                    }
 
-                    // Set current kintree_body as parent of the new dummy body
-                    auto current_kintree_dummy_body_ptr = kintree_body.get();
-                    body_parent->AddChild( std::move( kintree_body ), kintree_body_local_tf );
-                    body_parent = current_kintree_dummy_body_ptr;
+                    // Add current kintree-body as child of its parent (as it should be)
+                    auto base_kintree_body_name = kintree_body->name();
+                    auto current_kintree_body_ptr = kintree_body.get();
+                    if ( !body_parent )
+                        m_KintreeRef->SetRoot( std::move( kintree_body ) );
+                    else
+                        body_parent->AddChild( std::move( kintree_body ), kintree_body_local_tf );
+                    body_parent = current_kintree_body_ptr;
+                    kintree_body_local_tf = loco::TMat4();
+
+                    // All joints but the first one are related to a dummy body (current body "kintree_body" will have
+                    // to change as we append new dummy bodies as they are being created by their associated joints)
+                    for ( ssize_t i = 1; i < children_joints.size(); i++ )
+                    {
+                        const std::string kintree_body_name = base_kintree_body_name + "_dummy_" + std::to_string( i - 1 );
+                        kintree_body = std::make_unique<TKinematicTreeBody>( kintree_body_name, TKinematicTreeBodyData() );
+                        auto kintree_joint_for_dummy_local_tf_pair = parse_joint( children_joints[i] );
+                        auto kintree_joint_for_dummy = std::move( kintree_joint_for_dummy_local_tf_pair.first );
+                        auto kintree_joint_for_dummy_local_tf = kintree_joint_for_dummy_local_tf_pair.second;
+                        kintree_body->SetJoint( std::move( kintree_joint_for_dummy ), kintree_joint_for_dummy_local_tf );
+                        if ( i == children_joints.size() - 1 )
+                            break; // Last dummy-body is added in the section below, and remains as the current kintree_body
+
+                        // Set current kintree_body as parent of the new dummy body
+                        auto current_kintree_dummy_body_ptr = kintree_body.get();
+                        body_parent->AddChild( std::move( kintree_body ), kintree_body_local_tf );
+                        body_parent = current_kintree_dummy_body_ptr;
+                    }
                 }
             }
             else if ( children_joints.size() == 1 ) // Handle the single-joints into a normal joint (no dummies)
@@ -982,5 +990,53 @@ namespace kintree {
         auto b2_to_world = this_world_tf;
         auto b2_to_b1 = b1_to_world.inverse() * b2_to_world;
         return b2_to_b1;
+    }
+
+    bool TKinematicTreeMjcfParser::is_planar_group( const std::vector<const parsing::TElement*>& joints_elms )
+    {
+        // We're looking for a group of 3 joints: ( slide, slide, hinge )
+        if ( joints_elms.size() != 3 )
+            return false;
+
+        const eJointType jnt_t_0 = loco::ToEnumJoint( get_string( joints_elms[0], "type", "hinge" ) );
+        const eJointType jnt_t_1 = loco::ToEnumJoint( get_string( joints_elms[1], "type", "hinge" ) );
+        const eJointType jnt_t_2 = loco::ToEnumJoint( get_string( joints_elms[2], "type", "hinge" ) );
+
+        if ( ( jnt_t_0 == eJointType::REVOLUTE && jnt_t_1 == eJointType::PRISMATIC && jnt_t_2 == eJointType::PRISMATIC ) ||
+             ( jnt_t_1 == eJointType::REVOLUTE && jnt_t_2 == eJointType::PRISMATIC && jnt_t_0 == eJointType::PRISMATIC ) ||
+             ( jnt_t_2 == eJointType::REVOLUTE && jnt_t_0 == eJointType::PRISMATIC && jnt_t_1 == eJointType::PRISMATIC ) )
+            return true;
+        return false;
+    }
+
+    std::unique_ptr<TKinematicTreeJoint> TKinematicTreeMjcfParser::make_planar_joint( 
+                                            const std::vector<const parsing::TElement*>& joints_elms,
+                                            const std::string& joint_name )
+    {
+        TKinematicTreeJointData kintree_joint_data;
+        kintree_joint_data.type = eJointType::PLANAR;
+
+        const eJointType jnt_t_0 = loco::ToEnumJoint( get_string( joints_elms[0], "type", "hinge" ) );
+        const eJointType jnt_t_1 = loco::ToEnumJoint( get_string( joints_elms[1], "type", "hinge" ) );
+        const eJointType jnt_t_2 = loco::ToEnumJoint( get_string( joints_elms[2], "type", "hinge" ) );
+
+        /**/ if ( jnt_t_0 == eJointType::REVOLUTE && jnt_t_1 == eJointType::PRISMATIC && jnt_t_2 == eJointType::PRISMATIC )
+        {
+            kintree_joint_data.plane_axis_1 = get_vec3( joints_elms[1], "axis", { 1.0f, 0.0f, 0.0f } );
+            kintree_joint_data.plane_axis_2 = get_vec3( joints_elms[2], "axis", { 1.0f, 0.0f, 0.0f } );
+        }
+        else if ( jnt_t_1 == eJointType::REVOLUTE && jnt_t_2 == eJointType::PRISMATIC && jnt_t_0 == eJointType::PRISMATIC )
+        {
+            kintree_joint_data.plane_axis_1 = get_vec3( joints_elms[2], "axis", { 1.0f, 0.0f, 0.0f } );
+            kintree_joint_data.plane_axis_2 = get_vec3( joints_elms[0], "axis", { 1.0f, 0.0f, 0.0f } );
+        }
+        else if ( jnt_t_2 == eJointType::REVOLUTE && jnt_t_0 == eJointType::PRISMATIC && jnt_t_1 == eJointType::PRISMATIC )
+        {
+            kintree_joint_data.plane_axis_1 = get_vec3( joints_elms[0], "axis", { 1.0f, 0.0f, 0.0f } );
+            kintree_joint_data.plane_axis_2 = get_vec3( joints_elms[1], "axis", { 1.0f, 0.0f, 0.0f } );
+        }
+        return std::make_unique<TKinematicTreePlanarJoint>( joint_name,
+                                                            kintree_joint_data.plane_axis_1,
+                                                            kintree_joint_data.plane_axis_2 );
     }
 }}
