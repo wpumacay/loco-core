@@ -37,13 +37,13 @@ namespace kintree {
 
         const TKinematicTreeBody* body() const { return m_BodyRef; }
 
-        std::vector<TIKinematicTreeColliderAdapter*> colliders_adapters();
+        TIKinematicTreeColliderAdapter* collider_adapter() { return m_ColliderAdapter.get(); }
 
-        std::vector<const TIKinematicTreeColliderAdapter*> colliders_adapters() const;
+        const TIKinematicTreeColliderAdapter* collider_adapter() const { return m_ColliderAdapter.get(); }
 
-        std::vector<TIKinematicTreeJointAdapter*> joints_adapters();
+        TIKinematicTreeJointAdapter* joint_adapter() { return m_JointAdapter.get(); }
 
-        std::vector<const TIKinematicTreeJointAdapter*> joints_adapters() const;
+        const TIKinematicTreeJointAdapter* joint_adapter() const { return m_JointAdapter.get(); };
 
         bool detached() const { return m_Detached; }
 
@@ -54,8 +54,8 @@ namespace kintree {
         /// Flags used to check resource state (either linked to simulation or not)
         bool m_Detached = false;
         /// Adapter for related collider object
-        std::vector<std::unique_ptr<TIKinematicTreeColliderAdapter>> m_CollidersAdapters;
+        std::unique_ptr<TIKinematicTreeColliderAdapter> m_ColliderAdapter = nullptr;
         /// Adapter for related joint object
-        std::vector<std::unique_ptr<TIKinematicTreeJointAdapter>> m_JointsAdapters;
+        std::unique_ptr<TIKinematicTreeJointAdapter> m_JointAdapter = nullptr;
     };
 }}
