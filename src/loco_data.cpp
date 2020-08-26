@@ -21,7 +21,8 @@ namespace loco
 
     std::string ToString( const eJointType& type )
     {
-        /**/ if ( type == eJointType::FREE ) return "free";
+        /**/ if ( type == eJointType::NONE ) return "none";
+        else if ( type == eJointType::FREE ) return "free";
         else if ( type == eJointType::FIXED ) return "fixed";
         else if ( type == eJointType::REVOLUTE ) return "revolute";
         else if ( type == eJointType::PRISMATIC ) return "prismatic";

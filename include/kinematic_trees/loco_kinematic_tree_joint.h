@@ -9,7 +9,7 @@ namespace kintree {
     struct TKinematicTreeJointData
     {
         /// Enum representing the type of joint
-        eJointType type = eJointType::REVOLUTE;
+        eJointType type = eJointType::NONE;
         /// Limits for the movement of the body along the joint (if high < low, then no limits)
         TVec2 limits = { 1.0f, -1.0f };
         /// Stiffness value (for the spring-like behaviour)

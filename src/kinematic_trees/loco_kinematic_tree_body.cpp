@@ -20,46 +20,56 @@ namespace kintree {
         m_Data = body_data;
 
         const auto& collider_data = body_data.collider;
-        m_Collider = std::make_unique<TKinematicTreeCollider>( name + SUFFIX_COLLIDER, collider_data );
-        m_Collider->SetParentBody( this, collider_data.localTransform );
+        if ( collider_data.type != eShapeType::NONE )
+        {
+            m_Collider = std::make_unique<TKinematicTreeCollider>( name + SUFFIX_COLLIDER, collider_data );
+            m_Collider->SetParentBody( this, collider_data.localTransform );
+        }
 
         const auto& drawable_data = body_data.drawable;
-        m_Drawable = std::make_unique<visualizer::TDrawable>( name + SUFFIX_DRAWABLE, drawable_data );
-        m_Drawable->SetParentObject( this );
-        m_Drawable->SetLocalTransform( drawable_data.localTransform );
+        if ( drawable_data.type != eShapeType::NONE )
+        {
+            m_Drawable = std::make_unique<visualizer::TDrawable>( name + SUFFIX_DRAWABLE, drawable_data );
+            m_Drawable->SetParentObject( this );
+            m_Drawable->SetLocalTransform( drawable_data.localTransform );
+        }
 
         const auto& joint_data = body_data.joint;
-        /**/ if ( joint_data.type == eJointType::REVOLUTE )
-            m_Joint = std::make_unique<TKinematicTreeRevoluteJoint>( name + SUFFIX_JOINT,
-                                                                     joint_data.local_axis,
-                                                                     joint_data.limits,
-                                                                     joint_data.stiffness,
-                                                                     joint_data.armature,
-                                                                     joint_data.damping );
-        else if ( joint_data.type == eJointType::PRISMATIC )
-            m_Joint = std::make_unique<TKinematicTreePrismaticJoint>( name + SUFFIX_JOINT,
-                                                                      joint_data.local_axis,
-                                                                      joint_data.limits,
-                                                                      joint_data.stiffness,
-                                                                      joint_data.armature,
-                                                                      joint_data.damping );
-        else if ( joint_data.type == eJointType::SPHERICAL )
-            m_Joint = std::make_unique<TKinematicTreeSphericalJoint>( name + SUFFIX_JOINT,
-                                                                      joint_data.limits,
-                                                                      joint_data.stiffness,
-                                                                      joint_data.armature,
-                                                                      joint_data.damping );
-        else if ( joint_data.type == eJointType::PLANAR )
-            m_Joint = std::make_unique<TKinematicTreePlanarJoint>( name + SUFFIX_JOINT,
-                                                                   joint_data.plane_axis_1,
-                                                                   joint_data.plane_axis_2 );
-        else if ( joint_data.type == eJointType::FIXED )
-            m_Joint = std::make_unique<TKinematicTreeFixedJoint>( name + SUFFIX_JOINT );
-        else if ( joint_data.type == eJointType::FREE )
-            m_Joint = std::make_unique<TKinematicTreeFreeJoint>( name + SUFFIX_JOINT );
-        else
-            LOCO_CORE_CRITICAL( "TKinematicTreeBody >>> found undefined joint-type while constructing kintree-body {0}", m_name );
-        m_Joint->SetParentBody( this, joint_data.local_tf );
+        if ( joint_data.type != eJointType::NONE )
+        {
+            /**/ if ( joint_data.type == eJointType::REVOLUTE )
+                m_Joint = std::make_unique<TKinematicTreeRevoluteJoint>( name + SUFFIX_JOINT,
+                                                                         joint_data.local_axis,
+                                                                         joint_data.limits,
+                                                                         joint_data.stiffness,
+                                                                         joint_data.armature,
+                                                                         joint_data.damping );
+            else if ( joint_data.type == eJointType::PRISMATIC )
+                m_Joint = std::make_unique<TKinematicTreePrismaticJoint>( name + SUFFIX_JOINT,
+                                                                          joint_data.local_axis,
+                                                                          joint_data.limits,
+                                                                          joint_data.stiffness,
+                                                                          joint_data.armature,
+                                                                          joint_data.damping );
+            else if ( joint_data.type == eJointType::SPHERICAL )
+                m_Joint = std::make_unique<TKinematicTreeSphericalJoint>( name + SUFFIX_JOINT,
+                                                                          joint_data.limits,
+                                                                          joint_data.stiffness,
+                                                                          joint_data.armature,
+                                                                          joint_data.damping );
+            else if ( joint_data.type == eJointType::PLANAR )
+                m_Joint = std::make_unique<TKinematicTreePlanarJoint>( name + SUFFIX_JOINT,
+                                                                       joint_data.plane_axis_1,
+                                                                       joint_data.plane_axis_2 );
+            else if ( joint_data.type == eJointType::FIXED )
+                m_Joint = std::make_unique<TKinematicTreeFixedJoint>( name + SUFFIX_JOINT );
+            else if ( joint_data.type == eJointType::FREE )
+                m_Joint = std::make_unique<TKinematicTreeFreeJoint>( name + SUFFIX_JOINT );
+            else
+                LOCO_CORE_CRITICAL( "TKinematicTreeBody >>> found undefined joint-type while constructing kintree-body {0}", m_name );
+
+            m_Joint->SetParentBody( this, joint_data.local_tf );
+        }
     }
 
     TKinematicTreeBody::~TKinematicTreeBody()

@@ -24,7 +24,8 @@ namespace loco
     /// Type of joint, used for joint-related objects in the simulation
     enum class eJointType : uint8_t
     {
-        FREE = 0,
+        NONE = 0,
+        FREE,
         REVOLUTE,
         PRISMATIC,
         SPHERICAL,
@@ -94,7 +95,7 @@ namespace loco
     struct TShapeData
     {
         /// Type of shape used for collider|drawable
-        eShapeType type;
+        eShapeType type = eShapeType::NONE;
         /// Size of the collider|drawable's shape
         TVec3 size;
         /// Data structure with required information for mesh-type shapes
@@ -128,7 +129,7 @@ namespace loco
         TJointData() 
             : limits( { 1.0f, -1.0f } ), stiffness( 0.0f ), 
               armature( 0.0f ), damping( 0.0f ), ref( 0.0f ), 
-              nqpos( 0 ), nqvel( 0 )
+              nqpos( 0 ), nqvel( 0 ), type( eJointType::NONE )
         {
         #if defined( LOCO_CORE_USE_TRACK_ALLOCS )
             if ( tinyutils::Logger::IsActive() )
