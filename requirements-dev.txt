@@ -1,0 +1,10 @@
+numpy
+setuptools
+pytest
+pylint
+black
+cmakelang
+cpplint
+pre-commit
+ipython
+ipykernel
