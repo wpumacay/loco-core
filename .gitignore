@@ -27,5 +27,3 @@ simulation.xml
 sess_*.json
 session_*.json
 
-# @todo: delete once porting+refactoring has been completed
-## _legacy/
