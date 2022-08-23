@@ -1,9 +1,0 @@
-# dependencies exclusions
-cat1*
-imgui*
-spdlog*
-pybind11*
-tiny_math*
-tiny_utils*
-tiny_renderer*
-googletest*
