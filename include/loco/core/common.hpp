@@ -13,11 +13,12 @@
 
 #include <utils/logging.hpp>
 
-using Vec2 = math::Vector2<float>;
-using Vec3 = math::Vector3<float>;
-using Vec4 = math::Vector4<float>;
-using Quat = math::Quaternion<float>;
-using Mat4 = math::Matrix4<float>;
+using Scalar = float;
+using Vec2 = math::Vector2<Scalar>;
+using Vec3 = math::Vector3<Scalar>;
+using Vec4 = math::Vector4<Scalar>;
+using Quat = math::Quaternion<Scalar>;
+using Mat4 = math::Matrix4<Scalar>;
 
 namespace loco {
 
@@ -34,7 +35,7 @@ constexpr size_t NUM_QPOS_JOINT_SPHERICAL = 4;
 /// Number of generalized coordinates for free|none joints : 7qpos, 6qvel
 constexpr size_t NUM_QPOS_JOINT_FREE = 7;
 /// Default density (density of water 1000 kg/m3 ) used for mass calculations
-constexpr double DEFAULT_DENSITY = 1000.0;
+constexpr Scalar DEFAULT_DENSITY = static_cast<Scalar>(1000.0);
 
 /// Represents all available shapes
 enum class eShapeType {
@@ -79,11 +80,11 @@ struct MeshData {
     /// Absolute path to the mesh resource (if creating mesh from file)
     std::string filepath;
     /// User vertex-data of the mesh resource (if creating programmatically)
-    const float* vertices = nullptr;
+    const Scalar* vertices = nullptr;
     /// Number of elements in the vertices buffer
     size_t n_vertices = 0;
     /// User index-data of the mesh resource (if creating programmatically)
-    const uint32_t* faces = nullptr;
+    const Scalar* faces = nullptr;
     /// Number of elements in the faces buffer
     size_t n_indices = 0;
 };
@@ -95,7 +96,7 @@ struct HeightfieldData {
     /// Number of samples of the hfield's area in the y-dimension
     size_t n_depth_samples = 0;
     /// Elevation data stored in row-major order, and normalized to range [0-1]
-    const float* heights = nullptr;
+    const Scalar* heights = nullptr;
 };
 
 /// Represents the data that fully describes a shape
