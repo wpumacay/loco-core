@@ -1,21 +1,23 @@
 #pragma once
 
-// clang-format off
 #include <cstdlib>
 
-#include <loco/math/vec2_t_impl.hpp>
-#include <loco/math/vec3_t_impl.hpp>
-#include <loco/math/vec4_t_impl.hpp>
-#include <loco/math/quat_t_impl.hpp>
-#include <loco/math/mat4_t_impl.hpp>
+#include <string>
+#include <vector>
 
-#include <loco/utils/logging.hpp>
-// clang-format on
+#include <math/vec2_t.hpp>
+#include <math/vec3_t.hpp>
+#include <math/vec4_t.hpp>
+#include <math/quat_t.hpp>
+#include <math/mat4_t.hpp>
 
-using Vec2 = loco::math::Vector2<float>;
-using Vec3 = loco::math::Vector3<float>;
-using Vec4 = loco::math::Vector4<float>;
-using Quat = loco::math::Quaternion<float>;
+#include <utils/logging.hpp>
+
+using Vec2 = math::Vector2<float>;
+using Vec3 = math::Vector3<float>;
+using Vec4 = math::Vector4<float>;
+using Quat = math::Quaternion<float>;
+using Mat4 = math::Matrix4<float>;
 
 namespace loco {
 
@@ -33,6 +35,84 @@ constexpr size_t NUM_QPOS_JOINT_SPHERICAL = 4;
 constexpr size_t NUM_QPOS_JOINT_FREE = 7;
 /// Default density (density of water 1000 kg/m3 ) used for mass calculations
 constexpr double DEFAULT_DENSITY = 1000.0;
+
+/// Represents all available shapes
+enum class eShapeType {
+    /// Represents a plane, defined by its width and depth
+    PLANE,
+    /// Represents a box, defined by its width, height and depth
+    BOX,
+    /// Represents a sphere, defined by its radius
+    SPHERE,
+    /// Represents a cylinder, defined by its height and radius
+    CYLINDER,
+    /// Represents a capsule, defined by its height and radius
+    CAPSULE,
+    /// Represents an ellipsoid, defined by its radii
+    ELLIPSOID,
+    /// Represents a convex mesh, defined by its vertices
+    CONVEX_MESH,
+    /// Represents a triangular mesh, defined by its vertices
+    TRIANGULAR_MESH,
+    /// Represents a heghtfield, defined by its elevation data over an area
+    HEIGHTFIELD,
+    /// Represents a compound shape, defined by its children
+    COMPOUND,
+};
+
+/// Returns the string representation of the given shape type
+auto ToString(const eShapeType& shape_type) -> std::string;
+
+/// Represents all available dynamics options
+enum class eDynamicsType {
+    /// Defines an object that is dynamic, i.e. physics applies to this object
+    DYNAMIC,
+    /// Defines an object that is static, i.e. physics updates don't apply to it
+    STATIC,
+};
+
+/// Returns the string representation of the given dynamics option
+auto ToString(const eDynamicsType& dyn_type) -> std::string;
+
+/// Represents user-defined mesh data (for convex and triangular shapes)
+struct MeshData {
+    /// Absolute path to the mesh resource (if creating mesh from file)
+    std::string filepath;
+    /// User vertex-data of the mesh resource (if creating programmatically)
+    const float* vertices = nullptr;
+    /// Number of elements in the vertices buffer
+    size_t n_vertices = 0;
+    /// User index-data of the mesh resource (if creating programmatically)
+    const uint32_t* faces = nullptr;
+    /// Number of elements in the faces buffer
+    size_t n_indices = 0;
+};
+
+/// Represents user-defined heightfield data (for heightfield shapes)
+struct HeightfieldData {
+    /// Number of samples of the hfield's area in the x-dimension
+    size_t n_width_samples = 0;
+    /// Number of samples of the hfield's area in the y-dimension
+    size_t n_depth_samples = 0;
+    /// Elevation data stored in row-major order, and normalized to range [0-1]
+    const float* heights = nullptr;
+};
+
+/// Represents the data that fully describes a shape
+struct ShapeData {
+    /// Type of this shape
+    eShapeType type = eShapeType::SPHERE;
+    /// Size of the shape
+    Vec3 size;
+    /// Mesh data required for convex and triangular mesh shapes
+    MeshData mesh_data;
+    /// Heightfield data required for heightfield shapes
+    HeightfieldData hfield_data;
+    /// List of children shapes (in case of compound shapes)
+    std::vector<ShapeData> children;
+    /// Local transform w.r.t. parent shape (otherwise not used if no parent)
+    Mat4 local_tf;
+};
 
 }  // namespace loco
 

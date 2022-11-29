@@ -1,3 +1,5 @@
+include_guard()
+
 # ~~~
 # CMake configuration for third-party dependencies.
 #
@@ -6,10 +8,8 @@
 # * tinyxml2
 # * pybind11
 # * catch2
-# * glfw
-# * assimp
-# * loco-utils
-# * loco-math
+# * utils
+# * math
 #
 # - Based on the superbuild script by jeffamstutz for ospray
 #   https://github.com/jeffamstutz/superbuild_ospray/blob/main/macros.cmake
@@ -18,26 +18,10 @@
 # ~~~
 
 # -------------------------------------
-find_package(OpenGL REQUIRED)
-
-# -------------------------------------
 option(FIND_OR_FETCH_USE_SYSTEM_PACKAGE
        "Whether or not to give priority to system-wide package search" OFF)
 
 # cmake-format: off
-# ------------------------------------------------------------------------------
-# Use nlohmann's json library (parse some resource files for custom formats)
-# ------------------------------------------------------------------------------
-loco_find_or_fetch_dependency(
-  USE_SYSTEM_PACKAGE FALSE
-  PACKAGE_NAME json
-  LIBRARY_NAME json
-  GIT_REPO https://github.com/nlohmann/json.git
-  GIT_TAG v3.11.2
-  TARGETS nlohmann_json::nlohmann_json
-  BUILD_ARGS
-    -DJSON_BuildTests=OFF
-  EXCLUDE_FROM_ALL)
 
 # ------------------------------------------------------------------------------
 # Use leethomason's xml library (parse urdf resource files)
@@ -51,6 +35,25 @@ loco_find_or_fetch_dependency(
   TARGETS tinyxml2::tinyxml2
   BUILD_ARGS
     -Dtinyxml2_BUILD_TESTING=OFF
+  EXCLUDE_FROM_ALL)
+
+# ------------------------------------------------------------------------------
+# Spdlog is used for the logging functionality (internally uses the fmt lib)
+# ------------------------------------------------------------------------------
+loco_find_or_fetch_dependency(
+  USE_SYSTEM_PACKAGE ${FIND_OR_FETCH_USE_SYSTEM_PACKAGE}
+  PACKAGE_NAME spdlog
+  LIBRARY_NAME spdlog
+  GIT_REPO https://github.com/gabime/spdlog.git
+  GIT_TAG v1.9.2
+  TARGETS spdlog::spdlog
+  BUILD_ARGS
+    -DSPDLOG_BUILD_SHARED=OFF
+    -DSPDLOG_BUILD_EXAMPLE=OFF
+    -DSPDLOG_BUILD_EXAMPLE_HO=OFF
+    -DSPDLOG_BUILD_TESTS=OFF
+    -DSPDLOG_BUILD_TESTS_HO=OFF
+    -DSPDLOG_BUILD_BENCH=OFF
   EXCLUDE_FROM_ALL)
 
 # ------------------------------------------------------------------------------
@@ -93,59 +96,14 @@ if (catch2_POPULATED)
 endif()
 
 # ------------------------------------------------------------------------------
-# Use GLFW from sources (as it might not be installed in the system). We use
-# GLFW in order to create a window with a proper GL context in many platforms.
-# Recall that this might not be the only backend for window creation (e.g. Qt)
-# ------------------------------------------------------------------------------
-loco_find_or_fetch_dependency(
-  USE_SYSTEM_PACKAGE ${FIND_OR_FETCH_USE_SYSTEM_PACKAGE}
-  PACKAGE_NAME glfw3
-  LIBRARY_NAME glfw3
-  GIT_REPO https://github.com/glfw/glfw.git
-  GIT_TAG 3.3.8
-  TARGETS glfw
-  BUILD_ARGS
-    -DGLFW_BUILD_EXAMPLES=OFF
-    -DGLFW_BUILD_TESTS=OFF
-    -DGLFW_BUILD_DOCS=OFF
-    -DGLFW_INSTALL=OFF
-  EXCLUDE_FROM_ALL)
-# Make an alias (sorry, kind of an OCD thingy xD)
-add_library(glfw::glfw ALIAS glfw)
-
-# ------------------------------------------------------------------------------
-# Use Assimp from sources (again, might not be installed in the user's system).
-# We use it for the wide support that it gives us to load models from various
-# formats (e.g. GLTF, OBJ, etc.) and to avoid to re-write our own loaders
-# ------------------------------------------------------------------------------
-loco_find_or_fetch_dependency(
-  USE_SYSTEM_PACKAGE ${FIND_OR_FETCH_USE_SYSTEM_PACKAGE}
-  PACKAGE_NAME assimp
-  LIBRARY_NAME assimp
-  GIT_REPO https://github.com/assimp/assimp.git
-  GIT_TAG master
-  TARGETS assimp::assimp
-  BUILD_ARGS
-    -DBUILD_SHARED_LIBS=OFF
-    -DASSIMP_BUILD_FRAMEWORK=OFF
-    -DASSIMP_DOUBLE_PRECISION=OFF
-    -DASSIMP_BUILD_ASSIMP_TOOLS=OFF
-    -DASSIMP_BUILD_SAMPLES=OFF
-    -DASSIMP_BUILD_TESTS=OFF
-    -DASSIMP_INSTALL=OFF
-    -DASSIMP_HUNTER_ENABLED=OFF
-    -DASSIMP_INJECT_DEBUG_POSTFIX=OFF
-  EXCLUDE_FROM_ALL)
-
-# ------------------------------------------------------------------------------
 # LocoUtils exposes some utilities that we'll use (like logs, profiling, etc.)
 # ------------------------------------------------------------------------------
 loco_find_or_fetch_dependency(
   USE_SYSTEM_PACKAGE FALSE
-  LIBRARY_NAME loco_utils
-  GIT_REPO https://github.com/wpumacay/loco_utils.git
+  LIBRARY_NAME utils
+  GIT_REPO https://github.com/wpumacay/utils.git
   GIT_TAG dev
-  TARGETS loco::utils
+  TARGETS utils::utils
   BUILD_ARGS
     -DLOCOUTILS_BUILD_PYTHON_BINDINGS=ON
     -DLOCOUTILS_BUILD_EXAMPLES=OFF
@@ -158,10 +116,10 @@ loco_find_or_fetch_dependency(
 # ------------------------------------------------------------------------------
 loco_find_or_fetch_dependency(
   USE_SYSTEM_PACKAGE FALSE
-  LIBRARY_NAME loco_math
-  GIT_REPO https://github.com/wpumacay/loco_math.git
+  LIBRARY_NAME math
+  GIT_REPO https://github.com/wpumacay/math.git
   GIT_TAG dev
-  TARGETS loco::math
+  TARGETS math::math math::math_py_helpers
   BUILD_ARGS
     -DLOCOMATH_BUILD_PYTHON_BINDINGS=ON
     -DLOCOMATH_BUILD_EXAMPLES=OFF

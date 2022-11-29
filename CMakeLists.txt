@@ -16,7 +16,7 @@ include(${loco_cmake_SOURCE_DIR}/Index.cmake)
 project(
   Loco
   VERSION 0.0.1
-  DESCRIPTION "Locomotion framework"
+  DESCRIPTION "A locomotion framework for DeepRL research"
   HOMEPAGE_URL "https://github.com/wpumacay/loco-core"
   LANGUAGES C CXX)
 
@@ -25,12 +25,12 @@ option(LOCO_BUILD_PROFILING "Build with profiling tools enabled" ON)
 option(LOCO_BUILD_PYTHON_BINDINGS "Build Python bindings" ON)
 option(LOCO_BUILD_EXAMPLES "Build C/C++ examples" ON)
 option(LOCO_BUILD_TESTS "Build C/C++ tests" ON)
-option(LOCO_BUILD_DOCS "Build documentation" OFF)
+option(LOCO_BUILD_DOCS "Build documentation" ON)
 
 loco_initialize_project()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-include(LocoDependencies)
+include(Dependencies)
 
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/)
 
@@ -42,7 +42,7 @@ loco_create_target(loco STATIC
   INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/include
   TARGET_DEPENDENCIES
-    loco::math loco::utils nlohmann_json::nlohmann_json tinyxml2::tinyxml2
+    math::math utils::utils tinyxml2::tinyxml2
   WARNING_AS_ERRORS
     FALSE)
 
