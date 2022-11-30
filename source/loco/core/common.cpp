@@ -2,6 +2,15 @@
 
 namespace loco {
 
+auto ToString(const eBackendType& backend_type) -> std::string {
+    switch (backend_type) {
+        case eBackendType::NONE:
+            return "none";
+        case eBackendType::MUJOCO:
+            return "mujoco";
+    }
+}
+
 auto ToString(const eShapeType& shape_type) -> std::string {
     switch (shape_type) {
         case eShapeType::PLANE:

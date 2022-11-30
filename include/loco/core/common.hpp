@@ -20,6 +20,9 @@ using Vec4 = math::Vector4<Scalar>;
 using Quat = math::Quaternion<Scalar>;
 using Mat4 = math::Matrix4<Scalar>;
 
+// NOLINTNEXTLINE
+#define ToScalar(x) static_cast<Scalar>(x)
+
 namespace loco {
 
 /// Maximum number of generalized coordinates possible (3-xyz + 4-quat)
@@ -36,6 +39,17 @@ constexpr size_t NUM_QPOS_JOINT_SPHERICAL = 4;
 constexpr size_t NUM_QPOS_JOINT_FREE = 7;
 /// Default density (density of water 1000 kg/m3 ) used for mass calculations
 constexpr Scalar DEFAULT_DENSITY = static_cast<Scalar>(1000.0);
+
+/// Represents all available physics engines that can be used as backends
+enum class eBackendType {
+    /// Represents a dummy backend (mostly for visualization purposes)
+    NONE,
+    /// Represents the MuJoCo physics engine as available backend
+    MUJOCO
+};
+
+/// Returns the string representation of the given backend enumerator
+auto ToString(const eBackendType& backend_type) -> std::string;
 
 /// Represents all available shapes
 enum class eShapeType {

@@ -36,22 +36,22 @@ set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/)
 
 # cmake-format: off
 # -------------------------------------
-loco_create_target(loco STATIC
+loco_create_target(LocoCoreCpp STATIC
   SOURCES
     ${SOURCE_DIR}/core/common.cpp
+    ${SOURCE_DIR}/core/scenario_t.cpp
   INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/include
   TARGET_DEPENDENCIES
     math::math utils::utils tinyxml2::tinyxml2
-  WARNING_AS_ERRORS
+  WARNINGS_AS_ERRORS
     FALSE)
-
 # cmake-format: on
 
-if(LOCO_BUILD_LOGS)
-  target_compile_definitions(loco PUBLIC -DLOCO_LOGS_ENABLED)
-endif()
+include(Definitions)
 
-if(LOCO_BUILD_PROFILING)
-  target_compile_definitions(loco PUBLIC -DLOCO_PROFILING_ENABLED)
+add_library(loco::core ALIAS LocoCoreCpp)
+
+if(LOCO_BUILD_EXAMPLES)
+  add_subdirectory(examples/cpp)
 endif()
