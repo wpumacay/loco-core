@@ -27,6 +27,10 @@ option(LOCO_BUILD_EXAMPLES "Build C/C++ examples" ON)
 option(LOCO_BUILD_TESTS "Build C/C++ tests" ON)
 option(LOCO_BUILD_DOCS "Build documentation" ON)
 
+option(LOCO_BUILD_BACKEND_MUJOCO "Build with support for MuJoCo" ON)
+option(LOCO_BUILD_BACKEND_BULLET "Build with support for Bullet" ON)
+option(LOCO_BUILD_BACKEND_DART "Build with support for Dart" ON)
+
 loco_initialize_project()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
@@ -40,10 +44,13 @@ loco_create_target(LocoCoreCpp STATIC
   SOURCES
     ${SOURCE_DIR}/core/common.cpp
     ${SOURCE_DIR}/core/scenario_t.cpp
+    # ${SOURCE_DIR}/backends/scenario_impl_mujoco.cpp
+    # ${SOURCE_DIR}/backends/scenario_impl_bullet.cpp
+    # ${SOURCE_DIR}/backends/scenario_impl_dart.cpp
   INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/include
   TARGET_DEPENDENCIES
-    math::math utils::utils tinyxml2::tinyxml2
+    math::math utils::utils tinyxml2::tinyxml2 mujoco::mujoco bullet::bullet
   WARNINGS_AS_ERRORS
     FALSE)
 # cmake-format: on

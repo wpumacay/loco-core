@@ -24,6 +24,59 @@ option(FIND_OR_FETCH_USE_SYSTEM_PACKAGE
 # cmake-format: off
 
 # ------------------------------------------------------------------------------
+# MuJoCo is one of the supported physics backends for simulation
+# ------------------------------------------------------------------------------
+# Make sure we avoid including tests (might conflict due to gtest)
+set(MUJOCO_BUILD_TESTS OFF CACHE BOOL "Don't build MuJoCo unittests")
+
+loco_find_or_fetch_dependency(
+  USE_SYSTEM_PACKAGE ${FIND_OR_FETCH_USE_SYSTEM_PACKAGE}
+  PACKAGE_NAME mujoco
+  LIBRARY_NAME mujoco
+  GIT_REPO https://github.com/deepmind/mujoco.git
+  GIT_TAG 2.3.0
+  TARGETS mujoco::mujoco
+  BUILD_ARGS
+    -DMUJOCO_BUILD_EXAMPLES=OFF
+    -DMUJOCO_BUILD_SIMULATE=OFF
+    -DMUJOCO_BUILD_TESTS=OFF
+    -DMUJOCO_TEST_PYTHON_UTIL=OFF
+  EXCLUDE_FROM_ALL)
+
+# ------------------------------------------------------------------------------
+# Bullet is one of the supported physics backends for simulation
+# ------------------------------------------------------------------------------
+# Make sure we avoid including tests (might conflict due to gtest)
+set(BUILD_UNIT_TESTS OFF CACHE BOOL "Don't build bullet unittests")
+
+loco_find_or_fetch_dependency(
+  USE_SYSTEM_PACKAGE ${FIND_OR_FETCH_USE_SYSTEM_PACKAGE}
+  PACKAGE_NAME Bullet
+  LIBRARY_NAME bullet
+  GIT_REPO https://github.com/bulletphysics/bullet3.git
+  GIT_TAG 3.24
+  TARGETS LinearMath BulletCollision BulletDynamics
+  BUILD_ARGS
+    -DBUILD_BULLET2_DEMOS=OFF
+    -DBUILD_BULLET3=OFF
+    -DBUILD_PYBULLET=OFF
+    -DBUILD_EXTRAS=OFF
+    -DBUILD_CLSOCKET=OFF
+    -DBUILD_CPU_DEMOS=OFF
+    -DBUILD_EGL=OFF
+    -DBUILD_ENET=OFF
+    -DBUILD_OPENGL3_DEMOS=OFF
+    -DBUILD_UNIT_TESTS=OFF
+  EXCLUDE_FROM_ALL)
+
+# Group the required bullet libraries into a single target to ease its usage
+add_library(bullet INTERFACE)
+target_link_libraries(bullet INTERFACE LinearMath)
+target_link_libraries(bullet INTERFACE BulletCollision)
+target_link_libraries(bullet INTERFACE BulletDynamics)
+add_library(bullet::bullet ALIAS bullet)
+
+# ------------------------------------------------------------------------------
 # Use leethomason's xml library (parse urdf resource files)
 # ------------------------------------------------------------------------------
 loco_find_or_fetch_dependency(
