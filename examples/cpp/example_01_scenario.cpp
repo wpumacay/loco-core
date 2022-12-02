@@ -1,12 +1,15 @@
 #include <loco/core/scenario_t.hpp>
+#include <loco/core/simulation_t.hpp>
 
 auto main() -> int {
-    // Create a simple scenario and try out its API
-    loco::core::Scenario scenario;
-    scenario.Initialize(loco::eBackendType::NONE);
+    auto scenario = std::make_shared<loco::core::Scenario>();
+    auto sim = std::make_shared<loco::core::Simulation>(
+        scenario, loco::eBackendType::NONE);
 
-    scenario.SetTimeStep(ToScalar(0.01));
-    scenario.SetGravity({ToScalar(0.0), ToScalar(0.0), ToScalar(-1.62)});
+    sim->Init();
+
+    sim->SetTimeStep(ToScalar(0.01));
+    sim->SetGravity({ToScalar(0.0), ToScalar(0.0), ToScalar(-1.62)});
 
     return 0;
 }

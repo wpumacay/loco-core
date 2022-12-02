@@ -74,6 +74,7 @@ add_library(bullet INTERFACE)
 target_link_libraries(bullet INTERFACE LinearMath)
 target_link_libraries(bullet INTERFACE BulletCollision)
 target_link_libraries(bullet INTERFACE BulletDynamics)
+target_include_directories(bullet INTERFACE ${bullet_SOURCE_DIR}/src)
 add_library(bullet::bullet ALIAS bullet)
 
 # ------------------------------------------------------------------------------

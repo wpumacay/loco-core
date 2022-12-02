@@ -44,9 +44,7 @@ loco_create_target(LocoCoreCpp STATIC
   SOURCES
     ${SOURCE_DIR}/core/common.cpp
     ${SOURCE_DIR}/core/scenario_t.cpp
-    # ${SOURCE_DIR}/backends/scenario_impl_mujoco.cpp
-    # ${SOURCE_DIR}/backends/scenario_impl_bullet.cpp
-    # ${SOURCE_DIR}/backends/scenario_impl_dart.cpp
+    ${SOURCE_DIR}/core/simulation_t.cpp
   INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/include
   TARGET_DEPENDENCIES

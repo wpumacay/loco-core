@@ -18,6 +18,7 @@ using Vec2 = math::Vector2<Scalar>;
 using Vec3 = math::Vector3<Scalar>;
 using Vec4 = math::Vector4<Scalar>;
 using Quat = math::Quaternion<Scalar>;
+using Mat3 = math::Matrix3<Scalar>;
 using Mat4 = math::Matrix4<Scalar>;
 
 // NOLINTNEXTLINE
