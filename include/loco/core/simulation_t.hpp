@@ -29,6 +29,9 @@ class Simulation {
     /// Initializes the internal backend and sets the simulation ready
     auto Init() -> void;
 
+    /// Resets the scenario to its initial configuration
+    auto Reset() -> void;
+
     /// Advances the simulation by the given amount of time
     auto Step(Scalar step) -> void;
 
@@ -37,6 +40,21 @@ class Simulation {
 
     /// Sets the gravity for this simulation
     auto SetGravity(const Vec3& gravity) -> void;
+
+    /// Returns the current value of the simulation's timestep
+    auto timestep() const -> Scalar { return m_TimeStep; }
+
+    /// Returns the current value of the simulation's gravity vector
+    auto gravity() const -> Vec3 { return m_Gravity; }
+
+    /// Returns the type of backend used internally for the simulation
+    auto backend_type() const -> eBackendType { return m_BackendType; }
+
+    /// Returns a mutable reference to the internal pimpl
+    auto impl() -> SimulationImpl* { return m_BackendImpl.get(); }
+
+    /// Returns an unmutable reference to the internal pimpl
+    auto impl() const -> const SimulationImpl* { return m_BackendImpl.get(); }
 
  protected:
     /// Scenario to be simulated

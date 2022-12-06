@@ -8,6 +8,10 @@ auto ToString(const eBackendType& backend_type) -> std::string {
             return "none";
         case eBackendType::MUJOCO:
             return "mujoco";
+        case eBackendType::BULLET:
+            return "bullet";
+        case eBackendType::DART:
+            return "dart";
     }
 }
 

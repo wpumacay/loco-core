@@ -45,8 +45,12 @@ constexpr Scalar DEFAULT_DENSITY = static_cast<Scalar>(1000.0);
 enum class eBackendType {
     /// Represents a dummy backend (mostly for visualization purposes)
     NONE,
-    /// Represents the MuJoCo physics engine as available backend
-    MUJOCO
+    /// Represents the usage of MuJoCo as physics backend
+    MUJOCO,
+    /// Represents the usage of Bullet as physics backend
+    BULLET,
+    /// Represents the usage of DART as physics backend
+    DART,
 };
 
 /// Returns the string representation of the given backend enumerator
