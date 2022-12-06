@@ -11,6 +11,7 @@
 #include <loco/core/scenario_t.hpp>
 #include <loco/core/simulation_t.hpp>
 #include <loco/backends/bullet/simulation_impl_bullet.hpp>
+#include <loco/backends/mujoco/simulation_impl_mujoco.hpp>
 
 #include <cassert>
 
@@ -43,6 +44,24 @@ auto main() -> int {
         } else if (bt_world_type == BT_DEFORMABLE_MULTIBODY_DYNAMICS_WORLD) {
             LOG_TRACE("Using btMultibodyDynamicsWorld as btWorld");
         }
+    } else if (sim->backend_type() == loco::eBackendType::MUJOCO) {
+        auto* pimpl =
+            dynamic_cast<loco::mujoco::SimulationImplMujoco*>(sim->impl());
+
+        assert(pimpl != nullptr);
+
+        LOG_INFO("We're using MuJoCo as physics backend");
+
+        auto* mjc_model = pimpl->mujoco_model();
+        auto* mjc_data = pimpl->mujoco_data();
+        assert(mjc_model != nullptr);
+        assert(mjc_data != nullptr);
+
+        LOG_TRACE("Number of generalized coordinates {0}", mjc_model->nq);
+        LOG_TRACE("Number of degrees of freedom", mjc_model->nv);
+        LOG_TRACE("Number of constraints", mjc_data->nefc);
+        LOG_TRACE("Number of detected contacts", mjc_data->ncon);
+
     } else {
         LOG_INFO("We're using a dummy backend");
     }

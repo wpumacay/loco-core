@@ -11,6 +11,7 @@
 #endif
 
 #include <loco/backends/bullet/simulation_impl_bullet.hpp>
+#include <loco/backends/mujoco/simulation_impl_mujoco.hpp>
 
 namespace loco {
 namespace core {
@@ -21,7 +22,8 @@ auto Simulation::Init() -> void {
             m_BackendImpl = std::make_unique<SimulationImplNone>(m_Scenario);
             break;
         case eBackendType::MUJOCO:
-            // TODO(wilbert): use here SimulationImplMujoco
+            m_BackendImpl =
+                std::make_unique<mujoco::SimulationImplMujoco>(m_Scenario);
             break;
         case eBackendType::BULLET:
             m_BackendImpl =

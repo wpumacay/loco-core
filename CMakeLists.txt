@@ -49,8 +49,8 @@ loco_create_target(LocoCoreCpp STATIC
     ${SOURCE_DIR}/backends/bullet/common_bullet.cpp
     ${SOURCE_DIR}/backends/bullet/simulation_impl_bullet.cpp
     # MuJoCo backend implementations
-    #### ${SOURCE_DIR}/backends/mujoco/common_mujoco.cpp
-    #### ${SOURCE_DIR}/backends/mujoco/simulation_impl_mujoco.cpp
+    ${SOURCE_DIR}/backends/mujoco/common_mujoco.cpp
+    ${SOURCE_DIR}/backends/mujoco/simulation_impl_mujoco.cpp
     # DART backend implementation
     #### ${SOURCE_DIR}/backends/dart/common_dart.cpp
     #### ${SOURCE_DIR}/backends/dart/simulation_impl_dart.cpp
