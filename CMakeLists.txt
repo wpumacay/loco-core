@@ -57,7 +57,12 @@ loco_create_target(LocoCoreCpp STATIC
   INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/include
   TARGET_DEPENDENCIES
-    math::math utils::utils tinyxml2::tinyxml2 mujoco::mujoco bullet::bullet
+    math::math
+    utils::utils
+    tinyxml2::tinyxml2
+    mujoco::mujoco
+    bullet::bullet
+    dart::dart
   WARNINGS_AS_ERRORS
     FALSE)
 # cmake-format: on
