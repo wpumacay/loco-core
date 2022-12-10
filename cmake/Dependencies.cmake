@@ -106,7 +106,6 @@ loco_find_or_fetch_dependency(
 # Group the required DART libraries into a single target to ease its usage
 add_library(dart_libs INTERFACE)
 target_link_libraries(dart_libs INTERFACE dart)
-target_link_libraries(dart_libs INTERFACE dart-collision-bullet)
 target_include_directories(dart_libs INTERFACE ${dart_SOURCE_DIR}/src)
 add_library(dart::dart ALIAS dart_libs)
 
