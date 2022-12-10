@@ -78,39 +78,6 @@ target_include_directories(bullet INTERFACE ${bullet_SOURCE_DIR}/src)
 add_library(bullet::bullet ALIAS bullet)
 
 # ------------------------------------------------------------------------------
-# DART is one of the supported physics backends for simulation
-# ------------------------------------------------------------------------------
-loco_find_or_fetch_dependency(
-  USE_SYSTEM_PACKAGE FALSE
-  PACKAGE_NAME dart
-  LIBRARY_NAME dart
-  GIT_REPO https://github.com/dartsim/dart.git
-  GIT_TAG v6.12.2
-  TARGETS dart dart-collision-bullet
-  BUILD_ARGS
-    -DDART_BUILD_GUI_OSG=OFF
-    -DDART_BUILD_EXTRAS=OFF
-    -DDART_BUILD_DARTPY=OFF
-    -DDART_CODECOV=OFF
-  PATCH_COMMAND
-    "${GIT_EXECUTABLE}"
-    "apply"
-    "-q"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/dart-no-uninstall-target.patch"
-    "||"
-    "${CMAKE_COMMAND}"
-    "-E"
-    "true"
-  EXCLUDE_FROM_ALL)
-
-# Group the required DART libraries into a single target to ease its usage
-add_library(dart_libs INTERFACE)
-target_link_libraries(dart_libs INTERFACE dart)
-target_link_libraries(dart_libs INTERFACE dart-collision-bullet)
-target_include_directories(dart_libs INTERFACE ${dart_SOURCE_DIR}/src)
-add_library(dart::dart ALIAS dart_libs)
-
-# ------------------------------------------------------------------------------
 # Use leethomason's xml library (parse urdf resource files)
 # ------------------------------------------------------------------------------
 loco_find_or_fetch_dependency(
