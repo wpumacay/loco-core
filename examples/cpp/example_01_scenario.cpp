@@ -6,6 +6,7 @@
 #pragma clang diagnostic ignored "-Wdouble-promotion"
 #pragma clang diagnostic ignored "-Wimplicit-float-conversion"
 #pragma clang diagnostic ignored "-Wcast-align"
+#pragma clang diagnostic ignored "-Wunused-variable"
 #endif
 
 #include <loco/core/scenario_t.hpp>
@@ -27,14 +28,14 @@ auto main() -> int {
 
     // Grab the internal pimpl and play around with it (just for completeness)
     if (sim->backend_type() == loco::eBackendType::BULLET) {
-        auto* pimpl =
-            dynamic_cast<loco::bullet::SimulationImplBullet*>(sim->impl());
+        auto& pimpl =
+            dynamic_cast<loco::bullet::SimulationImplBullet&>(sim->impl());
 
         assert(pimpl != nullptr);
 
         LOG_INFO("We're using Bullet as physics backend");
 
-        auto* bt_world = pimpl->bullet_world();
+        auto* bt_world = pimpl.bullet_world();
         assert(bt_world != nullptr);
 
         auto bt_world_type = bt_world->getWorldType();
@@ -45,22 +46,23 @@ auto main() -> int {
             LOG_TRACE("Using btMultibodyDynamicsWorld as btWorld");
         }
     } else if (sim->backend_type() == loco::eBackendType::MUJOCO) {
-        auto* pimpl =
-            dynamic_cast<loco::mujoco::SimulationImplMujoco*>(sim->impl());
+        // NOLINTNEXTLINE
+        auto& pimpl =
+            dynamic_cast<loco::mujoco::SimulationImplMujoco&>(sim->impl());
 
         assert(pimpl != nullptr);
 
         LOG_INFO("We're using MuJoCo as physics backend");
 
-        auto* mjc_model = pimpl->mujoco_model();
-        auto* mjc_data = pimpl->mujoco_data();
-        assert(mjc_model != nullptr);
-        assert(mjc_data != nullptr);
+        //// auto* mjc_model = pimpl.mujoco_model();
+        //// auto* mjc_data = pimpl.mujoco_data();
+        //// assert(mjc_model != nullptr);
+        //// assert(mjc_data != nullptr);
 
-        LOG_TRACE("Number of generalized coordinates {0}", mjc_model->nq);
-        LOG_TRACE("Number of degrees of freedom", mjc_model->nv);
-        LOG_TRACE("Number of constraints", mjc_data->nefc);
-        LOG_TRACE("Number of detected contacts", mjc_data->ncon);
+        //// LOG_TRACE("Number of generalized coordinates {0}", mjc_model->nq);
+        //// LOG_TRACE("Number of degrees of freedom", mjc_model->nv);
+        //// LOG_TRACE("Number of constraints", mjc_data->nefc);
+        //// LOG_TRACE("Number of detected contacts", mjc_data->ncon);
 
     } else {
         LOG_INFO("We're using a dummy backend");

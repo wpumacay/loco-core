@@ -51,10 +51,10 @@ class Simulation {
     auto backend_type() const -> eBackendType { return m_BackendType; }
 
     /// Returns a mutable reference to the internal pimpl
-    auto impl() -> SimulationImpl* { return m_BackendImpl.get(); }
+    auto impl() -> SimulationImpl& { return *m_BackendImpl; }
 
     /// Returns an unmutable reference to the internal pimpl
-    auto impl() const -> const SimulationImpl* { return m_BackendImpl.get(); }
+    auto impl() const -> const SimulationImpl& { return *m_BackendImpl; }
 
  protected:
     /// Scenario to be simulated
