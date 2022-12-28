@@ -2,12 +2,19 @@
     "folders":
     [
         {
-            "path": "."
+            "path": ".",
         }
     ],
     "settings": {
         "ClangFormat": {
-            "format_on_save": true
-        }
-    }
+            "format_on_save": true,
+        },
+        "LSP":
+        {
+            "clangd":
+            {
+                "enabled": true,
+            },
+        },
+    },
 }
