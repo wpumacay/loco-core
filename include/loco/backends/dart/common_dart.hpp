@@ -1,8 +1,7 @@
 #pragma once
 
 #include <loco/core/common.hpp>
-#include <dart/collision/bullet/BulletCollisionDetector.hpp>
-#include <dart/collision/ode/OdeCollisionDetector.hpp>
+#include <dart/dart.hpp>
 
 namespace loco {
 namespace dart {

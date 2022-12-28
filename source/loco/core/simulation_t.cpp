@@ -12,6 +12,7 @@
 
 #include <loco/backends/bullet/simulation_impl_bullet.hpp>
 #include <loco/backends/mujoco/simulation_impl_mujoco.hpp>
+#include <loco/backends/dart/simulation_impl_dart.hpp>
 
 namespace loco {
 namespace core {
@@ -30,7 +31,8 @@ auto Simulation::Init() -> void {
                 std::make_unique<bullet::SimulationImplBullet>(m_Scenario);
             break;
         case eBackendType::DART:
-            // TODO(wilbert): use here SimulationImplDart
+            m_BackendImpl =
+                std::make_unique<dart::SimulationImplDart>(m_Scenario);
             break;
     }
 

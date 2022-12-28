@@ -13,13 +13,14 @@
 #include <loco/core/simulation_t.hpp>
 #include <loco/backends/bullet/simulation_impl_bullet.hpp>
 #include <loco/backends/mujoco/simulation_impl_mujoco.hpp>
+#include <loco/backends/dart/simulation_impl_dart.hpp>
 
 #include <cassert>
 
 auto main() -> int {
     auto scenario = std::make_shared<loco::core::Scenario>();
     auto sim = std::make_shared<loco::core::Simulation>(
-        scenario, loco::eBackendType::BULLET);
+        scenario, loco::eBackendType::DART);
 
     sim->Init();
 
@@ -50,8 +51,6 @@ auto main() -> int {
         auto& pimpl =
             dynamic_cast<loco::mujoco::SimulationImplMujoco&>(sim->impl());
 
-        assert(pimpl != nullptr);
-
         LOG_INFO("We're using MuJoCo as physics backend");
 
         //// auto* mjc_model = pimpl.mujoco_model();
@@ -64,6 +63,12 @@ auto main() -> int {
         //// LOG_TRACE("Number of constraints", mjc_data->nefc);
         //// LOG_TRACE("Number of detected contacts", mjc_data->ncon);
 
+    } else if (sim->backend_type() == loco::eBackendType::DART) {
+        // NOLINTNEXTLINE
+        auto& pimpl =
+            dynamic_cast<loco::dart::SimulationImplDart&>(sim->impl());
+
+        LOG_INFO("We're using DART as physics backend");
     } else {
         LOG_INFO("We're using a dummy backend");
     }
