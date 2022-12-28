@@ -32,7 +32,7 @@ auto main() -> int {
     sim->SetGravity({ToScalar(0.0), ToScalar(0.0), ToScalar(-1.62)});
 
     sim->Step(ToScalar(1. / 60.));
-    // viz->Update();
+    viz->Update();
 
     // Grab the internal pimpl and play around with it (just for completeness)
     if (sim->backend_type() == loco::eBackendType::BULLET) {
