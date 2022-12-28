@@ -45,6 +45,7 @@ loco_create_target(LocoCoreCpp STATIC
     ${SOURCE_DIR}/core/common.cpp
     ${SOURCE_DIR}/core/scenario_t.cpp
     ${SOURCE_DIR}/core/simulation_t.cpp
+    ${SOURCE_DIR}/core/visualizer_t.cpp
     # Bullet backend implementations
     ${SOURCE_DIR}/backends/bullet/common_bullet.cpp
     ${SOURCE_DIR}/backends/bullet/simulation_impl_bullet.cpp

@@ -11,6 +11,7 @@
 
 #include <loco/core/scenario_t.hpp>
 #include <loco/core/simulation_t.hpp>
+#include <loco/core/visualizer_t.hpp>
 #include <loco/backends/bullet/simulation_impl_bullet.hpp>
 #include <loco/backends/mujoco/simulation_impl_mujoco.hpp>
 #include <loco/backends/dart/simulation_impl_dart.hpp>
@@ -21,11 +22,17 @@ auto main() -> int {
     auto scenario = std::make_shared<loco::core::Scenario>();
     auto sim = std::make_shared<loco::core::Simulation>(
         scenario, loco::eBackendType::DART);
+    auto viz = std::make_shared<loco::core::Visualizer>(
+        scenario, loco::eVisualizerType::NONE);
 
     sim->Init();
+    viz->Init();
 
     sim->SetTimeStep(ToScalar(0.01));
     sim->SetGravity({ToScalar(0.0), ToScalar(0.0), ToScalar(-1.62)});
+
+    sim->Step(ToScalar(1. / 60.));
+    // viz->Update();
 
     // Grab the internal pimpl and play around with it (just for completeness)
     if (sim->backend_type() == loco::eBackendType::BULLET) {

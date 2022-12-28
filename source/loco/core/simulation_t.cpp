@@ -45,6 +45,18 @@ auto Simulation::Init() -> void {
     // TODO(wilbert): initialize all objects in this scenario
 }
 
+auto Simulation::Reset() -> void {
+    if (m_BackendImpl != nullptr) {
+        m_BackendImpl->Reset();
+    }
+}
+
+auto Simulation::Step(Scalar step) -> void {
+    if (m_BackendImpl != nullptr) {
+        m_BackendImpl->Step(step);
+    }
+}
+
 auto Simulation::SetTimeStep(Scalar step) -> void {
     m_TimeStep = step;
     if (m_BackendImpl != nullptr) {
@@ -56,12 +68,6 @@ auto Simulation::SetGravity(const Vec3& gravity) -> void {
     m_Gravity = gravity;
     if (m_BackendImpl != nullptr) {
         m_BackendImpl->SetGravity(gravity);
-    }
-}
-
-auto Simulation::Reset() -> void {
-    if (m_BackendImpl != nullptr) {
-        m_BackendImpl->Reset();
     }
 }
 

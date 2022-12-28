@@ -15,6 +15,17 @@ auto ToString(const eBackendType& backend_type) -> std::string {
     }
 }
 
+auto ToString(const eVisualizerType& visualizer_type) -> std::string {
+    switch (visualizer_type) {
+        case eVisualizerType::NONE:
+            return "none";
+        case eVisualizerType::VIS_GL:
+            return "vis_gl";
+        case eVisualizerType::VIS_MESHCAT:
+            return "vis_meshcat";
+    }
+}
+
 auto ToString(const eShapeType& shape_type) -> std::string {
     switch (shape_type) {
         case eShapeType::PLANE:

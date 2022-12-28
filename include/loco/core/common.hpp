@@ -56,6 +56,19 @@ enum class eBackendType {
 /// Returns the string representation of the given backend enumerator
 auto ToString(const eBackendType& backend_type) -> std::string;
 
+/// Represents all available visualizers integrated with this framework
+enum class eVisualizerType {
+    /// Represents a dummy visualizer (for debugging purposes)
+    NONE,
+    /// Represents the GL Visualizer, implemented with our own renderer
+    VIS_GL,
+    /// Represents the Meshcat Visualizer, integrated with meshcat (external)
+    VIS_MESHCAT,
+};
+
+/// Returns the string representation of the given visualizer enumerator
+auto ToString(const eVisualizerType& visualizer_type) -> std::string;
+
 /// Represents all available shapes
 enum class eShapeType {
     /// Represents a plane, defined by its width and depth
@@ -128,10 +141,30 @@ struct ShapeData {
     MeshData mesh_data;
     /// Heightfield data required for heightfield shapes
     HeightfieldData hfield_data;
-    /// List of children shapes (in case of compound shapes)
-    std::vector<ShapeData> children;
     /// Local transform w.r.t. parent shape (otherwise not used if no parent)
     Mat4 local_tf;
+};
+
+/// Represents the data that defines a collider
+struct ColliderData : ShapeData {
+    /// The group-id used for filtering collision pair checks
+    int32_t collision_group = 1;
+    /// The mask-id used for filtering collision pair checks
+    int32_t collision_mask = 1;
+    /// The friction coefficients packed as a vec3 (sliding, rolling, etc.)
+    Vec3 friction = {ToScalar(1.0), ToScalar(0.005), ToScalar(0.0001)};
+    /// Children colliders (in case of being a commpound collider)
+    std::vector<ColliderData> children;
+};
+
+/// Represents the data that defines a drawable
+struct DrawableData : ShapeData {
+    /// The color of this drawable
+    Vec3 color = {ToScalar(0.7), ToScalar(0.5), ToScalar(0.3)};
+    /// The id of the texture of this drawable
+    std::string texture;
+    /// Children drawable (in case of being a commpound drawable)
+    std::vector<DrawableData> children;
 };
 
 }  // namespace loco
