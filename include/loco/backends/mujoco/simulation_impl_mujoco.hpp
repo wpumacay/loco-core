@@ -32,22 +32,22 @@ class SimulationImplMujoco : public core::SimulationImpl {
     auto SetGravity(const Vec3& gravity) -> void override;
 
     /// Returns a mutable reference to the internal MuJoCo simulation model
-    auto mujoco_model() -> mjModel* { return m_Model.get(); }
+    auto mujoco_model() -> mjModel&;
 
     /// Returns an unmutable reference to the internal MuJoCo simulation model
-    auto mujoco_model() const -> const mjModel* { return m_Model.get(); }
+    auto mujoco_model() const -> const mjModel&;
 
     /// Returns a mutable reference to the internal MuJoCo simulation data
-    auto mujoco_data() -> mjData* { return m_Data.get(); }
+    auto mujoco_data() -> mjData&;
 
     /// Returns an unmutable reference to the internal MuJoCo simulation data
-    auto mujoco_data() const -> const mjData* { return m_Data.get(); }
+    auto mujoco_data() const -> const mjData&;
 
     /// Returns a mutable reference to the internal MuJoCo simulation data
-    auto mujoco_scene() -> mjvScene* { return m_Scene.get(); }
+    auto mujoco_scene() -> mjvScene&;
 
     /// Returns an unmutable reference to the internal MuJoCo simulation data
-    auto mujoco_scene() const -> const mjvScene* { return m_Scene.get(); }
+    auto mujoco_scene() const -> const mjvScene&;
 
  protected:
     /// Model struct containing the simulation structure

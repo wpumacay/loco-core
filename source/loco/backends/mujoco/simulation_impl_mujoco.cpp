@@ -46,5 +46,59 @@ auto SimulationImplMujoco::SetGravity(const Vec3& gravity) -> void {
     m_Model->opt.gravity[2] = static_cast<mjtNum>(gravity.z());
 }
 
+auto SimulationImplMujoco::mujoco_model() -> mjModel& {
+    if (m_Model == nullptr) {
+        throw std::runtime_error(
+            "SimulationImplMujoco::mujoco_model >>> Must initialize the "
+            "backend first before accesing the internal mjModel struct");
+    }
+    return *m_Model;
+}
+
+auto SimulationImplMujoco::mujoco_model() const -> const mjModel& {
+    if (m_Model == nullptr) {
+        throw std::runtime_error(
+            "SimulationImplMujoco::mujoco_model >>> Must initialize the "
+            "backend first before accesing the internal mjModel struct");
+    }
+    return *m_Model;
+}
+
+auto SimulationImplMujoco::mujoco_data() -> mjData& {
+    if (m_Data == nullptr) {
+        throw std::runtime_error(
+            "SimulationImplMujoco::mujoco_data >>> Must initialize the backend "
+            "first before accessing the internal mjData struct");
+    }
+    return *m_Data;
+}
+
+auto SimulationImplMujoco::mujoco_data() const -> const mjData& {
+    if (m_Data == nullptr) {
+        throw std::runtime_error(
+            "SimulationImplMujoco::mujoco_data >>> Must initialize the backend "
+            "first before accessing the internal mjData struct");
+    }
+    return *m_Data;
+}
+
+auto SimulationImplMujoco::mujoco_scene() -> mjvScene& {
+    if (m_Scene == nullptr) {
+        throw std::runtime_error(
+            "SimulationImplMujoco::mujoco_scene >>> Must initialize the "
+            "backend first before accessing the internal mjvScene struct");
+    }
+    return *m_Scene;
+}
+
+auto SimulationImplMujoco::mujoco_scene() const -> const mjvScene& {
+    if (m_Scene == nullptr) {
+        throw std::runtime_error(
+            "SimulationImplMujoco::mujoco_scene >>> Must initialize the "
+            "backend first before accessing the internal mjvScene struct");
+    }
+    return *m_Scene;
+}
+
 }  // namespace mujoco
 }  // namespace loco

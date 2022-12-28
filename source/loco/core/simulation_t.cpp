@@ -14,6 +14,8 @@
 #include <loco/backends/mujoco/simulation_impl_mujoco.hpp>
 #include <loco/backends/dart/simulation_impl_dart.hpp>
 
+#include <stdexcept>
+
 namespace loco {
 namespace core {
 
@@ -61,6 +63,22 @@ auto Simulation::Reset() -> void {
     if (m_BackendImpl != nullptr) {
         m_BackendImpl->Reset();
     }
+}
+
+auto Simulation::impl() -> SimulationImpl& {
+    if (m_BackendImpl == nullptr) {
+        throw std::runtime_error(
+            "Simulation >>> Must initialize the simulation first");
+    }
+    return *m_BackendImpl;
+}
+
+auto Simulation::impl() const -> const SimulationImpl& {
+    if (m_BackendImpl == nullptr) {
+        throw std::runtime_error(
+            "Simulation >>> Must initialize the simulation first");
+    }
+    return *m_BackendImpl;
 }
 
 }  // namespace core
