@@ -103,7 +103,7 @@ struct MeshData {
     /// Number of elements in the vertices buffer
     size_t n_vertices = 0;
     /// User index-data of the mesh resource (if creating programmatically)
-    const Scalar* faces = nullptr;
+    const uint32_t* indices = nullptr;
     /// Number of elements in the faces buffer
     size_t n_indices = 0;
 };
