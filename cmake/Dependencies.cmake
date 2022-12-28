@@ -18,8 +18,9 @@ include_guard()
 # ~~~
 
 # -------------------------------------
+# TODO(wilbert): should use system package for backends (MuJoCo, Bullet, etc.)
 option(FIND_OR_FETCH_USE_SYSTEM_PACKAGE
-       "Whether or not to give priority to system-wide package search" OFF)
+       "Whether or not to give priority to system-wide package search" ON)
 
 # cmake-format: off
 
@@ -34,7 +35,7 @@ loco_find_or_fetch_dependency(
   PACKAGE_NAME mujoco
   LIBRARY_NAME mujoco
   GIT_REPO https://github.com/deepmind/mujoco.git
-  GIT_TAG 2.3.0
+  GIT_TAG 2.3.1
   TARGETS mujoco::mujoco
   BUILD_ARGS
     -DMUJOCO_BUILD_EXAMPLES=OFF
@@ -42,6 +43,13 @@ loco_find_or_fetch_dependency(
     -DMUJOCO_BUILD_TESTS=OFF
     -DMUJOCO_TEST_PYTHON_UTIL=OFF
   EXCLUDE_FROM_ALL)
+
+# If using system package, make sure the imported target is found
+if(USE_SYSTEM_PACKAGE)
+  if(NOT TARGET mujoco::mujoco)
+    message(WARNING "Couldn't find imported target mujoco::mujoco")
+  endif()
+endif()
 
 # ------------------------------------------------------------------------------
 # Bullet is one of the supported physics backends for simulation
@@ -71,10 +79,17 @@ loco_find_or_fetch_dependency(
 
 # Group the required bullet libraries into a single target to ease its usage
 add_library(bullet INTERFACE)
-target_link_libraries(bullet INTERFACE LinearMath)
-target_link_libraries(bullet INTERFACE BulletCollision)
-target_link_libraries(bullet INTERFACE BulletDynamics)
-target_include_directories(bullet INTERFACE ${bullet_SOURCE_DIR}/src)
+if (FIND_OR_FETCH_USE_SYSTEM_PACKAGE)
+  # Embed the exported variables from the system package
+  target_include_directories(bullet INTERFACE ${BULLET_INCLUDE_DIRS})
+  target_link_libraries(bullet INTERFACE ${BULLET_LIBRARIES})
+else()
+  # Embed information created by Bullet's CMake workflow
+  target_link_libraries(bullet INTERFACE LinearMath)
+  target_link_libraries(bullet INTERFACE BulletCollision)
+  target_link_libraries(bullet INTERFACE BulletDynamics)
+  target_include_directories(bullet INTERFACE ${bullet_SOURCE_DIR}/src)
+endif()
 add_library(bullet::bullet ALIAS bullet)
 
 # ------------------------------------------------------------------------------
@@ -95,7 +110,7 @@ loco_find_or_fetch_dependency(
 # Spdlog is used for the logging functionality (internally uses the fmt lib)
 # ------------------------------------------------------------------------------
 loco_find_or_fetch_dependency(
-  USE_SYSTEM_PACKAGE ${FIND_OR_FETCH_USE_SYSTEM_PACKAGE}
+  USE_SYSTEM_PACKAGE FALSE
   PACKAGE_NAME spdlog
   LIBRARY_NAME spdlog
   GIT_REPO https://github.com/gabime/spdlog.git
@@ -117,7 +132,7 @@ loco_find_or_fetch_dependency(
 set(PYBIND11_FINDPYTHON ON CACHE BOOL "Use newer FindPython (CMake 3.15+)")
 
 loco_find_or_fetch_dependency(
-  USE_SYSTEM_PACKAGE ${FIND_OR_FETCH_USE_SYSTEM_PACKAGE}
+  USE_SYSTEM_PACKAGE FALSE
   PACKAGE_NAME pybind11
   LIBRARY_NAME pybind11
   GIT_REPO https://github.com/pybind/pybind11.git
@@ -132,7 +147,7 @@ loco_find_or_fetch_dependency(
 # powerfull (e.g. we can make use of template-parametrized tests-cases)
 # ------------------------------------------------------------------------------
 loco_find_or_fetch_dependency(
-  USE_SYSTEM_PACKAGE ${FIND_OR_FETCH_USE_SYSTEM_PACKAGE}
+  USE_SYSTEM_PACKAGE FALSE
   PACKAGE_NAME Catch2
   LIBRARY_NAME catch2
   GIT_REPO https://github.com/catchorg/Catch2.git
