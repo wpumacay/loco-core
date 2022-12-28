@@ -32,14 +32,11 @@ auto main() -> int {
         auto& pimpl =
             dynamic_cast<loco::bullet::SimulationImplBullet&>(sim->impl());
 
-        assert(pimpl != nullptr);
-
         LOG_INFO("We're using Bullet as physics backend");
 
-        auto* bt_world = pimpl.bullet_world();
-        assert(bt_world != nullptr);
+        auto& bt_world = pimpl.bullet_world();
 
-        auto bt_world_type = bt_world->getWorldType();
+        auto bt_world_type = bt_world.getWorldType();
 
         if (bt_world_type == BT_DISCRETE_DYNAMICS_WORLD) {
             LOG_TRACE("Using btDiscreteDynamicsWorld as btWorld");

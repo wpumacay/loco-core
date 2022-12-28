@@ -32,12 +32,10 @@ class SimulationImplBullet : public core::SimulationImpl {
     auto SetGravity(const Vec3& gravity) -> void override;
 
     /// Returns a mutable reference to the internal bullet world
-    auto bullet_world() -> btDynamicsWorld* { return m_World.get(); }
+    auto bullet_world() -> btDynamicsWorld&;
 
     /// Returns an unmutable reference to the internal bullet world
-    auto bullet_world() const -> const btDynamicsWorld* {
-        return m_World.get();
-    }
+    auto bullet_world() const -> const btDynamicsWorld&;
 
  protected:
     /// Bullet's dynamics world used to simulate our scenario

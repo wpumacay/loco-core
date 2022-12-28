@@ -10,6 +10,8 @@
 
 #include <loco/backends/bullet/simulation_impl_bullet.hpp>
 
+#include <stdexcept>
+
 namespace loco {
 namespace bullet {
 
@@ -60,6 +62,24 @@ auto SimulationImplBullet::SetGravity(const Vec3& gravity) -> void {
     if (m_World != nullptr) {
         m_World->setGravity(vec3_to_bt(gravity));
     }
+}
+
+auto SimulationImplBullet::bullet_world() -> btDynamicsWorld& {
+    if (m_World == nullptr) {
+        throw std::runtime_error(
+            "SimulationImplBullet::bullet_world >>> Must initialize the "
+            "backend first before accessing the internal btDynamicsWorld");
+    }
+    return *m_World;
+}
+
+auto SimulationImplBullet::bullet_world() const -> const btDynamicsWorld& {
+    if (m_World == nullptr) {
+        throw std::runtime_error(
+            "SimulationImplBullet::bullet_world >>> Must initialize the "
+            "backend first before accessing the internal btDynamicsWorld");
+    }
+    return *m_World;
 }
 
 }  // namespace bullet
