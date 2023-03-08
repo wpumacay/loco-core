@@ -8,8 +8,10 @@
 #include <math/vec2_t.hpp>
 #include <math/vec3_t.hpp>
 #include <math/vec4_t.hpp>
-#include <math/quat_t.hpp>
+#include <math/mat3_t.hpp>
 #include <math/mat4_t.hpp>
+#include <math/quat_t.hpp>
+#include <math/euler_t.hpp>
 
 #include <utils/logging.hpp>
 
@@ -20,6 +22,7 @@ using Vec4 = math::Vector4<Scalar>;
 using Quat = math::Quaternion<Scalar>;
 using Mat3 = math::Matrix3<Scalar>;
 using Mat4 = math::Matrix4<Scalar>;
+using Euler = math::Euler<Scalar>;
 
 // NOLINTNEXTLINE
 #define ToScalar(x) static_cast<Scalar>(x)
