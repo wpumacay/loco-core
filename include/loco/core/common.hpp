@@ -115,11 +115,11 @@ struct MeshData {
     /// Absolute path to the mesh resource (if creating mesh from file)
     std::string filepath;
     /// User vertex-data of the mesh resource (if creating programmatically)
-    const Scalar* vertices = nullptr;
+    Scalar* vertices = nullptr;
     /// Number of elements in the vertices buffer
     size_t n_vertices = 0;
     /// User index-data of the mesh resource (if creating programmatically)
-    const uint32_t* indices = nullptr;
+    uint32_t* indices = nullptr;
     /// Number of elements in the faces buffer
     size_t n_indices = 0;
 };
