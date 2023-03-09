@@ -119,9 +119,9 @@ struct MeshData {
     /// Number of elements in the vertices buffer
     size_t n_vertices = 0;
     /// User index-data of the mesh resource (if creating programmatically)
-    uint32_t* indices = nullptr;
-    /// Number of elements in the faces buffer
-    size_t n_indices = 0;
+    uint32_t* faces = nullptr;
+    /// Number of faces composing this mesh
+    size_t n_faces = 0;
 };
 
 /// Represents user-defined heightfield data (for heightfield shapes)
@@ -168,6 +168,28 @@ struct DrawableData : ShapeData {
     std::string texture;
     /// Children drawable (in case of being a commpound drawable)
     std::vector<DrawableData> children;
+};
+
+/// Represents the inertial properties of a body
+struct InertialData {
+    /// The mass of the related body
+    Scalar mass = ToScalar(1.0);
+    /// The inertia matrix of the related body
+    Mat3 inertia;
+    /// The relative transform of the body's COM reference frame
+    Mat4 local_tf;
+};
+
+/// Represents the properties of a rigid body
+struct BodyData {
+    /// Dynamics type used for this rigid body
+    eDynamicsType dyntype = eDynamicsType::DYNAMIC;
+    /// Inertial properties of this rigid body
+    InertialData inertia;
+    /// Collider data of this rigid body
+    ColliderData collider;
+    /// Drawable data of this rigid body
+    DrawableData drawable;
 };
 
 }  // namespace loco
