@@ -10,9 +10,17 @@
 #pragma clang diagnostic ignored "-Wcast-align"
 #endif
 
+#if defined(LOCO_BULLET_ENABLED)
 #include <loco/backends/bullet/simulation_impl_bullet.hpp>
+#endif
+
+#if defined(LOCO_MUJOCO_ENABLED)
 #include <loco/backends/mujoco/simulation_impl_mujoco.hpp>
+#endif
+
+#if defined(LOCO_DART_ENABLED)
 #include <loco/backends/dart/simulation_impl_dart.hpp>
+#endif
 
 #include <stdexcept>
 
@@ -24,17 +32,23 @@ auto Simulation::Init() -> void {
         case eBackendType::NONE:
             m_BackendImpl = std::make_unique<SimulationImplNone>(m_Scenario);
             break;
-        case eBackendType::MUJOCO:
-            m_BackendImpl =
-                std::make_unique<mujoco::SimulationImplMujoco>(m_Scenario);
-            break;
         case eBackendType::BULLET:
+#if defined(LOCO_BULLET_ENABLED)
             m_BackendImpl =
                 std::make_unique<bullet::SimulationImplBullet>(m_Scenario);
+#endif
+            break;
+        case eBackendType::MUJOCO:
+#if defined(LOCO_MUJOCO_ENABLED)
+            m_BackendImpl =
+                std::make_unique<mujoco::SimulationImplMujoco>(m_Scenario);
+#endif
             break;
         case eBackendType::DART:
+#if defined(LOCO_DART_ENABLED)
             m_BackendImpl =
                 std::make_unique<dart::SimulationImplDart>(m_Scenario);
+#endif
             break;
     }
 

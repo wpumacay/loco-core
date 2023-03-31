@@ -12,9 +12,18 @@
 #include <loco/core/scenario_t.hpp>
 #include <loco/core/simulation_t.hpp>
 #include <loco/core/visualizer_t.hpp>
+
+#if defined(LOCO_BULLET_ENABLED)
 #include <loco/backends/bullet/simulation_impl_bullet.hpp>
+#endif
+
+#if defined(LOCO_MUJOCO_ENABLED)
 #include <loco/backends/mujoco/simulation_impl_mujoco.hpp>
+#endif
+
+#if defined(LOCO_DART_ENABLED)
 #include <loco/backends/dart/simulation_impl_dart.hpp>
+#endif
 
 #include <cassert>
 
@@ -36,6 +45,7 @@ auto main() -> int {
 
     // Grab the internal pimpl and play around with it (just for completeness)
     if (sim->backend_type() == loco::eBackendType::BULLET) {
+#if defined(LOCO_BULLET_ENABLED)
         auto& pimpl =
             dynamic_cast<loco::bullet::SimulationImplBullet&>(sim->impl());
 
@@ -50,7 +60,9 @@ auto main() -> int {
         } else if (bt_world_type == BT_DEFORMABLE_MULTIBODY_DYNAMICS_WORLD) {
             LOG_TRACE("Using btMultibodyDynamicsWorld as btWorld");
         }
+#endif
     } else if (sim->backend_type() == loco::eBackendType::MUJOCO) {
+#if defined(LOCO_MUJOCO_ENABLED)
         // NOLINTNEXTLINE
         auto& pimpl =
             dynamic_cast<loco::mujoco::SimulationImplMujoco&>(sim->impl());
@@ -66,13 +78,15 @@ auto main() -> int {
         //// LOG_TRACE("Number of degrees of freedom", mjc_model->nv);
         //// LOG_TRACE("Number of constraints", mjc_data->nefc);
         //// LOG_TRACE("Number of detected contacts", mjc_data->ncon);
-
+#endif
     } else if (sim->backend_type() == loco::eBackendType::DART) {
+#if defined(LOCO_DART_ENABLED)
         // NOLINTNEXTLINE
         auto& pimpl =
             dynamic_cast<loco::dart::SimulationImplDart&>(sim->impl());
 
         LOG_INFO("We're using DART as physics backend");
+#endif
     } else {
         LOG_INFO("We're using a dummy backend");
     }

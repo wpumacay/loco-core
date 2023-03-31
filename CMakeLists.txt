@@ -29,14 +29,14 @@ option(LOCO_BUILD_DOCS "Build documentation" ON)
 
 option(LOCO_BUILD_BACKEND_MUJOCO "Build with support for MuJoCo" ON)
 option(LOCO_BUILD_BACKEND_BULLET "Build with support for Bullet" ON)
-option(LOCO_BUILD_BACKEND_DART "Build with support for Dart" ON)
+option(LOCO_BUILD_BACKEND_DART "Build with support for Dart" OFF)
 
 loco_initialize_project()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-include(Dependencies)
+include(LocoDependencies)
 
-set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/)
+set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/source/loco/)
 
 # cmake-format: off
 # -------------------------------------
@@ -46,32 +46,26 @@ loco_create_target(LocoCoreCpp STATIC
     ${SOURCE_DIR}/core/scenario_t.cpp
     ${SOURCE_DIR}/core/simulation_t.cpp
     ${SOURCE_DIR}/core/visualizer_t.cpp
-    # Bullet backend implementations
-    ${SOURCE_DIR}/backends/bullet/common_bullet.cpp
-    ${SOURCE_DIR}/backends/bullet/simulation_impl_bullet.cpp
-    # MuJoCo backend implementations
-    ${SOURCE_DIR}/backends/mujoco/common_mujoco.cpp
-    ${SOURCE_DIR}/backends/mujoco/simulation_impl_mujoco.cpp
-    # DART backend implementations
-    ${SOURCE_DIR}/backends/dart/common_dart.cpp
-    ${SOURCE_DIR}/backends/dart/simulation_impl_dart.cpp
   INCLUDE_DIRECTORIES
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/include
   TARGET_DEPENDENCIES
     math::math
     utils::utils
     tinyxml2::tinyxml2
-    mujoco::mujoco
-    bullet::bullet
-    dart::dart
+    renderer::renderer
   WARNINGS_AS_ERRORS
     FALSE)
 # cmake-format: on
 
-include(Definitions)
+include(LocoBackendsSetup)
+include(LocoDefinitions)
 
 add_library(loco::core ALIAS LocoCoreCpp)
 
 if(LOCO_BUILD_EXAMPLES)
   add_subdirectory(examples/cpp)
+endif()
+
+if(LOCO_BUILD_PYTHON_BINDINGS)
+  add_subdirectory(python/loco)
 endif()

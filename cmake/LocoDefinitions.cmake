@@ -8,9 +8,6 @@ endif()
 # double precision, as we currently have to manually set this and expect that it
 # indeed was compiled with those options
 
-# Hint that Bullet was compiled using double precision
-target_compile_definitions(LocoCoreCpp PUBLIC -DBT_USE_DOUBLE_PRECISION)
-
 if(LOCO_BUILD_LOGS)
   target_compile_definitions(LocoCoreCpp PUBLIC -DLOCO_LOGS_ENABLED)
 endif()
@@ -25,6 +22,8 @@ endif()
 
 if(LOCO_BUILD_BACKEND_BULLET)
   target_compile_definitions(LocoCoreCpp PUBLIC -DLOCO_BULLET_ENABLED)
+  # Hint that Bullet was compiled using double precision
+  target_compile_definitions(LocoCoreCpp PUBLIC -DBT_USE_DOUBLE_PRECISION)
 endif()
 
 if(LOCO_BUILD_BACKEND_DART)
