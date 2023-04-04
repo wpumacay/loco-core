@@ -25,77 +25,43 @@ auto bindings_common(py::module& m) -> void {
         using Enum = ::loco::eBackendType;
         constexpr auto EnumName = "BackendType";  // NOLINT
         py::enum_<Enum>(m, EnumName)
-            .value("NONE", Enum::NONE,
-                   "Use a dummy backend (for visualization purposes)")
-            .value("MUJOCO", Enum::MUJOCO,
-                   "Use MuJoCo as physics backend. See https://mujoco.org for "
-                   "more information")
-            .value("BULLET", Enum::BULLET,
-                   "Use Bullet as physics backend. See https://pybullet.org "
-                   "for more information")
-            .value("DART", Enum::DART,
-                   "Use DART as physics backend. See https://dartsim.github.io "
-                   "for more information");
+            .value("NONE", Enum::NONE)
+            .value("MUJOCO", Enum::MUJOCO)
+            .value("BULLET", Enum::BULLET)
+            .value("DART", Enum::DART);
     }
 
     {
         using Enum = ::loco::eVisualizerType;
         constexpr auto EnumName = "VisualizerType";  // NOLINT
         py::enum_<Enum>(m, EnumName)
-            .value("NONE", Enum::NONE,
-                   "Use a dummy visualizer (run either headless or without "
-                   "graphics enabled)")
-            .value("VIS_GL", Enum::VIS_GL,
-                   "Use internal OpenGL-based visualizer")
-            .value("VIS_MESHCAT", Enum::VIS_MESHCAT,
-                   "Use external remote visualizer based on MeshCat");
+            .value("NONE", Enum::NONE)
+            .value("VIS_GL", Enum::VIS_GL)
+            .value("VIS_MESHCAT", Enum::VIS_MESHCAT);
     }
 
     {
         using Enum = ::loco::eShapeType;
         constexpr auto EnumName = "ShapeType";  // NOLINT
         py::enum_<Enum>(m, EnumName)
-            .value(
-                "PLANE", Enum::PLANE,
-                "Represents a plane shape. It's defined by its width and depth")
-            .value("BOX", Enum::BOX,
-                   "Represents a box shape. It's defined by its width, height "
-                   "and depth")
-            .value("CYLINDER", Enum::SPHERE,
-                   "Represents a sphere shape. It's defined by its radius")
-            .value("ELLIPSOID", Enum::ELLIPSOID,
-                   "Represents a cylinder shape. It's defined by its base "
-                   "radius and height")
-            .value("CAPSULE", Enum::CAPSULE,
-                   "Represents a capsule shape. It's defined by its cap radius "
-                   "and height")
-            .value("ELLIPSOID", Enum::ELLIPSOID,
-                   "Represents an ellipsoid shape. It's defined by its radii "
-                   "in the x, y, and z axes")
-            .value("CONVEX_MESH", Enum::CONVEX_MESH,
-                   "Represents a convex mesh shape. It's defined by the mesh "
-                   "vertices")
-            .value("TRIANGULAR_MESH", Enum::TRIANGULAR_MESH,
-                   "Represents a triangular mesh shape. It's defined by its "
-                   "mesh vertices")
-            .value("HEIGHTFIELD", Enum::HEIGHTFIELD,
-                   "Represents a heightfield shape. It's defined by its "
-                   "elevation data over some area")
-            .value("COMPOUND", Enum::COMPOUND,
-                   "Represents a compound shape. It's defined by the combining "
-                   "various shape primitives");
+            .value("PLANE", Enum::PLANE)
+            .value("BOX", Enum::BOX)
+            .value("CYLINDER", Enum::SPHERE)
+            .value("ELLIPSOID", Enum::ELLIPSOID)
+            .value("CAPSULE", Enum::CAPSULE)
+            .value("ELLIPSOID", Enum::ELLIPSOID)
+            .value("CONVEX_MESH", Enum::CONVEX_MESH)
+            .value("TRIANGULAR_MESH", Enum::TRIANGULAR_MESH)
+            .value("HEIGHTFIELD", Enum::HEIGHTFIELD)
+            .value("COMPOUND", Enum::COMPOUND);
     }
 
     {
         using Enum = ::loco::eDynamicsType;
         constexpr auto EnumName = "DynamicsType";  // NOLINT
         py::enum_<Enum>(m, EnumName)
-            .value("DYNAMIC", Enum::DYNAMIC,
-                   "Defines an object that is dynamic, i.e. physics applies to "
-                   "this object")
-            .value("STATIC", Enum::STATIC,
-                   "Defines an object that is static, i.e. physics updates "
-                   "don't apply to it");
+            .value("DYNAMIC", Enum::DYNAMIC)
+            .value("STATIC", Enum::STATIC);
     }
 
     {
