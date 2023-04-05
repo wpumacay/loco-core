@@ -2,7 +2,12 @@
 # CMake configuration rules used to generate Python Bindings via Pybind11
 # ~~~
 if(NOT TARGET loco::core)
-  loco_message("Bindings require the loco::core target" LOG_LEVEL WARNING)
+  loco_message("Bindings require the 'loco::core' target" LOG_LEVEL FATAL_ERROR)
+  return()
+endif()
+if(NOT TARGET math::math_py_helpers)
+  loco_message("Bindings requires the 'math::math_py_helpers' target" LOG_LEVEL
+               FATAL_ERROR)
   return()
 endif()
 

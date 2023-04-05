@@ -15,7 +15,7 @@ include(${loco_cmake_SOURCE_DIR}/Index.cmake)
 
 project(
   Loco
-  VERSION 0.0.1
+  VERSION 0.1.1
   DESCRIPTION "A locomotion framework for DeepRL research"
   HOMEPAGE_URL "https://github.com/wpumacay/loco-core"
   LANGUAGES C CXX)
@@ -33,21 +33,24 @@ option(LOCO_BUILD_BACKEND_DART "Build with support for Dart" OFF)
 
 loco_initialize_project()
 
+# -------------------------------------
+# Allow the usage of our helper macros and functions
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-include(LocoDependencies)
 
-set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/source/loco/)
+# -------------------------------------
+# Bring our dependencies accordingly
+include(LocoDependencies)
 
 # cmake-format: off
 # -------------------------------------
 loco_create_target(LocoCoreCpp STATIC
   SOURCES
-    ${SOURCE_DIR}/core/common.cpp
-    ${SOURCE_DIR}/core/scenario_t.cpp
-    ${SOURCE_DIR}/core/simulation_t.cpp
-    ${SOURCE_DIR}/core/visualizer_t.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/common.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/scenario_t.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/simulation_t.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/visualizer_t.cpp
   INCLUDE_DIRECTORIES
-    ${PROJECT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
   TARGET_DEPENDENCIES
     math::math
     utils::utils
@@ -60,12 +63,18 @@ loco_create_target(LocoCoreCpp STATIC
 include(LocoBackendsSetup)
 include(LocoDefinitions)
 
+# -------------------------------------
+# Expose an alias for the library (CMake namespace convention)
 add_library(loco::core ALIAS LocoCoreCpp)
 
+# -------------------------------------
+# Add C++ examples to the build process
 if(LOCO_BUILD_EXAMPLES)
   add_subdirectory(examples/cpp)
 endif()
 
+# -------------------------------------
+# Add Python bindings to the build process
 if(LOCO_BUILD_PYTHON_BINDINGS)
   add_subdirectory(python/loco)
 endif()
