@@ -1,197 +1,199 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Setup script used to build and install this package.
 
+Adapted from the pybind cmake_example template.
+https://github.com/pybind/cmake_example/blob/master/setup.py
+"""
 import os
-import sys
-import glob
+import re
 import subprocess
+import sys
 
 from setuptools import find_packages, setup, Extension
 from setuptools.command.build_ext import build_ext
-from setuptools.command.install import install
 
-VERSION_MAJOR = 0
-VERSION_MINOR = 0
-VERSION_MICRO = 1
-VERSION = '%d.%d.%d' % ( VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO )
-PREFIX = 'wp_loco_%s_' % ( VERSION )
+# Convert distutils Windows platform specifiers to CMake -A arguments
+PLAT_TO_CMAKE = {
+    "win32": "Win32",
+    "win-amd64": "x64",
+    "win-arm32": "ARM",
+    "win-arm64": "ARM64",
+}
 
-def BuildBindings( sourceDir, buildDir, cmakeArgs, buildArgs, env ):
-    if not os.path.exists( buildDir ) :
-        os.makedirs( buildDir )
 
-    subprocess.call( ['cmake', sourceDir] + cmakeArgs, cwd=buildDir, env=env )
-    subprocess.call( ['cmake', '--build', '.'] + buildArgs, cwd=buildDir )
+class CMakeExtension(Extension):
+    """
+    An extended Extension-Class for CMake. We need this as we have to
+    pass a source dir instead of a file_list to get the source-code to build
 
-# get installation path: https://stackoverflow.com/questions/36187264/how-to-get-installation-directory-using-setuptools-and-pkg-ressources
-def GetInstallationDir() :
-    py_version = '%s.%s' % ( sys.version_info[0], sys.version_info[1] )
-    install_path_candidates = ( path % (py_version) for path in (
-                        sys.prefix + '/lib/python%s/dist-packages/',
-                        sys.prefix + '/lib/python%s/site-packages/',
-                        sys.prefix + '/local/lib/python%s/dist-packages/',
-                        sys.prefix + '/local/lib/python%s/site-packages/',
-                        '/Library/Python/%s/site-packages/' ) )
-    for path_candidate in install_path_candidates :
-        if os.path.exists( path_candidate ) :
-            return path_candidate
+    The name must be _single_ output extension from the CMake build. If you need
+    multiple extensions, see scikit-build
+    """
 
-    print( 'ERROR >>> No installation path found', file=sys.stderr )
-    return None
+    def __init__(self, name, sourcedir=""):
+        super().__init__(name, sources=[])
+        self.sourcedir = os.path.abspath(sourcedir)
 
-def GetFilesUnderPath( path, extension ) :
-    cwd_path = os.getcwd()
-    target_path = os.path.join( cwd_path, path )
-    if not os.path.exists( target_path ) :
-        return ( '', [] )
 
-    os.chdir( target_path )
-    files = glob.glob( '**/*.%s' % ( extension ), recursive=True )
-    files_paths = [ os.path.join( target_path, fpath ) for fpath in files ]
-    os.chdir( cwd_path )
-    return ( PREFIX + path, files_paths )
+class CMakeBuild(build_ext):
+    """
+    An extended build_ext-Class, used to build using our CMake workflow
+    """
 
-# @hack: get resources path (should replace with proper find functionality)
-def GetResourcesDir() :
-    py_version = '%s.%s' % ( sys.version_info[0], sys.version_info[1] )
-    install_path_candidates = ( path % (py_version) for path in (
-                        sys.prefix + '/lib/python%s/dist-packages/',
-                        sys.prefix + '/lib/python%s/site-packages/',
-                        sys.prefix + '/local/lib/python%s/dist-packages/',
-                        sys.prefix + '/local/lib/python%s/site-packages/',
-                        '/Library/Python/%s/site-packages/' ) )
+    def build_extension(self, ext):
+        extension_full_path = self.get_ext_fullpath(ext.name)
+        extension_dir_name = os.path.dirname(extension_full_path)
+        extension_dir_path = os.path.abspath(extension_dir_name)
 
-    for path_candidate in install_path_candidates :
-        if os.path.exists( path_candidate ) :
-            if path_candidate.find( 'local' ) != -1 :
-                return sys.prefix + '/local/' + PREFIX + 'res/'
-            else :
-                return sys.prefix + '/' + PREFIX + 'res/'
+        # Required for auto-detection and inclusion of auxiliary "native" libs
+        if not extension_dir_path.endswith(os.path.sep):
+            extension_dir_path += os.path.sep
 
-    print( 'ERROR >>> No resources path found', file=sys.stderr )
-    return None
+        # Get the BUILD_TYPE configuration (might even be in os.environ)
+        debug = (
+            int(os.environ.get("DEBUG", 0))
+            if self.debug is None
+            else self.debug
+        )
+        cfg = "Debug" if debug else "Release"
 
-class CMakeExtension( Extension ) :
+        # CMake lets you override the generator (usually on os.environ), so we
+        # need to check this. Can be also set with Conda-build, for example
+        cmake_generator = os.environ.get("CMAKE_GENERATOR", "")
 
-    def __init__( self, name, sourceDir ) :
-        super( CMakeExtension, self ).__init__( name, sources=[] )
-        self.sourceDir = os.path.abspath( sourceDir )
+        cmake_args = [
+            f"-DCMAKE_BUILD_TYPE={cfg}",
+            #### # Make sure we handle RPATH/RUNPATH properly ------
+            #### "-DCMAKE_INSTALL_RPATH=$ORIGIN",
+            #### "-DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=ON",
+            #### "-DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=OFF",
+            #### # -------------------------------------------------
+            f"-DPYTHON_EXECUTABLE={sys.executable}",
+            "-DLOCO_BUILD_LOGS=ON",
+            "-DLOCO_BUILD_PROFILING=ON",
+            "-DLOCO_BUILD_PYTHON_BINDINGS=ON",
+            "-DLOCO_BUILD_EXAMPLES=OFF",
+            "-DLOCO_BUILD_TESTS=OFF",
+            "-DLOCO_BUILD_DOCS=OFF",
+            "-DLOCO_BUILD_BACKEND_MUJOCO=ON",
+            "-DLOCO_BUILD_BACKEND_BULLET=ON",
+            "-DLOCO_BUILD_BACKEND_DART=OFF",
+        ]
+        build_args = []
 
-class BuildCommand( build_ext ) :
+        # By default, place every generated artifact into the same install path
+        library_outdir = extension_dir_path
+        archive_outdir = extension_dir_path
+        runtime_outdir = extension_dir_path
 
-    user_options = [ ( 'windowed=', None, 'Whether to build with OpenGL-GLFW backend support' ),
-                     ( 'headless=', None, 'Whether to build with OpenGL-EGL backend support' ),
-                     ( 'debug=', None, 'Whether to build in debug-mode or not' ) ]
-    boolean_options = [ 'windowed', 'headless', 'debug' ]
+        # Adding CMake arguments set as environment variable (needed e.g. to
+        # build for ARM OSx on conda-forge). Notice they are space separated
+        if "CMAKE_ARGS" in os.environ:
+            cmake_args += [
+                item for item in os.environ["CMAKE_ARGS"].split(" ") if item
+            ]
 
-    def initialize_options( self ) :
-        super( BuildCommand, self ).initialize_options()
-        self.windowed = 1 # Build with windowed-visualizer (openglviz-GLFW) by default
-        self.headless = 1 # Build with headless-visualizer (openglviz-EGL) by default
-        self.debug = 1 # Build in debug mode by default
+        if self.compiler.compiler_type != "msvc":
+            # Using Ninja-build since it a) is available as a wheel and b)
+            # multithreads automatically. MSVC would require all variables be
+            # exported for Ninja to pick it up, which is a little tricky to do
+            if not cmake_generator:
+                try:
+                    # pylint: disable=import-outside-toplevel, unused-import
+                    import ninja
 
-    def run( self ) :
-        try:
-            _ = subprocess.check_output( ['cmake', '--version'] )
-        except OSError:
-            raise RuntimeError( 'CMake must be installed to build the following extensions: ' +
-                                ', '.join( e.name for e in self.extensions ) )
+                    cmake_args += ["-GNinja"]
+                except ImportError:
+                    pass
 
-        for _extension in self.extensions :
-            self.build_extension( _extension )
+            # Send all generated artifacts to the same install location
+            cmake_args += [
+                f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={library_outdir}",
+                f"-DCMAKE_ARCHIVE_OUTPUT_DIRECTORY={archive_outdir}",
+                f"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY={runtime_outdir}",
+            ]
+        else:
+            # Single config generators are handled "normally"
+            single_config = any(
+                x in cmake_generator for x in ["NMake", "Ninja"]
+            )
 
-    def build_extension( self, extension ) :
-        global DEBUG
-        _extensionFullPath = self.get_ext_fullpath( extension.name )
-        _extensionDirName = os.path.dirname( _extensionFullPath )
-        _extensionDirPath = os.path.abspath( _extensionDirName )
+            # CMake allows an arch-in-generator style for backward compatibility
+            contains_arch = any(x in cmake_generator for x in ["ARM", "Win64"])
 
-        _cfg = 'Debug' if self.debug else 'Release'
-        _windowed = 'ON' if self.windowed else 'OFF'
-        _headless = 'ON' if self.headless else 'OFF'
-        _buildArgs = ['--config', _cfg, '--', '-j2']
-        _cmakeArgs = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + _extensionDirPath,
-                      '-DCMAKE_BUILD_RPATH=' + GetInstallationDir(),
-                      '-DCMAKE_INSTALL_RPATH=' + GetInstallationDir(),
-                      '-DPYTHON_EXECUTABLE=' + sys.executable,
-                      '-DCMAKE_BUILD_TYPE=' + _cfg,
-                      '-DLOCO_CORE_RESOURCES_PATH=' + sys.prefix + '/' + PREFIX + 'res/',
-                      '-DLOCO_CORE_LIBRARIES_PATH=' + GetInstallationDir(),
-                      '-DLOCO_CORE_BUILD_WINDOWED_VISUALIZER=' + _windowed,
-                      '-DLOCO_CORE_BUILD_HEADLESS_VISUALIZER=' + _headless,
-                      '-DLOCO_CORE_BUILD_DOCS=OFF',
-                      '-DLOCO_CORE_BUILD_EXAMPLES=OFF',
-                      '-DLOCO_CORE_BUILD_TESTS=OFF',
-                      '-DLOCO_CORE_BUILD_PYTHON_BINDINGS=ON',
-                      '-DLOCO_CORE_BUILD_WITH_LOGS=OFF',
-                      '-DLOCO_CORE_BUILD_WITH_PROFILING=OFF',
-                      '-DLOCO_CORE_BUILD_WITH_TRACK_ALLOCS=OFF']
+            # Specify the arch if using MSVC generator, but only if it doesn't
+            # contain a backward-compat. arch spec already in the generator name
+            if not single_config and not contains_arch:
+                cmake_args += ["-A", PLAT_TO_CMAKE[self.plat_name]]
 
-        _env = os.environ.copy()
-        _env['CXXFLAGS'] = '{} -DVERSION_INFO=\\"{}\\"'.format( _env.get( 'CXXFLAGS', '' ),
-                                                                self.distribution.get_version() )
+            # Multi-config generators have a different way to specify configs
+            if not single_config:
+                cmake_args += [
+                    "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}".format(
+                        cfg.upper(), library_outdir
+                    ),
+                    "-DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_{}={}".format(
+                        cfg.upper(), archive_outdir
+                    ),
+                    "-DCMAKE_RUNTIME_OUTPUT_DIRECTORY_{}={}".format(
+                        cfg.upper(), runtime_outdir
+                    ),
+                ]
+                build_args += ["--config", cfg]
 
-        _sourceDir = extension.sourceDir
-        _buildDir = self.build_temp
+        if sys.platform.startswith("darwin"):
+            # Cross-compile support for macOS - respect ARCHFLAGS if set
+            archs = re.findall(r"-arch (\S+)", os.environ.get("ARCHFLAGS", ""))
+            if archs:
+                cmake_args += [
+                    "-DCMAKE_OSX_ARCHITECTURE={}".format(";".join(archs))
+                ]
 
-        BuildBindings( _sourceDir, _buildDir, _cmakeArgs, _buildArgs, _env )
+        # Set CMAKE_BUILD_PARALLEL_LEVEL to control the parallel build level
+        # across all generators (if not set as an environment variable)
+        if "CMAKE_BUILD_PARALLEL_LEVEL" not in os.environ:
+            # self.parallel is a Python-3 only way to set parallel jobs by
+            # hand using -j in the build_ext call, not supported by pip or
+            # PyPA-build
+            if hasattr(self, "parallel") and self.parallel:
+                # CMake 3.12+ only
+                build_args += ["-j{}".format(self.parallel)]
 
-class InstallCommand( install ) :
+        if not os.path.exists(self.build_temp):
+            os.makedirs(self.build_temp)
 
-    user_options = install.user_options + BuildCommand.user_options
-    boolean_options = install.boolean_options + BuildCommand.boolean_options
+        subprocess.check_call(
+            ["cmake", ext.sourcedir] + cmake_args, cwd=self.build_temp
+        )
+        subprocess.check_call(
+            ["cmake", "--build", "."] + build_args, cwd=self.build_temp
+        )
 
-    def initialize_options( self ) :
-        super( InstallCommand, self ).initialize_options()
-        self.windowed = 1 # Build with windowed-visualizer (openglviz-GLFW) by default
-        self.headless = 1 # Build with headless-visualizer (openglviz-EGL) by default
-        self.debug = 1 # Build in debug mode by default
 
-    def run( self ) :
-        self.reinitialize_command( 'build_ext', headless=self.headless, debug=self.debug, windowed=self.windowed )
-        self.run_command( 'build_ext' )
-        super( InstallCommand, self ).run()
-
-with open( 'README.md', 'r' ) as fh :
-    longDescriptionData = fh.read()
-
-with open( 'requirements.txt', 'r' ) as fh :
-    requiredPackages = [ line.replace( '\n', '' ) for line in fh.readlines() ]
+long_description = ""
+if os.path.exists("README.md"):
+    with open("README.md", "r", encoding="utf-8") as fh:
+        long_description = fh.read()
 
 setup(
-    name                    = 'wp-loco',
-    version                 = VERSION,
-    description             = 'Core functionality for a backend-agnostic locomotion framework',
-    author                  = 'Wilbert Santos Pumacay Huallpa',
-    license                 = 'MIT License',
-    author_email            = 'wpumacay@gmail.com',
-    url                     = 'https://github.com/wpumacay/tysoc',
-    keywords                = 'locomotion control simulation',
-    zip_safe                = False,
-    install_requires        = requiredPackages,
-    package_dir             = { '' : './python' },
-    packages                = find_packages( './python' ),
-    data_files              = [ GetFilesUnderPath( 'res/templates/mjcf', 'xml' ),
-                                GetFilesUnderPath( 'res/templates/urdf', 'urdf' ),
-                                GetFilesUnderPath( 'res/templates/rlsim', 'json' ),
-                                GetFilesUnderPath( 'res/meshes', 'stl' ),
-                                GetFilesUnderPath( 'res/meshes', 'dae' ),
-                                GetFilesUnderPath( 'res/meshes', 'obj' ),
-                                GetFilesUnderPath( 'res/xml', 'xml' ),
-                                GetFilesUnderPath( 'res/xml/baxter_meshes', 'stl' ),
-                                GetFilesUnderPath( 'res/xml/baxter_meshes', 'obj' ),
-                                GetFilesUnderPath( 'res/xml/laikago_meshes', 'stl' ),
-                                GetFilesUnderPath( 'res/xml/laikago_meshes', 'obj' ),
-                                GetFilesUnderPath( 'res/xml/nao_meshes', 'stl' ),
-                                GetFilesUnderPath( 'res/xml/nao_meshes', 'obj' ),
-                                GetFilesUnderPath( 'res/xml/r2d2_meshes', 'stl' ),
-                                GetFilesUnderPath( 'res/xml/r2d2_meshes', 'obj' ),
-                                GetFilesUnderPath( 'res/xml/sawyer_meshes', 'stl' ),
-                                GetFilesUnderPath( 'res/xml/sawyer_meshes', 'obj' ) ],
-    ext_modules             = [
-                                CMakeExtension( 'loco_sim', '.' )
-                              ],
-    cmdclass                = {
-                                'build_ext': BuildCommand,
-                                'install': InstallCommand
-                              }
+    name="loco",
+    version="0.1.1",
+    description="Multi physics-backend LOCOmotion framework",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    author="Wilbert Santos Pumacay Huallpa",
+    license="MIT License",
+    author_email="wilbert.pumacay@ucsp.edu.pe",
+    url="https://github.com/wpumacay/loco-core",
+    keywords="rl, robotics, locomotion",
+    classifiers=[
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: POSIX :: Linux",
+    ],
+    zip_safe=False,
+    package_data={},
+    ext_modules=[CMakeExtension("loco", ".")],
+    cmdclass={"build_ext": CMakeBuild},
+    python_requires=">=3.7",
 )
