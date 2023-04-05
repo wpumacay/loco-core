@@ -4,6 +4,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <math/vec2_t.hpp>
 #include <math/vec3_t.hpp>
@@ -115,11 +116,11 @@ struct MeshData {
     /// Absolute path to the mesh resource (if creating mesh from file)
     std::string filepath;
     /// User vertex-data of the mesh resource (if creating programmatically)
-    Scalar* vertices = nullptr;
+    std::unique_ptr<Scalar[]> vertices = nullptr;  // NOLINT
     /// Number of elements in the vertices buffer
     size_t n_vertices = 0;
     /// User index-data of the mesh resource (if creating programmatically)
-    uint32_t* faces = nullptr;
+    std::unique_ptr<uint32_t[]> faces = nullptr;  // NOLINT
     /// Number of faces composing this mesh
     size_t n_faces = 0;
 };
@@ -131,7 +132,7 @@ struct HeightfieldData {
     /// Number of samples of the hfield's area in the y-dimension
     size_t n_depth_samples = 0;
     /// Elevation data stored in row-major order, and normalized to range [0-1]
-    const Scalar* heights = nullptr;
+    std::unique_ptr<Scalar[]> heights = nullptr;  // NOLINT
 };
 
 /// Represents the data that fully describes a shape
