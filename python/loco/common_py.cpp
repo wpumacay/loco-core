@@ -75,6 +75,20 @@ auto bindings_common(py::module& m) -> void {
             .def_property(
                 "vertices",
                 [](const Class& self) -> py::array_t<Scalar> {
+                    if (self.vertices == nullptr && self.n_vertices > 0) {
+                        LOG_CORE_WARN(
+                            "MeshData::vertices >>> tried reading {0} vertices "
+                            "from a non-initialized vertices buffer. Returning "
+                            "an empty buffer instead.",
+                            self.n_vertices);
+                        return py::array_t<Scalar>();  // NOLINT
+                    }
+
+                    // For a non-initialized buffer with 0 vertices just return
+                    // an empty buffer (don't use the non-initialized pointer)
+                    if (self.vertices == nullptr) {
+                        return py::array_t<Scalar>();  // NOLINT
+                    }
                     // We're assumming that the user configured the vertices
                     // previous to making this read step, so we just return a
                     // buffer of the size given by this "n_vertices" property,
@@ -84,7 +98,12 @@ auto bindings_common(py::module& m) -> void {
                     // (3 * n_vertices)
                     const auto NUM_SCALARS =
                         static_cast<ssize_t>(3 * self.n_vertices);
-                    return py::array_t<Scalar>(NUM_SCALARS, self.vertices);
+                    // TODO(wilbert): check how to return a view of the data.
+                    // Currently we're returning a copy of the data, but a view
+                    // would be nice in order to modify each element without
+                    // having to rewrite the whole buffer every time
+                    return py::array_t<Scalar>(NUM_SCALARS,
+                                               self.vertices.get());
                 },
                 [](Class& self, const py::array_t<Scalar>& array_np) -> void {
                     // We received here a numpy array from the user, which comes
@@ -105,12 +124,29 @@ auto bindings_common(py::module& m) -> void {
                     }
                     self.n_vertices = n_scalars / 3;
                     auto n_total_scalars = self.n_vertices * 3;
-                    memcpy(self.vertices, array_buffer_info.ptr,
+                    if (self.vertices == nullptr) {
+                        // NOLINTNEXTLINE
+                        self.vertices = std::unique_ptr<Scalar[]>(
+                            new Scalar[n_total_scalars]);
+                    }
+                    memcpy(self.vertices.get(), array_buffer_info.ptr,
                            sizeof(Scalar) * n_total_scalars);
                 })
             .def_property(
-                "indices",
+                "faces",
                 [](const Class& self) -> py::array_t<uint32_t> {
+                    if (self.faces == nullptr && self.n_faces > 0) {
+                        LOG_CORE_WARN(
+                            "MeshData::faces >>> tried reading {0} faces from "
+                            "a non-initialized faces buffer. Returning an "
+                            "empty buffer instead",
+                            self.n_faces);
+                        return py::array_t<uint32_t>();  // NOLINT
+                    }
+
+                    if (self.faces == nullptr) {
+                        return py::array_t<uint32_t>();  // NOLINT
+                    }
                     // Similar to the vertices, notice that for each face we
                     // have 3 indices in the faces/indices buffer, so we're
                     // making the correction for the number of elements we have
@@ -120,7 +156,7 @@ auto bindings_common(py::module& m) -> void {
                     // so we have a valid number of faces in the internal buffer
                     const auto NUM_INDICES =
                         static_cast<ssize_t>(3 * self.n_faces);
-                    return py::array_t<uint32_t>(NUM_INDICES, self.faces);
+                    return py::array_t<uint32_t>(NUM_INDICES, self.faces.get());
                 },
                 [](Class& self, const py::array_t<uint32_t>& array_np) -> void {
                     auto array_buffer_info = array_np.request();
@@ -135,7 +171,12 @@ auto bindings_common(py::module& m) -> void {
                     }
                     self.n_faces = n_indices / 3;
                     auto n_total_indices = self.n_faces * 3;
-                    memcpy(self.faces, array_buffer_info.ptr,
+                    if (self.faces == nullptr) {
+                        // NOLINTNEXTLINE
+                        self.faces = std::unique_ptr<uint32_t[]>(
+                            new uint32_t[n_total_indices]);
+                    }
+                    memcpy(self.faces.get(), array_buffer_info.ptr,
                            sizeof(uint32_t) * n_total_indices);
                 });
     }
