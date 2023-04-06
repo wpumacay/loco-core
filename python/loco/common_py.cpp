@@ -1,4 +1,5 @@
 #include <cstring>
+#include <stdexcept>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
@@ -112,9 +113,8 @@ auto bindings_common(py::module& m) -> void {
                     // "n_vertices" property to the number of vertices obtained.
                     // Notice that for a vertex we consider three scalar entries
                     // in the buffer (not just one per vertex)
-                    auto array_buffer_info = array_np.request();
-                    auto n_scalars =
-                        static_cast<size_t>(array_buffer_info.size);
+                    auto info = array_np.request();
+                    auto n_scalars = static_cast<size_t>(info.size);
                     if (n_scalars % 3 != 0) {
                         LOCO_CORE_WARN(
                             "MeshData::vertices >>> the given numpy array "
@@ -129,7 +129,7 @@ auto bindings_common(py::module& m) -> void {
                         self.vertices = std::unique_ptr<Scalar[]>(
                             new Scalar[n_total_scalars]);
                     }
-                    memcpy(self.vertices.get(), array_buffer_info.ptr,
+                    memcpy(self.vertices.get(), info.ptr,
                            sizeof(Scalar) * n_total_scalars);
                 })
             .def_property(
@@ -159,9 +159,8 @@ auto bindings_common(py::module& m) -> void {
                     return py::array_t<uint32_t>(NUM_INDICES, self.faces.get());
                 },
                 [](Class& self, const py::array_t<uint32_t>& array_np) -> void {
-                    auto array_buffer_info = array_np.request();
-                    auto n_indices =
-                        static_cast<size_t>(array_buffer_info.size);
+                    auto info = array_np.request();
+                    auto n_indices = static_cast<size_t>(info.size);
                     if (n_indices % 3 != 0) {
                         LOG_CORE_WARN(
                             "MeshData::faces >>> the given numpy array "
@@ -176,8 +175,81 @@ auto bindings_common(py::module& m) -> void {
                         self.faces = std::unique_ptr<uint32_t[]>(
                             new uint32_t[n_total_indices]);
                     }
-                    memcpy(self.faces.get(), array_buffer_info.ptr,
+                    memcpy(self.faces.get(), info.ptr,
                            sizeof(uint32_t) * n_total_indices);
+                });
+    }
+
+    {
+        using Class = ::loco::HeightfieldData;
+        constexpr auto ClassName = "HeightfieldData";  // NOLINT
+        py::class_<Class>(m, ClassName)
+            .def(py::init<>())
+            .def_readwrite("n_width_samples", &Class::n_width_samples)
+            .def_readwrite("n_depth_samples", &Class::n_depth_samples)
+            .def_property(
+                "heights",
+                [](const Class& self) -> py::array_t<Scalar> {
+                    // Make sure we have valid dimensions
+                    if (self.n_width_samples < 1 || self.n_depth_samples < 1) {
+                        LOG_CORE_WARN(
+                            "HeightfieldData::heights >>> tried reading from "
+                            "non-initialized grid. Should have valid width and "
+                            "depth number of samples; instead got 0 samples in "
+                            "one dimension");
+                        return py::array_t<Scalar>();  // NOLINT
+                    }
+                    // Make sure also that we have data to retrieve
+                    if (self.heights == nullptr) {
+                        LOG_CORE_WARN(
+                            "HeightfieldData::heights >>> tried reading from a "
+                            "non-initialized grid. Currently there's no data "
+                            "in the grid buffer. Returning an array of zeros "
+                            "instead");
+                        return py::array(py::buffer_info(
+                            nullptr, sizeof(Scalar),
+                            py::format_descriptor<Scalar>::format(), 2,
+                            {self.n_depth_samples, self.n_width_samples},
+                            {sizeof(Scalar) * self.n_width_samples,
+                             sizeof(Scalar)}));
+                    }
+
+                    return py::array(py::buffer_info(
+                        self.heights.get(), sizeof(Scalar),
+                        py::format_descriptor<Scalar>::format(), 2,
+                        {self.n_depth_samples, self.n_width_samples},
+                        {sizeof(Scalar) * self.n_width_samples,
+                         sizeof(Scalar)}));
+                },
+                [](Class& self, const py::array_t<Scalar>& array_np) -> void {
+                    auto info = array_np.request();
+                    if (info.ndim != 2) {
+                        throw std::runtime_error(
+                            "HeightfieldData::heights >>> tried using with "
+                            "incompatible dimensions. Expects a np.ndarray of "
+                            "2 dimensions (m, n).");
+                    }
+                    auto old_width_samples = self.n_width_samples;
+                    auto old_depth_samples = self.n_depth_samples;
+                    self.n_width_samples = static_cast<size_t>(info.shape[1]);
+                    self.n_depth_samples = static_cast<size_t>(info.shape[0]);
+                    auto n_total_samples_in_grid =
+                        self.n_width_samples * self.n_depth_samples;
+                    // Create some new storage if we either have new dimensions,
+                    // or we have no storage allocated yet
+                    if (old_width_samples != self.n_width_samples ||
+                        old_depth_samples != self.n_depth_samples ||
+                        self.heights == nullptr) {
+                        // NOLINTNEXTLINE
+                        self.heights = std::unique_ptr<Scalar[]>(
+                            new Scalar[n_total_samples_in_grid]);
+                    }
+
+                    for (auto stride : info.strides) {
+                        LOG_CORE_INFO("stride: {0}", stride);
+                    }
+                    memcpy(self.heights.get(), info.ptr,
+                           sizeof(Scalar) * n_total_samples_in_grid);
                 });
     }
 }
