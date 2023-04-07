@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <utility>
 
 #include <math/vec2_t.hpp>
 #include <math/vec3_t.hpp>
@@ -13,6 +14,7 @@
 #include <math/mat4_t.hpp>
 #include <math/quat_t.hpp>
 #include <math/euler_t.hpp>
+#include <math/pose3d_t.hpp>
 
 #include <utils/logging.hpp>
 
@@ -24,6 +26,7 @@ using Quat = math::Quaternion<Scalar>;
 using Mat3 = math::Matrix3<Scalar>;
 using Mat4 = math::Matrix4<Scalar>;
 using Euler = math::Euler<Scalar>;
+using Pose = ::math::Pose3d<Scalar>;
 
 // NOLINTNEXTLINE
 #define ToScalar(x) static_cast<Scalar>(x)
@@ -123,6 +126,117 @@ struct MeshData {
     std::unique_ptr<uint32_t[]> faces = nullptr;  // NOLINT
     /// Number of faces composing this mesh
     size_t n_faces = 0;
+
+    // RAII (make sure that we can also export bindings correctly) -------
+
+    /// Creates a default MeshData object with default initialized values
+    MeshData() = default;
+
+    /// Releases all allocated resources of this object
+    ~MeshData() = default;
+
+    /// Copy constructor for MeshData object. Copies fields if possible, and
+    /// makes deep copies of fields that have ownership (like unique_ptr)
+    MeshData(const MeshData& other)
+        : filepath(other.filepath),
+          n_vertices(other.n_vertices),
+          n_faces(other.n_faces) {
+        // Notify user  that he's making a deep copy of the whole object. This
+        // will help the user know where he's making too many copies
+        LOG_CORE_INFO(
+            "MeshData(copy-constructor) >>> making a full deep copy of this "
+            "object");
+        // Handle the deep-copy of the vertices buffer --------
+        auto vert_num_scalars = 3 * n_vertices;
+        // NOLINTNEXTLINE
+        vertices = std::unique_ptr<Scalar[]>(new Scalar[vert_num_scalars]);
+        memcpy(vertices.get(), other.vertices.get(),
+               sizeof(Scalar) * vert_num_scalars);
+        // ----------------------------------------------------
+
+        // Handle the deep-copy of the faces buffer -----------
+        auto faces_num_scalars = 3 * n_faces;
+        // NOLINTNEXTLINE
+        faces = std::unique_ptr<uint32_t[]>(new uint32_t[faces_num_scalars]);
+        memcpy(faces.get(), other.faces.get(),
+               sizeof(Scalar) * faces_num_scalars);
+        // ----------------------------------------------------
+    }
+
+    /// Copy assignment operator for MeshData object. Similarly to the copy
+    /// constructor, make a full copy of all attributes
+    auto operator=(const MeshData& other) -> MeshData& {
+        // Notify user that he's making a deep copy of the whole object. This
+        // will help the user know where he's making too many copies
+        LOG_CORE_INFO(
+            "MeshData(copy-assignment-op) >>> making a full deep copy of this "
+            "object");
+        filepath = other.filepath;
+        n_vertices = other.n_vertices;
+        n_faces = other.n_faces;
+        // Handle the deep-copy of the vertices buffer --------
+        auto vert_num_scalars = 3 * n_vertices;
+        // NOLINTNEXTLINE
+        vertices = std::unique_ptr<Scalar[]>(new Scalar[vert_num_scalars]);
+        memcpy(vertices.get(), other.vertices.get(),
+               sizeof(Scalar) * vert_num_scalars);
+        // ----------------------------------------------------
+
+        // Handle the deep-copy of the faces buffer -----------
+        auto faces_num_scalars = 3 * n_faces;
+        // NOLINTNEXTLINE
+        faces = std::unique_ptr<uint32_t[]>(new uint32_t[faces_num_scalars]);
+        memcpy(faces.get(), other.faces.get(),
+               sizeof(Scalar) * faces_num_scalars);
+        return *this;
+        // ----------------------------------------------------
+    }
+
+    /// Move constructor, transfers ownership of other object's data
+    MeshData(MeshData&& other) noexcept
+        : filepath(std::move(other.filepath)),
+          vertices(std::move(other.vertices)),
+          n_vertices(other.n_vertices),
+          faces(std::move(other.faces)),
+          n_faces(other.n_faces) {
+        // Notify the user that we are transfering ownership. Nothing should
+        // leak, but still make sure we're not making too many moves
+        LOG_CORE_INFO(
+            "MeshData(move-constructor) >>> making a full deep copy of this "
+            "object");
+        // Set to a default state the given r-value reference
+        other.filepath = "";
+        other.n_vertices = 0;
+        other.n_faces = 0;
+        other.vertices = nullptr;
+        other.faces = nullptr;
+    }
+
+    /// Move assignment operator, transfers ownership of other object's data
+    auto operator=(MeshData&& other) noexcept -> MeshData& {
+        // Notify the user that we are transfering ownership. Nothing should
+        // leak, but still make sure we're not making too many moves
+        LOG_CORE_INFO(
+            "MeshData(move-assignment-op) >>> making a full deep copy of this "
+            "object");
+        // Transfer ownership
+        filepath = std::move(other.filepath);
+        n_vertices = other.n_vertices;
+        n_faces = other.n_faces;
+        vertices = std::move(other.vertices);
+        faces = std::move(other.faces);
+
+        // Set to a default state the given r-value reference
+        other.filepath = "";
+        other.n_vertices = 0;
+        other.n_faces = 0;
+        other.vertices = nullptr;
+        other.faces = nullptr;
+
+        return *this;
+    }
+
+    // -------------------------------------------------------------------
 };
 
 /// Represents user-defined heightfield data (for heightfield shapes)
@@ -133,6 +247,90 @@ struct HeightfieldData {
     size_t n_depth_samples = 0;
     /// Elevation data stored in row-major order, and normalized to range [0-1]
     std::unique_ptr<Scalar[]> heights = nullptr;  // NOLINT
+
+    // RAII (make sure that we can also export bindings correctly) -------
+
+    /// Creates a default HeighfieldData object with default initialized values
+    HeightfieldData() = default;
+
+    /// Releases all allocated resources of this object
+    ~HeightfieldData() = default;
+
+    /// Copy constructor for HeightfieldData object. Copies fields if possible,
+    /// and makes deep copies of fields that have ownership (like unique_ptr)
+    HeightfieldData(const HeightfieldData& other)
+        : n_width_samples(other.n_width_samples),
+          n_depth_samples(other.n_depth_samples) {
+        // Notify user  that he's making a deep copy of the whole object. This
+        // will help the user know where he's making too many copies
+        LOG_CORE_INFO(
+            "HeightfieldData(copy-constructor) >>> making a full deep copy of "
+            "this object");
+        // Handle the deep-copy of the heights buffer ---------
+        auto grid_num_scalars = n_width_samples * n_depth_samples;
+        // NOLINTNEXTLINE
+        heights = std::unique_ptr<Scalar[]>(new Scalar[grid_num_scalars]);
+        memcpy(heights.get(), other.heights.get(),
+               sizeof(Scalar) * grid_num_scalars);
+        // ----------------------------------------------------
+    }
+
+    /// Copy assignment operator for HeightfieldData object. Similarly to the
+    /// copy constructor, make a full copy of all attributes
+    auto operator=(const HeightfieldData& other) -> HeightfieldData& {
+        // Notify user  that he's making a deep copy of the whole object. This
+        // will help the user know where he's making too many copies
+        LOG_CORE_INFO(
+            "HeightfieldData(copy-assignment-op) >>> making a full deep copy "
+            "of this object");
+        n_width_samples = other.n_width_samples;
+        n_depth_samples = other.n_depth_samples;
+        // Handle the deep-copy of the heights buffer ---------
+        auto grid_num_scalars = n_width_samples * n_depth_samples;
+        // NOLINTNEXTLINE
+        heights = std::unique_ptr<Scalar[]>(new Scalar[grid_num_scalars]);
+        memcpy(heights.get(), other.heights.get(),
+               sizeof(Scalar) * grid_num_scalars);
+        // ----------------------------------------------------
+        return *this;
+    }
+
+    /// Move constructor, transfers ownership of other object's data
+    HeightfieldData(HeightfieldData&& other) noexcept
+        : n_width_samples(other.n_width_samples),
+          n_depth_samples(other.n_depth_samples),  // NOLINT
+          heights(std::move(other.heights)) {
+        // Notify the user that we are transfering ownership. Nothing should
+        // leak, but still make sure we're not making too many moves
+        LOG_CORE_INFO(
+            "HeightfieldData(move-constructor) >>> making a full deep copy of "
+            "this object.");
+        // Set to a default state the given r-value reference
+        other.n_width_samples = 0;
+        other.n_depth_samples = 0;
+        other.heights = nullptr;
+    }
+
+    /// Move assignment operator, transfers ownership of other object's data
+    auto operator=(HeightfieldData&& other) noexcept -> HeightfieldData& {
+        // Notify the user that we are transfering ownership. Nothing should
+        // leak, but still make sure we're not making too many moves
+        LOG_CORE_INFO(
+            "HeightfieldData(move-assignment-op) >>> making a full deep copy "
+            "of this object.");
+        n_width_samples = other.n_width_samples;
+        n_depth_samples = other.n_depth_samples;
+        heights = std::move(other.heights);
+
+        // Set to a default state the given r-value reference
+        other.n_width_samples = 0;
+        other.n_depth_samples = 0;
+        other.heights = nullptr;
+
+        return *this;
+    }
+
+    // -------------------------------------------------------------------
 };
 
 /// Represents the data that fully describes a shape
@@ -146,7 +344,7 @@ struct ShapeData {
     /// Heightfield data required for heightfield shapes
     HeightfieldData hfield_data;
     /// Local transform w.r.t. parent shape (otherwise not used if no parent)
-    Mat4 local_tf;
+    Pose local_tf;
 };
 
 /// Represents the data that defines a collider
@@ -178,7 +376,7 @@ struct InertialData {
     /// The inertia matrix of the related body
     Mat3 inertia;
     /// The relative transform of the body's COM reference frame
-    Mat4 local_tf;
+    Pose local_tf;
 };
 
 /// Represents the properties of a rigid body
