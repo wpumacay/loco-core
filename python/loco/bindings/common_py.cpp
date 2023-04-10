@@ -248,6 +248,50 @@ auto bindings_common(py::module& m) -> void {
             .def_readwrite("hfield_data", &Class::hfield_data)
             .def_readwrite("local_tf", &Class::local_tf);
     }
+
+    {
+        using Class = ::loco::ColliderData;
+        using BaseClass = ::loco::ShapeData;
+        constexpr auto ClassName = "ColliderData";  // NOLINT
+        py::class_<Class, BaseClass>(m, ClassName)
+            .def(py::init<>())
+            .def_readwrite("collision_group", &Class::collision_group)
+            .def_readwrite("collision_mask", &Class::collision_mask)
+            .def_readwrite("friction", &Class::friction);
+        // .def_readwrite("children", &Class::children)
+    }
+
+    {
+        using Class = ::loco::DrawableData;
+        using BaseClass = ::loco::ShapeData;
+        constexpr auto ClassName = "DrawableData";  // NOLINT
+        py::class_<Class, BaseClass>(m, ClassName)
+            .def(py::init<>())
+            .def_readwrite("color", &Class::color)
+            .def_readwrite("texture", &Class::texture);
+        // .def_readwrite("children", &Class::children)
+    }
+
+    {
+        using Class = ::loco::InertialData;
+        constexpr auto ClassName = "InertialData";  // NOLINT
+        py::class_<Class>(m, ClassName)
+            .def(py::init<>())
+            .def_readwrite("mass", &Class::mass)
+            .def_readwrite("inertia", &Class::inertia)
+            .def_readwrite("local_tf", &Class::local_tf);
+    }
+
+    {
+        using Class = ::loco::BodyData;
+        constexpr auto ClassName = "BodyData";  // NOLINT
+        py::class_<Class>(m, ClassName)
+            .def(py::init<>())
+            .def_readwrite("dyntype", &Class::dyntype)
+            .def_readwrite("inertia", &Class::inertia)
+            .def_readwrite("collider", &Class::collider)
+            .def_readwrite("drawable", &Class::drawable);
+    }
 }
 
 }  // namespace loco
