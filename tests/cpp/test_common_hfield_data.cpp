@@ -106,4 +106,65 @@ TEST_CASE("HfieldData constructors", "[HfieldData]") {
         REQUIRE(hfield_data_2.heights[2] == ToScalar(0.3));
         REQUIRE(hfield_data_2.heights[3] == ToScalar(0.4));
     }
+
+    SECTION("Hfield move constructor") {
+        ::loco::HeightfieldData hfield_data_1;
+        constexpr size_t GRID_WIDTH = 2;
+        constexpr size_t GRID_DEPTH = 2;
+        constexpr size_t GRID_NSAMPLES = GRID_WIDTH * GRID_DEPTH;
+        hfield_data_1.n_width_samples = GRID_WIDTH;
+        hfield_data_1.n_depth_samples = GRID_DEPTH;
+        hfield_data_1.heights =
+            std::make_unique<Scalar[]>(GRID_NSAMPLES);  // NOLINT
+        hfield_data_1.heights[0] = ToScalar(1.0);
+        hfield_data_1.heights[1] = ToScalar(2.0);
+        hfield_data_1.heights[2] = ToScalar(3.0);
+        hfield_data_1.heights[3] = ToScalar(4.0);
+
+        // Make sure the move constructor transfers ownership accordingly
+        ::loco::HeightfieldData hfield_data_2(std::move(hfield_data_1));
+        REQUIRE(hfield_data_2.n_width_samples == GRID_WIDTH);
+        REQUIRE(hfield_data_2.n_depth_samples == GRID_DEPTH);
+        REQUIRE(hfield_data_2.heights != nullptr);
+        REQUIRE(hfield_data_2.heights[0] == ToScalar(1.0));
+        REQUIRE(hfield_data_2.heights[1] == ToScalar(2.0));
+        REQUIRE(hfield_data_2.heights[2] == ToScalar(3.0));
+        REQUIRE(hfield_data_2.heights[3] == ToScalar(4.0));
+
+        // Also, the base should be invalidated
+        REQUIRE(hfield_data_1.n_width_samples == 0);
+        REQUIRE(hfield_data_1.n_depth_samples == 0);
+        REQUIRE(hfield_data_1.heights == nullptr);
+    }
+
+    SECTION("Hfield move assignment operator") {
+        ::loco::HeightfieldData hfield_data_1;
+        constexpr size_t GRID_WIDTH = 2;
+        constexpr size_t GRID_DEPTH = 2;
+        constexpr size_t GRID_NSAMPLES = GRID_WIDTH * GRID_DEPTH;
+        hfield_data_1.n_width_samples = GRID_WIDTH;
+        hfield_data_1.n_depth_samples = GRID_DEPTH;
+        hfield_data_1.heights =
+            std::make_unique<Scalar[]>(GRID_NSAMPLES);  // NOLINT
+        hfield_data_1.heights[0] = ToScalar(1.0);
+        hfield_data_1.heights[1] = ToScalar(2.0);
+        hfield_data_1.heights[2] = ToScalar(3.0);
+        hfield_data_1.heights[3] = ToScalar(4.0);
+
+        // Make sure the move assignment operator transfers ownership
+        ::loco::HeightfieldData hfield_data_2;
+        hfield_data_2 = std::move(hfield_data_1);
+        REQUIRE(hfield_data_2.n_width_samples == GRID_WIDTH);
+        REQUIRE(hfield_data_2.n_depth_samples == GRID_DEPTH);
+        REQUIRE(hfield_data_2.heights != nullptr);
+        REQUIRE(hfield_data_2.heights[0] == ToScalar(1.0));
+        REQUIRE(hfield_data_2.heights[1] == ToScalar(2.0));
+        REQUIRE(hfield_data_2.heights[2] == ToScalar(3.0));
+        REQUIRE(hfield_data_2.heights[3] == ToScalar(4.0));
+
+        // Also, the base should be invalidated
+        REQUIRE(hfield_data_1.n_width_samples == 0);
+        REQUIRE(hfield_data_1.n_depth_samples == 0);
+        REQUIRE(hfield_data_1.heights == nullptr);
+    }
 }
