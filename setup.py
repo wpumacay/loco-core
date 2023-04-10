@@ -76,8 +76,8 @@ class CMakeBuild(build_ext):
             "-DLOCO_BUILD_EXAMPLES=OFF",
             "-DLOCO_BUILD_TESTS=OFF",
             "-DLOCO_BUILD_DOCS=OFF",
-            "-DLOCO_BUILD_BACKEND_MUJOCO=ON",
-            "-DLOCO_BUILD_BACKEND_BULLET=ON",
+            "-DLOCO_BUILD_BACKEND_MUJOCO=OFF",
+            "-DLOCO_BUILD_BACKEND_BULLET=OFF",
             "-DLOCO_BUILD_BACKEND_DART=OFF",
         ]
         build_args = []

@@ -60,6 +60,15 @@ loco_create_target(LocoCoreCpp STATIC
     FALSE)
 # cmake-format: on
 
+# -------------------------------------
+# Quick workaround to enable RPATH for our target
+set_target_properties(
+  LocoCoreCpp
+  PROPERTIES INSTALL_RPATH $ORIGIN
+             INSTALL_RPATH_USE_LINK_PATH OFF
+             BUILD_WITH_INSTALL_RPATH ON
+             MACOSX_RPATH ON)
+
 include(LocoBackendsSetup)
 include(LocoDefinitions)
 
