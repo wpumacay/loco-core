@@ -252,6 +252,18 @@ auto bindings_common(py::module& m) -> void {
                            sizeof(Scalar) * n_total_samples_in_grid);
                 });
     }
+
+    {
+        using Class = ::loco::ShapeData;
+        constexpr auto ClassName = "ShapeData";  // NOLINT
+        py::class_<Class>(m, ClassName)
+            .def(py::init<>())
+            .def_readwrite("type", &Class::type)
+            .def_readwrite("size", &Class::size)
+            .def_readwrite("mesh_data", &Class::mesh_data)
+            .def_readwrite("hfield_data", &Class::hfield_data)
+            .def_readwrite("local_tf", &Class::local_tf);
+    }
 }
 
 }  // namespace loco
