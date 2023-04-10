@@ -82,5 +82,5 @@ endif()
 # -------------------------------------
 # Add Python bindings to the build process
 if(LOCO_BUILD_PYTHON_BINDINGS)
-  add_subdirectory(python/loco)
+  add_subdirectory(python/loco/bindings)
 endif()
