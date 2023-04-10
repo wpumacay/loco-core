@@ -237,9 +237,6 @@ auto bindings_common(py::module& m) -> void {
                             new Scalar[n_total_samples_in_grid]);
                     }
 
-                    for (auto stride : info.strides) {
-                        LOG_CORE_INFO("stride: {0}", stride);
-                    }
                     memcpy(self.heights.get(), info.ptr,
                            sizeof(Scalar) * n_total_samples_in_grid);
                 });
