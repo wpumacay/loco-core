@@ -49,6 +49,39 @@ auto create_test_mesh(::loco::MeshData& mesh_data) -> void {
 }
 
 // NOLINTNEXTLINE
+auto validate_test_mesh(const ::loco::MeshData& mesh_data) -> void {
+    REQUIRE(mesh_data.filepath == FILEPATH);
+    REQUIRE(mesh_data.n_vertices == NUM_VERTICES);
+    REQUIRE(mesh_data.n_faces == NUM_FACES);
+    REQUIRE(mesh_data.vertices != nullptr);
+    REQUIRE(mesh_data.faces != nullptr);
+    // vertex p0 = (-1.0, -1.0, 0.0)
+    REQUIRE(mesh_data.vertices[0] == ToScalar(-1.0));
+    REQUIRE(mesh_data.vertices[1] == ToScalar(-1.0));
+    REQUIRE(mesh_data.vertices[2] == ToScalar(0.0));
+    // vertex p1 = (1.0, -1.0, 0.0)
+    REQUIRE(mesh_data.vertices[3] == ToScalar(1.0));
+    REQUIRE(mesh_data.vertices[4] == ToScalar(-1.0));
+    REQUIRE(mesh_data.vertices[5] == ToScalar(0.0));
+    // vertex p2 = (1.0, 1.0, 0.0)
+    REQUIRE(mesh_data.vertices[6] == ToScalar(1.0));
+    REQUIRE(mesh_data.vertices[7] == ToScalar(1.0));
+    REQUIRE(mesh_data.vertices[8] == ToScalar(0.0));
+    // vertex p3 = (1.0, 1.0, 0.0)
+    REQUIRE(mesh_data.vertices[9] == ToScalar(-1.0));
+    REQUIRE(mesh_data.vertices[10] == ToScalar(1.0));
+    REQUIRE(mesh_data.vertices[11] == ToScalar(0.0));
+    // triangle p0-p1-p2
+    REQUIRE(mesh_data.faces[0] == 0);
+    REQUIRE(mesh_data.faces[1] == 1);
+    REQUIRE(mesh_data.faces[2] == 2);
+    // triangle p0-p2-p3
+    REQUIRE(mesh_data.faces[3] == 0);
+    REQUIRE(mesh_data.faces[4] == 2);
+    REQUIRE(mesh_data.faces[5] == 3);
+}
+
+// NOLINTNEXTLINE
 TEST_CASE("MeshData constructors", "[MeshData]") {
     SECTION("MeshData default constructor") {
         ::loco::MeshData mesh_data;
@@ -65,35 +98,7 @@ TEST_CASE("MeshData constructors", "[MeshData]") {
 
         // Make sure the copy constructor works as expected
         ::loco::MeshData mesh_data_2(mesh_data_1);
-        REQUIRE(mesh_data_2.filepath == FILEPATH);
-        REQUIRE(mesh_data_2.n_vertices == NUM_VERTICES);
-        REQUIRE(mesh_data_2.n_faces == NUM_FACES);
-        REQUIRE(mesh_data_2.vertices != nullptr);
-        REQUIRE(mesh_data_2.faces != nullptr);
-        // vertex p0 = (-1.0, -1.0, 0.0)
-        REQUIRE(mesh_data_2.vertices[0] == ToScalar(-1.0));
-        REQUIRE(mesh_data_2.vertices[1] == ToScalar(-1.0));
-        REQUIRE(mesh_data_2.vertices[2] == ToScalar(0.0));
-        // vertex p1 = (1.0, -1.0, 0.0)
-        REQUIRE(mesh_data_2.vertices[3] == ToScalar(1.0));
-        REQUIRE(mesh_data_2.vertices[4] == ToScalar(-1.0));
-        REQUIRE(mesh_data_2.vertices[5] == ToScalar(0.0));
-        // vertex p2 = (1.0, 1.0, 0.0)
-        REQUIRE(mesh_data_2.vertices[6] == ToScalar(1.0));
-        REQUIRE(mesh_data_2.vertices[7] == ToScalar(1.0));
-        REQUIRE(mesh_data_2.vertices[8] == ToScalar(0.0));
-        // vertex p3 = (1.0, 1.0, 0.0)
-        REQUIRE(mesh_data_2.vertices[9] == ToScalar(-1.0));
-        REQUIRE(mesh_data_2.vertices[10] == ToScalar(1.0));
-        REQUIRE(mesh_data_2.vertices[11] == ToScalar(0.0));
-        // triangle p0-p1-p2
-        REQUIRE(mesh_data_2.faces[0] == 0);
-        REQUIRE(mesh_data_2.faces[1] == 1);
-        REQUIRE(mesh_data_2.faces[2] == 2);
-        // triangle p0-p2-p3
-        REQUIRE(mesh_data_2.faces[3] == 0);
-        REQUIRE(mesh_data_2.faces[4] == 2);
-        REQUIRE(mesh_data_2.faces[5] == 3);
+        validate_test_mesh(mesh_data_2);
 
         // Also, the original shouldn't have changed
         REQUIRE(mesh_data_1.filepath == FILEPATH);
@@ -118,36 +123,7 @@ TEST_CASE("MeshData constructors", "[MeshData]") {
         // Make sure the copy assignment operator works as expected
         ::loco::MeshData mesh_data_2;
         mesh_data_2 = mesh_data_1;
-
-        REQUIRE(mesh_data_2.filepath == FILEPATH);
-        REQUIRE(mesh_data_2.n_vertices == NUM_VERTICES);
-        REQUIRE(mesh_data_2.n_faces == NUM_FACES);
-        REQUIRE(mesh_data_2.vertices != nullptr);
-        REQUIRE(mesh_data_2.faces != nullptr);
-        // vertex p0 = (-1.0, -1.0, 0.0)
-        REQUIRE(mesh_data_2.vertices[0] == ToScalar(-1.0));
-        REQUIRE(mesh_data_2.vertices[1] == ToScalar(-1.0));
-        REQUIRE(mesh_data_2.vertices[2] == ToScalar(0.0));
-        // vertex p1 = (1.0, -1.0, 0.0)
-        REQUIRE(mesh_data_2.vertices[3] == ToScalar(1.0));
-        REQUIRE(mesh_data_2.vertices[4] == ToScalar(-1.0));
-        REQUIRE(mesh_data_2.vertices[5] == ToScalar(0.0));
-        // vertex p2 = (1.0, 1.0, 0.0)
-        REQUIRE(mesh_data_2.vertices[6] == ToScalar(1.0));
-        REQUIRE(mesh_data_2.vertices[7] == ToScalar(1.0));
-        REQUIRE(mesh_data_2.vertices[8] == ToScalar(0.0));
-        // vertex p3 = (1.0, 1.0, 0.0)
-        REQUIRE(mesh_data_2.vertices[9] == ToScalar(-1.0));
-        REQUIRE(mesh_data_2.vertices[10] == ToScalar(1.0));
-        REQUIRE(mesh_data_2.vertices[11] == ToScalar(0.0));
-        // triangle p0-p1-p2
-        REQUIRE(mesh_data_2.faces[0] == 0);
-        REQUIRE(mesh_data_2.faces[1] == 1);
-        REQUIRE(mesh_data_2.faces[2] == 2);
-        // triangle p0-p2-p3
-        REQUIRE(mesh_data_2.faces[3] == 0);
-        REQUIRE(mesh_data_2.faces[4] == 2);
-        REQUIRE(mesh_data_2.faces[5] == 3);
+        validate_test_mesh(mesh_data_2);
 
         // Also, the original shouldn't have changed
         REQUIRE(mesh_data_1.filepath == FILEPATH);
@@ -166,10 +142,33 @@ TEST_CASE("MeshData constructors", "[MeshData]") {
     SECTION("MeshData move constructor") {
         ::loco::MeshData mesh_data_1;
         create_test_mesh(mesh_data_1);
+
+        // Make sure the move constructor works as expected
+        ::loco::MeshData mesh_data_2(std::move(mesh_data_1));
+        validate_test_mesh(mesh_data_2);
+
+        // The original should be invalidated
+        REQUIRE(mesh_data_1.filepath.empty());
+        REQUIRE(mesh_data_1.n_vertices == 0);
+        REQUIRE(mesh_data_1.vertices == nullptr);
+        REQUIRE(mesh_data_1.n_faces == 0);
+        REQUIRE(mesh_data_1.faces == nullptr);
     }
 
     SECTION("MeshData move assignment operator") {
         ::loco::MeshData mesh_data_1;
         create_test_mesh(mesh_data_1);
+
+        // Make sure the move assignment operator works as expected
+        ::loco::MeshData mesh_data_2;
+        mesh_data_2 = std::move(mesh_data_1);
+        validate_test_mesh(mesh_data_2);
+
+        // The original should be invalidated
+        REQUIRE(mesh_data_1.filepath.empty());
+        REQUIRE(mesh_data_1.n_vertices == 0);
+        REQUIRE(mesh_data_1.vertices == nullptr);
+        REQUIRE(mesh_data_1.n_faces == 0);
+        REQUIRE(mesh_data_1.faces == nullptr);
     }
 }
