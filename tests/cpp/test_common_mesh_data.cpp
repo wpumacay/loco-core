@@ -89,5 +89,18 @@ TEST_CASE("MeshData constructors", "[MeshData]") {
         REQUIRE(mesh_data_2.faces[3] == 0);
         REQUIRE(mesh_data_2.faces[4] == 2);
         REQUIRE(mesh_data_2.faces[5] == 3);
+
+        // Also, the original shouldn't have changed
+        REQUIRE(mesh_data_1.filepath == FILEPATH);
+        REQUIRE(mesh_data_1.n_vertices == NUM_VERTICES);
+        REQUIRE(mesh_data_1.vertices != nullptr);
+        REQUIRE(mesh_data_1.vertices.get() != mesh_data_2.vertices.get());
+        REQUIRE(memcmp(mesh_data_1.vertices.get(), mesh_data_2.vertices.get(),
+                       sizeof(Scalar) * NUM_VERTICES * 3) == 0);
+        REQUIRE(mesh_data_1.n_faces == NUM_FACES);
+        REQUIRE(mesh_data_1.faces != nullptr);
+        REQUIRE(mesh_data_1.faces.get() != mesh_data_2.faces.get());
+        REQUIRE(memcmp(mesh_data_1.faces.get(), mesh_data_2.faces.get(),
+                       sizeof(uint32_t) * NUM_FACES * 3) == 0);
     }
 }
