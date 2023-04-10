@@ -27,8 +27,8 @@ option(LOCO_BUILD_EXAMPLES "Build C/C++ examples" ON)
 option(LOCO_BUILD_TESTS "Build C/C++ tests" ON)
 option(LOCO_BUILD_DOCS "Build documentation" ON)
 
-option(LOCO_BUILD_BACKEND_MUJOCO "Build with support for MuJoCo" ON)
-option(LOCO_BUILD_BACKEND_BULLET "Build with support for Bullet" ON)
+option(LOCO_BUILD_BACKEND_MUJOCO "Build with support for MuJoCo" OFF)
+option(LOCO_BUILD_BACKEND_BULLET "Build with support for Bullet" OFF)
 option(LOCO_BUILD_BACKEND_DART "Build with support for Dart" OFF)
 
 loco_initialize_project()
@@ -71,6 +71,12 @@ add_library(loco::core ALIAS LocoCoreCpp)
 # Add C++ examples to the build process
 if(LOCO_BUILD_EXAMPLES)
   add_subdirectory(examples/cpp)
+endif()
+
+# -------------------------------------
+# Add C++ tests to the build process
+if(LOCO_BUILD_TESTS)
+  add_subdirectory(tests/cpp)
 endif()
 
 # -------------------------------------
