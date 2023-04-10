@@ -1,5 +1,6 @@
 #include <cstring>
 #include <stdexcept>
+#include <algorithm>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
@@ -189,7 +190,7 @@ auto bindings_common(py::module& m) -> void {
             .def_readwrite("n_depth_samples", &Class::n_depth_samples)
             .def_property(
                 "heights",
-                [](const Class& self) -> py::array_t<Scalar> {
+                [](Class& self) -> py::array_t<Scalar> {
                     // Make sure we have valid dimensions
                     if (self.n_width_samples < 1 || self.n_depth_samples < 1) {
                         LOG_CORE_WARN(
@@ -199,19 +200,15 @@ auto bindings_common(py::module& m) -> void {
                             "one dimension");
                         return py::array_t<Scalar>();  // NOLINT
                     }
-                    // Make sure also that we have data to retrieve
+                    // Initialize the buffer to zeros if not initialized yet
                     if (self.heights == nullptr) {
-                        LOG_CORE_WARN(
-                            "HeightfieldData::heights >>> tried reading from a "
-                            "non-initialized grid. Currently there's no data "
-                            "in the grid buffer. Returning an array of zeros "
-                            "instead");
-                        return py::array(py::buffer_info(
-                            nullptr, sizeof(Scalar),
-                            py::format_descriptor<Scalar>::format(), 2,
-                            {self.n_depth_samples, self.n_width_samples},
-                            {sizeof(Scalar) * self.n_width_samples,
-                             sizeof(Scalar)}));
+                        // NOLINTNEXTLINE
+                        self.heights = std::make_unique<Scalar[]>(
+                            self.n_width_samples * self.n_depth_samples);
+                        std::fill(self.heights.get(),
+                                  self.heights.get() + (self.n_width_samples *
+                                                        self.n_depth_samples),
+                                  0.0);
                     }
 
                     return py::array(py::buffer_info(
