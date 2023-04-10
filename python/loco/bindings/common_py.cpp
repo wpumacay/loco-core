@@ -193,11 +193,6 @@ auto bindings_common(py::module& m) -> void {
                 [](Class& self) -> py::array_t<Scalar> {
                     // Make sure we have valid dimensions
                     if (self.n_width_samples < 1 || self.n_depth_samples < 1) {
-                        LOG_CORE_WARN(
-                            "HeightfieldData::heights >>> tried reading from "
-                            "non-initialized grid. Should have valid width and "
-                            "depth number of samples; instead got 0 samples in "
-                            "one dimension");
                         return py::array_t<Scalar>();  // NOLINT
                     }
                     // Initialize the buffer to zeros if not initialized yet
