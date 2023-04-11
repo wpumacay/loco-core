@@ -1,6 +1,6 @@
 #pragma once
 
-#include <loco/core/common.hpp>
+#include "./common.hpp"
 
 namespace loco {
 namespace core {

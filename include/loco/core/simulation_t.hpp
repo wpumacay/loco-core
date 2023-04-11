@@ -3,9 +3,9 @@
 #include <memory>
 #include <utility>
 
-#include <loco/core/common.hpp>
-#include <loco/core/scenario_t.hpp>
-#include <loco/core/impl/simulation_impl.hpp>
+#include "./common.hpp"
+#include "./scenario_t.hpp"
+#include "./impl/simulation_impl.hpp"
 
 namespace loco {
 namespace core {
