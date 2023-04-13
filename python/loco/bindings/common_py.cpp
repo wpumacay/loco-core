@@ -180,7 +180,13 @@ auto bindings_common(py::module& m) -> void {
                     }
                     memcpy(self.faces.get(), info.ptr,
                            sizeof(uint32_t) * n_indices);
-                });
+                })
+            .def("__repr__", [](const Class& self) -> py::str {
+                return py::str(
+                           "MeshData(filepath=\"{}\", num_vertices={}, "
+                           "num_faces={})")
+                    .format(self.filepath, self.n_vertices, self.n_faces);
+            });
     }
 
     {
@@ -240,7 +246,13 @@ auto bindings_common(py::module& m) -> void {
 
                     memcpy(self.heights.get(), info.ptr,
                            sizeof(Scalar) * num_samples);
-                });
+                })
+            .def("__repr__", [](const Class& self) -> py::str {
+                return py::str(
+                           "HeightfieldData(num_width_samples={}, "
+                           "num_depth_samples={})")
+                    .format(self.n_width_samples, self.n_depth_samples);
+            });
     }
 
     {
@@ -252,7 +264,12 @@ auto bindings_common(py::module& m) -> void {
             .def_readwrite("size", &Class::size)
             .def_readwrite("mesh_data", &Class::mesh_data)
             .def_readwrite("hfield_data", &Class::hfield_data)
-            .def_readwrite("local_tf", &Class::local_tf);
+            .def_readwrite("local_tf", &Class::local_tf)
+            .def("__repr__", [](const Class& self) -> py::str {
+                return py::str("ShapeData(type=\"{}\", size={}, local_tf={})")
+                    .format(::loco::ToString(self.type), self.size.toString(),
+                            self.local_tf.toString());
+            });
     }
 
     {
@@ -268,7 +285,17 @@ auto bindings_common(py::module& m) -> void {
             .def_readwrite("collision_group", &Class::collision_group)
             .def_readwrite("collision_mask", &Class::collision_mask)
             .def_readwrite("friction", &Class::friction)
-            .def_readwrite("children", &Class::children);
+            .def_readwrite("children", &Class::children)
+            .def("__repr__", [](const Class& self) -> py::str {
+                return py::str(
+                           "ColliderData(type=\"{}\", size={}, "
+                           "collision_group={}, collision_mask={}, "
+                           "friction={}, local_tf={}, num_children={})")
+                    .format(::loco::ToString(self.type), self.size.toString(),
+                            self.collision_group, self.collision_mask,
+                            self.friction.toString(), self.local_tf.toString(),
+                            self.children.size());
+            });
     }
 
     {
@@ -283,7 +310,15 @@ auto bindings_common(py::module& m) -> void {
             .def(py::init<>())
             .def_readwrite("color", &Class::color)
             .def_readwrite("texture", &Class::texture)
-            .def_readwrite("children", &Class::children);
+            .def_readwrite("children", &Class::children)
+            .def("__repr__", [](const Class& self) -> py::str {
+                return py::str(
+                           "DrawableData(type=\"{}\", size={}, color={}, "
+                           "texture=\"{}\", local_tf={}, num_children={})")
+                    .format(::loco::ToString(self.type), self.size.toString(),
+                            self.color.toString(), self.texture,
+                            self.local_tf.toString(), self.children.size());
+            });
     }
 
     {
@@ -293,7 +328,12 @@ auto bindings_common(py::module& m) -> void {
             .def(py::init<>())
             .def_readwrite("mass", &Class::mass)
             .def_readwrite("inertia", &Class::inertia)
-            .def_readwrite("local_tf", &Class::local_tf);
+            .def_readwrite("local_tf", &Class::local_tf)
+            .def("__repr__", [](const Class& self) -> py::str {
+                return py::str("InertialData(mass={}, inertia={}, local_tf={})")
+                    .format(self.mass, self.inertia.toString(),
+                            self.local_tf.toString());
+            });
     }
 
     {
@@ -304,7 +344,11 @@ auto bindings_common(py::module& m) -> void {
             .def_readwrite("dyntype", &Class::dyntype)
             .def_readwrite("inertia", &Class::inertia)
             .def_readwrite("collider", &Class::collider)
-            .def_readwrite("drawable", &Class::drawable);
+            .def_readwrite("drawable", &Class::drawable)
+            .def("__repr__", [](const Class& self) -> py::str {
+                return py::str("BodyData(dyntype={})")
+                    .format(::loco::ToString(self.dyntype));
+            });
     }
 }
 
