@@ -1,15 +1,21 @@
+#include <vector>
 #include <cstring>
 #include <stdexcept>
 #include <algorithm>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
+#include <pybind11/stl.h>
+#include <pybind11/stl_bind.h>
 
 #include <conversions_py.hpp>
 
 #include <loco/core/common.hpp>
 
 namespace py = pybind11;
+
+PYBIND11_MAKE_OPAQUE(std::vector<::loco::ColliderData>);
+PYBIND11_MAKE_OPAQUE(std::vector<::loco::DrawableData>);
 
 namespace loco {
 
@@ -250,6 +256,10 @@ auto bindings_common(py::module& m) -> void {
     }
 
     {
+        // Bind stl container std::vector<::loco::ColliderData>
+        py::bind_vector<std::vector<::loco::ColliderData>>(
+            m, "VectorColliderData");
+
         using Class = ::loco::ColliderData;
         using BaseClass = ::loco::ShapeData;
         constexpr auto ClassName = "ColliderData";  // NOLINT
@@ -257,19 +267,23 @@ auto bindings_common(py::module& m) -> void {
             .def(py::init<>())
             .def_readwrite("collision_group", &Class::collision_group)
             .def_readwrite("collision_mask", &Class::collision_mask)
-            .def_readwrite("friction", &Class::friction);
-        // .def_readwrite("children", &Class::children)
+            .def_readwrite("friction", &Class::friction)
+            .def_readwrite("children", &Class::children);
     }
 
     {
+        // Bind stl container std::vector<::loco::DrawableData>
+        py::bind_vector<std::vector<::loco::DrawableData>>(
+            m, "VectorDrawableData");
+
         using Class = ::loco::DrawableData;
         using BaseClass = ::loco::ShapeData;
         constexpr auto ClassName = "DrawableData";  // NOLINT
         py::class_<Class, BaseClass>(m, ClassName)
             .def(py::init<>())
             .def_readwrite("color", &Class::color)
-            .def_readwrite("texture", &Class::texture);
-        // .def_readwrite("children", &Class::children)
+            .def_readwrite("texture", &Class::texture)
+            .def_readwrite("children", &Class::children);
     }
 
     {

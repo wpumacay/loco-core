@@ -36,6 +36,7 @@ def test_collider_data() -> None:
     assert np.allclose(
         collider_data.friction, np.array([1.0, 0.005, 0.0001], dtype=np.float32)
     )
+    assert len(collider_data.children) == 0
     # Make sure it keeps the same defaults as its parent
     assert collider_data.type == loco.ShapeType.SPHERE
     assert np.allclose(
@@ -65,7 +66,28 @@ def test_drawable_data() -> None:
         drawable_data.color, np.array([0.7, 0.5, 0.3], dtype=np.float32)
     )
     assert drawable_data.texture == ""
-
+    assert len(drawable_data.children) == 0
+    # Make sure it keeps the same defaults as its parent
+    assert drawable_data.type == loco.ShapeType.SPHERE
+    assert np.allclose(
+        drawable_data.size, np.array([0.0, 0.0, 0.0], dtype=np.float32)
+    )
+    assert drawable_data.mesh_data.filepath == ""
+    assert drawable_data.mesh_data.n_vertices == 0
+    assert drawable_data.mesh_data.vertices.shape == (0,)
+    assert drawable_data.mesh_data.n_faces == 0
+    assert drawable_data.mesh_data.faces.shape == (0,)
+    assert drawable_data.hfield_data.n_width_samples == 0
+    assert drawable_data.hfield_data.n_depth_samples == 0
+    assert drawable_data.hfield_data.heights.shape == (0,)
+    assert np.allclose(
+        drawable_data.local_tf.position,
+        np.array([0.0, 0.0, 0.0], dtype=np.float32),
+    )
+    assert np.allclose(
+        drawable_data.local_tf.orientation,
+        np.array([1.0, 0.0, 0.0, 0.0], dtype=np.float32),
+    )
 
 def test_inertial_data() -> None:
     inertial_data = loco.InertialData()
