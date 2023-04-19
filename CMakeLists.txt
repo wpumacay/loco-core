@@ -49,6 +49,7 @@ loco_create_target(LocoCoreCpp STATIC
     ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/scenario_t.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/simulation_t.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/visualizer_t.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/body_t.cpp
   INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/include
   TARGET_DEPENDENCIES

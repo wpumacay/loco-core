@@ -25,6 +25,8 @@ class IBodyImpl {
     DEFINE_SMART_POINTERS(IBodyImpl)
 
  public:
+    IBodyImpl() = default;
+
     /// Releases/Frees all allocated resources for this adapter
     virtual ~IBodyImpl() = default;
 
@@ -82,6 +84,8 @@ class BodyImplNone : public IBodyImpl {
     DEFINE_SMART_POINTERS(BodyImplNone)
 
  public:
+    BodyImplNone() = default;
+
     // Documentation inherited
     ~BodyImplNone() override = default;
 
