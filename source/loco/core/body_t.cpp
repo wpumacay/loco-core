@@ -24,6 +24,10 @@ auto Body::Reset() -> void {
     totalTorque = Vec3(ToScalar(0.0), ToScalar(0.0), ToScalar(0.0));
     totalForceCOM = Vec3(ToScalar(0.0), ToScalar(0.0), ToScalar(0.0));
 
+    m_Pose = pose0;
+    m_LinearVel = linearVel0;
+    m_AngularVel = angularVel0;
+
     switch (m_BackendType) {
         case ::loco::eBackendType::NONE: {
             m_BackendImpl = std::make_unique<BodyImplNone>();
@@ -48,6 +52,28 @@ auto Body::SetPose(const Pose& pose) -> void {
         return;
     }
     m_BackendImpl->SetPose(pose);
+}
+
+auto Body::SetPosition(const Vec3& pos) -> void {
+    m_Pose.position = pos;
+    if (m_BackendImpl == nullptr) {
+        LOG_CORE_WARN(
+            "Body::SetPosition >>> tried setting position in world space for "
+            "the rigid body without a valid adapter");
+        return;
+    }
+    m_BackendImpl->SetPose(m_Pose);
+}
+
+auto Body::SetOrientation(const Quat& quat) -> void {
+    m_Pose.orientation = quat;
+    if (m_BackendImpl == nullptr) {
+        LOG_CORE_WARN(
+            "Body::SetOrientation >>> tried setting orientation in world space "
+            "for the rigid body without a valid adapter");
+        return;
+    }
+    m_BackendImpl->SetPose(m_Pose);
 }
 
 auto Body::SetLinearVelocity(const Vec3& linear_vel) -> void {

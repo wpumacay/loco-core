@@ -37,6 +37,16 @@ class Body {
     /// \param[in] pose The desired pose in world space
     auto SetPose(const Pose& pose) -> void;
 
+    /// \brief Sets the position of this rigid body in world space
+    ///
+    /// \param[in] pos The desired position in world space
+    auto SetPosition(const Vec3& pos) -> void;
+
+    /// \brief Sets the orientation of this rigid body in world space
+    ///
+    /// \param[in] quat The desired orientation in world space
+    auto SetOrientation(const Quat& quat) -> void;
+
     /// \brief Sets the linear velocity of this rigid body to the given value
     ///
     /// \param[in] linear_vel The desired linear velocity of this body
@@ -47,8 +57,14 @@ class Body {
     /// \param[in] angular_vel The angular velocity of this body
     auto SetAngularVelocity(const Vec3& angular_vel) -> void;
 
-    /// \brief Returns the current pose of this rigid body
+    /// \brief Returns the current pose of this rigid body in world space
     auto pose() const -> Pose { return m_Pose; }
+
+    /// \brief Returns the current position of this rigid body in world space
+    auto position() const -> Vec3 { return m_Pose.position; }
+
+    /// \brief Returns the current orientation of this rigid body in world space
+    auto orientation() const -> Quat { return m_Pose.orientation; }
 
     /// \brief Returns the linear velocity of this rigid body
     auto linear_vel() const -> Vec3 { return m_LinearVel; }
