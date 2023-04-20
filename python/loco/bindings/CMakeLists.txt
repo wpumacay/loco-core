@@ -11,8 +11,10 @@ if(NOT TARGET math::math_py_helpers)
   return()
 endif()
 
-set(BINDINGS_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/bindings_py.cpp
-                     ${CMAKE_CURRENT_SOURCE_DIR}/common_py.cpp)
+set(BINDINGS_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/bindings_py.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/common_py.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/body_py.cpp)
 
 pybind11_add_module(loco MODULE ${BINDINGS_SOURCES})
 target_include_directories(loco PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

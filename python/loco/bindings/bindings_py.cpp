@@ -20,4 +20,5 @@ PYBIND11_MODULE(loco, m) {
     ::loco::bindings_common(m);
     // ::loco::bindings_collider(m);
     // ::loco::bindings_drawable(m);
+    ::loco::bindings_body(m);
 }
