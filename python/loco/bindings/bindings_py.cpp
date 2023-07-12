@@ -3,8 +3,9 @@
 namespace py = pybind11;
 
 namespace loco {
-extern auto bindings_common(py::module& m) -> void;    // NOLINT
-extern auto bindings_scenario(py::module& m) -> void;  // NOLINT
+extern auto bindings_common(py::module& m) -> void;      // NOLINT
+extern auto bindings_scenario(py::module& m) -> void;    // NOLINT
+extern auto bindings_simulation(py::module& m) -> void;  // NOLINT
 
 //// extern auto bindings_collider(py::module& m) -> void;  // NOLINT
 //// extern auto bindings_drawable(py::module& m) -> void;  // NOLINT
@@ -21,6 +22,7 @@ PYBIND11_MODULE(loco, m) {
 
     ::loco::bindings_common(m);
     ::loco::bindings_scenario(m);
+    ::loco::bindings_simulation(m);
     // ::loco::bindings_collider(m);
     // ::loco::bindings_drawable(m);
     // ::loco::bindings_body(m);
