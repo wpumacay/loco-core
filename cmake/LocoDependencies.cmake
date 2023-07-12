@@ -40,16 +40,20 @@ set(LOCO_DEP_VERSION_tinyxml2
           "Version of TinyXML2 to be fetched (used to handle urdf and mjcf)")
 
 set(LOCO_DEP_VERSION_renderer
-    c53a7e94cc228b9b4cd0f347d36907fe5f2eb259 # Version v0.2.2
+    9b0289d7d99282099ae3472eb84e8b9ad260c468 # Version v0.2.3
     CACHE STRING "Version of the internal renderer to be fetched")
 
 set(LOCO_DEP_VERSION_utils
-    5d20d313cd6d444f41a35bc4a641a7d62a79e231 # Version v0.2.0
+    3b93e80597ebf86013b76b1252f136c4a8771516 # Version v0.2.1
     CACHE STRING "Version of internal utilities repo to be fetched")
 
 set(LOCO_DEP_VERSION_math
-    e6f8e7e6a2b283a156e6081b1f79f2d64a0a5ecb # Version v0.4.1
+    5b6edc1192da37b0c7b227d1f8cb2bce4cae1fa3 # Version v0.4.5
     CACHE STRING "Version of internal math repo to be fetched")
+
+set(LOCO_DEP_VERSION_pybind11
+    5b0a6fc2017fcc176545afe3e09c9f9885283242 # Release v2.10.4
+    CACHE STRING "Version of PyBind11 to be fetched (used for python bindings)")
 
 mark_as_advanced(LOCO_DEP_VERSION_mujoco)
 mark_as_advanced(LOCO_DEP_VERSION_bullet)
@@ -59,6 +63,7 @@ mark_as_advanced(LOCO_DEP_VERSION_tinyxml2)
 mark_as_advanced(LOCO_DEP_VERSION_renderer)
 mark_as_advanced(LOCO_DEP_VERSION_utils)
 mark_as_advanced(LOCO_DEP_VERSION_math)
+mark_as_advanced(LOCO_DEP_VERSION_pybind11)
 
 option(FIND_OR_FETCH_USE_SYSTEM_PACKAGE
        "Whether or not to give priority to system-wide package search" OFF)
@@ -201,15 +206,12 @@ loco_find_or_fetch_dependency(
 # ------------------------------------------------------------------------------
 # Pybind11 is used for generating Python bindings for this project's C++ API
 # ------------------------------------------------------------------------------
-# Hint to Pybind11 that we want to use the newer FindPython module from CMake
-set(PYBIND11_FINDPYTHON ON CACHE BOOL "Use newer FindPython (CMake 3.15+)")
-
 loco_find_or_fetch_dependency(
   USE_SYSTEM_PACKAGE FALSE
   PACKAGE_NAME pybind11
   LIBRARY_NAME pybind11
-  GIT_REPO https://github.com/RobotLocomotion/pybind11.git
-  GIT_TAG drake
+  GIT_REPO https://github.com/pybind/pybind11.git
+  GIT_TAG ${LOCO_DEP_VERSION_pybind11}
   TARGETS pybind11::headers
   BUILD_ARGS
     -DPYBIND11_TEST=OFF
