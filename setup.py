@@ -22,15 +22,6 @@ PLAT_TO_CMAKE = {
 }
 
 
-# Convert distutils Windows platform specifiers to CMake -A arguments
-PLAT_TO_CMAKE = {
-    "win32": "Win32",
-    "win-amd64": "x64",
-    "win-arm32": "ARM",
-    "win-arm64": "ARM64",
-}
-
-
 # A CMakeExtension needs a sourcedir instead of a file list.
 # The name must be the _single_ output extension from the CMake build.
 # If you need multiple extensions, see scikit-build.
@@ -165,6 +156,6 @@ class CMakeBuild(build_ext):
 
 
 setup(
-    ext_modules=[CMakeExtension("loco", ".")],
+    ext_modules=[CMakeExtension("loco_bindings", ".")],
     cmdclass={"build_ext": CMakeBuild},
 )
