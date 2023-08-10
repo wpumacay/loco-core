@@ -3,8 +3,13 @@ setuptools
 pytest
 pylint
 black
+isort
+flake8
 cmakelang
 cpplint
 pre-commit
 ipython
 ipykernel
+sphinx
+sphinx_rtd_theme
+breathe
