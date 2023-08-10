@@ -102,12 +102,10 @@ auto bindings_common(py::module& m) -> void {
                                   self.vertices.get() + NUM_SCALARS, 0.0);
                     }
 
-                    // TODO(wilbert): check how to return a view of the data.
-                    // Currently we're returning a copy of the data, but a view
-                    // would be nice in order to modify each element without
-                    // having to rewrite the whole buffer every time
+                    // Return a view of the vertices as an np.array[float]
                     return py::array_t<Scalar>(
-                        static_cast<ssize_t>(NUM_SCALARS), self.vertices.get());
+                        static_cast<ssize_t>(NUM_SCALARS), self.vertices.get(),
+                        py::cast(self));
                 },
                 [](Class& self, const py::array_t<Scalar>& array_np) -> void {
                     // We received here a numpy array from the user, which comes
@@ -155,12 +153,10 @@ auto bindings_common(py::module& m) -> void {
                                   self.faces.get() + NUM_INDICES, 0);
                     }
 
-                    // TODO(wilbert): check how to return a view of the data.
-                    // Currently we're returning a copy of the data, but a view
-                    // would be nice in order to modify each element without
-                    // having to rewrite the whole buffer every time
+                    // Return a view of the faces as an np.array[int]
                     return py::array_t<uint32_t>(
-                        static_cast<ssize_t>(NUM_INDICES), self.faces.get());
+                        static_cast<ssize_t>(NUM_INDICES), self.faces.get(),
+                        py::cast(self));
                 },
                 [](Class& self, const py::array_t<uint32_t>& array_np) -> void {
                     auto info = array_np.request();
@@ -214,12 +210,14 @@ auto bindings_common(py::module& m) -> void {
                                   0.0);
                     }
 
-                    return py::array(py::buffer_info(
-                        self.heights.get(), sizeof(Scalar),
-                        py::format_descriptor<Scalar>::format(), 2,
-                        {self.n_depth_samples, self.n_width_samples},
-                        {sizeof(Scalar) * self.n_width_samples,
-                         sizeof(Scalar)}));
+                    return py::array(
+                        py::buffer_info(
+                            self.heights.get(), sizeof(Scalar),
+                            py::format_descriptor<Scalar>::format(), 2,
+                            {self.n_depth_samples, self.n_width_samples},
+                            {sizeof(Scalar) * self.n_width_samples,
+                             sizeof(Scalar)}),
+                        py::cast(self));
                 },
                 [](Class& self, const py::array_t<Scalar>& array_np) -> void {
                     auto info = array_np.request();
