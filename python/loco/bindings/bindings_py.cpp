@@ -13,7 +13,7 @@ extern auto bindings_simulation(py::module& m) -> void;  // NOLINT
 }  // namespace loco
 
 // NOLINTNEXTLINE
-PYBIND11_MODULE(loco, m) {
+PYBIND11_MODULE(loco_bindings, m) {
     // Import bindings for our math types (avoids issues with undeclared funcs.)
     // TODO(wilbert): Currently we have to install math3d separately, even
     // though we build the math3d bindings as part of our build steps for loco.

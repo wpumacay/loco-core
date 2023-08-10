@@ -5,6 +5,7 @@ if(NOT TARGET loco::core)
   loco_message("Bindings require the 'loco::core' target" LOG_LEVEL FATAL_ERROR)
   return()
 endif()
+
 if(NOT TARGET math::math_py_helpers)
   loco_message("Bindings requires the 'math::math_py_helpers' target" LOG_LEVEL
                FATAL_ERROR)
@@ -19,6 +20,6 @@ set(BINDINGS_SOURCES
     # ${CMAKE_CURRENT_SOURCE_DIR}/body_py.cpp
 )
 
-pybind11_add_module(loco MODULE ${BINDINGS_SOURCES})
-target_include_directories(loco PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(loco PRIVATE loco::core math::math_py_helpers)
+pybind11_add_module(loco_bindings MODULE ${BINDINGS_SOURCES})
+target_include_directories(loco_bindings PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(loco_bindings PRIVATE loco::core math::math_py_helpers)
