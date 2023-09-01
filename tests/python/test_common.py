@@ -1,16 +1,51 @@
-import pytest
-
+import math3d as m3d
 import numpy as np
 
 import loco
 
 
+def test_constants() -> None:
+    assert loco.MAX_NUM_QPOS == 7
+    assert loco.MAX_NUM_QVEL == 6
+    assert loco.NUM_QPOS_JOINT_PRISMATIC == 1
+    assert loco.NUM_QPOS_JOINT_REVOLUTE == 1
+    assert loco.NUM_QPOS_JOINT_SPHERICAL == 4
+    assert loco.NUM_QPOS_JOINT_FREE == 7
+    assert np.abs(loco.DEFAULT_DENSITY - 1e3) < 1e-5
+
+
 def test_shape_data() -> None:
     shape_data = loco.ShapeData()
     assert shape_data.type == loco.ShapeType.SPHERE
+    # Size element is exposed as a math3d::Vector3X
+    assert shape_data.size is m3d.Vector3f or shape_data.size is m3d.Vector3d
+    assert np.abs(shape_data.size.x - 0.0) < 1e-6
+    assert np.abs(shape_data.size.y - 0.0) < 1e-6
+    assert np.abs(shape_data.size.z - 0.0) < 1e-6
     assert np.allclose(
         shape_data.size, np.array([0.0, 0.0, 0.0], dtype=np.float32)
     )
+    # Relative pose is exposed as a math3d::Pose3d_X
+    assert (
+        shape_data.local_tf is m3d.Pose3d_f
+        or shape_data.local_tf is m3d.Pose3d_d
+    )
+    assert np.abs(shape_data.local_tf.position.x - 0.0) < 1e-6
+    assert np.abs(shape_data.local_tf.position.y - 0.0) < 1e-6
+    assert np.abs(shape_data.local_tf.position.z - 0.0) < 1e-6
+    assert np.allclose(
+        shape_data.local_tf.position,
+        np.array([0.0, 0.0, 0.0], dtype=np.float32),
+    )
+    assert np.abs(shape_data.local_tf.orientation.w - 1.0) < 1e-6
+    assert np.abs(shape_data.local_tf.orientation.x - 0.0) < 1e-6
+    assert np.abs(shape_data.local_tf.orientation.y - 0.0) < 1e-6
+    assert np.abs(shape_data.local_tf.orientation.z - 0.0) < 1e-6
+    assert np.allclose(
+        shape_data.local_tf.orientation,
+        np.array([1.0, 0.0, 0.0, 0.0], dtype=np.float32),
+    )
+    # MeshData and HeightfieldData are both empty by default
     assert shape_data.mesh_data.filepath == ""
     assert shape_data.mesh_data.n_vertices == 0
     assert shape_data.mesh_data.vertices.shape == (0,)
@@ -19,14 +54,6 @@ def test_shape_data() -> None:
     assert shape_data.hfield_data.n_width_samples == 0
     assert shape_data.hfield_data.n_depth_samples == 0
     assert shape_data.hfield_data.heights.shape == (0,)
-    assert np.allclose(
-        shape_data.local_tf.position,
-        np.array([0.0, 0.0, 0.0], dtype=np.float32),
-    )
-    assert np.allclose(
-        shape_data.local_tf.orientation,
-        np.array([1.0, 0.0, 0.0, 0.0], dtype=np.float32),
-    )
 
 
 def test_collider_data() -> None:
@@ -89,6 +116,7 @@ def test_drawable_data() -> None:
         np.array([1.0, 0.0, 0.0, 0.0], dtype=np.float32),
     )
 
+
 def test_inertial_data() -> None:
     inertial_data = loco.InertialData()
     assert np.abs(inertial_data.mass - 1.0) < 1e-5
@@ -108,6 +136,6 @@ def test_inertial_data() -> None:
 def test_body_data() -> None:
     body_data = loco.BodyData()
     assert body_data.dyntype == loco.DynamicsType.DYNAMIC
-    assert type(body_data.inertia) == loco.InertialData
-    assert type(body_data.collider) == loco.ColliderData
-    assert type(body_data.drawable) == loco.DrawableData
+    assert type(body_data.inertia) is loco.InertialData
+    assert type(body_data.collider) is loco.ColliderData
+    assert type(body_data.drawable) is loco.DrawableData
