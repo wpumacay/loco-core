@@ -15,8 +15,8 @@ endif()
 set(BINDINGS_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/bindings_py.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/common_py.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/scenario_py.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/simulation_py.cpp
+    # ${CMAKE_CURRENT_SOURCE_DIR}/scenario_py.cpp
+    # ${CMAKE_CURRENT_SOURCE_DIR}/simulation_py.cpp
     # ${CMAKE_CURRENT_SOURCE_DIR}/body_py.cpp
 )
 

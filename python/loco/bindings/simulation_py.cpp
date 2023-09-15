@@ -14,8 +14,7 @@ auto bindings_simulation(py::module& m) -> void {
         using Class = ::loco::core::Simulation;
         constexpr auto ClassName = "Simulation";  // NOLINT
         py::class_<Class, Class::ptr>(m, ClassName)
-            .def(py::init<::loco::core::Scenario::ptr,
-                          const ::loco::eBackendType&>())
+            .def(py::init<::loco::core::Scenario::ptr, ::loco::eBackendType>())
             .def("Init", &Class::Init)
             .def("Reset", &Class::Reset)
             .def("Step", &Class::Step)
@@ -29,10 +28,14 @@ auto bindings_simulation(py::module& m) -> void {
             .def_property_readonly("gravity", &Class::gravity)
             .def_property_readonly("backend_type", &Class::backend_type)
             .def("__repr__", [](const Class& self) -> py::str {
-                return py::
-                    str("Simulation(timestep={}, gravity={}, backend_type={})")
-                        .format(self.timestep(), self.gravity().toString(),
-                                ::loco::ToString(self.backend_type()));
+                return py::str(
+                           "<Simulation\n"
+                           "  timestep={}\n"
+                           "  gravity={}\n"
+                           "  backend_type={}\n"
+                           ">")
+                    .format(self.timestep(), self.gravity().toString(),
+                            ::loco::ToString(self.backend_type()));
             });
     }
 }

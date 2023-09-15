@@ -19,8 +19,7 @@ class Simulation {
 
  public:
     /// Creates a simulation for the given scenario
-    explicit Simulation(Scenario::ptr scenario,
-                        const eBackendType& backend_type)
+    explicit Simulation(Scenario::ptr scenario, eBackendType backend_type)
         : m_Scenario(std::move(scenario)), m_BackendType(backend_type) {}
 
     /// Releases/Frees all allocated resources of this simulation

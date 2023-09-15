@@ -4,7 +4,8 @@ endif()
 
 # cmake-format: off
 set(LOCO_CORE_EXAMPLES_LIST
-    ${CMAKE_CURRENT_SOURCE_DIR}/example_01_scenario.cpp)
+    ##${CMAKE_CURRENT_SOURCE_DIR}/example_01_scenario.cpp
+)
 # cmake-format: on
 
 foreach(example_filepath IN LISTS LOCO_CORE_EXAMPLES_LIST)
