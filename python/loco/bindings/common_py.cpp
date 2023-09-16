@@ -179,8 +179,11 @@ auto bindings_common(py::module& m) -> void {
                 })
             .def("__repr__", [](const Class& self) -> py::str {
                 return py::str(
-                           "MeshData(filepath=\"{}\", num_vertices={}, "
-                           "num_faces={})")
+                           "<MeshData\n"
+                           "  filepath: \"{}\"\n"
+                           "  num_vertices: {}\n"
+                           "  num_faces: {}\n"
+                           ">")
                     .format(self.filepath, self.n_vertices, self.n_faces);
             });
     }
@@ -247,8 +250,10 @@ auto bindings_common(py::module& m) -> void {
                 })
             .def("__repr__", [](const Class& self) -> py::str {
                 return py::str(
-                           "HeightfieldData(num_width_samples={}, "
-                           "num_depth_samples={})")
+                           "<HeightfieldData\n"
+                           "  num_width_samples: {}\n"
+                           "  num_depth_samples: {}\n"
+                           ">")
                     .format(self.n_width_samples, self.n_depth_samples);
             });
     }
@@ -264,9 +269,16 @@ auto bindings_common(py::module& m) -> void {
             .def_readwrite("hfield_data", &Class::hfield_data)
             .def_readwrite("local_tf", &Class::local_tf)
             .def("__repr__", [](const Class& self) -> py::str {
-                return py::str("ShapeData(type=\"{}\", size={}, local_tf={})")
+                return py::str(
+                           "<ShapeData\n"
+                           "  type: {}\n"
+                           "  size: {}\n"
+                           "  local_pos: {}\n"
+                           "  local_quat: {}\n"
+                           ">")
                     .format(::loco::ToString(self.type), self.size.toString(),
-                            self.local_tf.toString());
+                            self.local_tf.position.toString(),
+                            self.local_tf.orientation.toString());
             });
     }
 
@@ -286,13 +298,21 @@ auto bindings_common(py::module& m) -> void {
             .def_readwrite("children", &Class::children)
             .def("__repr__", [](const Class& self) -> py::str {
                 return py::str(
-                           "ColliderData(type=\"{}\", size={}, "
-                           "collision_group={}, collision_mask={}, "
-                           "friction={}, local_tf={}, num_children={})")
+                           "<ColliderData\n"
+                           "  type: {}\n"
+                           "  size: {}\n"
+                           "  collision_group: {}\n"
+                           "  collision_mask: {}\n"
+                           "  friction: {}\n"
+                           "  num_children: {}\n"
+                           "  local_pos: {}\n"
+                           "  local_quat: {}\n"
+                           ">")
                     .format(::loco::ToString(self.type), self.size.toString(),
                             self.collision_group, self.collision_mask,
-                            self.friction.toString(), self.local_tf.toString(),
-                            self.children.size());
+                            self.friction.toString(), self.children.size(),
+                            self.local_tf.position.toString(),
+                            self.local_tf.orientation.toString());
             });
     }
 
@@ -311,11 +331,20 @@ auto bindings_common(py::module& m) -> void {
             .def_readwrite("children", &Class::children)
             .def("__repr__", [](const Class& self) -> py::str {
                 return py::str(
-                           "DrawableData(type=\"{}\", size={}, color={}, "
-                           "texture=\"{}\", local_tf={}, num_children={})")
+                           "<DrawableData\n"
+                           "  type: {}\n"
+                           "  size: {}\n"
+                           "  color: {}\n"
+                           "  texture: \"{}\"\n"
+                           "  num_children: {}\n"
+                           "  local_pos: {}\n"
+                           "  local_quat: {}\n"
+                           ">")
                     .format(::loco::ToString(self.type), self.size.toString(),
                             self.color.toString(), self.texture,
-                            self.local_tf.toString(), self.children.size());
+                            self.children.size(),
+                            self.local_tf.position.toString(),
+                            self.local_tf.orientation.toString());
             });
     }
 
@@ -328,9 +357,16 @@ auto bindings_common(py::module& m) -> void {
             .def_readwrite("inertia", &Class::inertia)
             .def_readwrite("local_tf", &Class::local_tf)
             .def("__repr__", [](const Class& self) -> py::str {
-                return py::str("InertialData(mass={}, inertia={}, local_tf={})")
+                return py::str(
+                           "<InertialData\n"
+                           "  mass: {}\n"
+                           "  inertia: \n{}\n"
+                           "  local_pos: {}\n"
+                           "  local_quat: {}\n"
+                           ">")
                     .format(self.mass, self.inertia.toString(),
-                            self.local_tf.toString());
+                            self.local_tf.position.toString(),
+                            self.local_tf.orientation.toString());
             });
     }
 
@@ -344,7 +380,10 @@ auto bindings_common(py::module& m) -> void {
             .def_readwrite("collider", &Class::collider)
             .def_readwrite("drawable", &Class::drawable)
             .def("__repr__", [](const Class& self) -> py::str {
-                return py::str("BodyData(dyntype={})")
+                return py::str(
+                           "<BodyData\n"
+                           "  dyntype: {}\n"
+                           ">")
                     .format(::loco::ToString(self.dyntype));
             });
     }
