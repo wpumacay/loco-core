@@ -26,11 +26,11 @@ auto main() -> int {
     // Making a kind of bottle (compound shape) ---------
     ::loco::ColliderData base_collider;
     base_collider.type = ::loco::eShapeType::CYLINDER;
-    base_collider.size = {0.5, 1.0};
+    base_collider.size = {0.5, 1.0, 0.5};
 
     ::loco::ColliderData tip_collider;
     tip_collider.type = ::loco::eShapeType::CYLINDER;
-    tip_collider.size = {0.25, 0.4};
+    tip_collider.size = {0.25, 0.4, 0.25};
     tip_collider.local_tf.position = {0.0, 0.0, 0.5};
 
     ::loco::ColliderData bottle_collider;

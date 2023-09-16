@@ -264,6 +264,7 @@ auto bindings_common(py::module& m) -> void {
         py::class_<Class>(m, ClassName)
             .def(py::init<>())
             .def_readwrite("type", &Class::type)
+            // TODO(wilbert): Add custom casters for vec3 <-> py::array_t<float>
             .def_readwrite("size", &Class::size)
             .def_readwrite("mesh_data", &Class::mesh_data)
             .def_readwrite("hfield_data", &Class::hfield_data)
