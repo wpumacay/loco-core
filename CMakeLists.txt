@@ -31,6 +31,11 @@ option(LOCO_BUILD_BACKEND_MUJOCO "Build with support for MuJoCo" OFF)
 option(LOCO_BUILD_BACKEND_BULLET "Build with support for Bullet" OFF)
 option(LOCO_BUILD_BACKEND_DART "Build with support for Dart" OFF)
 
+option(LOCO_BUILD_VISUALIZER_OPENGL
+       "Build with support for our OpenGL visualizer" OFF)
+option(LOCO_BUILD_VISUALIZER_MESHCAT
+       "Build with support for external visualizer based on MeshcatCpp" OFF)
+
 loco_initialize_project()
 
 # -------------------------------------
@@ -56,7 +61,6 @@ loco_create_target(LocoCoreCpp STATIC
     math::math
     utils::utils
     tinyxml2::tinyxml2
-    renderer::renderer
   WARNINGS_AS_ERRORS
     FALSE)
 # cmake-format: on
@@ -71,6 +75,7 @@ set_target_properties(
              MACOSX_RPATH ON)
 
 include(LocoBackendsSetup)
+include(LocoVisualizersSetup)
 include(LocoDefinitions)
 
 # -------------------------------------

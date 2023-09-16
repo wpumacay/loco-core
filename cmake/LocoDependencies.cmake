@@ -248,19 +248,21 @@ endif()
 # ------------------------------------------------------------------------------
 # 'Renderer' is a minimal rendering engine that we'll use for visualization
 # ------------------------------------------------------------------------------
-loco_find_or_fetch_dependency(
-  USE_SYSTEM_PACKAGE FALSE
-  LIBRARY_NAME renderer
-  GIT_REPO https://github.com/wpumacay/renderer.git
-  GIT_TAG ${LOCO_DEP_VERSION_renderer}
-  GIT_PROGRESS FALSE
-  TARGETS renderer::renderer
-  BUILD_ARGS
-    -DRENDERER_BUILD_PYTHON_BINDINGS=ON
-    -DRENDERER_BUILD_EXAMPLES=OFF
-    -DRENDERER_BUILD_TESTS=OFF
-    -DRENDERER_BUILD_DOCS=OFF
-  EXCLUDE_FROM_ALL)
+if (LOCO_BUILD_VISUALIZER_OPENGL)
+  loco_find_or_fetch_dependency(
+    USE_SYSTEM_PACKAGE FALSE
+    LIBRARY_NAME renderer
+    GIT_REPO https://github.com/wpumacay/renderer.git
+    GIT_TAG ${LOCO_DEP_VERSION_renderer}
+    GIT_PROGRESS FALSE
+    TARGETS renderer::renderer
+    BUILD_ARGS
+      -DRENDERER_BUILD_PYTHON_BINDINGS=ON
+      -DRENDERER_BUILD_EXAMPLES=OFF
+      -DRENDERER_BUILD_TESTS=OFF
+      -DRENDERER_BUILD_DOCS=OFF
+    EXCLUDE_FROM_ALL)
+endif()
 
 # ------------------------------------------------------------------------------
 # 'Utils' exposes some utilities that we'll use (like logs, profiling, etc.)
