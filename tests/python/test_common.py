@@ -18,7 +18,10 @@ def test_shape_data() -> None:
     shape_data = loco.ShapeData()
     assert shape_data.type == loco.ShapeType.SPHERE
     # Size element is exposed as a math3d::Vector3X
-    assert shape_data.size is m3d.Vector3f or shape_data.size is m3d.Vector3d
+    assert (
+        type(shape_data.size) is m3d.Vector3f
+        or type(shape_data.size) is m3d.Vector3d
+    )
     assert np.abs(shape_data.size.x - 0.0) < 1e-6
     assert np.abs(shape_data.size.y - 0.0) < 1e-6
     assert np.abs(shape_data.size.z - 0.0) < 1e-6
@@ -27,8 +30,8 @@ def test_shape_data() -> None:
     )
     # Relative pose is exposed as a math3d::Pose3d_X
     assert (
-        shape_data.local_tf is m3d.Pose3d_f
-        or shape_data.local_tf is m3d.Pose3d_d
+        type(shape_data.local_tf) is m3d.Pose3d_f
+        or type(shape_data.local_tf) is m3d.Pose3d_d
     )
     assert np.abs(shape_data.local_tf.position.x - 0.0) < 1e-6
     assert np.abs(shape_data.local_tf.position.y - 0.0) < 1e-6
