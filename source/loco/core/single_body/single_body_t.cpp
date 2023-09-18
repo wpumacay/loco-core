@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include <loco/core/body_t.hpp>
+#include <loco/core/single_body/single_body_t.hpp>
 
 #include <utils/logging.hpp>
 

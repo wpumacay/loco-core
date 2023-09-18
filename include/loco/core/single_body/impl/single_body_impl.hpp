@@ -3,7 +3,7 @@
 #include <memory>
 #include <utility>
 
-#include "../common.hpp"
+#include <loco/core/common.hpp>
 
 #if defined(__clang__)
 #pragma clang diagnostic push

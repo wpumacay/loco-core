@@ -4,13 +4,14 @@
 #include <memory>
 #include <utility>
 
-#include "./common.hpp"
-#include "./impl/body_impl.hpp"
+#include <loco/core/common.hpp>
+#include <loco/core/single_body/impl/single_body_impl.hpp>
 
 namespace loco {
 namespace core {
 
 class Body {
+    // cppcheck-suppress unknownMacro
     NO_COPY_NO_MOVE_NO_ASSIGN(Body)
 
     DEFINE_SMART_POINTERS(Body)
