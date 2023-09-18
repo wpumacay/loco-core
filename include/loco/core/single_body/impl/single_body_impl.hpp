@@ -18,17 +18,17 @@ namespace core {
 /// This class provides an interface and defines the API that is exposed to the
 /// user to interact with the internal backend-specific implementation of a
 /// rigid-body
-class IBodyImpl {
+class ISingleBodyImpl {
     // cppcheck-suppress unknownMacro
-    NO_COPY_NO_MOVE_NO_ASSIGN(IBodyImpl)
+    NO_COPY_NO_MOVE_NO_ASSIGN(ISingleBodyImpl)
 
-    DEFINE_SMART_POINTERS(IBodyImpl)
+    DEFINE_SMART_POINTERS(ISingleBodyImpl)
 
  public:
-    IBodyImpl() = default;
+    ISingleBodyImpl() = default;
 
     /// Releases/Frees all allocated resources for this adapter
-    virtual ~IBodyImpl() = default;
+    virtual ~ISingleBodyImpl() = default;
 
     /// \brief Sets the pose of the associated rigid-body
     ///
@@ -77,17 +77,17 @@ class IBodyImpl {
 };
 
 /// \brief Represents a dummy adapter that connects to no backend
-class BodyImplNone : public IBodyImpl {
+class SingleBodyImplNone : public ISingleBodyImpl {
     // cppcheck-suppress unknownMacro
-    NO_COPY_NO_MOVE_NO_ASSIGN(BodyImplNone)
+    NO_COPY_NO_MOVE_NO_ASSIGN(SingleBodyImplNone)
 
-    DEFINE_SMART_POINTERS(BodyImplNone)
+    DEFINE_SMART_POINTERS(SingleBodyImplNone)
 
  public:
-    BodyImplNone() = default;
+    SingleBodyImplNone() = default;
 
     // Documentation inherited
-    ~BodyImplNone() override = default;
+    ~SingleBodyImplNone() override = default;
 
     // Documentation inherited
     auto SetPose(const Pose& pose) -> void override {}

@@ -10,17 +10,17 @@
 namespace loco {
 namespace core {
 
-class Body {
+class SingleBody {
     // cppcheck-suppress unknownMacro
-    NO_COPY_NO_MOVE_NO_ASSIGN(Body)
+    NO_COPY_NO_MOVE_NO_ASSIGN(SingleBody)
 
-    DEFINE_SMART_POINTERS(Body)
+    DEFINE_SMART_POINTERS(SingleBody)
 
  public:
-    /// \brief Creates a body using the given configuration
+    /// \brief Creates a single body using the given configuration
     ///
     /// \param[in] data Body data to be used to create and configure this body
-    explicit Body(::loco::BodyData data, const Pose& p_pose)
+    explicit SingleBody(::loco::BodyData data, const Pose& p_pose)
         : m_Data(std::move(data)), m_Pose(p_pose) {}
 
     /// \brief Creates a body using the given configuration
@@ -28,12 +28,12 @@ class Body {
     /// \param[in] data Body data to be used to create and configure this body
     /// \param[in] p_position The position of this body in world space
     /// \param[in] p_orientation The orientation of this body in world space
-    explicit Body(::loco::BodyData data, const Vec3& p_position,
-                  const Quat& p_orientation = Quat(1.0, 0.0, 0.0, 0.0))
+    explicit SingleBody(::loco::BodyData data, const Vec3& p_position,
+                        const Quat& p_orientation = Quat(1.0, 0.0, 0.0, 0.0))
         : m_Data(std::move(data)), m_Pose(Pose(p_position, p_orientation)) {}
 
     /// \brief Deletes all allocated resources
-    ~Body() = default;
+    ~SingleBody() = default;
 
     /// \brief Initializes this body's internal resources
     ///
@@ -84,10 +84,10 @@ class Body {
     auto angular_vel() const -> Vec3 { return m_AngularVel; }
 
     /// \brief Returns a mutable reference to the interface to the backend
-    auto impl() -> IBodyImpl&;
+    auto impl() -> ISingleBodyImpl&;
 
     /// \brief Returns an unmutable reference to the interface to the backend
-    auto impl() const -> const IBodyImpl&;
+    auto impl() const -> const ISingleBodyImpl&;
 
  public:
     // ---------------------------------------------------------------------- //
@@ -121,7 +121,7 @@ class Body {
     /// The backend type used for simulating this body
     eBackendType m_BackendType = eBackendType::NONE;
     /// The adapter used to interact with the internal physics backend
-    IBodyImpl::uptr m_BackendImpl = nullptr;
+    ISingleBodyImpl::uptr m_BackendImpl = nullptr;
 };
 
 // Factory functions for primtive shapes

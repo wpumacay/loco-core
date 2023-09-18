@@ -1,26 +1,26 @@
 #include <stdexcept>
 
-#include <loco/core/single_body/single_body_t.hpp>
-
 #include <utils/logging.hpp>
+
+#include <loco/core/single_body/single_body_t.hpp>
 
 namespace loco {
 namespace core {
 
-auto Body::Initialize(const eBackendType& backend_type) -> void {
+auto SingleBody::Initialize(const eBackendType& backend_type) -> void {
     m_BackendType = backend_type;
 
     // Do some configuration before --------------------------------------------
     switch (m_BackendType) {
         case ::loco::eBackendType::NONE: {
-            m_BackendImpl = std::make_unique<BodyImplNone>();
+            m_BackendImpl = std::make_unique<SingleBodyImplNone>();
             break;
         }
         case ::loco::eBackendType::MUJOCO:
         case ::loco::eBackendType::BULLET:
         case ::loco::eBackendType::DART:
         default: {
-            m_BackendImpl = std::make_unique<BodyImplNone>();
+            m_BackendImpl = std::make_unique<SingleBodyImplNone>();
             break;
         }
     }
@@ -32,7 +32,7 @@ auto Body::Initialize(const eBackendType& backend_type) -> void {
     // ...
 }
 
-auto Body::Reset() -> void {
+auto SingleBody::Reset() -> void {
     // TODO(wilbert): expose Vec3::ZERO, Vec3::X, Vec3::Y, and Vec3::Z
     totalTorque = Vec3(ToScalar(0.0), ToScalar(0.0), ToScalar(0.0));
     totalForceCOM = Vec3(ToScalar(0.0), ToScalar(0.0), ToScalar(0.0));
@@ -48,74 +48,74 @@ auto Body::Reset() -> void {
     }
 }
 
-auto Body::SetPose(const Pose& pose) -> void {
+auto SingleBody::SetPose(const Pose& pose) -> void {
     m_Pose = pose;
     if (m_BackendImpl == nullptr) {
         LOG_CORE_WARN(
-            "Body::SetPose >>> tried setting a pose in world-space for the "
-            "rigid body without a valid adapter.");
+            "SingleBody::SetPose >>> tried setting a pose in world-space for "
+            "the rigid body without a valid adapter.");
         return;
     }
     m_BackendImpl->SetPose(pose);
 }
 
-auto Body::SetPosition(const Vec3& pos) -> void {
+auto SingleBody::SetPosition(const Vec3& pos) -> void {
     m_Pose.position = pos;
     if (m_BackendImpl == nullptr) {
         LOG_CORE_WARN(
-            "Body::SetPosition >>> tried setting position in world space for "
-            "the rigid body without a valid adapter");
-        return;
-    }
-    m_BackendImpl->SetPose(m_Pose);
-}
-
-auto Body::SetOrientation(const Quat& quat) -> void {
-    m_Pose.orientation = quat;
-    if (m_BackendImpl == nullptr) {
-        LOG_CORE_WARN(
-            "Body::SetOrientation >>> tried setting orientation in world space "
+            "SingleBody::SetPosition >>> tried setting position in world space "
             "for the rigid body without a valid adapter");
         return;
     }
     m_BackendImpl->SetPose(m_Pose);
 }
 
-auto Body::SetLinearVelocity(const Vec3& linear_vel) -> void {
+auto SingleBody::SetOrientation(const Quat& quat) -> void {
+    m_Pose.orientation = quat;
+    if (m_BackendImpl == nullptr) {
+        LOG_CORE_WARN(
+            "SingleBody::SetOrientation >>> tried setting orientation in world "
+            "space for the rigid body without a valid adapter");
+        return;
+    }
+    m_BackendImpl->SetPose(m_Pose);
+}
+
+auto SingleBody::SetLinearVelocity(const Vec3& linear_vel) -> void {
     m_LinearVel = linear_vel;
     if (m_BackendImpl == nullptr) {
         LOG_CORE_WARN(
-            "Body::SetLinearVelocity >>> tried setting the linear velocity of "
-            "the rigid body without a valid adapter");
+            "SingleBody::SetLinearVelocity >>> tried setting the linear "
+            "velocity of the rigid body without a valid adapter");
         return;
     }
     m_BackendImpl->SetLinearVelocity(linear_vel);
 }
 
-auto Body::SetAngularVelocity(const Vec3& angular_vel) -> void {
+auto SingleBody::SetAngularVelocity(const Vec3& angular_vel) -> void {
     m_AngularVel = angular_vel;
     if (m_BackendImpl == nullptr) {
         LOG_CORE_WARN(
-            "Body::SetAngularVelocity >>> tried setting the angular velocity "
-            "of the rigid body without a valid adapter");
+            "SingleBody::SetAngularVelocity >>> tried setting the angular "
+            "velocity of the rigid body without a valid adapter");
         return;
     }
     m_BackendImpl->SetAngularVelocity(angular_vel);
 }
 
-auto Body::impl() -> IBodyImpl& {
+auto SingleBody::impl() -> ISingleBodyImpl& {
     if (m_BackendImpl == nullptr) {
         throw std::runtime_error(
-            "Body::impl >>> Must initialize this body before using its "
+            "SingleBody::impl >>> Must initialize this body before using its "
             "adapter. Make sure you've called 'Init' first.");
     }
     return *m_BackendImpl;
 }
 
-auto Body::impl() const -> const IBodyImpl& {
+auto SingleBody::impl() const -> const ISingleBodyImpl& {
     if (m_BackendImpl == nullptr) {
         throw std::runtime_error(
-            "Body::impl >>> Must initialize this body before using its "
+            "SingleBody::impl >>> Must initialize this body before using its "
             "adapter. Make sure you've called 'Init' first.");
     }
     return *m_BackendImpl;
