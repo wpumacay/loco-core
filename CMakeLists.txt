@@ -51,7 +51,7 @@ include(LocoDependencies)
 loco_create_target(LocoCoreCpp STATIC
   SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/common.cpp
-    ## ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/body_t.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/body_t.cpp
     ## ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/simulation_t.cpp
     ## ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/visualizer_t.cpp
     ## ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/scenario_t.cpp

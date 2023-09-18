@@ -10,24 +10,7 @@ namespace core {
 auto Body::Initialize(const eBackendType& backend_type) -> void {
     m_BackendType = backend_type;
 
-    // Do some configuration before
-    // ...
-
-    Reset();
-
-    // Do some configuration after
-    // ...
-}
-
-auto Body::Reset() -> void {
-    // TODO(wilbert): expose Vec3::ZERO, Vec3::X, Vec3::Y, and Vec3::Z
-    totalTorque = Vec3(ToScalar(0.0), ToScalar(0.0), ToScalar(0.0));
-    totalForceCOM = Vec3(ToScalar(0.0), ToScalar(0.0), ToScalar(0.0));
-
-    m_Pose = pose0;
-    m_LinearVel = linearVel0;
-    m_AngularVel = angularVel0;
-
+    // Do some configuration before --------------------------------------------
     switch (m_BackendType) {
         case ::loco::eBackendType::NONE: {
             m_BackendImpl = std::make_unique<BodyImplNone>();
@@ -40,6 +23,28 @@ auto Body::Reset() -> void {
             m_BackendImpl = std::make_unique<BodyImplNone>();
             break;
         }
+    }
+
+    // Reset the configuration of the body (zero|default configuration) --------
+    Reset();
+
+    // Do some configuration after ---------------------------------------------
+    // ...
+}
+
+auto Body::Reset() -> void {
+    // TODO(wilbert): expose Vec3::ZERO, Vec3::X, Vec3::Y, and Vec3::Z
+    totalTorque = Vec3(ToScalar(0.0), ToScalar(0.0), ToScalar(0.0));
+    totalForceCOM = Vec3(ToScalar(0.0), ToScalar(0.0), ToScalar(0.0));
+
+    m_Pose = pose0;
+    m_LinearVel = linearVel0;
+    m_AngularVel = angularVel0;
+
+    if (m_BackendImpl != nullptr) {
+        m_BackendImpl->SetPose(m_Pose);
+        m_BackendImpl->SetLinearVelocity(m_LinearVel);
+        m_BackendImpl->SetAngularVelocity(m_AngularVel);
     }
 }
 

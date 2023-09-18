@@ -123,5 +123,7 @@ class Body {
     IBodyImpl::uptr m_BackendImpl = nullptr;
 };
 
+// Factory functions for primtive shapes
+
 }  // namespace core
 }  // namespace loco
