@@ -107,3 +107,7 @@ class SingleBodyImplNone : public ISingleBodyImpl {
 
 }  // namespace core
 }  // namespace loco
+
+#if defined(__clang__)
+#pragma clang diagnostic pop  // NOLINT
+#endif
