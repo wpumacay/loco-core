@@ -50,57 +50,37 @@ auto SingleBody::Reset() -> void {
 
 auto SingleBody::SetPose(const Pose& pose) -> void {
     m_Pose = pose;
-    if (m_BackendImpl == nullptr) {
-        LOG_CORE_WARN(
-            "SingleBody::SetPose >>> tried setting a pose in world-space for "
-            "the rigid body without a valid adapter.");
-        return;
+    if (m_BackendImpl != nullptr) {
+        m_BackendImpl->SetPose(pose);
     }
-    m_BackendImpl->SetPose(pose);
 }
 
 auto SingleBody::SetPosition(const Vec3& pos) -> void {
     m_Pose.position = pos;
-    if (m_BackendImpl == nullptr) {
-        LOG_CORE_WARN(
-            "SingleBody::SetPosition >>> tried setting position in world space "
-            "for the rigid body without a valid adapter");
-        return;
+    if (m_BackendImpl != nullptr) {
+        m_BackendImpl->SetPose(m_Pose);
     }
-    m_BackendImpl->SetPose(m_Pose);
 }
 
 auto SingleBody::SetOrientation(const Quat& quat) -> void {
     m_Pose.orientation = quat;
-    if (m_BackendImpl == nullptr) {
-        LOG_CORE_WARN(
-            "SingleBody::SetOrientation >>> tried setting orientation in world "
-            "space for the rigid body without a valid adapter");
-        return;
+    if (m_BackendImpl != nullptr) {
+        m_BackendImpl->SetPose(m_Pose);
     }
-    m_BackendImpl->SetPose(m_Pose);
 }
 
 auto SingleBody::SetLinearVelocity(const Vec3& linear_vel) -> void {
     m_LinearVel = linear_vel;
-    if (m_BackendImpl == nullptr) {
-        LOG_CORE_WARN(
-            "SingleBody::SetLinearVelocity >>> tried setting the linear "
-            "velocity of the rigid body without a valid adapter");
-        return;
+    if (m_BackendImpl != nullptr) {
+        m_BackendImpl->SetLinearVelocity(linear_vel);
     }
-    m_BackendImpl->SetLinearVelocity(linear_vel);
 }
 
 auto SingleBody::SetAngularVelocity(const Vec3& angular_vel) -> void {
     m_AngularVel = angular_vel;
-    if (m_BackendImpl == nullptr) {
-        LOG_CORE_WARN(
-            "SingleBody::SetAngularVelocity >>> tried setting the angular "
-            "velocity of the rigid body without a valid adapter");
-        return;
+    if (m_BackendImpl != nullptr) {
+        m_BackendImpl->SetAngularVelocity(angular_vel);
     }
-    m_BackendImpl->SetAngularVelocity(angular_vel);
 }
 
 auto SingleBody::impl() -> ISingleBodyImpl& {
