@@ -89,6 +89,36 @@ class Drawable {
     auto ChangeElevationData(size_t n_width_samples, size_t n_depth_samples,
                              const Scalar* ptr_heights) -> void;
 
+    /// \brief Returns whether or not this drawable is visible
+    auto visible() const -> bool { return m_Visible; }
+
+    /// \brief Returns whether or not this drawable is drawn as a wireframe
+    auto wireframe() const -> bool { return m_Wireframe; }
+
+    /// \brief Returns the current pose of this drawable in world space
+    auto pose() const -> Pose { return m_Pose; }
+
+    /// \brief Returns the current position of this drawable in world space
+    auto position() const -> Vec3 { return m_Pose.position; }
+
+    /// \brief Returns the current orientation of this drawable in world space
+    auto orientation() const -> Quat { return m_Pose.orientation; }
+
+    /// \brief Returns the color of this drawable
+    auto color() const -> Vec3 { return m_Data.color; }
+
+    /// \brief Returns the texture applied to this drawable
+    auto texture() const -> std::string { return m_Data.texture; }
+
+    /// \brief Returns the size of the internal shape of the drawable
+    auto size() const -> Vec3 { return m_Data.size; }
+
+    /// \brief Returns a mutable reference to the internal drawable adapter
+    auto impl() -> IDrawableImpl&;
+
+    /// \brief Returns an unmutable reference to the internal drawable adapter
+    auto impl() const -> const IDrawableImpl&;
+
  protected:
     /// The configuration data for this drawable
     ::loco::DrawableData m_Data;
