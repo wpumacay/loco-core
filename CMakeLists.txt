@@ -48,10 +48,12 @@ include(LocoDependencies)
 
 # cmake-format: off
 # -------------------------------------
+set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/source)
 loco_create_target(LocoCoreCpp STATIC
   SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/common.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/single_body/single_body_t.cpp
+    ${SOURCE_DIR}/loco/core/common.cpp
+    ${SOURCE_DIR}/loco/core/visualizer/drawable_t.cpp
+    ${SOURCE_DIR}/loco/core/single_body/single_body_collider_t.cpp
     ## ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/simulation_t.cpp
     ## ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/visualizer_t.cpp
     ## ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/scenario_t.cpp
