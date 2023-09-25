@@ -3,8 +3,8 @@
 #include <memory>
 #include <utility>
 
-#include "../common.hpp"
-#include "../scenario_t.hpp"
+#include <loco/core/common.hpp>
+#include <loco/core/scenario_t.hpp>
 
 #if defined(__clang__)
 #pragma clang diagnostic push

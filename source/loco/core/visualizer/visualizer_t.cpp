@@ -1,4 +1,4 @@
-#include <loco/core/visualizer_t.hpp>
+#include <loco/core/visualizer/visualizer_t.hpp>
 
 #include <stdexcept>
 

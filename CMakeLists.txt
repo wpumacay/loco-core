@@ -55,9 +55,9 @@ loco_create_target(LocoCoreCpp STATIC
     ${SOURCE_DIR}/loco/core/visualizer/drawable_t.cpp
     ${SOURCE_DIR}/loco/core/single_body/single_body_collider_t.cpp
     ${SOURCE_DIR}/loco/core/single_body/single_body_t.cpp
+    ${SOURCE_DIR}/loco/core/scenario_t.cpp
+    ${SOURCE_DIR}/loco/core/visualizer/visualizer_t.cpp
     ## ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/simulation_t.cpp
-    ## ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/visualizer_t.cpp
-    ## ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/scenario_t.cpp
   INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/include
   TARGET_DEPENDENCIES
