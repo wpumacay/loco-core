@@ -19,7 +19,7 @@ include_guard()
 
 # -------------------------------------
 set(LOCO_DEP_VERSION_mujoco
-    95a07e85ccaf31a7daabfb2f34f376e75534881d # Release 2.3.2
+    8f9c690c8593df7531597aa1a3589febb731ff0a # Release 3.0.0
     CACHE STRING "Version of MuJoCo to be fetched (used as physics backend)")
 
 set(LOCO_DEP_VERSION_bullet
@@ -40,15 +40,15 @@ set(LOCO_DEP_VERSION_tinyxml2
           "Version of TinyXML2 to be fetched (used to handle urdf and mjcf)")
 
 set(LOCO_DEP_VERSION_renderer
-    06e74a25ca30ef3b234507cef71a8eea77822b32 # Version v0.3.2
+    a0117301d1c323ed90c7b3f708a62ef9bf427d42 # Version v0.3.4
     CACHE STRING "Version of the internal renderer to be fetched")
 
 set(LOCO_DEP_VERSION_utils
-    58623f20534cbe4cc3f20cdeac46a27ca4f21790 # Version v0.2.2
+    cf00a4b66e10b35d89a6862b70dc3da2d1ec3c0e # Version v0.2.6
     CACHE STRING "Version of internal utilities repo to be fetched")
 
 set(LOCO_DEP_VERSION_math
-    7f863e0dbf9f0e9ba0d35b38ab912baf7431053f # Version v0.5.1
+    1e5dd4bac79d62d7eebfcd8a87360c2f4e1a550c # Version v0.6.1
     CACHE STRING "Version of internal math repo to be fetched")
 
 set(LOCO_DEP_VERSION_pybind11
@@ -84,6 +84,7 @@ if(LOCO_BUILD_BACKEND_MUJOCO)
     GIT_REPO https://github.com/deepmind/mujoco.git
     GIT_TAG ${LOCO_DEP_VERSION_mujoco}
     GIT_PROGRESS FALSE
+    GIT_SHALLOW TRUE
     TARGETS mujoco::mujoco
     BUILD_ARGS
       -DMUJOCO_BUILD_EXAMPLES=OFF
@@ -114,6 +115,7 @@ if(LOCO_BUILD_BACKEND_BULLET)
     GIT_REPO https://github.com/bulletphysics/bullet3.git
     GIT_TAG ${LOCO_DEP_VERSION_bullet}
     GIT_PROGRESS FALSE
+    GIT_SHALLOW TRUE
     TARGETS LinearMath BulletCollision BulletDynamics
     BUILD_ARGS
       -DBUILD_BULLET2_DEMOS=OFF
@@ -156,6 +158,7 @@ if(LOCO_BUILD_BACKEND_DART)
       GIT_REPO https://github.com/dartsim/dart.git
       GIT_TAG v6.12.2
       GIT_PROGRESS FALSE
+      GIT_SHALLOW TRUE
       TARGETS dart dart-collision-bullet dart-collision-ode
       BUILD_ARGS
         -DDART_BUILD_GUI_OSG=OFF
@@ -202,6 +205,7 @@ loco_find_or_fetch_dependency(
   GIT_REPO https://github.com/leethomason/tinyxml2
   GIT_TAG ${LOCO_DEP_VERSION_tinyxml2}
   GIT_PROGRESS FALSE
+  GIT_SHALLOW TRUE
   TARGETS tinyxml2::tinyxml2
   BUILD_ARGS
     -Dtinyxml2_BUILD_TESTING=OFF
@@ -217,6 +221,7 @@ loco_find_or_fetch_dependency(
   GIT_REPO https://github.com/pybind/pybind11.git
   GIT_TAG ${LOCO_DEP_VERSION_pybind11}
   GIT_PROGRESS FALSE
+  GIT_SHALLOW TRUE
   TARGETS pybind11::headers
   BUILD_ARGS
     -DPYBIND11_TEST=OFF
@@ -233,6 +238,7 @@ loco_find_or_fetch_dependency(
   GIT_REPO https://github.com/catchorg/Catch2.git
   GIT_TAG ${LOCO_DEP_VERSION_catch2}
   GIT_PROGRESS FALSE
+  GIT_SHALLOW TRUE
   TARGETS Catch2::Catch2
   BUILD_ARGS
     -DCATCH_INSTALL_DOCS=OFF
@@ -255,6 +261,7 @@ if (LOCO_BUILD_VISUALIZER_OPENGL)
     GIT_REPO https://github.com/wpumacay/renderer.git
     GIT_TAG ${LOCO_DEP_VERSION_renderer}
     GIT_PROGRESS FALSE
+    GIT_SHALLOW TRUE
     TARGETS renderer::renderer
     BUILD_ARGS
       -DRENDERER_BUILD_PYTHON_BINDINGS=ON
@@ -273,6 +280,7 @@ loco_find_or_fetch_dependency(
   GIT_REPO https://github.com/wpumacay/utils.git
   GIT_TAG ${LOCO_DEP_VERSION_utils}
   GIT_PROGRESS FALSE
+  GIT_SHALLOW TRUE
   TARGETS utils::utils
   BUILD_ARGS
     -DUTILS_BUILD_PYTHON_BINDINGS=ON
@@ -290,6 +298,7 @@ loco_find_or_fetch_dependency(
   GIT_REPO https://github.com/wpumacay/math.git
   GIT_TAG ${LOCO_DEP_VERSION_math}
   GIT_PROGRESS FALSE
+  GIT_SHALLOW TRUE
   TARGETS math::math math::math_py_helpers
   BUILD_ARGS
     -DMATH_BUILD_PYTHON_BINDINGS=ON
