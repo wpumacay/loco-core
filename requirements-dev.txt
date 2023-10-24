@@ -13,3 +13,4 @@ ipykernel
 sphinx
 sphinx_rtd_theme
 breathe
+twine
