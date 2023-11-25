@@ -36,7 +36,12 @@ option(LOCO_BUILD_VISUALIZER_OPENGL
 option(LOCO_BUILD_VISUALIZER_MESHCAT
        "Build with support for external visualizer based on MeshcatCpp" OFF)
 
-loco_initialize_project()
+# cmake-format: off
+set(LOCO_BUILD_CXX_STANDARD 17 CACHE STRING "The C++ standard to be used")
+set_property(CACHE LOCO_BUILD_CXX_STANDARD PROPERTY STRINGS 11 14 17 20)
+# cmake-format: on
+
+loco_initialize_project(CXX_STANDARD ${LOCO_BUILD_CXX_STANDARD})
 
 # -------------------------------------
 # Allow the usage of our helper macros and functions
@@ -64,6 +69,8 @@ loco_create_target(LocoCoreCpp STATIC
     math::math
     utils::utils
     tinyxml2::tinyxml2
+  CXX_STANDARD
+    ${LOCO_BUILD_CXX_STANDARD}
   WARNINGS_AS_ERRORS
     FALSE)
 # cmake-format: on

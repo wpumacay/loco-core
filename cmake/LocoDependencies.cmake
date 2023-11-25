@@ -40,15 +40,15 @@ set(LOCO_DEP_VERSION_tinyxml2
           "Version of TinyXML2 to be fetched (used to handle urdf and mjcf)")
 
 set(LOCO_DEP_VERSION_renderer
-    a0117301d1c323ed90c7b3f708a62ef9bf427d42 # Version v0.3.4
+    8e11f4d8e1697c0e255dda57378287f23dcb77c4 # Version v0.3.8
     CACHE STRING "Version of the internal renderer to be fetched")
 
 set(LOCO_DEP_VERSION_utils
-    cf00a4b66e10b35d89a6862b70dc3da2d1ec3c0e # Version v0.2.6
+    ec5db3e6165fbbdf0360a1818043f35c791c9572 # Version v0.2.8
     CACHE STRING "Version of internal utilities repo to be fetched")
 
 set(LOCO_DEP_VERSION_math
-    1e5dd4bac79d62d7eebfcd8a87360c2f4e1a550c # Version v0.6.1
+    c5bfd8383f802d90a0db658b6405f23a6cebabd9 # Version v0.6.6
     CACHE STRING "Version of internal math repo to be fetched")
 
 set(LOCO_DEP_VERSION_pybind11
