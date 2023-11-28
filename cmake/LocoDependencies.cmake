@@ -55,6 +55,10 @@ set(LOCO_DEP_VERSION_pybind11
     5b0a6fc2017fcc176545afe3e09c9f9885283242 # Release v2.10.4
     CACHE STRING "Version of PyBind11 to be fetched (used for python bindings)")
 
+set(LOCO_DEP_VERSION_meshcatcpp
+    a84be7add7f344d61e615bee7f26e6a7d5444f2a
+    CACHE STRING "Version of MeshcatCpp to be fetched (for meshcat visualizer")
+
 mark_as_advanced(LOCO_DEP_VERSION_mujoco)
 mark_as_advanced(LOCO_DEP_VERSION_bullet)
 mark_as_advanced(LOCO_DEP_VERSION_dart)
@@ -64,6 +68,7 @@ mark_as_advanced(LOCO_DEP_VERSION_renderer)
 mark_as_advanced(LOCO_DEP_VERSION_utils)
 mark_as_advanced(LOCO_DEP_VERSION_math)
 mark_as_advanced(LOCO_DEP_VERSION_pybind11)
+mark_as_advanced(LOCO_DEP_VERSION_meshcatcpp)
 
 option(FIND_OR_FETCH_USE_SYSTEM_PACKAGE
        "Whether or not to give priority to system-wide package search" OFF)
@@ -249,6 +254,27 @@ loco_find_or_fetch_dependency(
 # Add custom scripts for test-case registration to the module path
 if (catch2_POPULATED)
   list(APPEND CMAKE_MODULE_PATH "${catch2_SOURCE_DIR}/contrib")
+endif()
+
+# ------------------------------------------------------------------------------
+# MeshCatCpp is a self contained C++ interface of the MeshCat visualizer. It
+# allows us to integrate MeshCat as one more visualizer one minto Loco
+# ------------------------------------------------------------------------------
+
+if (LOCO_BUILD_VISUALIZER_MESHCAT)
+  loco_find_or_fetch_dependency(
+    USE_SYSTEM_PACKAGE FALSE
+    PACKAGE_NAME MeshcatCpp
+    LIBRARY_NAME meshcatcpp
+    GIT_REPO https://github.com/ami-iit/meshcat-cpp.git
+    GIT_TAG ${LOCO_DEP_VERSION_meshcatcpp}
+    GIT_PROGRESS FALSE
+    GIT_SHALLOW FALSE
+    TARGETS MeshcatCpp::MeshcatCpp
+    BUILD_ARGS
+      -DBUILD_SHARED_LIBS=OFF
+      -DMESHCAT_CPP_BUILT_EXAMPLES=OFF
+    EXCLUDE_FROM_ALL)
 endif()
 
 # ------------------------------------------------------------------------------

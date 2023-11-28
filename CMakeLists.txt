@@ -34,7 +34,7 @@ option(LOCO_BUILD_BACKEND_DART "Build with support for Dart" OFF)
 option(LOCO_BUILD_VISUALIZER_OPENGL
        "Build with support for our OpenGL visualizer" OFF)
 option(LOCO_BUILD_VISUALIZER_MESHCAT
-       "Build with support for external visualizer based on MeshcatCpp" OFF)
+       "Build with support for external visualizer based on MeshcatCpp" ON)
 
 # cmake-format: off
 set(LOCO_BUILD_CXX_STANDARD 17 CACHE STRING "The C++ standard to be used")
