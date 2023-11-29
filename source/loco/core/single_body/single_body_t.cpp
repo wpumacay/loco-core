@@ -34,6 +34,10 @@ auto SingleBody::Initialize(const eBackendType& backend_type) -> void {
     // ...
 }
 
+auto SingleBody::SetAdapter(ISingleBodyImpl::uptr adapter) -> void {
+    m_BackendImpl = std::move(adapter);
+}
+
 auto SingleBody::Reset() -> void {
     // TODO(wilbert): expose Vec3::ZERO, Vec3::X, Vec3::Y, and Vec3::Z
     totalTorque = Vec3(ToScalar(0.0), ToScalar(0.0), ToScalar(0.0));

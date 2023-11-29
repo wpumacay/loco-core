@@ -40,6 +40,11 @@ class SingleBody {
     /// \param[in] backend_type The internal backend to be used for this body
     auto Initialize(const eBackendType& backend_type) -> void;
 
+    /// \brief Sets the adapter used for simulation
+    ///
+    /// \param[in] adapter The adapter to be used by this body
+    auto SetAdapter(ISingleBodyImpl::uptr adapter) -> void;
+
     /// \brief Resets the body to its default/zero configuration
     auto Reset() -> void;
 
