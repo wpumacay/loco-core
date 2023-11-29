@@ -2,7 +2,7 @@
 
 #include <conversions_py.hpp>
 
-#include <loco/core/body_t.hpp>
+#include <loco/core/single_body/single_body_t.hpp>
 
 namespace py = pybind11;
 
@@ -11,77 +11,69 @@ namespace loco {
 // NOLINTNEXTLINE
 auto bindings_body(py::module& m) -> void {
     {
-        using Class = ::loco::core::Body;
-        constexpr auto ClassName = "Body";  // NOLINT
-        py::class_<Class>(m, ClassName)
-            .def(py::init<::loco::BodyData>())
-            .def_property(
-                "pose", [](const Class& self) -> Pose { return self.pose(); },
-                [](Class& self, const Pose& pose) -> void {
-                    self.SetPose(pose);
-                })
-            .def_property(
-                "position",
-                [](const Class& self) -> py::array_t<Scalar> {
-                    return ::math::vec3_to_nparray<Scalar>(self.position());
-                },
-                [](Class& self,
-                   const py::array_t<Scalar>& np_position) -> void {
-                    self.SetPosition(
-                        ::math::nparray_to_vec3<Scalar>(np_position));
-                })
-            .def_property(
-                "orientation",
-                [](const Class& self) -> py::array_t<Scalar> {
-                    auto np_quat = py::array_t<Scalar>(Quat::BUFFER_COUNT);
-                    auto quat = self.orientation();
-                    memcpy(np_quat.request().ptr, quat.data(),
-                           Quat::BUFFER_SIZE);
-                    return np_quat;
-                },
-                [](Class& self,
-                   const py::array_t<Scalar>& np_orientation) -> void {
-                    auto info = np_orientation.request();
-                    if (info.size != Quat::BUFFER_COUNT) {
-                        throw std::runtime_error(
-                            "Body::orientation >>> received incompatible array "
-                            "size, expected 4 elements for a quaternion");
-                    }
-                    Quat quat;
-                    memcpy(quat.data(), info.ptr, Quat::BUFFER_SIZE);
-                })
-            .def_property(
-                "linear_vel",
-                [](const Class& self) -> py::array_t<Scalar> {
-                    return ::math::vec3_to_nparray<Scalar>(self.linear_vel());
-                },
-                [](Class& self,
-                   const py::array_t<Scalar>& np_linear_vel) -> void {
-                    self.SetLinearVelocity(
-                        ::math::nparray_to_vec3<Scalar>(np_linear_vel));
-                })
-            .def_property(
-                "angular_vel",
-                [](const Class& self) -> py::array_t<Scalar> {
-                    return ::math::vec3_to_nparray<Scalar>(self.angular_vel());
-                },
-                [](Class& self,
-                   const py::array_t<Scalar>& np_angular_vel) -> void {
-                    self.SetAngularVelocity(
-                        ::math::nparray_to_vec3<Scalar>(np_angular_vel));
-                })
+        using Class = ::loco::core::SingleBody;
+        constexpr auto ClassName = "SingleBody";  // NOLINT
+        py::class_<Class, Class::ptr>(m, ClassName)
+            .def(py::init([](::loco::BodyData data, const Pose& p_pose) {
+                return std::make_shared<Class>(data, p_pose);
+            }))
+            .def(py::init([](::loco::BodyData data, const Vec3& p_position,
+                             const Quat& p_orientation) {
+                return std::make_shared<Class>(data, p_position, p_orientation);
+            }))
+            .def(py::init([](::loco::BodyData data,
+                             const py::array_t<Scalar>& np_position,
+                             const py::array_t<Scalar>& np_orientation) {
+                return std::make_shared<Class>(
+                    data, ::math::nparray_to_vec3<Scalar>(np_position),
+                    ::math::nparray_to_quat<Scalar>(np_orientation));
+            }))
+            .def(py::init([](::loco::BodyData data,
+                             const py::array_t<Scalar>& np_position) {
+                return std::make_shared<Class>(
+                    data, ::math::nparray_to_vec3<Scalar>(np_position));
+            }))
+            .def("SetPose", &Class::SetPose)
+            .def("SetPose",
+                 [](Class& self, const py::array_t<Scalar>& np_pose) {
+                     self.SetPose(
+                         Pose(::math::nparray_to_mat4<Scalar>(np_pose)));
+                 })
+            .def("pose", &Class::pose)
+            .def("SetPosition", &Class::SetPosition)
+            .def("SetPosition",
+                 [](Class& self, const py::array_t<Scalar>& np_position) {
+                     self.SetPosition(
+                         ::math::nparray_to_vec3<Scalar>(np_position));
+                 })
+            .def("position", &Class::position)
+            .def("SetOrientation", &Class::SetOrientation)
+            .def("SetOrientation",
+                 [](Class& self, const py::array_t<Scalar>& np_quat) {
+                     self.SetOrientation(
+                         ::math::nparray_to_quat<Scalar>(np_quat));
+                 })
+            .def("SetLinearVelocity", &Class::SetLinearVelocity)
+            .def("SetLinearVelocity",
+                 [](Class& self, const py::array_t<Scalar>& np_linearvel) {
+                     self.SetLinearVelocity(
+                         ::math::nparray_to_vec3<Scalar>(np_linearvel));
+                 })
+            .def("linear_vel", &Class::linear_vel)
+            .def("SetAngularVelocity", &Class::SetAngularVelocity)
+            .def("SetAngularVelocity",
+                 [](Class& self, const py::array_t<Scalar>& np_angularvel) {
+                     self.SetAngularVelocity(
+                         ::math::nparray_to_vec3<Scalar>(np_angularvel));
+                 })
+            .def("angular_vel", &Class::angular_vel)
             .def_readwrite("pose0", &Class::pose0)
             .def_readwrite("linearVel0", &Class::linearVel0)
             .def_readwrite("angularVel0", &Class::angularVel0)
             .def_readwrite("totalForceCOM", &Class::totalForceCOM)
             .def_readwrite("totalTorque", &Class::totalTorque)
-            .def("__repr__", [](const Class& self) -> py::str {
-                return py::str("Body(pos={}, quat={}, v={}, w={})")
-                    .format(self.position().toString(),
-                            self.orientation().toString(),
-                            self.linear_vel().toString(),
-                            self.angular_vel().toString());
-            });
+            .def("__repr__",
+                 [](const Class& self) -> py::str { return self.ToString(); });
     }
 }
 
