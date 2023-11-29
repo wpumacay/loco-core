@@ -89,6 +89,9 @@ class SingleBody {
     /// \brief Returns an unmutable reference to the interface to the backend
     auto impl() const -> const ISingleBodyImpl&;
 
+    /// \brief Returns the sctring representation of the body
+    auto ToString() const -> std::string;
+
  public:
     // ---------------------------------------------------------------------- //
     // These are made public as we don't actually need to control everything

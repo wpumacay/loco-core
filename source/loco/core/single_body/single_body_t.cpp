@@ -1,5 +1,7 @@
 #include <stdexcept>
 
+#include <spdlog/fmt/bundled/format.h>
+
 #include <utils/logging.hpp>
 
 #include <loco/core/single_body/single_body_t.hpp>
@@ -99,6 +101,18 @@ auto SingleBody::impl() const -> const ISingleBodyImpl& {
             "adapter. Make sure you've called 'Init' first.");
     }
     return *m_BackendImpl;
+}
+
+auto SingleBody::ToString() const -> std::string {
+    return fmt::format(
+        "<SingleBody\n"
+        "  position: {0}\n"
+        "  orientation: {1}\n",
+        "  linear_vel: {2}\n"
+        "  angular_vel: {3}\n"
+        ">\n",
+        m_Pose.position.toString(), m_Pose.orientation.toString(),
+        m_LinearVel.toString(), m_AngularVel.toString());
 }
 
 }  // namespace core
