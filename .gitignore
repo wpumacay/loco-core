@@ -42,3 +42,6 @@ compile_commands.json
 
 # Exclude sublime's workspace configuration file
 *.sublime-workspace
+
+# Exclude vscode's workspace configuration
+*.code-workspace
