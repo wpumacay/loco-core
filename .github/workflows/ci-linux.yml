@@ -1,0 +1,49 @@
+name: Building and Testing on Linux 🐧
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        compiler: [gcc, clang]
+        build-type: [Release, Debug]
+
+    name: "Build: ${{ matrix.os }} • ${{ matrix.build-type }} • ${{ matrix.compiler }}"
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Update CMake
+      uses: jwlawson/actions-setup-cmake@v1.14.1
+      with:
+        github-api-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - if: ${{ matrix.compiler == 'gcc' }}
+      name: Configure GNU/GCC as C/C++ compiler
+      run: |
+        echo "Choosing GNU/GCC as compiler"
+        echo "CC=gcc" >> $GITHUB_ENV
+        echo "CXX=g++" >> $GITHUB_ENV
+
+    - if: ${{ matrix.compiler == 'clang' }}
+      name: Configure LLVM/Clang as C/C++ compiler
+      run: |
+        echo "Choosing LLVM/Clang as compiler"
+        echo "CC=clang" >> $GITHUB_ENV
+        echo "CXX=clang++" >> $GITHUB_ENV
+
+    - name: Configure CMake
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{ matrix.build-type }}
+
+    - name: Build C++ Project
+      run: cmake --build build --config ${{ matrix.build-type }}
