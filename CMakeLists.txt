@@ -15,7 +15,7 @@ include(${loco_cmake_SOURCE_DIR}/Index.cmake)
 
 project(
   Loco
-  VERSION 0.1.2
+  VERSION 0.1.3
   DESCRIPTION "A locomotion framework for DeepRL research"
   HOMEPAGE_URL "https://github.com/wpumacay/loco-core"
   LANGUAGES C CXX)
