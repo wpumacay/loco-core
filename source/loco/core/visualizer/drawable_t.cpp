@@ -1,6 +1,8 @@
 #include <cstring>
 #include <stdexcept>
 
+#include <spdlog/fmt/bundled/format.h>
+
 #include <utils/logging.hpp>
 
 #include <loco/core/visualizer/drawable_t.hpp>
@@ -131,6 +133,20 @@ auto Drawable::ChangeElevationData(size_t n_width_samples,
         m_BackendImpl->ChangeElevationData(n_width_samples, n_depth_samples,
                                            ptr_heights);
     }
+}
+
+auto Drawable::ToString() const -> std::string {
+    return fmt::format(
+        "<Drawable\n"
+        "  position: {0}\n"
+        "  orientation: {1}\n"
+        "  visible: {2}\n"
+        "  wireframe: {3}\n"
+        "  type: {4}\n"
+        "  size: {5}\n"
+        ">\n",
+        m_Pose.position.toString(), m_Pose.orientation.toString(), m_Visible,
+        m_Wireframe, ::loco::ToString(m_Data.type), m_Data.size.toString());
 }
 
 }  // namespace core

@@ -19,13 +19,13 @@
 #include <utils/logging.hpp>
 
 using Scalar = float;
-using Vec2 = math::Vector2<Scalar>;
-using Vec3 = math::Vector3<Scalar>;
-using Vec4 = math::Vector4<Scalar>;
-using Quat = math::Quaternion<Scalar>;
-using Mat3 = math::Matrix3<Scalar>;
-using Mat4 = math::Matrix4<Scalar>;
-using Euler = math::Euler<Scalar>;
+using Vec2 = ::math::Vector2<Scalar>;
+using Vec3 = ::math::Vector3<Scalar>;
+using Vec4 = ::math::Vector4<Scalar>;
+using Quat = ::math::Quaternion<Scalar>;
+using Mat3 = ::math::Matrix3<Scalar>;
+using Mat4 = ::math::Matrix4<Scalar>;
+using Euler = ::math::Euler<Scalar>;
 using Pose = ::math::Pose3d<Scalar>;
 
 // NOLINTNEXTLINE
@@ -47,6 +47,10 @@ constexpr size_t NUM_QPOS_JOINT_SPHERICAL = 4;
 constexpr size_t NUM_QPOS_JOINT_FREE = 7;
 /// Default density (density of water 1000 kg/m3 ) used for mass calculations
 constexpr Scalar DEFAULT_DENSITY = static_cast<Scalar>(1000.0);
+/// The suffix used for generating names of colliders out of the body name
+constexpr const char* SUFFIX_COLLIDER = "_col";
+/// The suffix used for generating names of drawables out of the body name
+constexpr const char* SUFFIX_DRAWABLE = "_viz";
 
 /// Represents all available physics engines that can be used as backends
 enum class eBackendType {

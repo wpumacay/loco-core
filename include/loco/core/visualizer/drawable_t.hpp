@@ -17,14 +17,25 @@ class Drawable {
 
  public:
     /// \brief Creates a drawable using the given user configuration
-    explicit Drawable(::loco::DrawableData data, const Pose& p_pose)
-        : m_Data(std::move(data)), m_Pose(p_pose) {}
+    ///
+    /// \param[in] p_name The unique name given to this drawable
+    /// \param[in] p_pose The pose of this body in world space
+    /// \param[in] data Visual data used to build this drawable
+    explicit Drawable(std::string p_name, Pose p_pose,
+                      ::loco::DrawableData data)
+        : m_Data(std::move(data)), m_Name(std::move(p_name)), m_Pose(p_pose) {}
 
     /// \brief Creates a drawable with given config at given world position
-    explicit Drawable(::loco::DrawableData data, const Vec3& p_position)
-        : m_Data(std::move(data)) {
-        m_Pose.position = p_position;
-    }
+    ///
+    /// \param[in] p_name The unique name given to this drawable
+    /// \param[in] p_position The position of this drawable in world space
+    /// \param[in] p_orientation The orientation of this drawable in world space
+    /// \param[in] data Visual data used to build this drawable
+    explicit Drawable(std::string p_name, Vec3 p_position, Quat p_orientation,
+                      ::loco::DrawableData data)
+        : m_Data(std::move(data)),
+          m_Name(std::move(p_name)),
+          m_Pose(Pose(p_position, p_orientation)) {}
 
     /// \brief Releases all allocated resources for this drawable
     ~Drawable() = default;
@@ -119,9 +130,15 @@ class Drawable {
     /// \brief Returns an unmutable reference to the internal drawable adapter
     auto impl() const -> const IDrawableImpl&;
 
+    /// \brief Returns the string representation of this drawable
+    auto ToString() const -> std::string;
+
  protected:
     /// The configuration data for this drawable
     ::loco::DrawableData m_Data;
+
+    /// The name of this drawable (unique identifier)
+    std::string m_Name;
 
     /// The current pose of this drawable in world space
     Pose m_Pose;
