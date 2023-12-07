@@ -1,11 +1,16 @@
+#include <stdexcept>
+
 #include <loco/core/visualizer/visualizer_t.hpp>
 
-#include <stdexcept>
+#if defined(LOCO_VISUALIZER_MESHCAT_ENABLED)
+#include <loco/visualizers/meshcat/visualizer_impl_meshcat.hpp>
+#endif
 
 namespace loco {
 namespace core {
 
-auto Visualizer::Init() -> void {
+auto Visualizer::Init(eVisualizerType type) -> void {
+    m_VisualizerType = type;
     switch (m_VisualizerType) {
         case eVisualizerType::NONE:
             m_VisualizerImpl = std::make_unique<VisualizerImplNone>(m_Scenario);
@@ -13,6 +18,9 @@ auto Visualizer::Init() -> void {
         case eVisualizerType::VIS_GL:
             break;
         case eVisualizerType::VIS_MESHCAT:
+            m_VisualizerImpl =
+                std::make_unique<::loco::meshcat::VisualizerImplMeshcat>(
+                    m_Scenario);
             break;
     }
 
@@ -41,6 +49,12 @@ auto Visualizer::Reset() -> void {
 auto Visualizer::Update() -> void {
     if (m_VisualizerImpl != nullptr) {
         m_VisualizerImpl->Update();
+    }
+}
+
+auto Visualizer::AddDrawable(Drawable::ptr drawable) -> void {
+    if (m_Scenario != nullptr) {
+        m_Scenario->AddFreeDrawable(std::move(drawable));
     }
 }
 

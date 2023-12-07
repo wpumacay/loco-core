@@ -47,7 +47,7 @@ class VisualizerImplNone : public VisualizerImpl {
     // cppcheck-suppress unknownMacro
     NO_COPY_NO_MOVE_NO_ASSIGN(VisualizerImplNone)
 
-    DEFINE_SMART_POINTERS(VisualizerImplNone);
+    DEFINE_SMART_POINTERS(VisualizerImplNone)
 
  public:
     explicit VisualizerImplNone(Scenario::ptr scenario)

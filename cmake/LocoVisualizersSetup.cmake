@@ -14,6 +14,8 @@ if(LOCO_BUILD_VISUALIZER_OPENGL)
     PRIVATE ${SOURCE_DIR}/visualizers/opengl/common_opengl.cpp
             ${SOURCE_DIR}/visualizers/opengl/visualizer_impl_opengl.cpp)
   target_link_libraries(LocoCoreCpp PUBLIC renderer::renderer)
+  target_compile_definitions(LocoCoreCpp
+                             PUBLIC -DLOCO_VISUALIZER_OPENGL_ENABLED)
 endif()
 
 if(LOCO_BUILD_VISUALIZER_MESHCAT)
@@ -21,5 +23,7 @@ if(LOCO_BUILD_VISUALIZER_MESHCAT)
     LocoCoreCpp
     PRIVATE ${SOURCE_DIR}/visualizers/meshcat/common_meshcat.cpp
             ${SOURCE_DIR}/visualizers/meshcat/visualizer_impl_meshcat.cpp)
-  # target_link_libraries(LocoCoreCpp PUBLIC meshcat::meshcat)
+  target_link_libraries(LocoCoreCpp PUBLIC MeshcatCpp::MeshcatCpp)
+  target_compile_definitions(LocoCoreCpp
+                             PUBLIC -DLOCO_VISUALIZER_MESHCAT_ENABLED)
 endif()
