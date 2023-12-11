@@ -6,7 +6,7 @@ include(FetchContent)
 FetchContent_Declare(
   loco_cmake
   GIT_REPOSITORY https://github.com/wpumacay/loco_cmake.git
-  GIT_TAG 2a1148ebe5381874c043dd2d5ff6885a1b0d7071 # Version v0.1.3
+  GIT_TAG 0270626101bec01dbf9ae7f1b5febfb82092bf0c # Version v0.1.5
   GIT_PROGRESS FALSE
   GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(loco_cmake)

@@ -21,6 +21,7 @@ repos:
     -   id: cmake-lint
         types: [file]
         files: (\.cmake|CMakeLists.txt)(.in)?$
+        args: [--filter=-C0103]
 
 -   repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.3.1

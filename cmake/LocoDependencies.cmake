@@ -40,19 +40,19 @@ set(LOCO_DEP_VERSION_tinyxml2
           "Version of TinyXML2 to be fetched (used to handle urdf and mjcf)")
 
 set(LOCO_DEP_VERSION_renderer
-    8e11f4d8e1697c0e255dda57378287f23dcb77c4 # Version v0.3.8
+    574d4bd9ac349e066f5367d3c21bcd0e612fe1a5 # Version v0.3.9
     CACHE STRING "Version of the internal renderer to be fetched")
 
 set(LOCO_DEP_VERSION_utils
-    ec5db3e6165fbbdf0360a1818043f35c791c9572 # Version v0.2.8
+    687d4dea4b55afd13405d00b7aef6993e056b36d # Version v0.2.9
     CACHE STRING "Version of internal utilities repo to be fetched")
 
 set(LOCO_DEP_VERSION_math
-    c5bfd8383f802d90a0db658b6405f23a6cebabd9 # Version v0.6.6
+    a31f55fb57983286ad8e30c8915b3461d9ce8557 # Version v0.6.7
     CACHE STRING "Version of internal math repo to be fetched")
 
 set(LOCO_DEP_VERSION_pybind11
-    5b0a6fc2017fcc176545afe3e09c9f9885283242 # Release v2.10.4
+    8a099e44b3d5f85b20f05828d919d2332a8de841 # Release v2.11.1
     CACHE STRING "Version of PyBind11 to be fetched (used for python bindings)")
 
 set(LOCO_DEP_VERSION_meshcatcpp
@@ -79,8 +79,10 @@ option(FIND_OR_FETCH_USE_SYSTEM_PACKAGE
 # MuJoCo is one of the supported physics backends for simulation
 # ------------------------------------------------------------------------------
 if(LOCO_BUILD_BACKEND_MUJOCO)
-  # Make sure we avoid including tests (might conflict due to gtest)
-  set(MUJOCO_BUILD_TESTS OFF CACHE BOOL "Don't build MuJoCo unittests")
+  set(MUJOCO_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+  set(MUJOCO_BUILD_SIMULATE OFF CACHE BOOL "" FORCE)
+  set(MUJOCO_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+  set(MUJOCO_TEST_PYTHON_UTIL OFF CACHE BOOL "" FORCE)
 
   loco_find_or_fetch_dependency(
     USE_SYSTEM_PACKAGE ${FIND_OR_FETCH_USE_SYSTEM_PACKAGE}
@@ -110,7 +112,15 @@ endif()
 # Bullet is one of the supported physics backends for simulation
 # ------------------------------------------------------------------------------
 if(LOCO_BUILD_BACKEND_BULLET)
-  # Make sure we avoid including tests (might conflict due to gtest)
+  set(BUILD_BULLET2_DEMOS OFF CACHE BOOL "Don't build bullet unittests")
+  set(BUILD_BULLET3 OFF CACHE BOOL "Don't build bullet unittests")
+  set(BUILD_PYBULLET OFF CACHE BOOL "Don't build bullet unittests")
+  set(BUILD_EXTRAS OFF CACHE BOOL "Don't build bullet unittests")
+  set(BUILD_CLSOCKET OFF CACHE BOOL "Don't build bullet unittests")
+  set(BUILD_CPU_DEMOS OFF CACHE BOOL "Don't build bullet unittests")
+  set(BUILD_EGL OFF CACHE BOOL "Don't build bullet unittests")
+  set(BUILD_ENET OFF CACHE BOOL "Don't build bullet unittests")
+  set(BUILD_OPENGL3_DEMOS OFF CACHE BOOL "Don't build bullet unittests")
   set(BUILD_UNIT_TESTS OFF CACHE BOOL "Don't build bullet unittests")
 
   loco_find_or_fetch_dependency(
@@ -122,17 +132,6 @@ if(LOCO_BUILD_BACKEND_BULLET)
     GIT_PROGRESS FALSE
     GIT_SHALLOW TRUE
     TARGETS LinearMath BulletCollision BulletDynamics
-    BUILD_ARGS
-      -DBUILD_BULLET2_DEMOS=OFF
-      -DBUILD_BULLET3=OFF
-      -DBUILD_PYBULLET=OFF
-      -DBUILD_EXTRAS=OFF
-      -DBUILD_CLSOCKET=OFF
-      -DBUILD_CPU_DEMOS=OFF
-      -DBUILD_EGL=OFF
-      -DBUILD_ENET=OFF
-      -DBUILD_OPENGL3_DEMOS=OFF
-      -DBUILD_UNIT_TESTS=OFF
     EXCLUDE_FROM_ALL)
 
   # Group the required bullet libraries into a single target to ease its usage
@@ -156,6 +155,11 @@ endif()
 # ------------------------------------------------------------------------------
 if(LOCO_BUILD_BACKEND_DART)
   if(NOT FIND_OR_FETCH_USE_SYSTEM_PACKAGE)
+    set(DART_BUILD_GUI_OSG OFF CACHE BOOL "" FORCE)
+    set(DART_BUILD_EXTRAS OFF CACHE BOOL "" FORCE)
+    set(DART_BUILD_DARTPY OFF CACHE BOOL "" FORCE)
+    set(DART_CODECOV OFF CACHE BOOL "" FORCE)
+
     loco_find_or_fetch_dependency(
       USE_SYSTEM_PACKAGE FALSE
       PACKAGE_NAME DART
@@ -165,11 +169,6 @@ if(LOCO_BUILD_BACKEND_DART)
       GIT_PROGRESS FALSE
       GIT_SHALLOW TRUE
       TARGETS dart dart-collision-bullet dart-collision-ode
-      BUILD_ARGS
-        -DDART_BUILD_GUI_OSG=OFF
-        -DDART_BUILD_EXTRAS=OFF
-        -DDART_BUILD_DARTPY=OFF
-        -DDART_CODECOV=OFF
       PATCH_COMMAND
         "${GIT_EXECUTABLE}"
         "apply"
@@ -203,6 +202,8 @@ endif()
 # ------------------------------------------------------------------------------
 # Use leethomason's xml library (parse urdf resource files)
 # ------------------------------------------------------------------------------
+set(tinyxml2_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+
 loco_find_or_fetch_dependency(
   USE_SYSTEM_PACKAGE FALSE
   PACKAGE_NAME tinyxml2
@@ -212,13 +213,13 @@ loco_find_or_fetch_dependency(
   GIT_PROGRESS FALSE
   GIT_SHALLOW TRUE
   TARGETS tinyxml2::tinyxml2
-  BUILD_ARGS
-    -Dtinyxml2_BUILD_TESTING=OFF
   EXCLUDE_FROM_ALL)
 
 # ------------------------------------------------------------------------------
 # Pybind11 is used for generating Python bindings for this project's C++ API
 # ------------------------------------------------------------------------------
+set(PYBIND11_TEST OFF CACHE BOOL "" FORCE)
+
 loco_find_or_fetch_dependency(
   USE_SYSTEM_PACKAGE FALSE
   PACKAGE_NAME pybind11
@@ -228,14 +229,16 @@ loco_find_or_fetch_dependency(
   GIT_PROGRESS FALSE
   GIT_SHALLOW TRUE
   TARGETS pybind11::headers
-  BUILD_ARGS
-    -DPYBIND11_TEST=OFF
   EXCLUDE_FROM_ALL)
 
 # ------------------------------------------------------------------------------
 # Catch2 is used for making unit-tests in C++ land. It's API is simple yet quite
 # powerfull (e.g. we can make use of template-parametrized tests-cases)
 # ------------------------------------------------------------------------------
+set(CATCH_INSTALL_DOCS OFF CACHE BOOL "" FORCE)
+set(CATCH_INSTALL_EXTRAS OFF CACHE BOOL "" FORCE)
+set(CATCH_DEVELOPMENT_BUILD OFF CACHE BOOL "" FORCE)
+
 loco_find_or_fetch_dependency(
   USE_SYSTEM_PACKAGE FALSE
   PACKAGE_NAME Catch2
@@ -245,10 +248,6 @@ loco_find_or_fetch_dependency(
   GIT_PROGRESS FALSE
   GIT_SHALLOW TRUE
   TARGETS Catch2::Catch2
-  BUILD_ARGS
-    -DCATCH_INSTALL_DOCS=OFF
-    -DCATCH_INSTALL_EXTRAS=OFF
-    -DCATCH_DEVELOPMENT_BUILD=OFF
   EXCLUDE_FROM_ALL)
 
 # Add custom scripts for test-case registration to the module path
@@ -262,6 +261,8 @@ endif()
 # ------------------------------------------------------------------------------
 
 if (LOCO_BUILD_VISUALIZER_MESHCAT)
+  set(MESHCAT_CPP_BUILT_EXAMPLES OFF CACHE BOOL "" FORCE)
+
   loco_find_or_fetch_dependency(
     USE_SYSTEM_PACKAGE FALSE
     PACKAGE_NAME MeshcatCpp
@@ -271,9 +272,6 @@ if (LOCO_BUILD_VISUALIZER_MESHCAT)
     GIT_PROGRESS FALSE
     GIT_SHALLOW FALSE
     TARGETS MeshcatCpp::MeshcatCpp
-    BUILD_ARGS
-      -DBUILD_SHARED_LIBS=OFF
-      -DMESHCAT_CPP_BUILT_EXAMPLES=OFF
     EXCLUDE_FROM_ALL)
 endif()
 
@@ -281,56 +279,56 @@ endif()
 # 'Renderer' is a minimal rendering engine that we'll use for visualization
 # ------------------------------------------------------------------------------
 if (LOCO_BUILD_VISUALIZER_OPENGL)
+  set(RENDERER_BUILD_PYTHON_BINDINGS OFF CACHE BOOL "" FORCE)
+  set(RENDERER_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+  set(RENDERER_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+  set(RENDERER_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+
   loco_find_or_fetch_dependency(
     USE_SYSTEM_PACKAGE FALSE
     LIBRARY_NAME renderer
     GIT_REPO https://github.com/wpumacay/renderer.git
     GIT_TAG ${LOCO_DEP_VERSION_renderer}
     GIT_PROGRESS FALSE
-    GIT_SHALLOW TRUE
+    GIT_SHALLOW FALSE
     TARGETS renderer::renderer
-    BUILD_ARGS
-      -DRENDERER_BUILD_PYTHON_BINDINGS=ON
-      -DRENDERER_BUILD_EXAMPLES=OFF
-      -DRENDERER_BUILD_TESTS=OFF
-      -DRENDERER_BUILD_DOCS=OFF
     EXCLUDE_FROM_ALL)
 endif()
 
 # ------------------------------------------------------------------------------
 # 'Utils' exposes some utilities that we'll use (like logs, profiling, etc.)
 # ------------------------------------------------------------------------------
+set(UTILS_BUILD_PYTHON_BINDINGS OFF CACHE BOOL "" FORCE)
+set(UTILS_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(UTILS_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+
 loco_find_or_fetch_dependency(
   USE_SYSTEM_PACKAGE FALSE
   LIBRARY_NAME utils
   GIT_REPO https://github.com/wpumacay/utils.git
   GIT_TAG ${LOCO_DEP_VERSION_utils}
   GIT_PROGRESS FALSE
-  GIT_SHALLOW TRUE
+  GIT_SHALLOW FALSE
   TARGETS utils::utils
-  BUILD_ARGS
-    -DUTILS_BUILD_PYTHON_BINDINGS=ON
-    -DUTILS_BUILD_EXAMPLES=OFF
-    -DUTILS_BUILD_DOCS=OFF
   EXCLUDE_FROM_ALL)
 
 # ------------------------------------------------------------------------------
-# 'Math' is used as math library (defines vectors, matrices, and operations that
-# could be used on these types). The API is similar to the one used by Eigen.
+# 'Math3d' is used as math library (defines vectors, matrices, and operations
+# that could be used on these types). The API is similar to Eigen
 # ------------------------------------------------------------------------------
+set(MATH_BUILD_PYTHON_BINDINGS OFF CACHE BOOL "" FORCE)
+set(MATH_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(MATH_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(MATH_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+
 loco_find_or_fetch_dependency(
   USE_SYSTEM_PACKAGE FALSE
   LIBRARY_NAME math
   GIT_REPO https://github.com/wpumacay/math.git
   GIT_TAG ${LOCO_DEP_VERSION_math}
   GIT_PROGRESS FALSE
-  GIT_SHALLOW TRUE
-  TARGETS math::math math::math_py_helpers
-  BUILD_ARGS
-    -DMATH_BUILD_PYTHON_BINDINGS=ON
-    -DMATH_BUILD_EXAMPLES=OFF
-    -DMATH_BUILD_TESTS=OFF
-    -DMATH_BUILD_DOCS=OFF
+  GIT_SHALLOW FALSE
+  TARGETS math::math
   EXCLUDE_FROM_ALL)
 
 # cmake-format: on

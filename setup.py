@@ -82,6 +82,8 @@ class CMakeBuild(build_ext):
             "-DLOCO_BUILD_BACKEND_MUJOCO=OFF",
             "-DLOCO_BUILD_BACKEND_BULLET=OFF",
             "-DLOCO_BUILD_BACKEND_DART=OFF",
+            "-DLOCO_BUILD_VISUALIZER_OPENGL=OFF",
+            "-DLOCO_BUILD_VISUALIZER_MESHCAT=ON",
         ]
 
         if self.compiler.compiler_type != "msvc":
