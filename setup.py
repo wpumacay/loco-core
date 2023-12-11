@@ -58,10 +58,14 @@ class CMakeBuild(build_ext):
             f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}{os.sep}",
             f"-DPYTHON_EXECUTABLE={sys.executable}",
             f"-DCMAKE_BUILD_TYPE={cfg}",
-            # Make sure we handle RPATH correctly when installing
-            "-DCMAKE_INSTALL_RPATH=$ORIGIN",
-            "-DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=ON",
-            "-DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=OFF",
+            # HACK: Removing our rpath handling works for MeshcatCpp for now,
+            # but leaves the hardcoded path to the libraries, instead of copying
+            # the libraries to the same directory as the Python module. Will
+            # keep for development for now until we need to deploy to PyPI
+            # # Make sure we handle RPATH correctly when installing
+            # "-DCMAKE_INSTALL_RPATH=$ORIGIN",
+            # "-DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=ON",
+            # "-DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=OFF",
         ]
         build_args = []
         # Adding CMake arguments set as environment variable (needed e.g. to
@@ -73,17 +77,17 @@ class CMakeBuild(build_ext):
 
         # Add additional CMake arguments required for setting up this project
         cmake_args += [
-            "-DLOCO_BUILD_LOGS=ON",
-            "-DLOCO_BUILD_PROFILING=ON",
-            "-DLOCO_BUILD_PYTHON_BINDINGS=ON",
-            "-DLOCO_BUILD_EXAMPLES=OFF",
-            "-DLOCO_BUILD_TESTS=OFF",
-            "-DLOCO_BUILD_DOCS=OFF",
-            "-DLOCO_BUILD_BACKEND_MUJOCO=OFF",
-            "-DLOCO_BUILD_BACKEND_BULLET=OFF",
-            "-DLOCO_BUILD_BACKEND_DART=OFF",
-            "-DLOCO_BUILD_VISUALIZER_OPENGL=OFF",
-            "-DLOCO_BUILD_VISUALIZER_MESHCAT=ON",
+            "-DLOCO_BUILD_LOGS:BOOL=ON",
+            "-DLOCO_BUILD_PROFILING:BOOL=ON",
+            "-DLOCO_BUILD_PYTHON_BINDINGS:BOOL=ON",
+            "-DLOCO_BUILD_EXAMPLES:BOOL=OFF",
+            "-DLOCO_BUILD_TESTS:BOOL=OFF",
+            "-DLOCO_BUILD_DOCS:BOOL=OFF",
+            "-DLOCO_BUILD_BACKEND_MUJOCO:BOOL=OFF",
+            "-DLOCO_BUILD_BACKEND_BULLET:BOOL=OFF",
+            "-DLOCO_BUILD_BACKEND_DART:BOOL=OFF",
+            "-DLOCO_BUILD_VISUALIZER_OPENGL:BOOL=OFF",
+            "-DLOCO_BUILD_VISUALIZER_MESHCAT:BOOL=ON",
         ]
 
         if self.compiler.compiler_type != "msvc":
