@@ -16,6 +16,20 @@ class Drawable {
     DEFINE_SMART_POINTERS(Drawable)
 
  public:
+    /// \brief Creates a default drawable with the given pose in world space
+    ///
+    /// \param[in] p_name The unique name given to this drawable
+    /// \param[in] p_pose The pose of this body in world space
+    explicit Drawable(std::string p_name, Pose p_pose)
+        : m_Name(std::move(p_name)), m_Pose(p_pose) {}
+
+    /// \brief Creates a default drawable at the given location in world space
+    ///
+    /// \param[in] p_name The unique name given to this drawable
+    /// \param[in] p_position The position of this drawable in world space
+    explicit Drawable(std::string p_name, Vec3 p_position)
+        : m_Name(std::move(p_name)), m_Pose(Pose(p_position, Quat())) {}
+
     /// \brief Creates a drawable using the given user configuration
     ///
     /// \param[in] p_name The unique name given to this drawable

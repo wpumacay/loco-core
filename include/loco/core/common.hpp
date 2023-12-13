@@ -52,6 +52,16 @@ constexpr const char* SUFFIX_COLLIDER = "_col";
 /// The suffix used for generating names of drawables out of the body name
 constexpr const char* SUFFIX_DRAWABLE = "_viz";
 
+/// The unit vector in the x-direction
+const Vec3 UNIT_VEC_X = {ToScalar(1.0), ToScalar(0.0), ToScalar(0.0)};
+/// The unit vector in the y-direction
+const Vec3 INIT_VEC_Y = {ToScalar(0.0), ToScalar(1.0), ToScalar(0.0)};
+/// The unit vector in the z-direction
+const Vec3 INIT_VEC_Z = {ToScalar(0.0), ToScalar(0.0), ToScalar(1.0)};
+
+/// The default color of the drawables
+const Vec3 DEFAULT_COLOR = {ToScalar(0.7), ToScalar(0.5), ToScalar(0.3)};
+
 /// Represents all available physics engines that can be used as backends
 enum class eBackendType {
     /// Represents a dummy backend (mostly for visualization purposes)
