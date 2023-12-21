@@ -10,31 +10,12 @@
 namespace loco {
 namespace core {
 
-auto Drawable::Initialize(eVisualizerType vis_type) -> void {
-    m_VisualizerType = vis_type;
-
-    // Do some configuration ---------------------------------------------------
-    switch (m_VisualizerType) {
-        case ::loco::eVisualizerType::NONE: {
-            m_BackendImpl = std::make_unique<DrawableImplNone>();
-            break;
-        }
-
-        case ::loco::eVisualizerType::VIS_GL: {
-            /* TODO(wilbert): Instantiate the vis-gl adapter */
-            break;
-        }
-
-        case ::loco::eVisualizerType::VIS_MESHCAT: {
-            /* TODO(wilbert): Instantiate the vis-meshcat adapter */
-            break;
-        }
-
-        default: {
-            m_BackendImpl = std::make_unique<DrawableImplNone>();
-            break;
-        }
+auto Drawable::SetAdapter(IDrawableImpl::uptr adapter) -> void {
+    if (adapter == nullptr) {
+        LOG_CORE_WARN("Drawable::SetAdapter >>> given adapter is nullptr");
+        return;
     }
+    m_BackendImpl = std::move(adapter);
 }
 
 auto Drawable::SetVisible(bool visible) -> void {

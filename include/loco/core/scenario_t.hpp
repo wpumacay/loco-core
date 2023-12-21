@@ -19,16 +19,8 @@ class Scenario {
     DEFINE_SMART_POINTERS(Scenario)
 
  public:
-    /// Max number of bodies allowed in a single scene (used for array capacity)
-    static constexpr size_t MAX_BODIES = 1024;
     /// Max number of free drawables allowed in a single scene
-    static constexpr size_t MAX_FREE_DRAWABLES = 1024;
-
-    /// The number of single bodies created/added so far to the scene
-    static size_t s_bodies_so_far;  // NOLINT
-
-    /// The number of free drawables created/added so far to the scene
-    static size_t s_drawables_so_far;  // NOLINT
+    static constexpr size_t MAX_DRAWABLES = 1024;
 
     /// Creates a scenario with a default dummy runtime and backend
     Scenario();
@@ -36,44 +28,34 @@ class Scenario {
     /// Releases/Frees all allocated resources of this scenario
     ~Scenario();
 
-    /// \brief Adds the given body to the scenario with the given name
-    ///
-    /// \param[in] body The body we want to add to the scenario
-    /// \param[in] name The name of the body in the scenario
-    auto AddSingleBody(SingleBody::ptr body, const std::string& name = "")
-        -> void;
-
     /// \brief Adds a given free drawable to the scenario with the given name
     ///
     /// \param[in] drawable The drawable we want to add to the scenario
     /// \param[in] name The name of the drawable in the scenario
-    auto AddFreeDrawable(Drawable::ptr drawable, const std::string& name = "")
-        -> void;
+    auto AddDrawable(Drawable::ptr drawable) -> void;
 
-    /// Returns the current number of bodies in this scenario
-    auto num_single_bodies() const -> size_t;
+    /// \brief Returns the drawable at given index
+    ///
+    /// \param[in] index The index of the drawable we want to retrieve
+    auto GetDrawableByIndex(size_t index) -> Drawable::ptr;
+
+    /// \brief Returns the drawable with given name
+    ///
+    /// \param[in] name The name of the drawable we want to retrieve
+    auto GetDrawableByName(const std::string& name) -> Drawable::ptr;
 
     /// Returns the current number of free drawables in this scenario
-    auto num_free_drawables() const -> size_t;
-
-    /// Returns whether this scenario is empty or not
-    auto empty() const -> bool;
+    auto num_drawables() const -> size_t;
 
     /// Returns a string representation of this scenario
-    auto toString() const -> std::string;
+    auto ToString() const -> std::string;
 
  protected:
-    /// The list of bodies currently hold by this scenario
-    std::vector<SingleBody::ptr> m_SingleBodies;
-
     /// The list of free drawables hold by this scenario
-    std::vector<Drawable::ptr> m_FreeDrawables;
-
-    /// The keymap used to link bodies by name to its location in the list
-    std::unordered_map<std::string, int> m_SingleBodiesKeymap;
+    std::vector<Drawable::ptr> m_Drawables;
 
     /// The keympa used to link drawables by name to its location in the list
-    std::unordered_map<std::string, int> m_FreeDrawablesKeymap;
+    std::unordered_map<std::string, size_t> m_DrawablesKeymap;
 };
 
 }  // namespace core

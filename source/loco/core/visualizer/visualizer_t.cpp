@@ -12,19 +12,35 @@ namespace core {
 auto Visualizer::Init(eVisualizerType type) -> void {
     m_VisualizerType = type;
     switch (m_VisualizerType) {
-        case eVisualizerType::NONE:
+        case eVisualizerType::NONE: {
             m_VisualizerImpl = std::make_unique<VisualizerImplNone>(m_Scenario);
             break;
-        case eVisualizerType::VIS_GL:
+        }
+
+#if defined(LOCO_VISUALIZE_OPENGL_ENABLED)
+        case eVisualizerType::VIS_GL: {
             break;
-        case eVisualizerType::VIS_MESHCAT:
+        }
+#endif
+
+#if defined(LOCO_VISUALIZER_MESHCAT_ENABLED)
+        case eVisualizerType::VIS_MESHCAT: {
             m_VisualizerImpl =
                 std::make_unique<::loco::meshcat::VisualizerImplMeshcat>(
                     m_Scenario);
             break;
+        }
+#endif
+        default: {
+            LOCO_CORE_ERROR(
+                "Visualizer::Init >>> requested visualizer type {0} is "
+                "not supported",
+                ::loco::ToString(m_VisualizerType));
+            break;
+        }
     }
 
-    // TODO(wilbert): could create drawables for associated object here (colletc
+    // TODO(wilbert): could create drawables for associated object here (collect
     // from associated objects like single bodies, etc.), instead of doing it
     // after the call to initialize the visualizer. I'm in doubt of which way
     // makes more sense and results in a clearer interface
@@ -54,7 +70,7 @@ auto Visualizer::Update() -> void {
 
 auto Visualizer::AddDrawable(Drawable::ptr drawable) -> void {
     if (m_Scenario != nullptr) {
-        m_Scenario->AddFreeDrawable(std::move(drawable));
+        m_Scenario->AddDrawable(std::move(drawable));
     }
 }
 

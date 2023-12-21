@@ -31,7 +31,7 @@ class VisualizerImplMeshcat : public ::loco::core::VisualizerImpl {
 
  private:
     /// The handle to the Meshcat instance
-    std::unique_ptr<MeshcatCpp::Meshcat> m_MeshcatInstance = nullptr;
+    std::shared_ptr<MeshcatCpp::Meshcat> m_MeshcatInstance = nullptr;
 };
 
 }  // namespace meshcat

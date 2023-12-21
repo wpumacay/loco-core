@@ -22,6 +22,7 @@ if(LOCO_BUILD_VISUALIZER_MESHCAT)
   target_sources(
     LocoCoreCpp
     PRIVATE ${SOURCE_DIR}/visualizers/meshcat/common_meshcat.cpp
+            ${SOURCE_DIR}/visualizers/meshcat/drawable_impl_meshcat.cpp
             ${SOURCE_DIR}/visualizers/meshcat/visualizer_impl_meshcat.cpp)
   target_link_libraries(LocoCoreCpp PUBLIC MeshcatCpp::MeshcatCpp)
   target_compile_definitions(LocoCoreCpp

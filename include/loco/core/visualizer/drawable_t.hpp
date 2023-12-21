@@ -54,8 +54,10 @@ class Drawable {
     /// \brief Releases all allocated resources for this drawable
     ~Drawable() = default;
 
-    /// \brief Initializes the drawable with the given visualizer type
-    auto Initialize(eVisualizerType vis_type) -> void;
+    /// \brief Sets the adapter to be used by this drawable
+    ///
+    /// \param[in] adapter The adapter to be used by this drawable
+    auto SetAdapter(IDrawableImpl::uptr adapter) -> void;
 
     /// \brief Sets whether or not the drawable should be visible
     ///
@@ -113,6 +115,12 @@ class Drawable {
     /// \param[in] ptr_heights The buffer where the new elevation data is stored
     auto ChangeElevationData(size_t n_width_samples, size_t n_depth_samples,
                              const Scalar* ptr_heights) -> void;
+
+    /// \brief Returns the data used to build this drawable
+    auto data() const -> ::loco::DrawableData { return m_Data; }
+
+    /// \brief Returns the name of this drawable
+    auto name() const -> std::string { return m_Name; }
 
     /// \brief Returns whether or not this drawable is visible
     auto visible() const -> bool { return m_Visible; }
