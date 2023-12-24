@@ -40,15 +40,15 @@ set(LOCO_DEP_VERSION_tinyxml2
           "Version of TinyXML2 to be fetched (used to handle urdf and mjcf)")
 
 set(LOCO_DEP_VERSION_renderer
-    574d4bd9ac349e066f5367d3c21bcd0e612fe1a5 # Version v0.3.9
+    eb9c00e9452550607cf7c550209fa5c2fd675df1 # Version v0.3.10
     CACHE STRING "Version of the internal renderer to be fetched")
 
 set(LOCO_DEP_VERSION_utils
-    687d4dea4b55afd13405d00b7aef6993e056b36d # Version v0.2.9
+    efff9de7c158850f9f7cbad1cc66dda5fa867e6e # Version v0.2.10
     CACHE STRING "Version of internal utilities repo to be fetched")
 
 set(LOCO_DEP_VERSION_math
-    a31f55fb57983286ad8e30c8915b3461d9ce8557 # Version v0.6.7
+    34cb09bc70b8484a66a1734c4964635cb8f1a22b # Version v0.6.9
     CACHE STRING "Version of internal math repo to be fetched")
 
 set(LOCO_DEP_VERSION_pybind11
@@ -93,11 +93,6 @@ if(LOCO_BUILD_BACKEND_MUJOCO)
     GIT_PROGRESS FALSE
     GIT_SHALLOW TRUE
     TARGETS mujoco::mujoco
-    BUILD_ARGS
-      -DMUJOCO_BUILD_EXAMPLES=OFF
-      -DMUJOCO_BUILD_SIMULATE=OFF
-      -DMUJOCO_BUILD_TESTS=OFF
-      -DMUJOCO_TEST_PYTHON_UTIL=OFF
     EXCLUDE_FROM_ALL)
 
   # If using system package, make sure the imported target is found
@@ -112,16 +107,16 @@ endif()
 # Bullet is one of the supported physics backends for simulation
 # ------------------------------------------------------------------------------
 if(LOCO_BUILD_BACKEND_BULLET)
-  set(BUILD_BULLET2_DEMOS OFF CACHE BOOL "Don't build bullet unittests")
-  set(BUILD_BULLET3 OFF CACHE BOOL "Don't build bullet unittests")
-  set(BUILD_PYBULLET OFF CACHE BOOL "Don't build bullet unittests")
-  set(BUILD_EXTRAS OFF CACHE BOOL "Don't build bullet unittests")
-  set(BUILD_CLSOCKET OFF CACHE BOOL "Don't build bullet unittests")
-  set(BUILD_CPU_DEMOS OFF CACHE BOOL "Don't build bullet unittests")
-  set(BUILD_EGL OFF CACHE BOOL "Don't build bullet unittests")
-  set(BUILD_ENET OFF CACHE BOOL "Don't build bullet unittests")
-  set(BUILD_OPENGL3_DEMOS OFF CACHE BOOL "Don't build bullet unittests")
-  set(BUILD_UNIT_TESTS OFF CACHE BOOL "Don't build bullet unittests")
+  set(BUILD_BULLET2_DEMOS OFF CACHE BOOL "" FORCE)
+  set(BUILD_BULLET3 OFF CACHE BOOL "" FORCE)
+  set(BUILD_PYBULLET OFF CACHE BOOL "" FORCE)
+  set(BUILD_EXTRAS OFF CACHE BOOL "" FORCE)
+  set(BUILD_CLSOCKET OFF CACHE BOOL "" FORCE)
+  set(BUILD_CPU_DEMOS OFF CACHE BOOL "" FORCE)
+  set(BUILD_EGL OFF CACHE BOOL "" FORCE)
+  set(BUILD_ENET OFF CACHE BOOL "" FORCE)
+  set(BUILD_OPENGL3_DEMOS OFF CACHE BOOL "" FORCE)
+  set(BUILD_UNIT_TESTS OFF CACHE BOOL "" FORCE)
 
   loco_find_or_fetch_dependency(
     USE_SYSTEM_PACKAGE ${FIND_OR_FETCH_USE_SYSTEM_PACKAGE}
@@ -262,6 +257,7 @@ endif()
 
 if (LOCO_BUILD_VISUALIZER_MESHCAT)
   set(MESHCAT_CPP_BUILT_EXAMPLES OFF CACHE BOOL "" FORCE)
+  set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
 
   loco_find_or_fetch_dependency(
     USE_SYSTEM_PACKAGE FALSE

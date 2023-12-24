@@ -22,6 +22,10 @@ namespace meshcat {
 auto CreateShape(MeshcatCpp::Meshcat& handle, const std::string& name,
                  const ::loco::DrawableData& data) -> void;
 
+/// \brief Converts the given pose to a matrix view
+///
+/// \param[in] pose The pose in world space to be converted
+/// \return The matrix view of the given pose
 auto ConvertToMatrixView(Pose pose) -> MeshcatCpp::MatrixView<double>;
 
 }  // namespace meshcat

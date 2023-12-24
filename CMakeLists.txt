@@ -54,7 +54,7 @@ include(LocoDependencies)
 # cmake-format: off
 # -------------------------------------
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/source)
-loco_create_target(LocoCoreCpp STATIC
+loco_create_target(LocoCoreCpp SHARED
   SOURCES
     ${SOURCE_DIR}/loco/core/common.cpp
     ${SOURCE_DIR}/loco/core/visualizer/drawable_t.cpp
@@ -77,13 +77,9 @@ loco_create_target(LocoCoreCpp STATIC
 # cmake-format: on
 
 # -------------------------------------
-# Quick workaround to enable RPATH for our target
-set_target_properties(
-  LocoCoreCpp
-  PROPERTIES INSTALL_RPATH $ORIGIN
-             INSTALL_RPATH_USE_LINK_PATH OFF
-             BUILD_WITH_INSTALL_RPATH ON
-             MACOSX_RPATH ON)
+# # Quick workaround to enable RPATH for our target set_target_properties(
+# LocoCoreCpp PROPERTIES INSTALL_RPATH $ORIGIN INSTALL_RPATH_USE_LINK_PATH OFF
+# BUILD_WITH_INSTALL_RPATH ON MACOSX_RPATH ON)
 
 include(LocoBackendsSetup)
 include(LocoVisualizersSetup)

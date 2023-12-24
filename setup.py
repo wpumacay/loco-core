@@ -63,7 +63,7 @@ class CMakeBuild(build_ext):
             # the libraries to the same directory as the Python module. Will
             # keep for development for now until we need to deploy to PyPI
             # # Make sure we handle RPATH correctly when installing
-            # "-DCMAKE_INSTALL_RPATH=$ORIGIN",
+            "-DCMAKE_INSTALL_RPATH=$ORIGIN",
             # "-DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=ON",
             # "-DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=OFF",
         ]
