@@ -19,6 +19,7 @@ auto VisualizerImplMeshcat::Init() -> void {
         auto drawable_adapter = std::make_unique<DrawableImplMeshcat>(
             drawable->name(), drawable->data(), m_MeshcatInstance);
         drawable->SetAdapter(std::move(drawable_adapter));
+        drawable->SetPose(drawable->pose());
     }
 }
 

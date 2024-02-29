@@ -24,9 +24,10 @@ auto CreateShape(MeshcatCpp::Meshcat& handle, const std::string& name,
 
 /// \brief Converts the given pose to a matrix view
 ///
-/// \param[in] pose The pose in world space to be converted
-/// \return The matrix view of the given pose
-auto ConvertToMatrixView(Pose pose) -> MeshcatCpp::MatrixView<double>;
+/// \param[in] tf_array The 4x4 transform given a a list of doubles
+/// \return The matrix view of the given transform
+auto ConvertToMatrixView(std::array<double, 16>& tf_array)
+    -> MeshcatCpp::MatrixView<double>;
 
 }  // namespace meshcat
 }  // namespace loco

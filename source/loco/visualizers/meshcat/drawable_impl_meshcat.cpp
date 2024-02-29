@@ -12,7 +12,21 @@ DrawableImplMeshcat::DrawableImplMeshcat(
     ::loco::meshcat::CreateShape(*m_Handle, m_Name, m_Data);
 }
 
-auto DrawableImplMeshcat::SetPose(const Pose& pose) -> void {}
+auto DrawableImplMeshcat::SetPose(const Pose& pose) -> void {
+    Mat4 tf(pose.position, pose.orientation);
+    std::array<double, 16> tf_array = {
+        static_cast<double>(tf(0, 0)), static_cast<double>(tf(1, 0)),
+        static_cast<double>(tf(2, 0)), static_cast<double>(tf(3, 0)),
+        static_cast<double>(tf(0, 1)), static_cast<double>(tf(1, 1)),
+        static_cast<double>(tf(2, 1)), static_cast<double>(tf(3, 1)),
+        static_cast<double>(tf(0, 2)), static_cast<double>(tf(1, 2)),
+        static_cast<double>(tf(2, 2)), static_cast<double>(tf(3, 2)),
+        static_cast<double>(tf(0, 3)), static_cast<double>(tf(1, 3)),
+        static_cast<double>(tf(2, 3)), static_cast<double>(tf(3, 3))};
+
+    auto mat_view = ::loco::meshcat::ConvertToMatrixView(tf_array);
+    m_Handle->set_transform("/loco/" + m_Name, mat_view);
+}
 
 auto DrawableImplMeshcat::SetColor(const Vec3& color) -> void {}
 

@@ -7,7 +7,7 @@ auto main() -> int {
     // Create a simple scene
     auto scenario = ::loco::core::Scenario::Create();
     auto box = ::loco::core::viz::Box::Create("box", Vec3(0.0F, 0.0F, 1.0F),
-                                              Vec3(0.1F, 0.2F, 0.3F));
+                                              Vec3(0.1F, 0.1F, 0.1F));
 
     auto plane = ::loco::core::viz::Plane::Create(
         "plane", Vec3(0.0F, 0.0F, 0.0F), Vec2(1.0F, 1.0F));

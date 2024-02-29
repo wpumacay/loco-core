@@ -12,7 +12,7 @@ auto CreateShape(MeshcatCpp::Meshcat& handle, const std::string& name,
     switch (data.type) {
         case ::loco::eShapeType::BOX: {
             handle.set_object(
-                name,
+                "/loco/" + name,
                 MeshcatCpp::Box(static_cast<double>(data.size.x()),
                                 static_cast<double>(data.size.y()),
                                 static_cast<double>(data.size.z())),
@@ -22,7 +22,7 @@ auto CreateShape(MeshcatCpp::Meshcat& handle, const std::string& name,
 
         case ::loco::eShapeType::PLANE: {
             handle.set_object(
-                name,
+                "/loco/" + name,
                 MeshcatCpp::Box(static_cast<double>(data.size.x()),
                                 static_cast<double>(data.size.y()), 0.01),
                 material);
@@ -38,23 +38,13 @@ auto CreateShape(MeshcatCpp::Meshcat& handle, const std::string& name,
     }
 }
 
-auto ConvertToMatrixView(Pose pose) -> MeshcatCpp::MatrixView<double> {
+auto ConvertToMatrixView(std::array<double, 16>& tf_array)
+    -> MeshcatCpp::MatrixView<double> {
     constexpr MeshcatCpp::MatrixView<double>::index_type ROWS = 4;
     constexpr MeshcatCpp::MatrixView<double>::index_type COLS = 4;
     constexpr auto ORDER = MeshcatCpp::MatrixStorageOrdering::ColumnMajor;
 
-    Mat4 tf(pose.position, pose.orientation);
-    std::array<double, ROWS* COLS> data = {
-        static_cast<double>(tf(0, 0)), static_cast<double>(tf(1, 0)),
-        static_cast<double>(tf(2, 0)), static_cast<double>(tf(3, 0)),
-        static_cast<double>(tf(0, 1)), static_cast<double>(tf(1, 1)),
-        static_cast<double>(tf(2, 1)), static_cast<double>(tf(3, 1)),
-        static_cast<double>(tf(0, 2)), static_cast<double>(tf(1, 2)),
-        static_cast<double>(tf(2, 2)), static_cast<double>(tf(3, 2)),
-        static_cast<double>(tf(0, 3)), static_cast<double>(tf(1, 3)),
-        static_cast<double>(tf(2, 3)), static_cast<double>(tf(3, 3))};
-
-    return MeshcatCpp::make_matrix_view(data.data(), ROWS, COLS, ORDER);
+    return MeshcatCpp::make_matrix_view(tf_array.data(), ROWS, COLS, ORDER);
 }
 
 }  // namespace meshcat
