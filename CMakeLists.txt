@@ -25,7 +25,7 @@ option(LOCO_BUILD_PROFILING "Build with profiling tools enabled" ON)
 option(LOCO_BUILD_PYTHON_BINDINGS "Build Python bindings" ON)
 option(LOCO_BUILD_EXAMPLES "Build C/C++ examples" ON)
 option(LOCO_BUILD_TESTS "Build C/C++ tests" ON)
-option(LOCO_BUILD_DOCS "Build documentation" ON)
+option(LOCO_BUILD_DOCS "Build documentation" OFF)
 
 option(LOCO_BUILD_BACKEND_MUJOCO "Build with support for MuJoCo" OFF)
 option(LOCO_BUILD_BACKEND_BULLET "Build with support for Bullet" OFF)
