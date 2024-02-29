@@ -155,11 +155,6 @@ struct MeshData {
         : filepath(other.filepath),
           n_vertices(other.n_vertices),
           n_faces(other.n_faces) {
-        // Notify user  that he's making a deep copy of the whole object. This
-        // will help the user know where he's making too many copies
-        LOG_CORE_INFO(
-            "MeshData(copy-constructor) >>> making a full deep copy of this "
-            "object");
         // Handle the deep-copy of the vertices buffer --------
         auto vert_num_scalars = 3 * n_vertices;
         // NOLINTNEXTLINE
@@ -180,11 +175,6 @@ struct MeshData {
     /// Copy assignment operator for MeshData object. Similarly to the copy
     /// constructor, make a full copy of all attributes
     auto operator=(const MeshData& other) -> MeshData& {
-        // Notify user that he's making a deep copy of the whole object. This
-        // will help the user know where he's making too many copies
-        LOG_CORE_INFO(
-            "MeshData(copy-assignment-op) >>> making a full deep copy of this "
-            "object");
         filepath = other.filepath;
         n_vertices = other.n_vertices;
         n_faces = other.n_faces;
@@ -213,12 +203,6 @@ struct MeshData {
           n_vertices(other.n_vertices),
           faces(std::move(other.faces)),
           n_faces(other.n_faces) {
-        // Notify the user that we are transfering ownership. Nothing should
-        // leak, but still make sure we're not making too many moves
-        LOG_CORE_INFO(
-            "MeshData(move-constructor) >>> making a full deep copy of this "
-            "object");
-        // Set to a default state the given r-value reference
         other.filepath = "";
         other.n_vertices = 0;
         other.n_faces = 0;
@@ -228,11 +212,6 @@ struct MeshData {
 
     /// Move assignment operator, transfers ownership of other object's data
     auto operator=(MeshData&& other) noexcept -> MeshData& {
-        // Notify the user that we are transfering ownership. Nothing should
-        // leak, but still make sure we're not making too many moves
-        LOG_CORE_INFO(
-            "MeshData(move-assignment-op) >>> making a full deep copy of this "
-            "object");
         // Transfer ownership
         filepath = std::move(other.filepath);
         n_vertices = other.n_vertices;
@@ -275,11 +254,6 @@ struct HeightfieldData {
     HeightfieldData(const HeightfieldData& other)
         : n_width_samples(other.n_width_samples),
           n_depth_samples(other.n_depth_samples) {
-        // Notify user  that he's making a deep copy of the whole object. This
-        // will help the user know where he's making too many copies
-        LOG_CORE_INFO(
-            "HeightfieldData(copy-constructor) >>> making a full deep copy of "
-            "this object");
         // Handle the deep-copy of the heights buffer ---------
         auto grid_num_scalars = n_width_samples * n_depth_samples;
         // NOLINTNEXTLINE
@@ -292,11 +266,6 @@ struct HeightfieldData {
     /// Copy assignment operator for HeightfieldData object. Similarly to the
     /// copy constructor, make a full copy of all attributes
     auto operator=(const HeightfieldData& other) -> HeightfieldData& {
-        // Notify user  that he's making a deep copy of the whole object. This
-        // will help the user know where he's making too many copies
-        LOG_CORE_INFO(
-            "HeightfieldData(copy-assignment-op) >>> making a full deep copy "
-            "of this object");
         n_width_samples = other.n_width_samples;
         n_depth_samples = other.n_depth_samples;
         // Handle the deep-copy of the heights buffer ---------
@@ -314,12 +283,6 @@ struct HeightfieldData {
         : n_width_samples(other.n_width_samples),
           n_depth_samples(other.n_depth_samples),  // NOLINT
           heights(std::move(other.heights)) {
-        // Notify the user that we are transfering ownership. Nothing should
-        // leak, but still make sure we're not making too many moves
-        LOG_CORE_INFO(
-            "HeightfieldData(move-constructor) >>> making a full deep copy of "
-            "this object.");
-        // Set to a default state the given r-value reference
         other.n_width_samples = 0;
         other.n_depth_samples = 0;
         other.heights = nullptr;
@@ -327,11 +290,6 @@ struct HeightfieldData {
 
     /// Move assignment operator, transfers ownership of other object's data
     auto operator=(HeightfieldData&& other) noexcept -> HeightfieldData& {
-        // Notify the user that we are transfering ownership. Nothing should
-        // leak, but still make sure we're not making too many moves
-        LOG_CORE_INFO(
-            "HeightfieldData(move-assignment-op) >>> making a full deep copy "
-            "of this object.");
         n_width_samples = other.n_width_samples;
         n_depth_samples = other.n_depth_samples;
         heights = std::move(other.heights);
