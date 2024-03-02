@@ -137,13 +137,114 @@ class Plane : public Drawable {
     Vec2 m_Extents = {ToScalar(1.0), ToScalar(1.0)};
 };
 
-class Sphere : public Drawable {};
+/// \brief Class that represents a drawable with a sphere shape
+///
+/// This sphere class is a helper class that is exposed to make building of
+/// sphere drawables easier. It exposes an API for a sphere shape, as well as
+/// the default API from the Drawable base class.
+class Sphere : public Drawable {
+    // cppcheck-suppress unknownMacro
+    NO_COPY_NO_MOVE_NO_ASSIGN(Sphere)
 
-class Cylinder : public Drawable {};
+    DEFINE_SMART_POINTERS(Sphere)
+
+ public:
+    /// \brief Creates a sphere given its name, pose and radius
+    explicit Sphere(std::string p_name, Pose p_pose, Scalar p_radius);
+
+    /// \brief Creates a sphere given its name, radius and position
+    explicit Sphere(std::string p_name, Vec3 p_position, Scalar p_radius);
+
+    /// \biref Releases all allocated resources for this sphere drawable
+    ~Sphere() = default;
+
+    /// \brief Sets the radius of the sphere
+    auto SetRadius(Scalar p_radius) -> void;
+
+    /// \brief Returns the radius of the sphere
+    auto radius() const -> Scalar { return m_Radius; }
+
+ protected:
+    /// \brief The radius of the sphere
+    Scalar m_Radius;
+};
+
+/// \brief Class that represents a drawable with a cylinder shape
+class Cylinder : public Drawable {
+    // cppcheck-suppress unknownMacro
+    NO_COPY_NO_MOVE_NO_ASSIGN(Cylinder)
+
+    DEFINE_SMART_POINTERS(Cylinder)
+
+ public:
+    /// \brief Creates a cylinder given its name, pose, radius and height
+    explicit Cylinder(std::string p_name, Pose p_pose, Scalar p_radius,
+                      Scalar p_height);
+
+    /// \brief Creates a cylinder given its name, position, radius and  height
+    explicit Cylinder(std::string p_name, Vec3 p_position, Scalar p_radius,
+                      Scalar p_height);
+
+    /// \biref Releases all allocated resources for this cylinder drawable
+    ~Cylinder() = default;
+
+    /// \brief Sets the radius of the cylinder
+    auto SetRadius(Scalar p_radius) -> void;
+
+    /// \brief Sets the height of the cylinder
+    auto SetHeight(Scalar p_height) -> void;
+
+    /// \brief Returns the radius of the cylinder
+    auto radius() const -> Scalar { return m_Radius; }
+
+    /// \brief Returns the height of the cylinder
+    auto height() const -> Scalar { return m_Height; }
+
+ protected:
+    /// \brief The radius of the cylinder
+    Scalar m_Radius;
+
+    /// \brief The height of the cylinder
+    Scalar m_Height;
+};
+
+class Ellipsoid : public Drawable {
+    // cppcheck-suppress unknownMacro
+    NO_COPY_NO_MOVE_NO_ASSIGN(Ellipsoid)
+
+    DEFINE_SMART_POINTERS(Ellipsoid)
+
+ public:
+    /// \brief Creates an ellipsoid given its name, pose and radii
+    explicit Ellipsoid(std::string p_name, Pose p_pose, Vec3 p_radii);
+
+    /// \brief Creates an ellipsoid given its name, position and radii
+    explicit Ellipsoid(std::string p_name, Vec3 p_position, Vec3 p_radii);
+
+    /// \brief Releases all allocated resources for this ellipsoid drawable
+    ~Ellipsoid() = default;
+
+    /// \brief Sets the radii of the ellipsoid
+    auto SetRadii(Vec3 p_radii) -> void;
+
+    /// \brief Sets the x-radius of the ellipsoid
+    auto SetRadiusX(Scalar radius_x) -> void;
+
+    /// \brief Sets the x-radius of the ellipsoid
+    auto SetRadiusY(Scalar radius_y) -> void;
+
+    /// \brief Sets the x-radius of the ellipsoid
+    auto SetRadiusZ(Scalar radius_z) -> void;
+
+    /// \brief Returns the radii of the ellipsoid
+    auto radii() const -> Vec3 { return m_Radii; }
+
+ protected:
+    /// \brief The radii of the ellipsoid
+    Vec3 m_Radii;
+};
 
 class Capsule : public Drawable {};
-
-class Ellipsoid : public Drawable {};
 
 class ConvexMesh : public Drawable {};
 

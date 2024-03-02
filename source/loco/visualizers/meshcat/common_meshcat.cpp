@@ -1,4 +1,5 @@
 #include <loco/visualizers/meshcat/common_meshcat.hpp>
+#include "loco/core/common.hpp"
 
 namespace loco {
 namespace meshcat {
@@ -25,6 +26,33 @@ auto CreateShape(MeshcatCpp::Meshcat& handle, const std::string& name,
                 "/loco/" + name,
                 MeshcatCpp::Box(static_cast<double>(data.size.x()),
                                 static_cast<double>(data.size.y()), 0.01),
+                material);
+            break;
+        }
+
+        case ::loco::eShapeType::SPHERE: {
+            handle.set_object(
+                "/loco/" + name,
+                MeshcatCpp::Sphere(static_cast<double>(data.size.x())),
+                material);
+            break;
+        }
+
+        case ::loco::eShapeType::CYLINDER: {
+            handle.set_object(
+                "/loco/" + name,
+                MeshcatCpp::Cylinder(static_cast<double>(data.size.x()),
+                                     static_cast<double>(data.size.z())),
+                material);
+            break;
+        }
+
+        case ::loco::eShapeType::ELLIPSOID: {
+            handle.set_object(
+                "/loco/" + name,
+                MeshcatCpp::Ellipsoid(static_cast<double>(data.size.x()),
+                                      static_cast<double>(data.size.y()),
+                                      static_cast<double>(data.size.z())),
                 material);
             break;
         }
