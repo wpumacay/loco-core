@@ -1,5 +1,13 @@
 #include <loco/visualizers/meshcat/drawable_impl_meshcat.hpp>
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 namespace loco {
 namespace meshcat {
 
@@ -44,7 +52,9 @@ auto DrawableImplMeshcat::ChangeElevationData(size_t n_width_samples,
                                               const Scalar* ptr_heights)
     -> void {}
 
-auto DrawableImplMeshcat::SetVisible(bool visible) -> void {}
+auto DrawableImplMeshcat::SetVisible(bool visible) -> void {
+    m_Handle->set_property("/loco/" + m_Name, "visible", visible);
+}
 
 auto DrawableImplMeshcat::SetWireframe(bool wireframe) -> void {}
 
