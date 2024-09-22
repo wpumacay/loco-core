@@ -47,6 +47,15 @@ auto CreateShape(MeshcatCpp::Meshcat& handle, const std::string& name,
             break;
         }
 
+        case ::loco::eShapeType::CAPSULE: {
+            handle.set_object(
+                "/loco/" + name,
+                MeshcatCpp::Capsule(static_cast<double>(data.size.x()),
+                                    static_cast<double>(data.size.z())),
+                material);
+            break;
+        }
+
         case ::loco::eShapeType::ELLIPSOID: {
             handle.set_object(
                 "/loco/" + name,

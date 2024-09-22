@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -8,6 +9,8 @@
 
 namespace loco {
 namespace core {
+
+class Scenario;
 
 class Drawable {
     // cppcheck-suppress unknownMacro
@@ -58,6 +61,11 @@ class Drawable {
     ///
     /// \param[in] adapter The adapter to be used by this drawable
     auto SetAdapter(IDrawableImpl::uptr adapter) -> void;
+
+    /// \brief Sets the reference to the scenario that contains it
+    ///
+    /// \param[in] scenario A non-owning reference to a scenario
+    auto SetScenario(std::weak_ptr<Scenario> scenario) -> void;
 
     /// \brief Sets whether or not the drawable should be visible
     ///
@@ -164,15 +172,21 @@ class Drawable {
 
     /// The current pose of this drawable in world space
     Pose m_Pose;
+
     /// Flag to store whether or not this drawable is visible
     bool m_Visible = true;
+
     /// Flag to store whether or not this drawable is rendered as a wireframe
     bool m_Wireframe = false;
 
     /// The backend type used for the visualizer this drawable belongs to
     eVisualizerType m_VisualizerType = eVisualizerType::NONE;
+
     /// The adapter used to interact with the internal visualizer backend
     IDrawableImpl::uptr m_BackendImpl = nullptr;
+
+    /// A non-owning reference to the scenario that holds it
+    std::weak_ptr<Scenario> m_ScenarioRef;
 };
 
 }  // namespace core

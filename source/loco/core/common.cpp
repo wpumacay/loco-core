@@ -13,6 +13,7 @@ auto ToString(const eBackendType& backend_type) -> std::string {
         case eBackendType::DART:
             return "dart";
     }
+    return "none";
 }
 
 auto ToString(const eVisualizerType& visualizer_type) -> std::string {
@@ -24,6 +25,7 @@ auto ToString(const eVisualizerType& visualizer_type) -> std::string {
         case eVisualizerType::VIS_MESHCAT:
             return "vis_meshcat";
     }
+    return "none";
 }
 
 auto ToString(const eShapeType& shape_type) -> std::string {
@@ -49,6 +51,7 @@ auto ToString(const eShapeType& shape_type) -> std::string {
         case eShapeType::COMPOUND:
             return "compound";
     }
+    return "none";
 }
 
 auto ToString(const eDynamicsType& dyn_type) -> std::string {
@@ -58,6 +61,7 @@ auto ToString(const eDynamicsType& dyn_type) -> std::string {
         case eDynamicsType::STATIC:
             return "static";
     }
+    return "none";
 }
 
 }  // namespace loco

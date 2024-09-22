@@ -7,6 +7,9 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdouble-promotion"
 #pragma clang diagnostic ignored "-Wimplicit-float-conversion"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdouble-promotion"
 #endif
 
 // NOLINTNEXTLINE
@@ -68,4 +71,6 @@ TEST_CASE("BodyData type", "[BodyData]") {
 
 #if defined(__clang__)
 #pragma clang diagnostic pop  // NOLINT
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
 #endif

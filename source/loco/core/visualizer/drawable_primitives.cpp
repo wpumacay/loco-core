@@ -215,6 +215,40 @@ auto Ellipsoid::SetRadiusZ(Scalar radius_z) -> void {
     }
 }
 
+// -------------------------------------------------------------------------- //
+//                             Capsule primitive                              //
+// -------------------------------------------------------------------------- //
+
+Capsule::Capsule(std::string name, Pose pose, Scalar radius, Scalar height)
+    : Drawable(std::move(name), pose), m_Radius(radius), m_Height(height) {
+    m_Data.type = eShapeType::CAPSULE;
+    m_Data.size = {m_Radius, m_Radius, m_Height};
+    m_Data.color = ::loco::DEFAULT_COLOR;
+}
+
+Capsule::Capsule(std::string name, Vec3 xyz, Scalar radius, Scalar height)
+    : Drawable(std::move(name), xyz), m_Radius(radius), m_Height(height) {
+    m_Data.type = eShapeType::CAPSULE;
+    m_Data.size = {m_Radius, m_Radius, m_Height};
+    m_Data.color = ::loco::DEFAULT_COLOR;
+}
+
+auto Capsule::SetRadius(Scalar radius) -> void {
+    m_Radius = radius;
+    m_Data.size = {m_Radius, m_Radius, m_Height};
+    if (m_BackendImpl != nullptr) {
+        m_BackendImpl->ChangeSize(m_Data.size);
+    }
+}
+
+auto Capsule::SetHeight(Scalar height) -> void {
+    m_Height = height;
+    m_Data.size = {m_Radius, m_Radius, m_Height};
+    if (m_BackendImpl != nullptr) {
+        m_BackendImpl->ChangeSize(m_Data.size);
+    }
+}
+
 }  // namespace viz
 }  // namespace core
 }  // namespace loco

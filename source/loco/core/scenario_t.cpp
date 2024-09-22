@@ -16,7 +16,7 @@ auto Scenario::AddDrawable(Drawable::ptr drawable) -> void {
 }
 
 auto Scenario::GetDrawableByIndex(size_t index) -> Drawable::ptr {
-    if (index < 0 || index > m_Drawables.size() - 1) {
+    if (index > m_Drawables.size() - 1) {
         return nullptr;
     }
     return m_Drawables[index];

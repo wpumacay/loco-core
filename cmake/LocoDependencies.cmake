@@ -56,7 +56,7 @@ set(LOCO_DEP_VERSION_pybind11
     CACHE STRING "Version of PyBind11 to be fetched (used for python bindings)")
 
 set(LOCO_DEP_VERSION_meshcatcpp
-    a84be7add7f344d61e615bee7f26e6a7d5444f2a
+    200e1256465a49e320d8ee501b30dc0534bb2103
     CACHE STRING "Version of MeshcatCpp to be fetched (for meshcat visualizer")
 
 mark_as_advanced(LOCO_DEP_VERSION_mujoco)
@@ -263,7 +263,7 @@ if (LOCO_BUILD_VISUALIZER_MESHCAT)
     USE_SYSTEM_PACKAGE FALSE
     PACKAGE_NAME MeshcatCpp
     LIBRARY_NAME meshcatcpp
-    GIT_REPO https://github.com/ami-iit/meshcat-cpp.git
+    GIT_REPO https://github.com/wpumacay/meshcat-cpp.git
     GIT_TAG ${LOCO_DEP_VERSION_meshcatcpp}
     GIT_PROGRESS FALSE
     GIT_SHALLOW FALSE

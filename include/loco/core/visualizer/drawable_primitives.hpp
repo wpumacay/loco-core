@@ -1,13 +1,14 @@
 #pragma once
 
 // TODO(wilbert): The current implementation is intended for a moderate number
-// of drawables in the screen, as it creates a separate insteance for each that
+// of drawables in the screen, as it creates a separate instance for each that
 // does its own allocation in the heap. This can be mitigated by using custom
 // allocators, and by relaxing the constraint on both copy and move.
 
 #include <string>
 
 #include <loco/core/visualizer/drawable_t.hpp>
+#include "utils/common.hpp"
 
 namespace loco {
 namespace core {
@@ -244,7 +245,41 @@ class Ellipsoid : public Drawable {
     Vec3 m_Radii;
 };
 
-class Capsule : public Drawable {};
+class Capsule : public Drawable {
+    // cppcheck-suppress unknownMacro
+    NO_COPY_NO_MOVE_NO_ASSIGN(Capsule)
+
+    DEFINE_SMART_POINTERS(Capsule)
+
+ public:
+    /// \brief Creates a capsule given its name, pose, radius and height
+    explicit Capsule(std::string name, Pose pose, Scalar radius, Scalar height);
+
+    /// \brief Creates a capsule given its name, position, radius and height
+    explicit Capsule(std::string name, Vec3 xyz, Scalar radius, Scalar height);
+
+    /// \brief Releases all allocated resources for this capsule drawable
+    ~Capsule() = default;
+
+    /// \brief Sets the radius of the capsule
+    auto SetRadius(Scalar radius) -> void;
+
+    /// \brief Sets the height of the capsule
+    auto SetHeight(Scalar height) -> void;
+
+    /// \brief Returns the radius of the capsule
+    auto radius() const -> Scalar { return m_Radius; }
+
+    /// \brief Returns the height of the capsule
+    auto height() const -> Scalar { return m_Height; }
+
+ protected:
+    /// \brief The radius of the caps of the capsule
+    Scalar m_Radius;
+
+    /// \brief The height of the capsule (length of the cylindrical part)
+    Scalar m_Height;
+};
 
 class ConvexMesh : public Drawable {};
 

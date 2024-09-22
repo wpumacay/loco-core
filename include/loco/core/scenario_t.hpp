@@ -1,18 +1,18 @@
 #pragma once
 
-#include <vector>
+#include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include <loco/core/common.hpp>
-#include <loco/core/single_body/single_body_t.hpp>
 #include <loco/core/visualizer/drawable_t.hpp>
 
 namespace loco {
 namespace core {
 
 /// \brief Representation for the main container of simulated objects
-class Scenario {
+class Scenario : public std::enable_shared_from_this<Scenario> {
     // cppcheck-suppress unknownMacro
     NO_COPY_NO_MOVE_NO_ASSIGN(Scenario)
 

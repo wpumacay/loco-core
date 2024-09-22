@@ -6,6 +6,7 @@
 #include <utils/logging.hpp>
 
 #include <loco/core/visualizer/drawable_t.hpp>
+#include <loco/core/scenario_t.hpp>
 
 namespace loco {
 namespace core {
@@ -16,6 +17,16 @@ auto Drawable::SetAdapter(IDrawableImpl::uptr adapter) -> void {
         return;
     }
     m_BackendImpl = std::move(adapter);
+}
+
+auto Drawable::SetScenario(std::weak_ptr<Scenario> scenario) -> void {
+    if (!m_ScenarioRef.expired()) {
+        LOG_CORE_WARN(
+          "Drawable::SetScenario >>> still keeping a ref to a different "
+          "scenario");
+        return;
+    }
+    m_ScenarioRef = std::move(scenario);
 }
 
 auto Drawable::SetVisible(bool visible) -> void {
