@@ -14,6 +14,8 @@
 namespace loco {
 namespace meshcat {
 
+constexpr auto* MC_PATH_PREFIX = "/loco";
+
 /// \brief Sends a request to meshcat to create the given shape
 ///
 /// \param[in] handle The handle to the MeshcatCpp interface

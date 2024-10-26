@@ -56,7 +56,7 @@ set(LOCO_DEP_VERSION_pybind11
     CACHE STRING "Version of PyBind11 to be fetched (used for python bindings)")
 
 set(LOCO_DEP_VERSION_meshcatcpp
-    200e1256465a49e320d8ee501b30dc0534bb2103
+    d7df7b83617cca185c7b77405aabaffe3bc072ac
     CACHE STRING "Version of MeshcatCpp to be fetched (for meshcat visualizer")
 
 mark_as_advanced(LOCO_DEP_VERSION_mujoco)

@@ -81,13 +81,16 @@ class DrawableImplMeshcat : public ::loco::core::IDrawableImpl {
 
  private:
     /// A copy of the data for the linked drawable
-    ::loco::DrawableData m_Data;
+    ::loco::DrawableData m_Data{};
 
     /// The associated name of the drawable we're adapting
-    std::string m_Name;
+    std::string m_Name{};
+
+    /// The path to the object in the scene tree
+    std::string m_Path{};
 
     /// The handle to the MeshcatCpp interface
-    std::shared_ptr<MeshcatCpp::Meshcat> m_Handle = nullptr;
+    std::shared_ptr<MeshcatCpp::Meshcat> m_Handle{nullptr};
 };
 
 }  // namespace meshcat

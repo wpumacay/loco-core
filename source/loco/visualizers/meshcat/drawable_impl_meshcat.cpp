@@ -1,3 +1,5 @@
+#include <vector>
+
 #include <loco/visualizers/meshcat/drawable_impl_meshcat.hpp>
 
 #if defined(__clang__)
@@ -17,6 +19,7 @@ DrawableImplMeshcat::DrawableImplMeshcat(
     : m_Data(std::move(data)),
       m_Name(std::move(name)),
       m_Handle(std::move(handle)) {
+    m_Path = MC_PATH_PREFIX + m_Name;
     ::loco::meshcat::CreateShape(*m_Handle, m_Name, m_Data);
 }
 
@@ -33,12 +36,19 @@ auto DrawableImplMeshcat::SetPose(const Pose& pose) -> void {
         static_cast<double>(tf(2, 3)), static_cast<double>(tf(3, 3))};
 
     auto mat_view = ::loco::meshcat::ConvertToMatrixView(tf_array);
-    m_Handle->set_transform("/loco/" + m_Name, mat_view);
+    m_Handle->set_transform(m_Path, mat_view);
 }
 
-auto DrawableImplMeshcat::SetColor(const Vec3& color) -> void {}
+auto DrawableImplMeshcat::SetColor(const Vec3& color) -> void {
+    std::vector<double> v_color = {static_cast<double>(color.x()),
+                                   static_cast<double>(color.y()),
+                                   static_cast<double>(color.z())};
+    m_Handle->set_property("/loco" + m_Name, "color", v_color);
+}
 
-auto DrawableImplMeshcat::SetTexture(const std::string& tex_filepath) -> void {}
+auto DrawableImplMeshcat::SetTexture(const std::string& tex_filepath) -> void {
+    // TODO(wilbert): implement on Meshcat
+}
 
 auto DrawableImplMeshcat::ChangeSize(const Vec3& size) -> void {}
 
@@ -53,7 +63,7 @@ auto DrawableImplMeshcat::ChangeElevationData(size_t n_width_samples,
     -> void {}
 
 auto DrawableImplMeshcat::SetVisible(bool visible) -> void {
-    m_Handle->set_property("/loco/" + m_Name, "visible", visible);
+    m_Handle->set_property(m_Path, "visible", visible);
 }
 
 auto DrawableImplMeshcat::SetWireframe(bool wireframe) -> void {}
