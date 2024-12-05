@@ -1,8 +1,6 @@
 #pragma once
 
-#include <memory>
 #include <utility>
-#include <vector>
 
 #include <loco/core/common.hpp>
 #include <loco/core/scenario_t.hpp>
@@ -12,7 +10,7 @@ namespace loco {
 namespace core {
 
 /// Core visualizer object, used to visualize a given scenario
-class Visualizer {
+class LOCO_API Visualizer {
     // cppcheck-suppress unknownMacro
     NO_COPY_NO_MOVE_NO_ASSIGN(Visualizer)
 
@@ -35,19 +33,20 @@ class Visualizer {
     /// Updates the state of the visualizer, syncing to the scenario state
     auto Update() -> void;
 
-    /// \brief Adds the given drawable to the visualizer
-    ///
+    /// Adds the given drawable to the visualizer
     /// \param[in] drawable The drawable to be added to this visualizer
     auto AddDrawable(Drawable::ptr drawable) -> void;
 
     /// Returns the type of visualizer backend used internally
-    auto visualizer_type() const -> eVisualizerType { return m_VisualizerType; }
+    LOCO_NODISCARD auto visualizer_type() const -> eVisualizerType {
+        return m_VisualizerType;
+    }
 
     /// Returns a mutable reference to the internal backend-specific impl
-    auto impl() -> VisualizerImpl&;
+    LOCO_NODISCARD auto impl() -> VisualizerImpl&;
 
     /// Returns an unmutable reference to the internal backend-specific impl
-    auto impl() const -> const VisualizerImpl&;
+    LOCO_NODISCARD auto impl() const -> const VisualizerImpl&;
 
  protected:
     /// Scenario to be simulated

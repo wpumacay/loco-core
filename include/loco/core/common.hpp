@@ -18,6 +18,89 @@
 
 #include <utils/logging.hpp>
 
+// -----------------------------------------------------------------------------
+// Language detection adapted from https://github.com/g-truc/glm
+
+#define LOCO_LANG_CXX98_FLAG (1 << 1)
+#define LOCO_LANG_CXX03_FLAG (1 << 2)
+#define LOCO_LANG_CXX0X_FLAG (1 << 3)
+#define LOCO_LANG_CXX11_FLAG (1 << 4)
+#define LOCO_LANG_CXX14_FLAG (1 << 5)
+#define LOCO_LANG_CXX17_FLAG (1 << 6)
+#define LOCO_LANG_CXX20_FLAG (1 << 7)
+
+#define LOCO_LANG_CXX98 LOCO_LANG_CXX98_FLAG
+#define LOCO_LANG_CXX03 (LOCO_LANG_CXX98 | LOCO_LANG_CXX03_FLAG)
+#define LOCO_LANG_CXX0X (LOCO_LANG_CXX03 | LOCO_LANG_CXX0X_FLAG)
+#define LOCO_LANG_CXX11 (LOCO_LANG_CXX0X | LOCO_LANG_CXX11_FLAG)
+#define LOCO_LANG_CXX14 (LOCO_LANG_CXX11 | LOCO_LANG_CXX14_FLAG)
+#define LOCO_LANG_CXX17 (LOCO_LANG_CXX14 | LOCO_LANG_CXX17_FLAG)
+#define LOCO_LANG_CXX20 (LOCO_LANG_CXX17 | LOCO_LANG_CXX20_FLAG)
+
+// clang-format off
+#if defined(LOCO_FORCE_CXX20)
+    #define LOCO_LANG LOCO_LANG_CXX20
+#elif defined(LOCO_FORCE_CXX17)
+    #define LOCO_LANG LOCO_LANG_CXX17
+#elif defined(LOCO_FORCE_CXX14)
+    #define LOCO_LANG LOCO_LANG_CXX14
+#elif defined(LOCO_FORCE_CXX11)
+    #define LOCO_LANG LOCO_LANG_CXX11
+#else
+    #if __cplusplus > 201703L
+        #define LOCO_LANG LOCO_LANG_CXX20
+    #elif __cplusplus == 201703L
+        #define LOCO_LANG LOCO_LANG_CXX17
+    #elif __cplusplus == 201402L
+        #define LOCO_LANG LOCO_LANG_CXX14
+    #elif __cplusplus == 201103L
+        #define LOCO_LANG LOCO_LANG_CXX11
+    #else
+        #error "C++ standard must be one of 11, 14, 17, and 20"
+    #endif
+#endif
+
+// [[nodiscard]]
+#if LOCO_LANG & LOCO_LANG_CXX17_FLAG
+    #define LOCO_NODISCARD [[nodiscard]]
+#else
+    #define LOCO_NODISCARD
+#endif
+
+#if defined _WIN32 || defined __CYGWIN__
+    #define LOCO_DLL_EXPORT __declspec(dllexport)
+    #define LOCO_DLL_IMPORT __declspec(dllimport)
+    #define LOCO_DLL_LOCAL
+#else
+    #if __GNUC__ >= 4
+        #define LOCO_DLL_EXPORT __attribute__ ((visibility ("default")))
+        #define LOCO_DLL_IMPORT __attribute__ ((visibility ("default")))
+        #define LOCO_DLL_LOCAL __attribute__ ((visibility ("hidden")))
+    #else
+        #define LOCO_DLL_EXPORT
+        #define LOCO_DLL_IMPORT
+        #define LOCO_DLL_LOCAL
+    #endif
+#endif
+
+
+#define LOCO_DECL LOCO_NODISCARD
+
+#ifdef LOCO_STATIC
+    #define LOCO_API
+    #define LOCO_LOCAL
+#else
+    #ifdef LOCO_DLL_EXPORTS
+        #define LOCO_API LOCO_DLL_EXPORT
+    #else
+        #define LOCO_API LOCO_DLL_IMPORT
+    #endif
+    #define LOCO_LOCAL LOCO_DLL_LOCAL
+#endif
+// clang-format on
+
+// -----------------------------------------------------------------------------
+
 using Scalar = float;
 using Vec2 = ::math::Vector2<Scalar>;
 using Vec3 = ::math::Vector3<Scalar>;
@@ -75,7 +158,7 @@ enum class eBackendType {
 };
 
 /// Returns the string representation of the given backend enumerator
-auto ToString(const eBackendType& backend_type) -> std::string;
+LOCO_API auto ToString(const eBackendType& backend_type) -> std::string;
 
 /// Represents all available visualizers integrated with this framework
 enum class eVisualizerType {
@@ -88,7 +171,7 @@ enum class eVisualizerType {
 };
 
 /// Returns the string representation of the given visualizer enumerator
-auto ToString(const eVisualizerType& visualizer_type) -> std::string;
+LOCO_API auto ToString(const eVisualizerType& visualizer_type) -> std::string;
 
 /// Represents all available shapes
 enum class eShapeType {
@@ -115,7 +198,7 @@ enum class eShapeType {
 };
 
 /// Returns the string representation of the given shape type
-auto ToString(const eShapeType& shape_type) -> std::string;
+LOCO_API auto ToString(const eShapeType& shape_type) -> std::string;
 
 /// Represents all available dynamics options
 enum class eDynamicsType {
@@ -126,10 +209,10 @@ enum class eDynamicsType {
 };
 
 /// Returns the string representation of the given dynamics option
-auto ToString(const eDynamicsType& dyn_type) -> std::string;
+LOCO_API auto ToString(const eDynamicsType& dyn_type) -> std::string;
 
 /// Represents user-defined mesh data (for convex and triangular shapes)
-struct MeshData {
+struct LOCO_API MeshData {
     /// Absolute path to the mesh resource (if creating mesh from file)
     std::string filepath;
     /// User vertex-data of the mesh resource (if creating programmatically)
@@ -233,7 +316,7 @@ struct MeshData {
 };
 
 /// Represents user-defined heightfield data (for heightfield shapes)
-struct HeightfieldData {
+struct LOCO_API HeightfieldData {
     /// Number of samples of the hfield's area in the x-dimension
     size_t n_width_samples = 0;
     /// Number of samples of the hfield's area in the y-dimension
@@ -306,7 +389,7 @@ struct HeightfieldData {
 };
 
 /// Represents the data that fully describes a shape
-struct ShapeData {
+struct LOCO_API ShapeData {
     /// Type of this shape
     eShapeType type = eShapeType::SPHERE;
     /// Size of the shape
@@ -320,7 +403,7 @@ struct ShapeData {
 };
 
 /// Represents the data that defines a collider
-struct ColliderData : ShapeData {
+struct LOCO_API ColliderData : ShapeData {
     /// The group-id used for filtering collision pair checks
     int32_t collision_group = 1;
     /// The mask-id used for filtering collision pair checks
@@ -332,7 +415,7 @@ struct ColliderData : ShapeData {
 };
 
 /// Represents the data that defines a drawable
-struct DrawableData : ShapeData {
+struct LOCO_API DrawableData : ShapeData {
     /// The color of this drawable
     Vec3 color = {ToScalar(0.7), ToScalar(0.5), ToScalar(0.3)};
     /// The id of the texture of this drawable
@@ -342,7 +425,7 @@ struct DrawableData : ShapeData {
 };
 
 /// Represents the inertial properties of a body
-struct InertialData {
+struct LOCO_API InertialData {
     /// The mass of the related body
     Scalar mass = ToScalar(1.0);
     /// The inertia matrix of the related body
@@ -352,7 +435,7 @@ struct InertialData {
 };
 
 /// Represents the properties of a rigid body
-struct BodyData {
+struct LOCO_API BodyData {
     /// Dynamics type used for this rigid body
     eDynamicsType dyntype = eDynamicsType::DYNAMIC;
     /// Inertial properties of this rigid body

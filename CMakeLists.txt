@@ -42,6 +42,8 @@ set_property(CACHE LOCO_BUILD_CXX_STANDARD PROPERTY STRINGS 11 14 17 20)
 # cmake-format: on
 
 loco_initialize_project(CXX_STANDARD ${LOCO_BUILD_CXX_STANDARD})
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # -------------------------------------
 # Allow the usage of our helper macros and functions
@@ -80,6 +82,27 @@ loco_create_target(LocoCoreCpp SHARED
 # # Quick workaround to enable RPATH for our target set_target_properties(
 # LocoCoreCpp PROPERTIES INSTALL_RPATH $ORIGIN INSTALL_RPATH_USE_LINK_PATH OFF
 # BUILD_WITH_INSTALL_RPATH ON MACOSX_RPATH ON)
+
+# -------------------------------------
+if(CMAKE_CXX_STANDARD EQUAL 20)
+  target_compile_definitions(LocoCoreCpp PUBLIC -DLOCO_FORCE_CXX20)
+elseif(CMAKE_CXX_STANDARD EQUAL 17)
+  target_compile_definitions(LocoCoreCpp PUBLIC -DLOCO_FORCE_CXX17)
+elseif(CMAKE_CXX_STANDARD EQUAL 14)
+  target_compile_definitions(LocoCoreCpp PUBLIC -DLOCO_FORCE_CXX14)
+elseif(CMAKE_CXX_STANDARD EQUAL 11)
+  target_compile_definitions(LocoCoreCpp PUBLIC -DLOCO_FORCE_CXX11)
+else()
+  message(
+    WARNING "Loco >>> should setup which standard to use. Using autodetect")
+endif()
+
+# -------------------------------------
+# Handle symbol visibility
+set_target_properties(LocoCoreCpp PROPERTIES C_VISIBILITY_PRESET hidden)
+set_target_properties(LocoCoreCpp PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(LocoCoreCpp PROPERTIES VISIBILITY_INLINES_HIDDEN ON)
+target_compile_definitions(LocoCoreCpp PRIVATE -DLOCO_DLL_EXPORTS)
 
 include(LocoBackendsSetup)
 include(LocoVisualizersSetup)

@@ -12,7 +12,7 @@ namespace core {
 
 class Scenario;
 
-class Drawable {
+class LOCO_API Drawable {
     // cppcheck-suppress unknownMacro
     NO_COPY_NO_MOVE_NO_ASSIGN(Drawable)
 
@@ -125,43 +125,47 @@ class Drawable {
                              const Scalar* ptr_heights) -> void;
 
     /// \brief Returns the data used to build this drawable
-    auto data() const -> ::loco::DrawableData { return m_Data; }
+    LOCO_NODISCARD auto data() const -> ::loco::DrawableData { return m_Data; }
 
     /// \brief Returns the name of this drawable
-    auto name() const -> std::string { return m_Name; }
+    LOCO_NODISCARD auto name() const -> std::string { return m_Name; }
 
     /// \brief Returns whether or not this drawable is visible
-    auto visible() const -> bool { return m_Visible; }
+    LOCO_NODISCARD auto visible() const -> bool { return m_Visible; }
 
     /// \brief Returns whether or not this drawable is drawn as a wireframe
-    auto wireframe() const -> bool { return m_Wireframe; }
+    LOCO_NODISCARD auto wireframe() const -> bool { return m_Wireframe; }
 
     /// \brief Returns the current pose of this drawable in world space
-    auto pose() const -> Pose { return m_Pose; }
+    LOCO_NODISCARD auto pose() const -> Pose { return m_Pose; }
 
     /// \brief Returns the current position of this drawable in world space
-    auto position() const -> Vec3 { return m_Pose.position; }
+    LOCO_NODISCARD auto position() const -> Vec3 { return m_Pose.position; }
 
     /// \brief Returns the current orientation of this drawable in world space
-    auto orientation() const -> Quat { return m_Pose.orientation; }
+    LOCO_NODISCARD auto orientation() const -> Quat {
+        return m_Pose.orientation;
+    }
 
     /// \brief Returns the color of this drawable
-    auto color() const -> Vec3 { return m_Data.color; }
+    LOCO_NODISCARD auto color() const -> Vec3 { return m_Data.color; }
 
     /// \brief Returns the texture applied to this drawable
-    auto texture() const -> std::string { return m_Data.texture; }
+    LOCO_NODISCARD auto texture() const -> std::string {
+        return m_Data.texture;
+    }
 
     /// \brief Returns the size of the internal shape of the drawable
-    auto size() const -> Vec3 { return m_Data.size; }
+    LOCO_NODISCARD auto size() const -> Vec3 { return m_Data.size; }
 
     /// \brief Returns a mutable reference to the internal drawable adapter
-    auto impl() -> IDrawableImpl&;
+    LOCO_NODISCARD auto impl() -> IDrawableImpl&;
 
     /// \brief Returns an unmutable reference to the internal drawable adapter
-    auto impl() const -> const IDrawableImpl&;
+    LOCO_NODISCARD auto impl() const -> const IDrawableImpl&;
 
     /// \brief Returns the string representation of this drawable
-    auto ToString() const -> std::string;
+    LOCO_NODISCARD auto ToString() const -> std::string;
 
  protected:
     /// The configuration data for this drawable

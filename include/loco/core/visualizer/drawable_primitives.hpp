@@ -19,7 +19,7 @@ namespace viz {
 /// This box class is a helper class that is exposed to make building of box
 /// drawables easier. It exposes an API for a box shape, as well as the default
 /// API from the Drawable base class.
-class Box : public Drawable {
+class LOCO_API Box : public Drawable {
     // cppcheck-suppress unknownMacro
     NO_COPY_NO_MOVE_NO_ASSIGN(Box)
 
@@ -64,16 +64,16 @@ class Box : public Drawable {
     auto SetHeight(Scalar height) -> void;
 
     /// \brief Returns the size of the box
-    auto extents() const -> const Vec3& { return m_Extents; }
+    LOCO_NODISCARD auto extents() const -> const Vec3& { return m_Extents; }
 
     /// \brief Returns the width of the box
-    auto width() const -> Scalar { return m_Extents.x(); }
+    LOCO_NODISCARD auto width() const -> Scalar { return m_Extents.x(); }
 
     /// \brief Returns the depth of the box
-    auto depth() const -> Scalar { return m_Extents.y(); }
+    LOCO_NODISCARD auto depth() const -> Scalar { return m_Extents.y(); }
 
     /// \brief Returns the height of the box
-    auto height() const -> Scalar { return m_Extents.z(); }
+    LOCO_NODISCARD auto height() const -> Scalar { return m_Extents.z(); }
 
  protected:
     /// \brief The size of the box in each dimension (XYZ)
@@ -85,7 +85,7 @@ class Box : public Drawable {
 /// This plane class is a helper class that is exposed to make building of plane
 /// drawables easier. It exposes an API for a plane shape, as well as the
 /// default API from the Drawable base class.
-class Plane : public Drawable {
+class LOCO_API Plane : public Drawable {
     // cppcheck-suppress unknownMacro
     NO_COPY_NO_MOVE_NO_ASSIGN(Plane)
 
@@ -125,13 +125,13 @@ class Plane : public Drawable {
     auto SetDepth(Scalar depth) -> void;
 
     /// \brief Returns the size of the plane
-    auto extents() const -> const Vec2& { return m_Extents; }
+    LOCO_NODISCARD auto extents() const -> const Vec2& { return m_Extents; }
 
     /// \brief Returns the width of the plane
-    auto width() const -> Scalar { return m_Extents.x(); }
+    LOCO_NODISCARD auto width() const -> Scalar { return m_Extents.x(); }
 
     /// \brief Returns the height of the plane
-    auto depth() const -> Scalar { return m_Extents.y(); }
+    LOCO_NODISCARD auto depth() const -> Scalar { return m_Extents.y(); }
 
  protected:
     /// \brief The size of the plane in each dimension (XY)
@@ -143,7 +143,7 @@ class Plane : public Drawable {
 /// This sphere class is a helper class that is exposed to make building of
 /// sphere drawables easier. It exposes an API for a sphere shape, as well as
 /// the default API from the Drawable base class.
-class Sphere : public Drawable {
+class LOCO_API Sphere : public Drawable {
     // cppcheck-suppress unknownMacro
     NO_COPY_NO_MOVE_NO_ASSIGN(Sphere)
 
@@ -163,7 +163,7 @@ class Sphere : public Drawable {
     auto SetRadius(Scalar p_radius) -> void;
 
     /// \brief Returns the radius of the sphere
-    auto radius() const -> Scalar { return m_Radius; }
+    LOCO_NODISCARD auto radius() const -> Scalar { return m_Radius; }
 
  protected:
     /// \brief The radius of the sphere
@@ -171,7 +171,7 @@ class Sphere : public Drawable {
 };
 
 /// \brief Class that represents a drawable with a cylinder shape
-class Cylinder : public Drawable {
+class LOCO_API Cylinder : public Drawable {
     // cppcheck-suppress unknownMacro
     NO_COPY_NO_MOVE_NO_ASSIGN(Cylinder)
 
@@ -196,10 +196,10 @@ class Cylinder : public Drawable {
     auto SetHeight(Scalar p_height) -> void;
 
     /// \brief Returns the radius of the cylinder
-    auto radius() const -> Scalar { return m_Radius; }
+    LOCO_NODISCARD auto radius() const -> Scalar { return m_Radius; }
 
     /// \brief Returns the height of the cylinder
-    auto height() const -> Scalar { return m_Height; }
+    LOCO_NODISCARD auto height() const -> Scalar { return m_Height; }
 
  protected:
     /// \brief The radius of the cylinder
@@ -209,7 +209,7 @@ class Cylinder : public Drawable {
     Scalar m_Height;
 };
 
-class Ellipsoid : public Drawable {
+class LOCO_API Ellipsoid : public Drawable {
     // cppcheck-suppress unknownMacro
     NO_COPY_NO_MOVE_NO_ASSIGN(Ellipsoid)
 
@@ -238,14 +238,14 @@ class Ellipsoid : public Drawable {
     auto SetRadiusZ(Scalar radius_z) -> void;
 
     /// \brief Returns the radii of the ellipsoid
-    auto radii() const -> Vec3 { return m_Radii; }
+    LOCO_NODISCARD auto radii() const -> Vec3 { return m_Radii; }
 
  protected:
     /// \brief The radii of the ellipsoid
     Vec3 m_Radii;
 };
 
-class Capsule : public Drawable {
+class LOCO_API Capsule : public Drawable {
     // cppcheck-suppress unknownMacro
     NO_COPY_NO_MOVE_NO_ASSIGN(Capsule)
 
@@ -268,10 +268,10 @@ class Capsule : public Drawable {
     auto SetHeight(Scalar height) -> void;
 
     /// \brief Returns the radius of the capsule
-    auto radius() const -> Scalar { return m_Radius; }
+    LOCO_NODISCARD auto radius() const -> Scalar { return m_Radius; }
 
     /// \brief Returns the height of the capsule
-    auto height() const -> Scalar { return m_Height; }
+    LOCO_NODISCARD auto height() const -> Scalar { return m_Height; }
 
  protected:
     /// \brief The radius of the caps of the capsule
@@ -281,9 +281,9 @@ class Capsule : public Drawable {
     Scalar m_Height;
 };
 
-class ConvexMesh : public Drawable {};
+class LOCO_API ConvexMesh : public Drawable {};
 
-class Heightfield : public Drawable {};
+class LOCO_API Heightfield : public Drawable {};
 
 }  // namespace viz
 }  // namespace core
