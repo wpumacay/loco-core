@@ -19,11 +19,11 @@ include_guard()
 
 # -------------------------------------
 set(LOCO_DEP_VERSION_mujoco
-    8f9c690c8593df7531597aa1a3589febb731ff0a # Release 3.0.0
+    0f64959e279e63b62a7610c23e0396c000f28c06 # Release 3.2.6
     CACHE STRING "Version of MuJoCo to be fetched (used as physics backend)")
 
 set(LOCO_DEP_VERSION_bullet
-    2c204c49e56ed15ec5fcfa71d199ab6d6570b3f5 # Release 3.25
+    e9c461b0ace140d5c73972760781d94b7b5eee53 # Release 3.25
     CACHE STRING "Version of Bullet to be fetched (used as physics backend)")
 
 set(LOCO_DEP_VERSION_dart
@@ -31,7 +31,7 @@ set(LOCO_DEP_VERSION_dart
     CACHE STRING "Version of DART to be fetched (used as physics backend)")
 
 set(LOCO_DEP_VERSION_catch2
-    182c910b4b63ff587a3440e08f84f70497e49a81 # Release 2.13.10
+    ee1450f268dfd5c13aa8670ba97e93cabaf2e15d # Release 2.13.10
     CACHE STRING "Version of Catch2 to be fetched (used for unittests)")
 
 set(LOCO_DEP_VERSION_tinyxml2
@@ -44,15 +44,15 @@ set(LOCO_DEP_VERSION_renderer
     CACHE STRING "Version of the internal renderer to be fetched")
 
 set(LOCO_DEP_VERSION_utils
-    efff9de7c158850f9f7cbad1cc66dda5fa867e6e # Version v0.2.10
+    71b8620301da236c0b38cd3732bbaeccef5563ff # Version v0.2.13
     CACHE STRING "Version of internal utilities repo to be fetched")
 
 set(LOCO_DEP_VERSION_math
-    34cb09bc70b8484a66a1734c4964635cb8f1a22b # Version v0.6.9
+    a18a53aebb87a216f4432ac2beff249a29eaebe8 # Version v0.6.16
     CACHE STRING "Version of internal math repo to be fetched")
 
 set(LOCO_DEP_VERSION_pybind11
-    8a099e44b3d5f85b20f05828d919d2332a8de841 # Release v2.11.1
+    a2e59f0e7065404b44dfe92a28aca47ba1378dc4 # Release v2.13.6
     CACHE STRING "Version of PyBind11 to be fetched (used for python bindings)")
 
 set(LOCO_DEP_VERSION_meshcatcpp
