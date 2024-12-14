@@ -1,4 +1,7 @@
+#include <memory>
 #include <stdexcept>
+#include <string>
+#include <utility>
 
 #include <spdlog/fmt/bundled/format.h>
 
@@ -9,7 +12,7 @@
 namespace loco {
 namespace core {
 
-auto SingleBody::Initialize(const eBackendType& backend_type) -> void {
+auto SingleBody::Initialize(eBackendType backend_type) -> void {
     m_BackendType = backend_type;
 
     // Do some configuration before --------------------------------------------
@@ -54,35 +57,35 @@ auto SingleBody::Reset() -> void {
     }
 }
 
-auto SingleBody::SetPose(const Pose& pose) -> void {
+auto SingleBody::SetPose(Pose pose) -> void {
     m_Pose = pose;
     if (m_BackendImpl != nullptr) {
         m_BackendImpl->SetPose(pose);
     }
 }
 
-auto SingleBody::SetPosition(const Vec3& pos) -> void {
+auto SingleBody::SetPosition(Vec3 pos) -> void {
     m_Pose.position = pos;
     if (m_BackendImpl != nullptr) {
         m_BackendImpl->SetPose(m_Pose);
     }
 }
 
-auto SingleBody::SetOrientation(const Quat& quat) -> void {
+auto SingleBody::SetOrientation(Quat quat) -> void {
     m_Pose.orientation = quat;
     if (m_BackendImpl != nullptr) {
         m_BackendImpl->SetPose(m_Pose);
     }
 }
 
-auto SingleBody::SetLinearVelocity(const Vec3& linear_vel) -> void {
+auto SingleBody::SetLinearVelocity(Vec3 linear_vel) -> void {
     m_LinearVel = linear_vel;
     if (m_BackendImpl != nullptr) {
         m_BackendImpl->SetLinearVelocity(linear_vel);
     }
 }
 
-auto SingleBody::SetAngularVelocity(const Vec3& angular_vel) -> void {
+auto SingleBody::SetAngularVelocity(Vec3 angular_vel) -> void {
     m_AngularVel = angular_vel;
     if (m_BackendImpl != nullptr) {
         m_BackendImpl->SetAngularVelocity(angular_vel);

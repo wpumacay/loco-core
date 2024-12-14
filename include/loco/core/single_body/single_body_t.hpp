@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <memory>
 #include <utility>
 
 #include <loco/core/common.hpp>
@@ -10,21 +9,19 @@
 namespace loco {
 namespace core {
 
-class SingleBody {
+class LOCO_API SingleBody {
     // cppcheck-suppress unknownMacro
     NO_COPY_NO_MOVE_NO_ASSIGN(SingleBody)
 
     DEFINE_SMART_POINTERS(SingleBody)
 
  public:
-    /// \brief Creates a single body using the given configuration
-    ///
+    /// Creates a single body using the given configuration
     /// \param[in] data Body data to be used to create and configure this body
     explicit SingleBody(::loco::BodyData data, const Pose& p_pose)
         : m_Data(std::move(data)), m_Pose(p_pose) {}
 
-    /// \brief Creates a body using the given configuration
-    ///
+    /// Creates a single body using the given configuration
     /// \param[in] data Body data to be used to create and configure this body
     /// \param[in] p_position The position of this body in world space
     /// \param[in] p_orientation The orientation of this body in world space
@@ -32,70 +29,70 @@ class SingleBody {
                         const Quat& p_orientation = Quat(1.0, 0.0, 0.0, 0.0))
         : m_Data(std::move(data)), m_Pose(Pose(p_position, p_orientation)) {}
 
-    /// \brief Deletes all allocated resources
+    /// Deletes all allocated resources
     ~SingleBody() = default;
 
-    /// \brief Initializes this body's internal resources
-    ///
+    /// Initializes this body's internal resources
     /// \param[in] backend_type The internal backend to be used for this body
-    auto Initialize(const eBackendType& backend_type) -> void;
+    auto Initialize(eBackendType backend_type) -> void;
 
-    /// \brief Sets the adapter used for simulation
-    ///
+    /// Sets the adapter used for simulating this body
     /// \param[in] adapter The adapter to be used by this body
     auto SetAdapter(ISingleBodyImpl::uptr adapter) -> void;
 
-    /// \brief Resets the body to its default/zero configuration
+    /// Resets the body to its default/zero configuration
     auto Reset() -> void;
 
-    /// \brief Sets the pose of this rigid body in world space
-    ///
+    /// Sets the pose of this rigid body in world space
     /// \param[in] pose The desired pose in world space
-    auto SetPose(const Pose& pose) -> void;
+    auto SetPose(Pose pose) -> void;
 
-    /// \brief Sets the position of this rigid body in world space
-    ///
+    /// Sets the position of this rigid body in world space
     /// \param[in] pos The desired position in world space
-    auto SetPosition(const Vec3& pos) -> void;
+    auto SetPosition(Vec3 pos) -> void;
 
-    /// \brief Sets the orientation of this rigid body in world space
-    ///
+    /// Sets the orientation of this rigid body in world space
     /// \param[in] quat The desired orientation in world space
-    auto SetOrientation(const Quat& quat) -> void;
+    auto SetOrientation(Quat quat) -> void;
 
-    /// \brief Sets the linear velocity of this rigid body to the given value
-    ///
+    /// Sets the linear velocity of this rigid body to the given value
     /// \param[in] linear_vel The desired linear velocity of this body
-    auto SetLinearVelocity(const Vec3& linear_vel) -> void;
+    auto SetLinearVelocity(Vec3 linear_vel) -> void;
 
-    /// \brief Sets the angular velocity of this rigid body to the given value
-    ///
+    /// Sets the angular velocity of this rigid body to the given value
     /// \param[in] angular_vel The angular velocity of this body
-    auto SetAngularVelocity(const Vec3& angular_vel) -> void;
+    auto SetAngularVelocity(Vec3 angular_vel) -> void;
 
-    /// \brief Returns the current pose of this rigid body in world space
-    auto pose() const -> Pose { return m_Pose; }
+    /// Returns the current pose of this rigid body in world space
+    LOCO_NODISCARD auto pose() const -> Pose { return m_Pose; }
 
-    /// \brief Returns the current position of this rigid body in world space
-    auto position() const -> Vec3 { return m_Pose.position; }
+    /// Returns the current position of this rigid body in world space
+    LOCO_NODISCARD auto position() const -> Vec3 { return m_Pose.position; }
 
-    /// \brief Returns the current orientation of this rigid body in world space
-    auto orientation() const -> Quat { return m_Pose.orientation; }
+    /// Returns the current orientation of this rigid body in world space
+    LOCO_NODISCARD auto orientation() const -> Quat {
+        return m_Pose.orientation;
+    }
 
-    /// \brief Returns the linear velocity of this rigid body
-    auto linear_vel() const -> Vec3 { return m_LinearVel; }
+    /// Returns the linear velocity of this rigid body
+    LOCO_NODISCARD auto linear_vel() const -> Vec3 { return m_LinearVel; }
 
-    /// \brief Returns the angular velocity of this rigid body
-    auto angular_vel() const -> Vec3 { return m_AngularVel; }
+    /// Returns the angular velocity of this rigid body
+    LOCO_NODISCARD auto angular_vel() const -> Vec3 { return m_AngularVel; }
 
-    /// \brief Returns a mutable reference to the interface to the backend
-    auto impl() -> ISingleBodyImpl&;
+    /// Returns the type of backend associated with this body
+    LOCO_NODISCARD auto backend_type() const -> eBackendType {
+        return m_BackendType;
+    }
 
-    /// \brief Returns an unmutable reference to the interface to the backend
-    auto impl() const -> const ISingleBodyImpl&;
+    /// Returns a mutable reference to the interface to the backend
+    LOCO_NODISCARD auto impl() -> ISingleBodyImpl&;
 
-    /// \brief Returns the sctring representation of the body
-    auto ToString() const -> std::string;
+    /// Returns an unmutable reference to the interface to the backend
+    LOCO_NODISCARD auto impl() const -> const ISingleBodyImpl&;
+
+    /// Returns the string representation of the body
+    LOCO_NODISCARD auto ToString() const -> std::string;
 
  public:
     // ---------------------------------------------------------------------- //
@@ -121,15 +118,18 @@ class SingleBody {
 
     /// The current pose of this rigid body in world space
     Pose m_Pose;
+
     /// The current linear velocity of this rigid body
     Vec3 m_LinearVel;
+
     /// The current angular velocity of this rigid body
     Vec3 m_AngularVel;
 
     /// The backend type used for simulating this body
-    eBackendType m_BackendType = eBackendType::NONE;
+    eBackendType m_BackendType{eBackendType::NONE};
+
     /// The adapter used to interact with the internal physics backend
-    ISingleBodyImpl::uptr m_BackendImpl = nullptr;
+    ISingleBodyImpl::uptr m_BackendImpl{nullptr};
 };
 
 // Factory functions for primtive shapes
