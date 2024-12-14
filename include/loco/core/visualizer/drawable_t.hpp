@@ -19,22 +19,19 @@ class LOCO_API Drawable {
     DEFINE_SMART_POINTERS(Drawable)
 
  public:
-    /// \brief Creates a default drawable with the given pose in world space
-    ///
+    /// Creates a default drawable with the given pose in world space
     /// \param[in] p_name The unique name given to this drawable
     /// \param[in] p_pose The pose of this body in world space
     explicit Drawable(std::string p_name, Pose p_pose)
         : m_Name(std::move(p_name)), m_Pose(p_pose) {}
 
-    /// \brief Creates a default drawable at the given location in world space
-    ///
+    /// Creates a default drawable at the given location in world space
     /// \param[in] p_name The unique name given to this drawable
     /// \param[in] p_position The position of this drawable in world space
     explicit Drawable(std::string p_name, Vec3 p_position)
         : m_Name(std::move(p_name)), m_Pose(Pose(p_position, Quat())) {}
 
-    /// \brief Creates a drawable using the given user configuration
-    ///
+    /// Creates a drawable using the given user configuration
     /// \param[in] p_name The unique name given to this drawable
     /// \param[in] p_pose The pose of this body in world space
     /// \param[in] data Visual data used to build this drawable
@@ -42,8 +39,7 @@ class LOCO_API Drawable {
                       ::loco::DrawableData data)
         : m_Data(std::move(data)), m_Name(std::move(p_name)), m_Pose(p_pose) {}
 
-    /// \brief Creates a drawable with given config at given world position
-    ///
+    /// Creates a drawable with given config at given world position
     /// \param[in] p_name The unique name given to this drawable
     /// \param[in] p_position The position of this drawable in world space
     /// \param[in] p_orientation The orientation of this drawable in world space
@@ -54,61 +50,50 @@ class LOCO_API Drawable {
           m_Name(std::move(p_name)),
           m_Pose(Pose(p_position, p_orientation)) {}
 
-    /// \brief Releases all allocated resources for this drawable
+    /// Releases all allocated resources for this drawable
     ~Drawable() = default;
 
-    /// \brief Sets the adapter to be used by this drawable
-    ///
+    /// Sets the adapter to be used by this drawable
     /// \param[in] adapter The adapter to be used by this drawable
     auto SetAdapter(IDrawableImpl::uptr adapter) -> void;
 
-    /// \brief Sets the reference to the scenario that contains it
-    ///
+    /// Sets the reference to the scenario that contains it
     /// \param[in] scenario A non-owning reference to a scenario
     auto SetScenario(std::weak_ptr<Scenario> scenario) -> void;
 
-    /// \brief Sets whether or not the drawable should be visible
-    ///
+    /// Sets whether or not the drawable should be visible
     /// \param[in] visible Whether or not the drawable should be visible
     auto SetVisible(bool visible) -> void;
 
-    /// \brief Sets whether or not the drawable should be rendered as wireframe
-    ///
+    /// Sets whether or not the drawable should be rendered as wireframe
     /// \param[in] wireframe Whether or not to render the drawable as wireframe
     auto SetWireframe(bool wireframe) -> void;
 
-    /// \brief Sets the position of this drawable in world space
-    ///
+    /// Sets the position of this drawable in world space
     /// \param[in] pos The desired position of the body in world space
     auto SetPosition(const Vec3& pos) -> void;
 
-    /// \brief Sets the orientation of this drawable in world space
-    ///
+    /// Sets the orientation of this drawable in world space
     /// \param[in] quat The desired orientation of the body in world space
     auto SetOrientation(const Quat& quat) -> void;
 
-    /// \brief Sets the pose of this drawable in workd space
-    ///
+    /// Sets the pose of this drawable in workd space
     /// \param[in] pose The desired pose of the body in world space
     auto SetPose(const Pose& pose) -> void;
 
-    /// \brief Sets the color of this drawable
-    ///
+    /// Sets the color of this drawable
     /// \param[in] color The desired color of this drawable
     auto SetColor(const Vec3& color) -> void;
 
-    /// \brief Sets the texture applied to this drawable
-    ///
+    /// Sets the texture applied to this drawable
     /// \param[in] tex_filepath The path to the texture that we want to use
     auto SetTexture(const std::string& tex_filepath) -> void;
 
-    /// \brief Updates the size of this drawable according to its shape type
-    ///
+    /// Updates the size of this drawable according to its shape type
     /// \param[in] size The desired size for the shape of this drawable
     auto ChangeSize(const Vec3& size) -> void;
 
-    /// \brief Updates the vertex data of the associated mesh shape
-    ///
+    /// Updates the vertex data of the associated mesh shape
     /// \param[in] num_vertices The number of vertices the given mesh has
     /// \param[in] ptr_vertices The buffer where the vertex data is stored
     /// \param[in] num_faces The number of faces the given mesh has
@@ -116,55 +101,54 @@ class LOCO_API Drawable {
     auto ChangeVertexData(size_t num_vertices, const Scalar* ptr_vertices,
                           size_t num_faces, const uint32_t* ptr_faces) -> void;
 
-    /// \brief Updates the elevation data of the associated heightfield shape
-    ///
+    /// Updates the elevation data of the associated heightfield shape
     /// \param[in] n_width_samples The number of samples in the first dimension
     /// \param[in] n_depth_samples The number of samples in the second dimension
     /// \param[in] ptr_heights The buffer where the new elevation data is stored
     auto ChangeElevationData(size_t n_width_samples, size_t n_depth_samples,
                              const Scalar* ptr_heights) -> void;
 
-    /// \brief Returns the data used to build this drawable
+    /// Returns the data used to build this drawable
     LOCO_NODISCARD auto data() const -> ::loco::DrawableData { return m_Data; }
 
-    /// \brief Returns the name of this drawable
+    /// Returns the name of this drawable
     LOCO_NODISCARD auto name() const -> std::string { return m_Name; }
 
-    /// \brief Returns whether or not this drawable is visible
+    /// Returns whether or not this drawable is visible
     LOCO_NODISCARD auto visible() const -> bool { return m_Visible; }
 
-    /// \brief Returns whether or not this drawable is drawn as a wireframe
+    /// Returns whether or not this drawable is drawn as a wireframe
     LOCO_NODISCARD auto wireframe() const -> bool { return m_Wireframe; }
 
-    /// \brief Returns the current pose of this drawable in world space
+    /// Returns the current pose of this drawable in world space
     LOCO_NODISCARD auto pose() const -> Pose { return m_Pose; }
 
-    /// \brief Returns the current position of this drawable in world space
+    /// Returns the current position of this drawable in world space
     LOCO_NODISCARD auto position() const -> Vec3 { return m_Pose.position; }
 
-    /// \brief Returns the current orientation of this drawable in world space
+    /// Returns the current orientation of this drawable in world space
     LOCO_NODISCARD auto orientation() const -> Quat {
         return m_Pose.orientation;
     }
 
-    /// \brief Returns the color of this drawable
+    /// Returns the color of this drawable
     LOCO_NODISCARD auto color() const -> Vec3 { return m_Data.color; }
 
-    /// \brief Returns the texture applied to this drawable
+    /// Returns the texture applied to this drawable
     LOCO_NODISCARD auto texture() const -> std::string {
         return m_Data.texture;
     }
 
-    /// \brief Returns the size of the internal shape of the drawable
+    /// Returns the size of the internal shape of the drawable
     LOCO_NODISCARD auto size() const -> Vec3 { return m_Data.size; }
 
-    /// \brief Returns a mutable reference to the internal drawable adapter
+    /// Returns a mutable reference to the internal drawable adapter
     LOCO_NODISCARD auto impl() -> IDrawableImpl&;
 
-    /// \brief Returns an unmutable reference to the internal drawable adapter
+    /// Returns an unmutable reference to the internal drawable adapter
     LOCO_NODISCARD auto impl() const -> const IDrawableImpl&;
 
-    /// \brief Returns the string representation of this drawable
+    /// Returns the string representation of this drawable
     LOCO_NODISCARD auto ToString() const -> std::string;
 
  protected:
