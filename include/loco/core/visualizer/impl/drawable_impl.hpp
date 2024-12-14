@@ -1,18 +1,8 @@
 #pragma once
 
-#include <memory>
 #include <string>
-#include <utility>
 
 #include <loco/core/common.hpp>
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#elif defined(__GNUC__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
 
 namespace loco {
 namespace core {
@@ -82,42 +72,27 @@ class DrawableImplNone : public IDrawableImpl {
  public:
     DrawableImplNone() = default;
 
-    // Documentation inherited
     ~DrawableImplNone() override = default;
 
-    // Documentation inherited
-    auto SetPose(const Pose& pose) -> void override {}
+    auto SetPose(const Pose& pose) -> void override;
 
-    // Documentation inherited
-    auto SetColor(const Vec3& color) -> void override {}
+    auto SetColor(const Vec3& color) -> void override;
 
-    // Documentation inherited
-    auto SetTexture(const std::string& tex_filepath) -> void override {}
+    auto SetTexture(const std::string& tex_filepath) -> void override;
 
-    // Documentation inherited
-    auto ChangeSize(const Vec3& size) -> void override {}
+    auto ChangeSize(const Vec3& size) -> void override;
 
-    // Documentation inherited
     auto ChangeVertexData(size_t num_vertices, const Scalar* ptr_vertices,
                           size_t num_faces,
-                          const uint32_t* ptr_faces) -> void override {}
+                          const uint32_t* ptr_faces) -> void override;
 
-    // Documentation inherited
     auto ChangeElevationData(size_t n_width_samples, size_t n_depth_samples,
-                             const Scalar* ptr_heights) -> void override {}
+                             const Scalar* ptr_heights) -> void override;
 
-    // Documentation inherited
-    auto SetVisible(bool visible) -> void override {}
+    auto SetVisible(bool visible) -> void override;
 
-    // Documentation inherited
-    auto SetWireframe(bool wireframe) -> void override {}
+    auto SetWireframe(bool wireframe) -> void override;
 };
 
 }  // namespace core
 }  // namespace loco
-
-#if defined(__clang__)
-#pragma clang diagnostic pop  // NOLINT
-#elif defined(__GNUC__)
-#pragma GCC diagnostic pop  // NOLINT
-#endif

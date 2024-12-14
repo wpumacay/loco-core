@@ -60,10 +60,12 @@ loco_create_target(LocoCoreCpp SHARED
   SOURCES
     ${SOURCE_DIR}/loco/core/common.cpp
     ${SOURCE_DIR}/loco/core/visualizer/drawable_t.cpp
+    ${SOURCE_DIR}/loco/core/visualizer/impl/drawable_impl.cpp
     ${SOURCE_DIR}/loco/core/visualizer/drawable_primitives.cpp
     ${SOURCE_DIR}/loco/core/single_body/single_body_collider_t.cpp
     ${SOURCE_DIR}/loco/core/single_body/impl/single_body_collider_impl.cpp
-    ## ${SOURCE_DIR}/loco/core/single_body/single_body_t.cpp
+    # ${SOURCE_DIR}/loco/core/single_body/single_body_t.cpp
+    # ${SOURCE_DIR}/loco/core/single_body/impl/single_body_impl.cpp
     ${SOURCE_DIR}/loco/core/scenario_t.cpp
     ${SOURCE_DIR}/loco/core/visualizer/visualizer_t.cpp
     ## ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/simulation_t.cpp
