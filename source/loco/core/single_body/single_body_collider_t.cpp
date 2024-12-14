@@ -1,4 +1,3 @@
-#include <stdexcept>
 #include <cstring>
 
 #include <utils/logging.hpp>
@@ -8,7 +7,7 @@
 namespace loco {
 namespace core {
 
-auto SingleBodyCollider::ChangeSize(const Vec3& size) -> void {
+auto SingleBodyCollider::ChangeSize(Vec3 size) -> void {
     m_Data.size = size;
     if (m_BackendImpl != nullptr) {
         m_BackendImpl->ChangeSize(size);
@@ -41,10 +40,9 @@ auto SingleBodyCollider::ChangeVertexData(size_t num_vertices,
     }
 }
 
-auto SingleBodyCollider::ChangeElevationData(size_t n_width_samples,
-                                             size_t n_depth_samples,
-                                             const Scalar* ptr_heights)
-    -> void {
+auto SingleBodyCollider::ChangeElevationData(
+    size_t n_width_samples, size_t n_depth_samples,
+    const Scalar* ptr_heights) -> void {
     // Resize the buffer to its new storage size if required
     const auto N_GRID_SAMPLES = n_width_samples * n_depth_samples;
     if (m_Data.hfield_data.n_width_samples != n_width_samples ||
