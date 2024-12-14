@@ -1,23 +1,13 @@
 #pragma once
 
-#include <memory>
-#include <utility>
+#include <string>
 
 #include <loco/core/common.hpp>
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#endif
 
 namespace loco {
 namespace core {
 
-/// \brief Interface for body adapters to link to internal physics backend
-///
-/// This class provides an interface and defines the API that is exposed to the
-/// user to interact with the internal backend-specific implementation of a
-/// rigid-body
+/// Interface for body adapters to link to internal physics backend
 class ISingleBodyImpl {
     // cppcheck-suppress unknownMacro
     NO_COPY_NO_MOVE_NO_ASSIGN(ISingleBodyImpl)
@@ -30,53 +20,38 @@ class ISingleBodyImpl {
     /// Releases/Frees all allocated resources for this adapter
     virtual ~ISingleBodyImpl() = default;
 
-    /// \brief Sets the pose of the associated rigid-body
-    ///
-    /// Updates the pose in world space by using the backend-specific resources
-    /// that links to the associated body. The backend could be using either
-    /// maximal or minimal coordinates; either way, the implementation of the
-    /// adapter should be in charge of using the backend's API to set the pose
-    /// correctly
-    ///
+    /// Sets the pose of the associated body in world space
     /// \param[in] pose The desired pose of the rigid body in world space
-    virtual auto SetPose(const Pose& pose) -> void = 0;
+    virtual auto SetPose(Pose pose) -> void = 0;
 
-    /// \brief Updates the internal backend with the linear velocity of the
-    /// associated body
-    ///
-    /// \param[in] linear_vel The desired linear velocity of the associated
-    /// rigid-body
-    virtual auto SetLinearVelocity(const Vec3& linear_vel) -> void = 0;
+    /// Sets the linear velocity of the associated body
+    /// \param[in] linear_vel The desired linear velocity of the body
+    virtual auto SetLinearVelocity(Vec3 linear_vel) -> void = 0;
 
-    /// \brief Updates the internal backend with the angular velocity of the
-    /// associated body
-    ///
-    /// \param[in] angular_vel The desired angular velocity of the associated
-    /// rigid body
-    virtual auto SetAngularVelocity(const Vec3& angular_vel) -> void = 0;
+    /// Sets the angular velocity of the associated body
+    /// \param[in] angular_vel The desired angular velocity of the body
+    virtual auto SetAngularVelocity(Vec3 angular_vel) -> void = 0;
 
-    /// \brief Sets the given total force at the center of mass for the
-    /// associated body
-    ///
-    /// \param[in] force The desired total force to be applied to the associated
-    /// rigid body at its center of mass
-    virtual auto SetForceCOM(const Vec3& force) -> void = 0;
+    /// Sets the total force at the COM of the body
+    /// \param[in] force The desired total force to be applied
+    virtual auto SetForceCOM(Vec3 force) -> void = 0;
 
-    /// \brief Sets the given total torque for the associated body
-    ///
-    /// \param[in] torque The desired total torque to be applied to the
-    /// associated rigid body
-    virtual auto SetTorque(const Vec3& torque) -> void = 0;
+    /// Sets the total torque applied to the body
+    /// \param[in] torque The desired total torque to be applied
+    virtual auto SetTorque(Vec3 torque) -> void = 0;
 
-    /// \brief Returns the type of backend being used internally for simulation
-    auto type() const -> eBackendType { return m_BackendType; }
+    /// Returns the type of backend being used internally for simulation
+    LOCO_NODISCARD auto type() const -> eBackendType { return m_BackendType; }
+
+    /// Returns a string representation of this body adapter
+    LOCO_NODISCARD virtual auto ToString() const -> std::string = 0;
 
  protected:
     /// The internall type of backend used for simulation
     ::loco::eBackendType m_BackendType = ::loco::eBackendType::NONE;
 };
 
-/// \brief Represents a dummy adapter that connects to no backend
+/// Represents a dummy adapter that connects to no backend
 class SingleBodyImplNone : public ISingleBodyImpl {
     // cppcheck-suppress unknownMacro
     NO_COPY_NO_MOVE_NO_ASSIGN(SingleBodyImplNone)
@@ -86,28 +61,20 @@ class SingleBodyImplNone : public ISingleBodyImpl {
  public:
     SingleBodyImplNone() = default;
 
-    // Documentation inherited
     ~SingleBodyImplNone() override = default;
 
-    // Documentation inherited
-    auto SetPose(const Pose& pose) -> void override {}
+    auto SetPose(Pose pose) -> void override;
 
-    // Documentation inherited
-    auto SetLinearVelocity(const Vec3& linear_vel) -> void override {}
+    auto SetLinearVelocity(Vec3 linear_vel) -> void override;
 
-    // Documentation inherited
-    auto SetAngularVelocity(const Vec3& angular_vel) -> void override {}
+    auto SetAngularVelocity(Vec3 angular_vel) -> void override;
 
-    // Documentation inherited
-    auto SetForceCOM(const Vec3& force) -> void override {}
+    auto SetForceCOM(Vec3 force) -> void override;
 
-    // Documentation inherited
-    auto SetTorque(const Vec3& torque) -> void override {}
+    auto SetTorque(Vec3 torque) -> void override;
+
+    LOCO_NODISCARD auto ToString() const -> std::string override;
 };
 
 }  // namespace core
 }  // namespace loco
-
-#if defined(__clang__)
-#pragma clang diagnostic pop  // NOLINT
-#endif
