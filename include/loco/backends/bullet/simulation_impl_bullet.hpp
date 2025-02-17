@@ -29,7 +29,9 @@ class SimulationImplBullet : public core::SimulationImpl {
 
     auto SetTimeStep(Scalar step) -> void override;
 
-    auto SetGravity(const Vec3& gravity) -> void override;
+    auto SetGravity(Vec3 gravity) -> void override;
+
+    LOCO_NODISCARD auto ToString() const -> std::string override;
 
     /// Returns a mutable reference to the internal bullet world
     auto bullet_world() -> btDynamicsWorld&;
@@ -51,6 +53,7 @@ class SimulationImplBullet : public core::SimulationImpl {
 
     /// Fixed timestep taken on the simulation
     btScalar m_FixedTimeStep = static_cast<btScalar>(1e-3);
+
     /// Max. number of fixed simulation steps possible
     size_t m_MaxSubSteps = 20;
 };

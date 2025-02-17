@@ -27,7 +27,8 @@
 namespace loco {
 namespace core {
 
-auto Simulation::Init() -> void {
+auto Simulation::Init(eBackendType backend_type) -> void {
+    m_BackendType = backend_type;
     switch (m_BackendType) {
         case eBackendType::NONE:
             m_BackendImpl = std::make_unique<SimulationImplNone>(m_Scenario);
@@ -78,7 +79,7 @@ auto Simulation::SetTimeStep(Scalar step) -> void {
     }
 }
 
-auto Simulation::SetGravity(const Vec3& gravity) -> void {
+auto Simulation::SetGravity(Vec3 gravity) -> void {
     m_Gravity = gravity;
     if (m_BackendImpl != nullptr) {
         m_BackendImpl->SetGravity(gravity);

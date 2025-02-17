@@ -1,21 +1,16 @@
 #pragma once
 
-#include <memory>
+#include <string>
 #include <utility>
 
-#include "../common.hpp"
-#include "../scenario_t.hpp"
-
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#endif
+#include <loco/core/common.hpp>
+#include <loco/core/scenario_t.hpp>
 
 namespace loco {
 namespace core {
 
 /// Represents an adapter that links to a specific simulation backend
-class SimulationImpl {
+class LOCO_API SimulationImpl {
     // cppcheck-suppress unknownMacro
     NO_COPY_NO_MOVE_NO_ASSIGN(SimulationImpl)
 
@@ -41,7 +36,10 @@ class SimulationImpl {
     virtual auto SetTimeStep(Scalar step) -> void = 0;
 
     /// Sets the internal gravity
-    virtual auto SetGravity(const Vec3& gravity) -> void = 0;
+    virtual auto SetGravity(Vec3 gravity) -> void = 0;
+
+    /// Returns a string representation of this adapter
+    LOCO_NODISCARD virtual auto ToString() const -> std::string = 0;
 
  protected:
     /// The scenario to be simulated
@@ -49,7 +47,7 @@ class SimulationImpl {
 };
 
 /// Represents a dummy adapter for a scenario (no simulation happens)
-class SimulationImplNone : public SimulationImpl {
+class LOCO_API SimulationImplNone : public SimulationImpl {
     // cppcheck-suppress unknownMacro
     NO_COPY_NO_MOVE_NO_ASSIGN(SimulationImplNone)
 
@@ -61,20 +59,18 @@ class SimulationImplNone : public SimulationImpl {
 
     ~SimulationImplNone() override = default;
 
-    auto Init() -> void override {}
+    auto Init() -> void override;
 
-    auto Reset() -> void override {}
+    auto Reset() -> void override;
 
-    auto Step(Scalar step) -> void override {}
+    auto Step(Scalar step) -> void override;
 
-    auto SetTimeStep(Scalar step) -> void override {}
+    auto SetTimeStep(Scalar step) -> void override;
 
-    auto SetGravity(const Vec3& gravity) -> void override {}
+    auto SetGravity(Vec3 gravity) -> void override;
+
+    LOCO_NODISCARD auto ToString() const -> std::string override;
 };
 
 }  // namespace core
 }  // namespace loco
-
-#if defined(__clang__)
-#pragma clang diagnostic pop  // NOLINT
-#endif

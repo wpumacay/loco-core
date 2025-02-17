@@ -8,9 +8,12 @@
 #pragma clang diagnostic ignored "-Wcast-align"
 #endif
 
-#include <loco/backends/bullet/simulation_impl_bullet.hpp>
-
+#include <typeinfo>
 #include <stdexcept>
+
+#include <spdlog/fmt/bundled/format.h>
+
+#include <loco/backends/bullet/simulation_impl_bullet.hpp>
 
 namespace loco {
 namespace bullet {
@@ -54,7 +57,7 @@ auto SimulationImplBullet::SetTimeStep(Scalar step) -> void {
     m_FixedTimeStep = step;
 }
 
-auto SimulationImplBullet::SetGravity(const Vec3& gravity) -> void {
+auto SimulationImplBullet::SetGravity(Vec3 gravity) -> void {
     // NOTE(wilbert): When changing gravity, the value is set internally for
     // each bullet rigid body that is not static. Should hint the user that this
     // function will have the expected result if the body creation step is done
@@ -62,6 +65,27 @@ auto SimulationImplBullet::SetGravity(const Vec3& gravity) -> void {
     if (m_World != nullptr) {
         m_World->setGravity(vec3_to_bt(gravity));
     }
+}
+
+auto SimulationImplBullet::ToString() const -> std::string {
+    const auto* msg_world =
+        (m_World != nullptr ? typeid(m_World.get()).name() : "nullptr");
+    const auto* msg_constraint_solver =
+        (m_ConstraintSolver != nullptr ? typeid(m_ConstraintSolver.get()).name()
+                                       : "nullptr");
+    const auto* msg_broadphase =
+        (m_Broadphase != nullptr ? typeid(m_Broadphase.get()).name()
+                                 : "nullptr");
+    return fmt::format(
+        "<SimulationImplBullet\n"
+        "  fixedTimeStep: {0}\n"
+        "  maxSubSteps: {1}\n"
+        "  btDynamicsWorld: {2}\n"
+        "  btConstraintSolver: {3}\n"
+        "  btBroadphaseInterface: {4}\n"
+        ">\n",
+        m_FixedTimeStep, m_MaxSubSteps, msg_world, msg_constraint_solver,
+        msg_broadphase);
 }
 
 auto SimulationImplBullet::bullet_world() -> btDynamicsWorld& {
