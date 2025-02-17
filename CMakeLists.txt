@@ -27,6 +27,7 @@ option(LOCO_BUILD_EXAMPLES "Build C/C++ examples" ON)
 option(LOCO_BUILD_TESTS "Build C/C++ tests" ON)
 option(LOCO_BUILD_DOCS "Build documentation" OFF)
 
+option(LOCO_USE_BACKEND_SUBMODULES "Build using the git submodules" ON)
 option(LOCO_BUILD_BACKEND_MUJOCO "Build with support for MuJoCo" OFF)
 option(LOCO_BUILD_BACKEND_BULLET "Build with support for Bullet" OFF)
 option(LOCO_BUILD_BACKEND_DART "Build with support for Dart" OFF)
@@ -68,7 +69,8 @@ loco_create_target(LocoCoreCpp SHARED
     ${SOURCE_DIR}/loco/core/single_body/impl/single_body_impl.cpp
     ${SOURCE_DIR}/loco/core/scenario_t.cpp
     ${SOURCE_DIR}/loco/core/visualizer/visualizer_t.cpp
-    ## ${CMAKE_CURRENT_SOURCE_DIR}/source/loco/core/simulation_t.cpp
+    ${SOURCE_DIR}/loco/core/simulation_t.cpp
+    ${SOURCE_DIR}/loco/core/impl/simulation_impl.cpp
   INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/include
   TARGET_DEPENDENCIES

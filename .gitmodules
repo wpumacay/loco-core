@@ -1,0 +1,6 @@
+[submodule "third_party/bullet3"]
+	path = third_party/bullet3
+	url = https://github.com/bulletphysics/bullet3.git
+[submodule "third_party/mujoco"]
+	path = third_party/mujoco
+	url = https://github.com/google-deepmind/mujoco.git

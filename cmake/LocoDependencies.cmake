@@ -56,7 +56,7 @@ set(LOCO_DEP_VERSION_pybind11
     CACHE STRING "Version of PyBind11 to be fetched (used for python bindings)")
 
 set(LOCO_DEP_VERSION_meshcatcpp
-    d7df7b83617cca185c7b77405aabaffe3bc072ac
+    d1ee02eccdc5f1a4d46ef5b0c901410a15116746
     CACHE STRING "Version of MeshcatCpp to be fetched (for meshcat visualizer")
 
 mark_as_advanced(LOCO_DEP_VERSION_mujoco)
@@ -84,22 +84,19 @@ if(LOCO_BUILD_BACKEND_MUJOCO)
   set(MUJOCO_BUILD_TESTS OFF CACHE BOOL "" FORCE)
   set(MUJOCO_TEST_PYTHON_UTIL OFF CACHE BOOL "" FORCE)
 
-  loco_find_or_fetch_dependency(
-    USE_SYSTEM_PACKAGE ${FIND_OR_FETCH_USE_SYSTEM_PACKAGE}
-    PACKAGE_NAME mujoco
-    LIBRARY_NAME mujoco
-    GIT_REPO https://github.com/deepmind/mujoco.git
-    GIT_TAG ${LOCO_DEP_VERSION_mujoco}
-    GIT_PROGRESS FALSE
-    GIT_SHALLOW TRUE
-    TARGETS mujoco::mujoco
-    EXCLUDE_FROM_ALL)
-
-  # If using system package, make sure the imported target is found
-  if(USE_SYSTEM_PACKAGE)
-    if(NOT TARGET mujoco::mujoco)
-      message(WARNING "Couldn't find imported target mujoco::mujoco")
-    endif()
+  if(LOCO_USE_BACKEND_SUBMODULES)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/mujoco)
+  else()
+    loco_find_or_fetch_dependency(
+      USE_SYSTEM_PACKAGE ${FIND_OR_FETCH_USE_SYSTEM_PACKAGE}
+      PACKAGE_NAME mujoco
+      LIBRARY_NAME mujoco
+      GIT_REPO https://github.com/deepmind/mujoco.git
+      GIT_TAG ${LOCO_DEP_VERSION_mujoco}
+      GIT_PROGRESS FALSE
+      GIT_SHALLOW TRUE
+      TARGETS mujoco::mujoco
+      EXCLUDE_FROM_ALL)
   endif()
 endif()
 
@@ -118,29 +115,37 @@ if(LOCO_BUILD_BACKEND_BULLET)
   set(BUILD_OPENGL3_DEMOS OFF CACHE BOOL "" FORCE)
   set(BUILD_UNIT_TESTS OFF CACHE BOOL "" FORCE)
 
-  loco_find_or_fetch_dependency(
-    USE_SYSTEM_PACKAGE ${FIND_OR_FETCH_USE_SYSTEM_PACKAGE}
-    PACKAGE_NAME Bullet
-    LIBRARY_NAME bullet
-    GIT_REPO https://github.com/bulletphysics/bullet3.git
-    GIT_TAG ${LOCO_DEP_VERSION_bullet}
-    GIT_PROGRESS FALSE
-    GIT_SHALLOW TRUE
-    TARGETS LinearMath BulletCollision BulletDynamics
-    EXCLUDE_FROM_ALL)
+  if(LOCO_USE_BACKEND_SUBMODULES)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/bullet3)
 
-  # Group the required bullet libraries into a single target to ease its usage
-  add_library(bullet INTERFACE)
-  if (FIND_OR_FETCH_USE_SYSTEM_PACKAGE)
-    # Embed the exported variables from the system package
+    add_library(bullet INTERFACE)
     target_include_directories(bullet INTERFACE ${BULLET_INCLUDE_DIRS})
     target_link_libraries(bullet INTERFACE ${BULLET_LIBRARIES})
   else()
-    # Embed information created by Bullet's CMake workflow
-    target_link_libraries(bullet INTERFACE LinearMath)
-    target_link_libraries(bullet INTERFACE BulletCollision)
-    target_link_libraries(bullet INTERFACE BulletDynamics)
-    target_include_directories(bullet INTERFACE ${bullet_SOURCE_DIR}/src)
+    loco_find_or_fetch_dependency(
+      USE_SYSTEM_PACKAGE ${FIND_OR_FETCH_USE_SYSTEM_PACKAGE}
+      PACKAGE_NAME Bullet
+      LIBRARY_NAME bullet
+      GIT_REPO https://github.com/bulletphysics/bullet3.git
+      GIT_TAG ${LOCO_DEP_VERSION_bullet}
+      GIT_PROGRESS FALSE
+      GIT_SHALLOW TRUE
+      TARGETS LinearMath BulletCollision BulletDynamics
+      EXCLUDE_FROM_ALL)
+
+    # Group the required bullet libraries into a single target to ease its usage
+    add_library(bullet INTERFACE)
+    if (FIND_OR_FETCH_USE_SYSTEM_PACKAGE)
+      # Embed the exported variables from the system package
+      target_include_directories(bullet INTERFACE ${BULLET_INCLUDE_DIRS})
+      target_link_libraries(bullet INTERFACE ${BULLET_LIBRARIES})
+    else()
+      # Embed information created by Bullet's CMake workflow
+      target_link_libraries(bullet INTERFACE LinearMath)
+      target_link_libraries(bullet INTERFACE BulletCollision)
+      target_link_libraries(bullet INTERFACE BulletDynamics)
+      target_include_directories(bullet INTERFACE ${bullet_SOURCE_DIR}/src)
+    endif()
   endif()
   add_library(bullet::bullet ALIAS bullet)
 endif()
@@ -155,32 +160,35 @@ if(LOCO_BUILD_BACKEND_DART)
     set(DART_BUILD_DARTPY OFF CACHE BOOL "" FORCE)
     set(DART_CODECOV OFF CACHE BOOL "" FORCE)
 
-    loco_find_or_fetch_dependency(
-      USE_SYSTEM_PACKAGE FALSE
-      PACKAGE_NAME DART
-      LIBRARY_NAME ${LOCO_DEP_VERSION_dart}
-      GIT_REPO https://github.com/dartsim/dart.git
-      GIT_TAG v6.12.2
-      GIT_PROGRESS FALSE
-      GIT_SHALLOW TRUE
-      TARGETS dart dart-collision-bullet dart-collision-ode
-      PATCH_COMMAND
-        "${GIT_EXECUTABLE}"
-        "apply"
-        "-q"
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/dart-no-uninstall-target.patch"
-        "||"
-        "${CMAKE_COMMAND}"
-        "-E"
-        "true"
-      EXCLUDE_FROM_ALL)
-
-    add_library(dart_libs INTERFACE)
-    target_link_libraries(dart_libs INTERFACE dart)
-    target_link_libraries(dart_libs INTERFACE dart-collision-bullet)
-    target_link_libraries(dart_libs INTERFACE dart-collision-ode)
-    target_include_directories(dart_libs INTERFACE ${dart_SOURCE_DIR}/src)
-    add_library(dart::dart ALIAS dart_libs)
+    if(LOCO_USE_BACKEND_SUBMODULES)
+      add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/dart)
+    else()
+      loco_find_or_fetch_dependency(
+        USE_SYSTEM_PACKAGE FALSE
+        PACKAGE_NAME DART
+        LIBRARY_NAME ${LOCO_DEP_VERSION_dart}
+        GIT_REPO https://github.com/dartsim/dart.git
+        GIT_TAG v6.12.2
+        GIT_PROGRESS FALSE
+        GIT_SHALLOW TRUE
+        TARGETS dart dart-collision-bullet dart-collision-ode
+        PATCH_COMMAND
+          "${GIT_EXECUTABLE}"
+          "apply"
+          "-q"
+          "${CMAKE_CURRENT_SOURCE_DIR}/cmake/dart-no-uninstall-target.patch"
+          "||"
+          "${CMAKE_COMMAND}"
+          "-E"
+          "true"
+        EXCLUDE_FROM_ALL)
+    endif()
+      add_library(dart_libs INTERFACE)
+      target_link_libraries(dart_libs INTERFACE dart)
+      target_link_libraries(dart_libs INTERFACE dart-collision-bullet)
+      target_link_libraries(dart_libs INTERFACE dart-collision-ode)
+      target_include_directories(dart_libs INTERFACE ${dart_SOURCE_DIR}/src)
+      add_library(dart::dart ALIAS dart_libs)
   else()
     find_package(DART REQUIRED COMPONENTS collision-bullet collision-ode CONFIG)
     find_package(Eigen3 REQUIRED)
